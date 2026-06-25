@@ -1,0 +1,453 @@
+
+<style>
+#erd-wrap { padding: 0; overflow-x: auto; }
+#erd-wrap svg { max-width: none !important; width: 100% !important; }
+.erd-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin: 0 0 8px; padding: 12px 0 0; }
+.erd-section { font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: .05em; margin: 16px 0 4px; }
+#tab-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; padding-top: 8px; }
+.tab-btn { padding: 4px 12px; border-radius: 20px; border: 1px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); font-size: 12px; cursor: pointer; transition: all .15s; }
+.tab-btn.active { background: var(--color-text-primary); color: var(--color-background-primary); border-color: transparent; }
+#erd-wrap svg .node rect { rx: 8; }
+</style>
+
+<p class="erd-title">ERD — AI Project Planning & Portfolio Management (SQLAlchemy)</p>
+
+<div id="tab-bar">
+  <button class="tab-btn active" onclick="showTab('user')">👤 User & RBAC</button>
+  <button class="tab-btn" onclick="showTab('project')">📁 Project Core</button>
+  <button class="tab-btn" onclick="showTab('task')">✅ Task & Scheduling</button>
+  <button class="tab-btn" onclick="showTab('cr')">🔄 Change Management</button>
+  <button class="tab-btn" onclick="showTab('ai')">🤖 AI Domain</button>
+  <button class="tab-btn" onclick="showTab('doc')">📄 Document & Notification</button>
+</div>
+
+<div id="erd-wrap"><div id="erd"></div></div>
+
+<script type="module">
+import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs';
+const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+await document.fonts.ready;
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  fontFamily: '"Anthropic Sans", sans-serif',
+  themeVariables: {
+    darkMode: dark,
+    fontSize: '12px',
+    fontFamily: '"Anthropic Sans", sans-serif',
+    lineColor: dark ? '#9c9a92' : '#73726c',
+    textColor: dark ? '#c2c0b6' : '#3d3d3a',
+    primaryColor: dark ? '#3C3489' : '#EEEDFE',
+    primaryTextColor: dark ? '#CECBF6' : '#3C3489',
+    primaryBorderColor: dark ? '#534AB7' : '#AFA9EC',
+    secondaryColor: dark ? '#085041' : '#E1F5EE',
+    tertiaryColor: dark ? '#3C3489' : '#EEEDFE',
+  },
+});
+
+const diagrams = {
+  user: `erDiagram
+    users {
+      int id PK
+      string email UK
+      string username UK
+      string full_name
+      string hashed_password
+      string avatar_url
+      string phone
+      string position
+      string department
+      float hourly_rate
+      boolean is_active
+      boolean is_superuser
+      datetime last_login
+    }
+    roles {
+      int id PK
+      string name UK
+      string description
+    }
+    permissions {
+      int id PK
+      string resource
+      string action
+      string description
+    }
+    skills {
+      int id PK
+      string name UK
+      string description
+      string category
+    }
+    leaves {
+      int id PK
+      int user_id FK
+      string leave_type
+      date start_date
+      date end_date
+      string reason
+      string status
+      int approved_by_id FK
+      datetime approved_at
+    }
+    user_roles {
+      int user_id PK,FK
+      int role_id PK,FK
+    }
+    role_permissions {
+      int role_id PK,FK
+      int permission_id PK,FK
+    }
+    user_skills {
+      int user_id PK,FK
+      int skill_id PK,FK
+      string level
+    }
+    project_members {
+      int project_id PK,FK
+      int user_id PK,FK
+      string role_in_project
+    }
+
+    users ||--o{ user_roles : "has"
+    roles ||--o{ user_roles : "assigned to"
+    roles ||--o{ role_permissions : "grants"
+    permissions ||--o{ role_permissions : "included in"
+    users ||--o{ user_skills : "has"
+    skills ||--o{ user_skills : "possessed by"
+    users ||--o{ leaves : "requests"
+  `,
+
+  project: `erDiagram
+    portfolios {
+      int id PK
+      string name
+      string description
+      string status
+      float budget
+      string currency
+      int owner_id FK
+    }
+    projects {
+      int id PK
+      string name
+      string description
+      string status
+      date start_date
+      date end_date
+      float progress
+      float budget
+      float actual_cost
+      string currency
+      int portfolio_id FK
+      int pm_id FK
+    }
+    phases {
+      int id PK
+      string name
+      string description
+      string status
+      int order_index
+      date start_date
+      date end_date
+      int project_id FK
+    }
+    sprints {
+      int id PK
+      string name
+      string goal
+      string status
+      date start_date
+      date end_date
+      int story_points_committed
+      int story_points_completed
+      float velocity
+      int phase_id FK
+      int project_id FK
+    }
+    epics {
+      int id PK
+      string name
+      string description
+      string status
+      int story_points
+      string color
+      int project_id FK
+    }
+    milestones {
+      int id PK
+      string name
+      string description
+      date due_date
+      string status
+      datetime completed_at
+      int project_id FK
+    }
+
+    portfolios ||--o{ projects : "contains"
+    projects ||--o{ phases : "has"
+    projects ||--o{ sprints : "has"
+    projects ||--o{ epics : "has"
+    projects ||--o{ milestones : "has"
+    phases ||--o{ sprints : "groups"
+  `,
+
+  task: `erDiagram
+    tasks {
+      int id PK
+      string name
+      string description
+      string status
+      string priority
+      int story_points
+      float progress
+      float estimated_hours
+      float actual_hours
+      date start_date
+      date due_date
+      date actual_start
+      date actual_end
+      date early_start
+      date early_finish
+      date late_start
+      date late_finish
+      float float_days
+      boolean is_critical
+      int project_id FK
+      int phase_id FK
+      int sprint_id FK
+      int epic_id FK
+      int assignee_id FK
+    }
+    subtasks {
+      int id PK
+      string name
+      string description
+      string status
+      boolean is_completed
+      float estimated_hours
+      float actual_hours
+      int task_id FK
+      int assignee_id FK
+    }
+    dependencies {
+      int predecessor_id PK,FK
+      int successor_id PK,FK
+      string dependency_type
+      int lag_days
+    }
+    assignments {
+      int id PK
+      int task_id FK
+      int user_id FK
+      string role
+      float allocated_hours
+      float allocation_percentage
+      date start_date
+      date end_date
+    }
+    worklogs {
+      int id PK
+      int task_id FK
+      int user_id FK
+      float hours
+      date log_date
+      string description
+      datetime start_time
+      datetime end_time
+    }
+    comments {
+      int id PK
+      int task_id FK
+      int user_id FK
+      text content
+    }
+
+    tasks ||--o{ subtasks : "breaks into"
+    tasks ||--o{ dependencies : "predecessor of"
+    tasks ||--o{ dependencies : "successor to"
+    tasks ||--o{ assignments : "assigned via"
+    tasks ||--o{ worklogs : "logs work"
+    tasks ||--o{ comments : "has"
+  `,
+
+  cr: `erDiagram
+    change_requests {
+      int id PK
+      string title
+      text description
+      string reason
+      string impact_description
+      string status
+      datetime applied_at
+      int applied_by_id FK
+      int project_id FK
+      int requested_by_id FK
+    }
+    approvals {
+      int id PK
+      int change_request_id FK
+      int approver_id FK
+      int step_order
+      string status
+      text comment
+      datetime approved_at
+    }
+    impact_reports {
+      int id PK
+      int change_request_id FK
+      string risk_level
+      float risk_score
+      int schedule_impact_days
+      float cost_impact
+      json affected_tasks_json
+      json ai_analysis_json
+      text summary
+    }
+    project_versions {
+      int id PK
+      int project_id FK
+      int version_number
+      string label
+      text description
+      boolean is_baseline
+      json snapshot
+      int change_request_id FK
+      int created_by_id FK
+    }
+    audit_logs {
+      int id PK
+      int user_id FK
+      string action
+      string entity_type
+      int entity_id
+      json old_values
+      json new_values
+      string ip_address
+      text description
+    }
+
+    change_requests ||--o{ approvals : "reviewed via"
+    change_requests ||--|| impact_reports : "generates"
+    change_requests ||--o{ project_versions : "results in version"
+  `,
+
+  ai: `erDiagram
+    ai_requests {
+      int id PK
+      int project_id FK
+      int user_id FK
+      string request_type
+      string status
+      json input_data_json
+      string celery_task_id
+      text error_message
+      datetime completed_at
+    }
+    ai_outputs {
+      int id PK
+      int ai_request_id FK
+      json output_json
+      int tokens_used
+      string model_name
+      int processing_time_ms
+      text raw_response
+    }
+    risk_reports {
+      int id PK
+      int project_id FK
+      float risk_score
+      string risk_level
+      json risk_factors_json
+      json mitigation_suggestions_json
+      text summary
+    }
+
+    ai_requests ||--|| ai_outputs : "produces"
+  `,
+
+  doc: `erDiagram
+    documents {
+      int id PK
+      string name
+      string doc_type
+      string minio_bucket
+      text minio_key
+      text file_url
+      int file_size
+      string mime_type
+      boolean ai_parsed
+      text ai_summary
+      datetime ai_parsed_at
+      int project_id FK
+      int uploaded_by_id FK
+    }
+    notifications {
+      int id PK
+      int user_id FK
+      string title
+      text message
+      string notification_type
+      boolean is_read
+      datetime read_at
+      text link
+      string related_entity_type
+      int related_entity_id
+    }
+    email_logs {
+      int id PK
+      string recipient_email
+      string subject
+      string template_name
+      string status
+      datetime sent_at
+      text error_message
+    }
+  `
+};
+
+let currentTab = 'user';
+const container = document.getElementById('erd');
+
+async function renderDiagram(tab) {
+  container.innerHTML = '<p style="color:var(--color-text-tertiary);font-size:12px;padding:8px">Đang tải...</p>';
+  try {
+    const { svg } = await mermaid.render('erd-svg-' + tab + '-' + Date.now(), diagrams[tab]);
+    container.innerHTML = svg;
+
+    container.querySelectorAll('.node').forEach(node => {
+      const firstPath = node.querySelector('path[d]');
+      if (!firstPath) return;
+      const d = firstPath.getAttribute('d');
+      const nums = d.match(/-?[\d.]+/g)?.map(Number);
+      if (!nums || nums.length < 8) return;
+      const xs = [nums[0], nums[2], nums[4], nums[6]];
+      const ys = [nums[1], nums[3], nums[5], nums[7]];
+      const x = Math.min(...xs), y = Math.min(...ys);
+      const w = Math.max(...xs) - x, h = Math.max(...ys) - y;
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('x', x); rect.setAttribute('y', y);
+      rect.setAttribute('width', w); rect.setAttribute('height', h);
+      rect.setAttribute('rx', '8');
+      for (const a of ['fill', 'stroke', 'stroke-width', 'class', 'style']) {
+        if (firstPath.hasAttribute(a)) rect.setAttribute(a, firstPath.getAttribute(a));
+      }
+      firstPath.replaceWith(rect);
+    });
+    container.querySelectorAll('.row-rect-odd path, .row-rect-even path').forEach(p => {
+      p.setAttribute('stroke', 'none');
+    });
+  } catch(e) {
+    container.innerHTML = '<p style="color:var(--color-text-danger);font-size:12px;padding:8px">Lỗi render: ' + e.message + '</p>';
+  }
+}
+
+window.showTab = function(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderDiagram(tab);
+};
+
+renderDiagram('user');
+</script>
