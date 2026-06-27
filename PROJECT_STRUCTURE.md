@@ -8,7 +8,7 @@
 ## 📁 Tổng quan thư mục gốc
 
 ```
-Đồ án tốt nghiệp/
+ai-project-managemant/
 ├── backend/                    # Python FastAPI backend
 ├── frontend/                   # React (Vite + TypeScript) frontend
 ├── docker-compose.yml          # Orchestration toàn bộ services
