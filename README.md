@@ -16,7 +16,7 @@ Web application quản lý dự án thông minh tích hợp AI, hỗ trợ:
 ## 🏗️ Kiến trúc hệ thống
 
 ```
-Frontend (React + Vite)  ←→  Backend (FastAPI / Python)  ←→  PostgreSQL
+Frontend (Next.js 15)  ←→  Backend (FastAPI / Python)  ←→  PostgreSQL
                                          ↓
                                  Redis + Celery
                                          ↓
@@ -48,9 +48,9 @@ Frontend (React + Vite)  ←→  Backend (FastAPI / Python)  ←→  PostgreSQL
 ### Frontend — React
 | Thành phần | Công nghệ |
 |---|---|
-| Framework | **React 18 + Vite** |
+| Framework | **Next.js 15 (React 18)** |
 | Language | TypeScript |
-| Routing | **React Router v6** |
+| Routing | **Next.js App Router** (file-based, `src/app/`) |
 | State (local) | **Zustand** |
 | State (server) | **TanStack Query v5** |
 | HTTP | Axios |
@@ -155,7 +155,7 @@ cd backend
 celery -A app.workers.celery_app worker --loglevel=info
 ```
 
-### Frontend Setup (React / Vite)
+### Frontend Setup (Next.js)
 
 ```bash
 cd frontend
@@ -165,13 +165,13 @@ npm install
 
 # Setup biến môi trường
 cp .env.example .env.local
-# Chỉnh sửa VITE_API_URL=http://localhost:8000
+# Chỉnh sửa NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
 
 # Chạy development server
 npm run dev
 ```
 
-> Ứng dụng chạy tại: http://localhost:5173
+> Ứng dụng chạy tại: http://localhost:3000
 
 ### Docker Setup
 
@@ -200,9 +200,10 @@ Xem chi tiết trong [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)
 |---|---|
 | [PROJECT_INSTRUCTION.md](./PROJECT_INSTRUCTION.md) | Hướng dẫn chi tiết về hệ thống & SOP |
 | [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md) | Cấu trúc thư mục dự án |
-| [BRD (Business Requirements Document)](./.kiro/specs/system-architecture/brd.md) | Tài liệu yêu cầu nghiệp vụ |
-| [SRS (Software Requirements Spec)](./.kiro/specs/system-architecture/srs.md) | Đặc tả yêu cầu phần mềm |
-| [Architecture Design](./.kiro/specs/system-architecture/design.md) | Thiết kế kiến trúc tổng thể |
+| [BRD (Business Requirements Document)](./.documents/specs/system-architecture/brd.md) | Tài liệu yêu cầu nghiệp vụ |
+| [SRS (Software Requirements Spec)](./.documents/specs/system-architecture/srs.md) | Đặc tả yêu cầu phần mềm |
+| [Architecture Design](./.documents/specs/system-architecture/design.md) | Thiết kế kiến trúc tổng thể |
+| [Sequence Diagrams (SOP)](./.documents/specs/system-architecture/Sequence%20SOP/) | Sequence diagram (PlantUML) cho từng SOP |
 | API Docs | http://localhost:8000/docs (khi chạy backend) |
 
 ---
@@ -290,8 +291,8 @@ SMTP_PASSWORD=your-app-password
 
 ### Frontend (`frontend/.env.local`)
 ```env
-VITE_API_URL=http://localhost:8000/api/v1
-VITE_WS_URL=ws://localhost:8000/ws
+NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+NEXT_PUBLIC_WS_URL=ws://localhost:8000/ws
 ```
 
 ---
@@ -306,4 +307,4 @@ MIT
 
 ---
 
-*Stack: Python FastAPI + React Vite — Cập nhật 2026-06-25*
+*Stack: Python FastAPI + Next.js 15 — Cập nhật 2026-08-05*

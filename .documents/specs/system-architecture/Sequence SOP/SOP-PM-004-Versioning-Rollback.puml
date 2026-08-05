@@ -1,0 +1,51 @@
+@startuml SOP-PM-004-Versioning-Rollback
+skinparam backgroundColor white
+skinparam sequence {
+    ArrowColor #333333
+    LifeLineBorderColor #333333
+    LifeLineBackgroundColor #F0F0F0
+    ParticipantBorderColor #333333
+    ParticipantBackgroundColor #E6F3FF
+}
+
+actor "PM" as PM
+participant "Frontend UI" as UI
+participant "Backend API" as API
+database "PostgreSQL" as DB
+
+== Khởi tạo Version (SOP-PM-004) ==
+PM -> UI: Chọn "Tạo Baseline / Version mới"
+activate UI
+UI -> API: POST /api/projects/:id/versions
+activate API
+
+API -> DB: Fetch toàn bộ cấu trúc Dự án\n(Phase, Sprint, Epic, Task, Dep...)
+API -> DB: Serialize thành JSON Snapshot
+API -> DB: INSERT ProjectVersion (snapshot_data, created_by)
+API --> UI: Created
+deactivate API
+UI --> PM: Hiển thị thông báo tạo thành công
+
+== Rollback Version (SOP-PM-005) ==
+PM -> UI: Xem danh sách Versions
+UI -> API: GET /api/projects/:id/versions
+API --> UI: Trả về danh sách
+PM -> UI: Chọn Version cần Rollback & Xem Diff
+UI -> API: GET /api/projects/:id/versions/:vid/diff
+API --> UI: Trả về khác biệt (Diff)
+
+PM -> UI: Xác nhận Rollback
+UI -> API: POST /api/projects/:id/rollback/:versionId
+activate API
+
+API -> DB: Lấy dữ liệu snapshot từ Version ID
+API -> DB: Delete/Archive dữ liệu hiện tại
+API -> DB: Restore dữ liệu từ Snapshot\n(Tái tạo Phase, Task, Milestone...)
+API -> DB: Ghi Audit Log (Rollback action)
+API --> UI: Rollback Success
+deactivate API
+
+UI --> PM: Reload Project Dashboard\n(Theo dữ liệu đã phục hồi)
+deactivate UI
+
+@enduml

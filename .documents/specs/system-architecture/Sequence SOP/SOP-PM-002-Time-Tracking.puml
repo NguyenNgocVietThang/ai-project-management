@@ -1,0 +1,42 @@
+@startuml SOP-PM-002-Time-Tracking
+skinparam backgroundColor white
+skinparam sequence {
+    ArrowColor #333333
+    LifeLineBorderColor #333333
+    LifeLineBackgroundColor #F0F0F0
+    ParticipantBorderColor #333333
+    ParticipantBackgroundColor #E6F3FF
+}
+
+actor "Member" as Member
+participant "Frontend UI" as UI
+participant "Backend API" as API
+database "PostgreSQL" as DB
+
+Member -> UI: Click "Start Work" trên Task
+activate UI
+UI -> API: POST /api/tasks/:id/start
+activate API
+API -> DB: Ghi nhận Start Timestamp
+API --> UI: Trả về trạng thái In Progress
+deactivate API
+UI --> Member: Hiển thị trạng thái đang làm việc
+
+... Thành viên thực hiện công việc ...
+
+Member -> UI: Click "Stop Work"
+UI -> UI: Yêu cầu nhập WorkLog / Actual Hours
+Member -> UI: Nhập ghi chú & xác nhận
+UI -> API: POST /api/tasks/:id/stop (WorkLog info)
+activate API
+
+API -> DB: Ghi nhận Stop Timestamp
+API -> DB: INSERT WorkLog (start_time, end_time, actual_hours, note)
+API -> DB: Tích lũy Actual Hours vào Task
+API --> UI: Cập nhật thành công
+deactivate API
+
+UI --> Member: Cập nhật Task, Hiển thị Actual Hours
+deactivate UI
+
+@enduml

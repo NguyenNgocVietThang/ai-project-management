@@ -1,0 +1,49 @@
+@startuml SOP-AI-001-AI-Project-Generator
+skinparam backgroundColor white
+skinparam sequence {
+    ArrowColor #333333
+    LifeLineBorderColor #333333
+    LifeLineBackgroundColor #F0F0F0
+    ParticipantBorderColor #333333
+    ParticipantBackgroundColor #E6F3FF
+}
+
+actor "PM" as PM
+participant "Frontend UI" as UI
+participant "Backend API" as API
+participant "AI Engine\n(OpenAI/Gemini)" as AI
+participant "CPM Engine" as CPM
+database "PostgreSQL" as DB
+
+PM -> UI: Nhập Prompt\n(VD: Tạo dự án website...)
+activate UI
+UI -> PM: Hiển thị Prompt editor (chỉnh sửa nếu cần)
+PM -> UI: Submit yêu cầu
+UI -> API: POST /api/projects/:id/ai/generate
+activate API
+
+API -> AI: Gửi Prompt
+activate AI
+AI --> API: Trả về JSON structure\n(Phases, Sprints, Epics, Tasks, Dependencies, Milestones)
+deactivate AI
+
+API -> API: Validate & Parse JSON Schema
+API -> DB: INSERT Phases, Sprints, Epics
+API -> DB: INSERT Tasks, Dependencies, Milestones
+
+API -> CPM: recalculateCPM(projectId)
+activate CPM
+CPM -> DB: Fetch Dependencies
+CPM -> CPM: Topological Sort, Forward Pass, Backward Pass
+CPM -> DB: UPDATE Task (es, ef, ls, lf, float, is_critical)
+CPM --> API: Done
+deactivate CPM
+
+API --> UI: Trả về Project Plan Data
+deactivate API
+
+UI -> UI: Render Gantt Chart
+UI --> PM: Hiển thị kế hoạch trên Gantt
+deactivate UI
+
+@enduml

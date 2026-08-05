@@ -1,0 +1,47 @@
+@startuml SOP-DOC-001-Document-Management
+skinparam backgroundColor white
+skinparam sequence {
+    ArrowColor #333333
+    LifeLineBorderColor #333333
+    LifeLineBackgroundColor #F0F0F0
+    ParticipantBorderColor #333333
+    ParticipantBackgroundColor #E6F3FF
+}
+
+actor "PM/Member" as User
+participant "Frontend UI" as UI
+participant "Backend API" as API
+participant "MinIO Storage" as MinIO
+participant "AI Engine\n(Parser)" as AI
+database "PostgreSQL" as DB
+
+User -> UI: Upload tài liệu (BRD/SRS/Deliverable)
+activate UI
+UI -> API: POST /api/projects/:id/documents (File)
+activate API
+
+API -> MinIO: Upload File
+activate MinIO
+MinIO --> API: Trả về File URL
+deactivate MinIO
+
+API -> DB: INSERT Document record (file_url, type)
+
+alt Document type = BRD/SRS
+    API -> AI: Gửi yêu cầu phân tích nội dung tài liệu
+    activate AI
+    AI --> API: Đề xuất danh sách Task/Epic từ tài liệu
+    deactivate AI
+    API --> UI: Trả về danh sách Task đề xuất
+    UI -> User: Hiển thị gợi ý Task
+    User -> UI: PM review & tạo Task
+    UI -> API: POST /api/tasks (tạo từ suggest)
+    API -> DB: INSERT Tasks
+end
+
+API --> UI: Upload thành công
+deactivate API
+UI --> User: Hiển thị tài liệu trong dự án
+deactivate UI
+
+@enduml

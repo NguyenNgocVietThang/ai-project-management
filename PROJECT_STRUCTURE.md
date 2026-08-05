@@ -1,26 +1,29 @@
 # Cấu trúc Thư mục Dự án
 ## Hệ thống AI Project Planning & Portfolio Management
 
-> Stack: **Python (FastAPI)** + **React (Vite + TypeScript)**
+> Stack: **Python (FastAPI)** + **Next.js 15 (React + TypeScript)**
 
 ---
 
 ## 📁 Tổng quan thư mục gốc
 
 ```
-Đồ án tốt nghiệp/
+AI Project Planning & Portfolio Management system/
 ├── backend/                    # Python FastAPI backend
-├── frontend/                   # React (Vite + TypeScript) frontend
+├── frontend/                   # Next.js 15 (React + TypeScript) frontend
 ├── docker-compose.yml          # Orchestration toàn bộ services
 ├── .gitignore
 ├── README.md
 ├── PROJECT_STRUCTURE.md        # File này
 ├── PROJECT_INSTRUCTION.md      # Hướng dẫn chi tiết hệ thống
 ├── erd_ai_project_management.html  # ERD diagram
-└── .kiro/
+└── .documents/
     └── specs/
-        ├── database-setup/     # Spec thiết lập database
-        └── python-react-migration/  # Spec migration sang Python + React
+        └── system-architecture/
+            ├── brd.md           # Business Requirements Document
+            ├── srs.md           # Software Requirements Spec
+            ├── design.md        # Architecture Design
+            └── Sequence SOP/    # Sequence diagrams (PlantUML) theo từng SOP
 ```
 
 ---
@@ -182,18 +185,12 @@ backend/
 
 ---
 
-## ✅ Frontend (React — Vite + TypeScript)
+## ✅ Frontend (Next.js 15 — React + TypeScript)
 
 ```
 frontend/
-├── public/
-│   ├── favicon.ico
-│   └── assets/
 ├── src/
-│   ├── main.tsx                # React entrypoint
-│   ├── App.tsx                 # Root component + Router setup
-│   ├── router/
-│   │   └── index.tsx           # React Router v6 routes
+│   ├── app/                    # Next.js App Router (routes, layouts, pages)
 │   ├── features/               # Feature-based modules
 │   │   ├── auth/               # Login, register, reset password
 │   │   │   ├── components/
@@ -253,8 +250,9 @@ frontend/
 │   │   └── validators.ts
 │   └── styles/
 │       └── index.css           # Global styles + Tailwind
-├── index.html
-├── vite.config.ts              # Vite config
+├── public/
+│   └── favicon.ico
+├── next.config.js              # Next.js config
 ├── tailwind.config.ts
 ├── tsconfig.json
 ├── package.json
@@ -263,13 +261,13 @@ frontend/
 └── .env.example
 ```
 
-### Công nghệ Frontend (React)
+### Công nghệ Frontend (Next.js)
 
 | Thành phần | Thư viện |
 |---|---|
-| Framework | React 18 + Vite |
+| Framework | Next.js 15 (React 18) |
 | Language | TypeScript |
-| Routing | React Router v6 |
+| Routing | Next.js App Router (file-based, `src/app/`) |
 | State | Zustand |
 | Server State | TanStack Query (React Query) v5 |
 | HTTP | Axios |
@@ -296,9 +294,9 @@ frontend/
 - [ ] Tạo guards/dependencies (RBAC) trong `core/dependencies.py`
 - [ ] Implement tất cả service layer theo module
 
-### 2. Frontend (React + Vite)
-- [ ] Khởi tạo project với `npm create vite@latest`
-- [ ] Setup React Router v6 với protected routes
+### 2. Frontend (Next.js)
+- [ ] Xây dựng route/layout đầu tiên trong `src/app/` (App Router)
+- [ ] Setup protected routes (middleware / route groups)
 - [ ] Implement Authentication flow (login, refresh token)
 - [ ] Tạo Gantt Chart component
 - [ ] Implement Dashboard với các Chart (Burndown, EVA, CPI)
@@ -355,13 +353,13 @@ frontend/
 ## 📝 Ghi chú
 
 - Backend đã được chuyển từ **NestJS (TypeScript)** → **FastAPI (Python)**
-- Frontend đã được chuyển từ **Next.js 15** → **React + Vite (TypeScript)**
 - ORM chuyển từ **Prisma** → **SQLAlchemy 2.x + Alembic**
 - Queue chuyển từ **BullMQ** → **Celery + Redis**
+- Frontend giữ nguyên **Next.js 15**, chỉ chuyển state/data layer sang Zustand + TanStack Query (thay Redux/SWR nếu có)
 - Toàn bộ modules & tính năng được giữ nguyên, chỉ thay đổi công nghệ
-- Database schema đã có spec chi tiết trong `.kiro/specs/database-setup/`
+- Đặc tả BRD/SRS/Design đã chuyển vào `.documents/specs/system-architecture/`
 - Tham khảo PROJECT_INSTRUCTION.md để biết chi tiết về từng module và SOP
 
 ---
 
-*Cập nhật lần cuối: 2026-06-25 — Stack: Python FastAPI + React Vite*
+*Cập nhật lần cuối: 2026-08-05 — Stack: Python FastAPI + Next.js 15*
