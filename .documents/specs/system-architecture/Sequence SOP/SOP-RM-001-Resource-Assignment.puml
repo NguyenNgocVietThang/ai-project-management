@@ -1,0 +1,60 @@
+@startuml SOP-RM-001-Resource-Assignment
+skinparam backgroundColor white
+skinparam sequence {
+    ArrowColor #333333
+    LifeLineBorderColor #333333
+    LifeLineBackgroundColor #F0F0F0
+    ParticipantBorderColor #333333
+    ParticipantBackgroundColor #E6F3FF
+}
+
+actor "PM" as PM
+participant "Frontend UI" as UI
+participant "Backend API" as API
+participant "AI Engine" as AI
+participant "Resource Leveling\nService" as RLS
+database "PostgreSQL" as DB
+
+PM -> UI: Chọn Task & Click "AI Suggest Resource"
+activate UI
+UI -> API: GET /api/tasks/:id/ai/recommend-resource
+activate API
+
+API -> DB: Lấy yêu cầu kỹ năng của Task
+API -> DB: Lấy danh sách nhân sự & Workload & Leaves
+API -> AI: Gửi thông tin (Skill match, Cost/hr, Availability, Leaves)
+activate AI
+AI --> API: Đề xuất danh sách nhân sự (có ranking)
+deactivate AI
+
+API --> UI: Trả về danh sách đề xuất
+deactivate API
+
+UI --> PM: Hiển thị danh sách đề xuất
+PM -> UI: Xem xét, duyệt và chọn nhân sự
+UI -> API: POST /api/tasks/:id/assign
+activate API
+
+API -> DB: INSERT Assignment
+
+API -> RLS: check_resource_overload()
+activate RLS
+RLS -> DB: Tính tổng giờ làm & kiểm tra lịch nghỉ phép
+alt Nếu quá tải (overload)
+    RLS --> API: Overloaded = True
+    API -> AI: Yêu cầu đề xuất thay thế/dời lịch
+    activate AI
+    AI --> API: Đề xuất giải pháp
+    deactivate AI
+    API --> UI: Trả kết quả + Cảnh báo đỏ + Đề xuất
+else Bình thường
+    RLS --> API: Overloaded = False
+    API --> UI: Assign thành công
+end
+deactivate RLS
+deactivate API
+
+UI --> PM: Cập nhật giao diện Task (Assignee)
+deactivate UI
+
+@enduml

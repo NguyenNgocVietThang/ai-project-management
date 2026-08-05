@@ -1,0 +1,47 @@
+@startuml SOP-PM-001-Create-Project
+skinparam backgroundColor white
+skinparam sequence {
+    ArrowColor #333333
+    LifeLineBorderColor #333333
+    LifeLineBackgroundColor #F0F0F0
+    ParticipantBorderColor #333333
+    ParticipantBackgroundColor #E6F3FF
+}
+
+actor "PM" as PM
+participant "Frontend UI" as UI
+participant "Backend API" as API
+database "PostgreSQL" as DB
+database "MinIO" as MinIO
+participant "Audit Log" as Audit
+
+PM -> UI: Nhập thông tin dự án mới\n(Tên, Mô tả, Ngân sách,...)
+activate UI
+
+opt PM có upload BRD/SRS
+    PM -> UI: Upload tài liệu
+    UI -> API: Gửi file tài liệu
+    activate API
+    API -> MinIO: Lưu trữ file
+    MinIO --> API: Trả về File URL
+    deactivate API
+end
+
+PM -> UI: Submit tạo dự án
+UI -> API: POST /api/projects
+activate API
+
+API -> DB: Validate thông tin
+API -> DB: INSERT Project (info, members)
+DB --> API: Success
+
+API -> Audit: Ghi nhận tạo dự án (User, Timestamp, Entity)
+Audit --> API: Logged
+
+API --> UI: Trả kết quả thành công
+deactivate API
+
+UI --> PM: Hiển thị thông báo & Chuyển hướng đến Dashboard dự án
+deactivate UI
+
+@enduml

@@ -1,0 +1,86 @@
+@startuml SOP-CR-Change-Request-Workflow
+skinparam backgroundColor white
+skinparam sequence {
+    ArrowColor #333333
+    LifeLineBorderColor #333333
+    LifeLineBackgroundColor #F0F0F0
+    ParticipantBorderColor #333333
+    ParticipantBackgroundColor #E6F3FF
+}
+
+actor "Customer" as Customer
+actor "BA" as BA
+actor "PO" as PO
+actor "PM" as PM
+participant "Frontend UI" as UI
+participant "Backend API" as API
+participant "AI Engine" as AI
+database "PostgreSQL" as DB
+
+Customer -> UI: Tạo Change Request (CR)
+activate UI
+UI -> API: POST /api/change-requests
+activate API
+API -> DB: Lưu CR, Status: Pending BA
+API --> UI: Created
+deactivate API
+UI --> Customer: Thông báo thành công
+deactivate UI
+
+BA -> UI: Xem danh sách CR
+activate UI
+BA -> UI: Review & Approve CR
+UI -> API: POST /api/change-requests/:id/approve (BA)
+activate API
+API -> DB: Update CR Status: Pending PO
+API --> UI: Approved
+deactivate API
+UI --> BA: Thành công
+deactivate UI
+
+PO -> UI: Review & Approve CR (Nghiệp vụ)
+activate UI
+PO -> UI: Approve CR
+UI -> API: POST /api/change-requests/:id/approve (PO)
+activate API
+
+API -> DB: Update CR Status: Pending AI Analysis
+API -> AI: Gọi SOP-AI-002: Impact Analysis
+activate AI
+AI --> API: Trả về Impact Report (Affected Tasks, Sprints, Resources)
+deactivate AI
+API -> DB: Lưu Impact Report
+API -> DB: Update CR Status: Pending PM
+API --> UI: Approved
+deactivate API
+UI --> PO: Thành công
+deactivate UI
+
+PM -> UI: Xem CR & Impact Report
+activate UI
+PM -> UI: Review & Approve CR
+UI -> API: POST /api/change-requests/:id/approve (PM)
+activate API
+
+API -> AI: Gọi SOP-AI-003: Schedule Optimization
+activate AI
+AI --> API: Trả về Kế hoạch tối ưu (Dependencies, Resource Allocation)
+deactivate AI
+
+API -> DB: Cập nhật kế hoạch nháp (Draft Plan)
+API --> UI: Trả về Draft Plan để PM xác nhận
+deactivate API
+
+PM -> UI: Xác nhận kết quả tối ưu & Apply
+UI -> API: POST /api/change-requests/:id/apply
+activate API
+
+API -> API: Tạo Version Snapshot (SOP-PM-004)
+API -> DB: Apply thay đổi vào Dự án chính
+API -> DB: Cập nhật CR Status: Applied
+API --> UI: Applied Successfully
+deactivate API
+UI --> PM: Thông báo thành công
+deactivate UI
+
+@enduml

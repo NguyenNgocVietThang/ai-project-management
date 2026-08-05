@@ -1,0 +1,43 @@
+@startuml SOP-PM-003-CPM
+skinparam backgroundColor white
+skinparam sequence {
+    ArrowColor #333333
+    LifeLineBorderColor #333333
+    LifeLineBackgroundColor #F0F0F0
+    ParticipantBorderColor #333333
+    ParticipantBackgroundColor #E6F3FF
+}
+
+actor "PM" as PM
+participant "Gantt Chart (UI)" as UI
+participant "Backend API" as API
+participant "CPM Service" as CPM
+database "PostgreSQL" as DB
+
+PM -> UI: Kéo thả Task / Sửa thời gian trên Gantt
+activate UI
+UI -> API: PATCH /api/tasks/:id
+activate API
+
+API -> DB: Cập nhật thông tin Task
+API -> CPM: recalculateCPM(projectId)
+activate CPM
+
+CPM -> DB: Fetch tất cả Tasks & Dependencies của Project
+CPM -> CPM: Topological Sort\n(Loại bỏ vòng lặp)
+CPM -> CPM: Forward Pass\n(Tính ES, EF)
+CPM -> CPM: Backward Pass\n(Tính LS, LF)
+CPM -> CPM: Tính Slack = LS - ES\nTìm Critical Path (Slack = 0)
+
+CPM -> DB: Bulk Update (es, ef, ls, lf, float_time, is_critical)
+CPM --> API: Trả về danh sách Task đã cập nhật
+deactivate CPM
+
+API --> UI: Trả về dữ liệu Gantt mới
+deactivate API
+
+UI -> UI: Re-render Gantt\n(Highlight đỏ cho Critical Path)
+UI --> PM: Hiển thị thay đổi trực quan
+deactivate UI
+
+@enduml

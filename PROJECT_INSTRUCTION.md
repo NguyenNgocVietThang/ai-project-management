@@ -53,7 +53,7 @@ Xây dựng một **web application quản lý dự án thông minh** tích hợ
 
 | Layer | Công nghệ |
 |---|---|
-| Frontend | React 18, TypeScript, Vite, Tailwind CSS, Zustand, React Query |
+| Frontend | Next.js 15, React 18, TypeScript, Tailwind CSS, Zustand, React Query |
 | Backend | FastAPI (Python 3.11+), SQLAlchemy 2.0, Alembic |
 | Database | PostgreSQL (primary), Redis (cache/session) |
 | Storage | MinIO (S3-compatible, lưu BRD/SRS/deliverables) |
@@ -452,10 +452,11 @@ backend/
 └── Dockerfile
 ```
 
-### Frontend (React + Vite)
+### Frontend (Next.js 15)
 ```
 frontend/
 ├── src/
+│   ├── app/                    # Next.js App Router (routes, layouts, pages)
 │   ├── features/
 │   │   ├── auth/               # Login, register, reset password
 │   │   ├── dashboard/          # Portfolio & Project dashboards
@@ -502,15 +503,11 @@ frontend/
 │   │   ├── date.utils.ts
 │   │   ├── format.utils.ts
 │   │   └── ...
-│   ├── router/                 # React Router configuration
-│   │   └── index.tsx
-│   ├── App.tsx                 # Main App component
-│   └── main.tsx                # Entry point
+│   └── styles/                 # Global styles + Tailwind
 ├── public/                     # Static assets
-├── index.html                  # HTML template
 ├── package.json                # Node dependencies
 ├── tsconfig.json               # TypeScript config
-├── vite.config.ts              # Vite configuration
+├── next.config.js              # Next.js configuration
 ├── tailwind.config.js          # Tailwind CSS config
 ├── .env.example                # Environment variables template
 └── Dockerfile
@@ -832,11 +829,11 @@ GET    /api/audit-logs?projectId=:id
 - Async/await cho mọi I/O operations
 - Migration quản lý bằng **Alembic**
 
-### Frontend (React + Vite)
+### Frontend (Next.js 15)
 
 - Component structure: Functional components + hooks
 - State management: Zustand cho global, React Query cho server state
-- Routing: React Router v6
+- Routing: Next.js App Router (file-based, `src/app/`)
 - Gantt Chart: tự build hoặc dùng `dhtmlx-gantt` / `frappe-gantt` (customize)
 - Drag & drop: `@dnd-kit/core`
 - Charts: `recharts` hoặc `chart.js`

@@ -44,7 +44,7 @@ Backend được thiết kế theo mô hình **Layered Architecture** (Kiến tr
 
 ## Database Schema (SQLAlchemy)
 
-Cơ sở dữ liệu bao gồm khoảng 22 bảng chính, chia thành các nhóm Domain:
+Cơ sở dữ liệu bao gồm khoảng 32 bảng chính, chia thành các nhóm Domain:
 
 ### 1. User & RBAC Domain
 - **User**: Bảng người dùng trung tâm.
