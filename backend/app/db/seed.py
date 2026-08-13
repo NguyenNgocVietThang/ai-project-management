@@ -77,8 +77,16 @@ PERMISSIONS = [
 ROLE_PERMISSIONS = {
     "Admin": [f"{r}:{a}" for r, a, _ in PERMISSIONS],  # Admin có tất cả
     "PM": [
-        "portfolio:create", "portfolio:read", "portfolio:update",
-        "project:create", "project:read", "project:update", "project:manage_members", "project:rollback",
+        "portfolio:create",
+        "portfolio:read",
+        "portfolio:update",
+        "portfolio:delete",
+        "project:create",
+        "project:read",
+        "project:update",
+        "project:delete",
+        "project:manage_members",
+        "project:rollback",
         "task:create", "task:read", "task:update", "task:delete", "task:assign",
         "worklog:read",
         "change_request:read", "change_request:approve", "change_request:apply",
@@ -113,10 +121,20 @@ ROLE_PERMISSIONS = {
 
 
 async def seed(db):
+    # Import app.db.base first — it imports ALL models in correct dependency order
+    import bcrypt as _bcrypt
+    from sqlalchemy import insert
+
+    import app.db.base  # noqa: F401
+    from app.models.associations import role_permissions, user_roles
     from app.models.permission import Permission
     from app.models.role import Role
     from app.models.user import User
-    from app.core.security import hash_password
+
+    def hash_password(password: str) -> str:
+        """Hash password using bcrypt directly (bypasses passlib/bcrypt 5.x incompatibility)."""
+        return _bcrypt.hashpw(password.encode("utf-8"), _bcrypt.gensalt()).decode("utf-8")
+
 
     print("Seeding permissions...")
     perm_map: dict[str, Permission] = {}
@@ -135,12 +153,18 @@ async def seed(db):
         role_map[role_data["name"]] = role
     await db.flush()
 
-    # Assign permissions to roles
+    # Assign permissions to roles via direct insert into association table
+    role_perm_rows = []
     for role_name, perm_keys in ROLE_PERMISSIONS.items():
         role = role_map[role_name]
         for key in perm_keys:
             if key in perm_map:
-                role.permissions.append(perm_map[key])
+                role_perm_rows.append({
+                    "role_id": role.id,
+                    "permission_id": perm_map[key].id,
+                })
+    if role_perm_rows:
+        await db.execute(insert(role_permissions), role_perm_rows)
 
     print("Seeding admin user...")
     admin = User(
@@ -151,16 +175,20 @@ async def seed(db):
         position="System Admin",
         is_active=True,
         is_superuser=True,
+        email_verified=True,
     )
     db.add(admin)
     await db.flush()
-    admin.roles.append(role_map["Admin"])
+
+    # Assign Admin role to admin user via direct insert
+    await db.execute(insert(user_roles), [{"user_id": admin.id, "role_id": role_map["Admin"].id}])
 
     await db.commit()
-    print(f"\n✅ Seeded:")
+    print("\n✅ Seeded:")
     print(f"   - {len(PERMISSIONS)} permissions")
     print(f"   - {len(ROLES)} roles")
-    print(f"   - 1 admin user: admin@example.com / Admin@123456")
+    print("   - 1 admin user: admin@example.com / Admin@123456")
+
 
 
 async def main():

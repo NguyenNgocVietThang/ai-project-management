@@ -18,7 +18,9 @@ alembic==1.13.3
 # ============================================================
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
+bcrypt==4.0.1            # Last bcrypt release fully compatible with passlib 1.7.4
 python-multipart==0.0.12  # For OAuth2 form data
+email-validator==2.2.0    # Required by pydantic EmailStr (auth/user schemas)
 
 # ============================================================
 # Cache & Queue (Redis + Celery)
@@ -38,6 +40,7 @@ google-generativeai==0.8.0
 # ============================================================
 minio==7.2.9
 boto3==1.35.0             # Optional: AWS S3 compatible
+Pillow==11.0.0            # Validate and normalize uploaded avatars
 
 # ============================================================
 # Email

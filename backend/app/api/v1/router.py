@@ -1,41 +1,43 @@
 from fastapi import APIRouter
 
 from app.api.v1.endpoints import (
-    auth,
-    users,
-    roles,
-    permissions,
-    portfolios,
-    projects,
-    phases,
-    sprints,
-    epics,
-    milestones,
-    tasks,
-    subtasks,
-    dependencies,
-    assignments,
-    worklogs,
-    leaves,
-    skills,
-    documents,
-    approvals,
-    change_requests,
-    gantt,
-    cpm,
-    resource_leveling,
-    dashboards,
-    reports,
-    notifications,
-    audit_timeline,
-    project_versions,
     ai,
+    approvals,
+    assignments,
+    audit_timeline,
+    auth,
+    change_requests,
+    cpm,
+    dashboards,
+    dependencies,
+    documents,
+    epics,
+    gantt,
+    leaves,
+    milestones,
+    notifications,
+    oauth,
+    permissions,
+    phases,
+    portfolios,
+    project_versions,
+    projects,
+    reports,
+    resource_leveling,
+    roles,
+    skills,
+    sprints,
+    subtasks,
     system,
+    tasks,
+    users,
+    worklogs,
 )
 
 api_router = APIRouter()
 
 api_router.include_router(auth.router, prefix="/auth", tags=["Auth"])
+api_router.include_router(oauth.router, prefix="/oauth", tags=["OAuth"])
 api_router.include_router(users.router, prefix="/users", tags=["Users"])
 api_router.include_router(roles.router, prefix="/roles", tags=["Roles"])
 api_router.include_router(permissions.router, prefix="/permissions", tags=["Permissions"])
@@ -54,10 +56,18 @@ api_router.include_router(leaves.router, prefix="/leaves", tags=["Leaves"])
 api_router.include_router(skills.router, prefix="/skills", tags=["Skills"])
 api_router.include_router(documents.router, prefix="/documents", tags=["Documents"])
 api_router.include_router(approvals.router, prefix="/approvals", tags=["Approvals"])
-api_router.include_router(change_requests.router, prefix="/change-requests", tags=["Change Requests"])
+api_router.include_router(
+    change_requests.router,
+    prefix="/change-requests",
+    tags=["Change Requests"],
+)
 api_router.include_router(gantt.router, prefix="/gantt", tags=["Gantt"])
 api_router.include_router(cpm.router, prefix="/cpm", tags=["CPM"])
-api_router.include_router(resource_leveling.router, prefix="/resource-leveling", tags=["Resource Leveling"])
+api_router.include_router(
+    resource_leveling.router,
+    prefix="/resource-leveling",
+    tags=["Resource Leveling"],
+)
 api_router.include_router(dashboards.router, prefix="/dashboards", tags=["Dashboards"])
 api_router.include_router(reports.router, prefix="/reports", tags=["Reports"])
 api_router.include_router(notifications.router, prefix="/notifications", tags=["Notifications"])

@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
     # MinIO (S3-compatible)
-    MINIO_ENDPOINT: str = "localhost:9000"
+    MINIO_ENDPOINT: str = "127.0.0.1:9000"
     MINIO_ACCESS_KEY: str = "minioadmin"
     MINIO_SECRET_KEY: str = "minioadmin"
     MINIO_BUCKET: str = "ai-project-files"
@@ -51,10 +51,27 @@ class Settings(BaseSettings):
     SMTP_USER: str = ""
     SMTP_PASSWORD: str = ""
     EMAIL_FROM: str = "noreply@projectmanagement.com"
+    EMAIL_FROM_NAME: str = "AI Project Management"
+    SMTP_STARTTLS: bool = True
+    SMTP_SSL_TLS: bool = False
+    SMTP_USE_CREDENTIALS: bool = True
+    SMTP_VALIDATE_CERTS: bool = True
 
     # Celery
     CELERY_BROKER_URL: str = "redis://localhost:6379/1"
     CELERY_RESULT_BACKEND: str = "redis://localhost:6379/2"
+
+    # Frontend Application
+    FRONTEND_URL: str = "http://localhost:3000"
+
+    # Social Login (OAuth 2.0)
+    GOOGLE_CLIENT_ID: str = ""
+    GOOGLE_CLIENT_SECRET: str = ""
+    GOOGLE_REDIRECT_URI: str = "http://localhost:8000/api/v1/oauth/google/callback"
+
+    FACEBOOK_APP_ID: str = ""
+    FACEBOOK_APP_SECRET: str = ""
+    FACEBOOK_REDIRECT_URI: str = "http://localhost:8000/api/v1/oauth/facebook/callback"
 
 
 settings = Settings()

@@ -2,7 +2,7 @@
 
 > Hệ thống quản lý dự án thông minh tích hợp AI — tương đương MS Project
 
-## 🎯 Tổng quan
+## Tổng quan
 
 Web application quản lý dự án thông minh tích hợp AI, hỗ trợ:
 - Quản lý danh mục dự án (Portfolio & Project Management)
@@ -13,21 +13,21 @@ Web application quản lý dự án thông minh tích hợp AI, hỗ trợ:
 
 ---
 
-## 🏗️ Kiến trúc hệ thống
+## Kiến trúc hệ thống
 
 ```
-Frontend (Next.js 15)  ←→  Backend (FastAPI / Python)  ←→  PostgreSQL
-                                         ↓
+Frontend (Next.js 15)  <->  Backend (FastAPI / Python)  <->  PostgreSQL
+                                         |
                                  Redis + Celery
-                                         ↓
+                                         |
                               AI Providers (OpenAI / Gemini)
-                                         ↓
+                                         |
                                  MinIO (File Storage)
 ```
 
 ---
 
-## 📦 Technology Stack
+## Technology Stack
 
 ### Backend — Python
 | Thành phần | Công nghệ |
@@ -41,7 +41,7 @@ Frontend (Next.js 15)  ←→  Backend (FastAPI / Python)  ←→  PostgreSQL
 | Cache | Redis (redis-py) |
 | AI | openai, google-generativeai |
 | Storage | minio (S3-compatible) |
-| Email | FastMail / smtplib |
+| Email | FastAPI-Mail / smtplib |
 | Export | python-docx, openpyxl |
 | Testing | pytest, pytest-asyncio, httpx |
 
@@ -63,7 +63,7 @@ Frontend (Next.js 15)  ←→  Backend (FastAPI / Python)  ←→  PostgreSQL
 
 ---
 
-## 🗄️ Database Schema (SQLAlchemy)
+## Database Schema (SQLAlchemy)
 
 Hệ thống bao gồm 32 bảng, được chia thành 7 Domains chính:
 
@@ -71,7 +71,7 @@ Hệ thống bao gồm 32 bảng, được chia thành 7 Domains chính:
 - `user_roles`, `role_permissions`, `user_skills`, `project_members`
 
 ### 2. User & RBAC Domain (5 tables)
-- `users`: Thông tin tài khoản và profile (department, position, hourly_rate).
+- `users`: Thông tin tài khoản và profile (department, position, hourly_rate, auth_provider, google_id, facebook_id, email_verified).
 - `roles`, `permissions`: Phân quyền hệ thống.
 - `skills`: Phân loại kỹ năng nhân sự.
 - `leaves`: Quản lý ngày nghỉ (tính toán Resource Leveling).
@@ -107,7 +107,7 @@ Hệ thống bao gồm 32 bảng, được chia thành 7 Domains chính:
 
 ---
 
-## 🚀 Cài đặt và chạy
+## Cài đặt và chạy
 
 ### Prerequisites
 - Python >= 3.11
@@ -188,13 +188,13 @@ docker-compose down
 
 ---
 
-## 📁 Cấu trúc dự án
+## Cấu trúc dự án
 
 Xem chi tiết trong [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)
 
 ---
 
-## 📋 Tài liệu
+## Tài liệu
 
 | Tài liệu | Mô tả |
 |---|---|
@@ -208,7 +208,7 @@ Xem chi tiết trong [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)
 
 ---
 
-## 🔑 Vai trò hệ thống (RBAC)
+## Vai trò hệ thống (RBAC)
 
 | Role | Mô tả | Quyền chính |
 |---|---|---|
@@ -222,24 +222,32 @@ Xem chi tiết trong [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)
 
 ---
 
-## 🎯 Roadmap
+## Roadmap
 
-### Phase 1 — Core (ưu tiên)
-- [ ] Auth + RBAC (JWT + Refresh Token)
-- [ ] Portfolio & Project CRUD
-- [ ] Task management + Dependency graph
+### Phase 1 — Core Auth & Onboarding (Đã hoàn thành)
+- [x] Auth + RBAC (JWT + Refresh Token)
+- [x] Register / Login / Forgot Password / Reset Password / Email Verification
+- [x] Social Login (Google & Facebook OAuth 2.0)
+- [x] Route Protection Edge Guard (Next.js Middleware)
+- [x] Frontend Auth Service & Zustand Auth Store
+
+### Phase 2 — Portfolio & Project Core (Đang triển khai)
+- [ ] Portfolio CRUD API & UI
+- [ ] Project CRUD API & UI + Member Management
+- [ ] Phase / Sprint / Epic / Milestone CRUD
+- [ ] Task management + Subtasks + Dependency graph
 - [ ] CPM engine (Topological Sort + Forward/Backward Pass)
 - [ ] Gantt Chart (render + drag & drop)
-- [ ] Resource Assignment + Overload warning
+- [ ] Resource Assignment + WorkLog + Overload warning
 
-### Phase 2 — AI Features
+### Phase 3 — AI Features
 - [ ] AI Project Generator (SOP-AI-001)
 - [ ] AI Impact Analysis (SOP-AI-002)
 - [ ] AI Schedule Optimization (SOP-AI-003)
 - [ ] AI Resource Recommendation (SOP-RM-001)
 - [ ] AI Risk Analysis (SOP-AI-005)
 
-### Phase 3 — Workflow & Reporting
+### Phase 4 — Workflow & Reporting
 - [ ] Change Request & Approval Workflow
 - [ ] Project Versioning & Rollback
 - [ ] Dashboard (Gantt, Burndown, Velocity, EVA, CPI, SPI)
@@ -247,46 +255,60 @@ Xem chi tiết trong [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)
 - [ ] Audit Timeline
 - [ ] Email Notifications
 
-### Phase 4 — Document AI & Polish
+### Phase 5 — Document AI & Polish
 - [ ] BRD/SRS Upload + AI Document Parser
 - [ ] Investor Dashboard (read-only)
-- [ ] Performance optimization
-- [ ] Mobile responsive
+- [ ] Profile Settings & Avatar Management
+- [ ] Performance optimization & Mobile responsive
 
 ---
 
-## 🔧 Biến môi trường
+## Biến môi trường
 
 ### Backend (`backend/.env`)
 ```env
 # App
 APP_ENV=development
-SECRET_KEY=your-secret-key-here
+SECRET_KEY=your-super-secret-key-min-32-chars
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 REFRESH_TOKEN_EXPIRE_DAYS=7
 
-# Database
+# Database (Async PostgreSQL)
 DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/ai_project_management
+DATABASE_POOL_SIZE=10
+DATABASE_MAX_OVERFLOW=20
 
 # Redis
 REDIS_URL=redis://localhost:6379/0
+
+# Celery
+CELERY_BROKER_URL=redis://localhost:6379/1
+CELERY_RESULT_BACKEND=redis://localhost:6379/2
+
+# CORS
+CORS_ORIGINS=["http://localhost:5173","http://localhost:3000"]
 
 # MinIO
 MINIO_ENDPOINT=localhost:9000
 MINIO_ACCESS_KEY=minioadmin
 MINIO_SECRET_KEY=minioadmin
 MINIO_BUCKET=ai-project-files
+MINIO_USE_SSL=false
 
 # AI Providers
 OPENAI_API_KEY=sk-...
+OPENAI_MODEL=gpt-4o
 GEMINI_API_KEY=AIza...
+GEMINI_MODEL=gemini-pro
+ACTIVE_AI_PROVIDER=openai
 
 # Email
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your@email.com
 SMTP_PASSWORD=your-app-password
+EMAIL_FROM=noreply@projectmanagement.com
 ```
 
 ### Frontend (`frontend/.env.local`)
@@ -297,14 +319,14 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000/ws
 
 ---
 
-## 📝 License
+## License
 
 MIT
 
-## 👥 Contributors
+## Contributors
 
-- [Your Name]
+- Nguyễn Ngọc Việt Thắng
 
 ---
 
-*Stack: Python FastAPI + Next.js 15 — Cập nhật 2026-08-05*
+*Stack: Python FastAPI 0.115 + Next.js 15 — Cập nhật 2026-08-13*

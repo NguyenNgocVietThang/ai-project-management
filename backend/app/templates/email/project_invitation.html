@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Project invitation</title>
+  </head>
+  <body style="margin:0;background:#f6f7fb;font-family:Arial,sans-serif;color:#172033">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+      <tr>
+        <td align="center" style="padding:32px 16px">
+          <table role="presentation" width="100%" style="max-width:560px;background:#fff;border-radius:12px;padding:32px">
+            <tr><td><h1 style="font-size:22px;margin:0 0 16px">You joined a project</h1></td></tr>
+            <tr>
+              <td style="font-size:15px;line-height:1.6">
+                <p><strong>{{ inviter_name }}</strong> added you to <strong>{{ project_name }}</strong> as <strong>{{ role_name }}</strong>.</p>
+                <p style="margin:24px 0">
+                  <a href="{{ project_link }}" style="display:inline-block;background:#4f46e5;color:#fff;text-decoration:none;padding:12px 18px;border-radius:8px">Open project</a>
+                </p>
+                <p style="color:#667085;font-size:13px">If the button does not work, copy this link: {{ project_link }}</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
