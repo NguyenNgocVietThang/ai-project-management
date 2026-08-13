@@ -852,8 +852,14 @@ GET    /api/audit-logs?projectId=:id
 
 ## 12. GIAI ĐOẠN PHÁT TRIỂN (ROADMAP)
 
-### Phase 1 — Core (ưu tiên)
-- Auth + RBAC
+### Phase 1 — Core Auth & Onboarding (Đã hoàn thành)
+- Auth + RBAC (JWT + Refresh Token)
+- Register / Login / Forgot Password / Reset Password / Email Verification
+- Social Login (Google & Facebook OAuth 2.0)
+- Route Protection Edge Guard (Next.js Middleware)
+- Frontend Auth Service & Zustand Auth Store
+
+### Phase 2 — Portfolio & Project Core (Đang triển khai)
 - Portfolio & Project CRUD
 - Task management + Dependency graph
 - CPM engine (Topological Sort + Forward/Backward Pass)

@@ -33,3 +33,18 @@ class BadRequestException(HTTPException):
 class UnprocessableException(HTTPException):
     def __init__(self, detail: str = "Unprocessable entity"):
         super().__init__(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=detail)
+
+
+class TooManyRequestsException(HTTPException):
+    def __init__(self, detail: str = "Too many requests", retry_after: int | None = None):
+        headers = {"Retry-After": str(retry_after)} if retry_after is not None else None
+        super().__init__(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=detail,
+            headers=headers,
+        )
+
+
+class ServiceUnavailableException(HTTPException):
+    def __init__(self, detail: str = "Service temporarily unavailable"):
+        super().__init__(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=detail)

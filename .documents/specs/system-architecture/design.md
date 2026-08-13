@@ -1,31 +1,80 @@
 # System Architecture Design
+## AI Project Planning & Portfolio Management System
+
+**Version:** 2.0
+**Date:** 2026-08-05
+
+---
 
 ## Overview
 
-Hệ thống **AI Project Planning & Portfolio Management** được thiết kế theo kiến trúc hiện đại, tập trung hoàn toàn vào **Python (FastAPI)** cho phía Server và **React (Vite)** cho phía Client. Thiết kế này loại bỏ hoàn toàn các di sản cũ (NestJS/Prisma), tối ưu hóa cho tốc độ xử lý I/O bất đồng bộ, tính toán thuật toán CPM, và khả năng tích hợp linh hoạt với các mô hình AI ngôn ngữ lớn (LLMs).
+Hệ thống **AI Project Planning & Portfolio Management** được thiết kế theo kiến trúc hiện đại, tập trung hoàn toàn vào **Python (FastAPI)** cho phía Server và **Next.js 15 (React + TypeScript)** cho phía Client. Thiết kế này loại bỏ hoàn toàn các di sản cũ (NestJS/Prisma/BullMQ), tối ưu hóa cho:
+- Tốc độ xử lý I/O bất đồng bộ (AsyncIO + SQLAlchemy Async)
+- Tính toán thuật toán CPM (thuần Python)
+- Tích hợp linh hoạt với các mô hình AI ngôn ngữ lớn (LLMs) qua abstraction layer
+
+---
 
 ## Technology Stack
 
 ### Backend Layer
-- **Framework Core**: FastAPI (Python 3.11+)
-- **Validation & Serialization**: Pydantic v2
-- **ORM**: SQLAlchemy 2.0 (Async Engine)
-- **Database Migrations**: Alembic
-- **Task Queue & Background Jobs**: Celery
-- **Message Broker & Cache**: Redis
-- **Security**: python-jose (JWT), passlib (Bcrypt) cho Authentication & RBAC.
+
+| Thành phần | Thư viện | Phiên bản |
+|---|---|---|
+| Framework Core | FastAPI | 0.115.0 |
+| ASGI Server | uvicorn[standard] | 0.30.0 |
+| Validation & Serialization | Pydantic v2 | 2.9.0 |
+| Settings | pydantic-settings | 2.5.0 |
+| ORM | SQLAlchemy (Async Engine) | 2.0.35 |
+| DB Driver | asyncpg | 0.29.0 |
+| Database Migrations | Alembic | 1.13.3 |
+| Security (JWT) | python-jose[cryptography] | 3.3.0 |
+| Security (Hash) | passlib[bcrypt] | 1.7.4 |
+| Task Queue | Celery[redis] | 5.4.0 |
+| Message Broker / Cache | Redis | 5.1.1 |
+| Celery Monitor | flower | 2.0.1 |
+| AI — OpenAI | openai | 1.51.0 |
+| AI — Gemini | google-generativeai | 0.8.0 |
+| File Storage | minio / boto3 | 7.2.9 / 1.35.0 |
+| Email | fastapi-mail + Jinja2 | 1.4.1 / 3.1.4 |
+| Export DOCX | python-docx | 1.1.2 |
+| Export XLSX | openpyxl | 3.1.5 |
+| HTTP Client | httpx | 0.27.2 |
+| Date Utils | python-dateutil, pytz | 2.9.0 / 2024.2 |
+| Linting / QA | black, isort, ruff, mypy | — |
+| Testing | pytest, pytest-asyncio, httpx | — |
 
 ### Frontend Layer
-- **Framework**: React 18 + Vite (Single Page Application - SPA)
-- **Language**: TypeScript
-- **State Management**: Zustand (Local state) & TanStack Query v5 (Server state)
-- **Styling**: Tailwind CSS v3
-- **Routing**: React Router v6
+
+| Thành phần | Thư viện | Phiên bản |
+|---|---|---|
+| Framework | Next.js (App Router) | 15.0.0 |
+| UI Runtime | React | ^18.3.0 |
+| Language | TypeScript | ^5.2.2 |
+| Server State | TanStack Query v5 | ^5.0.0 |
+| Global State | Zustand | ^4.4.0 |
+| HTTP Client | Axios | ^1.5.0 |
+| Styling | Tailwind CSS v3 | ^3.3.0 |
+| Forms | React Hook Form + Zod + @hookform/resolvers | ^7.47.0 / ^3.22.0 |
+| Tables | TanStack Table v8 | — |
+| Charts | Recharts | ^2.8.0 |
+| Drag & Drop | @dnd-kit/core + sortable | ^6.0.0 / ^8.0.0 |
+| Icons | Lucide React | ^0.290.0 |
+| Date | date-fns | ^2.30.0 |
+| CSS Utils | clsx + tailwind-merge | ^2.0.0 |
 
 ### Infrastructure Layer
-- **Database**: PostgreSQL 14+
-- **File Storage**: MinIO (S3-compatible) cho BRD/SRS documents, avatar và báo cáo xuất ra.
-- **AI Providers**: OpenAI (GPT-4o) hoặc Google Gemini (Gemini Pro).
+
+| Service | Image / Tech | Port |
+|---|---|---|
+| `postgres` | postgres:16-alpine | 5432 |
+| `redis` | redis:7-alpine | 6379 |
+| `minio` | minio/minio:latest | 9000 (API), 9001 (Console) |
+| `backend` | ./backend Dockerfile (FastAPI) | 8000 |
+| `celery-worker` | ./backend Dockerfile | — |
+| `frontend` | ./frontend Dockerfile (Next.js) | 3000 |
+
+> Network: `ai-project-network`. Volumes: `postgres_data`, `redis_data`, `minio_data`.
 
 ---
 
@@ -33,57 +82,409 @@ Hệ thống **AI Project Planning & Portfolio Management** được thiết k�
 
 Backend được thiết kế theo mô hình **Layered Architecture** (Kiến trúc phân tầng) để đảm bảo tính module hóa và dễ bảo trì:
 
-1. **Endpoints Layer (`app/api/v1/endpoints/`)**: Chịu trách nhiệm nhận HTTP requests, kiểm tra quyền (RBAC dependencies), định tuyến đến Services, và trả về Pydantic schemas.
-2. **Services Layer (`app/services/`)**: Chứa toàn bộ Business Logic. Bao gồm các dịch vụ như AI Integration (`ai_service.py`), CPM Calculation (`cpm_service.py`), Resource Leveling, v.v.
-3. **Repositories Layer (`app/repositories/`)**: Data Access Layer. Kế thừa từ `BaseRepository`, đảm nhiệm việc truy vấn SQLAlchemy bất đồng bộ (async). Đảm bảo Service không gọi thẳng ORM.
-4. **Models Layer (`app/models/`)**: Định nghĩa cấu trúc bảng (Table) thông qua SQLAlchemy Declarative Base.
-5. **Schemas Layer (`app/schemas/`)**: Data Transfer Objects (DTO) định nghĩa bằng Pydantic, dùng để validate input và serialize output.
-6. **Workers Layer (`app/workers/`)**: Các Celery tasks chạy ngầm độc lập khỏi API thread chính (ví dụ: gửi email, gọi AI tạo dự án tốn thời gian, sinh file báo cáo).
+```
+HTTP Request
+     │
+     ▼
+┌─────────────────────────────────────────────────┐
+│ 1. ENDPOINTS LAYER  (app/api/v1/endpoints/)     │
+│    - Nhận HTTP request                          │
+│    - Kiểm tra quyền RBAC (require_roles())      │
+│    - Định tuyến đến Services                    │
+│    - Trả về Pydantic schemas (DTO)              │
+└────────────────────┬────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────┐
+│ 2. SERVICES LAYER  (app/services/)              │
+│    - Chứa toàn bộ Business Logic                │
+│    - AI services, CPM service, Email service    │
+│    - Không gọi trực tiếp ORM                   │
+└────────────────────┬────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────┐
+│ 3. REPOSITORIES LAYER  (app/repositories/)      │
+│    - Data Access Layer (Repository Pattern)     │
+│    - Kế thừa BaseRepository (CRUD generic)      │
+│    - Thực thi SQLAlchemy async queries          │
+└────────────────────┬────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────┐
+│ 4. MODELS LAYER  (app/models/)                  │
+│    - SQLAlchemy Declarative Base                │
+│    - 31 models, 7 Domains                      │
+└─────────────────────────────────────────────────┘
+
+Phụ trợ:
+┌─────────────────────────────────────────────────┐
+│ 5. SCHEMAS LAYER  (app/schemas/)                │
+│    - Pydantic DTOs (Request/Response)           │
+│    - Validate input, serialize output           │
+└─────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────┐
+│ 6. WORKERS LAYER  (app/workers/)                │
+│    - Celery tasks chạy ngầm (AI, Email, Report) │
+│    - Độc lập hoàn toàn với API thread           │
+└─────────────────────────────────────────────────┘
+```
+
+### Cấu trúc thư mục Backend thực tế
+
+```
+backend/
+├── app/
+│   ├── main.py                 # FastAPI entrypoint + lifespan + CORS
+│   ├── api/v1/
+│   │   ├── router.py           # Tổng hợp 31 routers → api_router
+│   │   └── endpoints/          # 31 endpoint files
+│   │       ├── auth.py         # JWT login/refresh/logout
+│   │       ├── users.py        ├── roles.py  ├── permissions.py
+│   │       ├── portfolios.py   ├── projects.py ├── phases.py
+│   │       ├── sprints.py      ├── epics.py  ├── milestones.py
+│   │       ├── tasks.py        ├── subtasks.py ├── dependencies.py
+│   │       ├── assignments.py  ├── worklogs.py ├── leaves.py
+│   │       ├── skills.py       ├── documents.py ├── approvals.py
+│   │       ├── change_requests.py ├── gantt.py ├── cpm.py
+│   │       ├── resource_leveling.py ├── dashboards.py ├── reports.py
+│   │       ├── notifications.py ├── audit_timeline.py
+│   │       ├── project_versions.py ├── ai.py └── system.py
+│   ├── core/
+│   │   ├── config.py           # Pydantic BaseSettings (đọc .env)
+│   │   ├── security.py         # JWT create/decode + bcrypt hash/verify
+│   │   ├── dependencies.py     # get_db, get_current_user, require_roles()
+│   │   └── exceptions.py       # Custom HTTP exceptions
+│   ├── models/                 # 31 SQLAlchemy models — 7 Domains
+│   │   ├── base.py             # DeclarativeBase + id, created_at, updated_at
+│   │   ├── associations.py     # user_roles, role_permissions, user_skills, project_members
+│   │   ├── user.py  ├── role.py  ├── permission.py  ├── skill.py  ├── leave.py
+│   │   ├── portfolio.py  ├── project.py  ├── phase.py  ├── sprint.py
+│   │   ├── epic.py  ├── milestone.py
+│   │   ├── task.py  ├── subtask.py  ├── dependency.py  ├── assignment.py
+│   │   ├── worklog.py  ├── comment.py
+│   │   ├── change_request.py  ├── approval.py  ├── impact_report.py
+│   │   ├── project_version.py  ├── audit_log.py
+│   │   ├── ai_request.py  ├── ai_output.py  ├── risk_report.py
+│   │   ├── document.py  ├── notification.py  └── email_log.py
+│   ├── schemas/                # 9 Pydantic schema files
+│   │   ├── auth.py  ├── user.py  ├── project.py  ├── task.py
+│   │   ├── gantt.py  ├── dashboard.py  ├── ai.py  └── common.py
+│   ├── services/ai/            # AI Provider abstraction
+│   │   ├── base.py             # BaseAIProvider (ABC)
+│   │   ├── openai_provider.py  # OpenAI GPT-4o
+│   │   ├── gemini_provider.py  # Google Gemini Pro
+│   │   └── project_generator.py # SOP-AI-001
+│   │   # TODO: impact_analysis.py, schedule_optimizer.py,
+│   │   #       resource_recommender.py, risk_analyzer.py, document_parser.py
+│   ├── repositories/           # Repository Pattern
+│   │   ├── base_repository.py  # Generic CRUD (get_by_id, list, create, update, delete)
+│   │   ├── user_repository.py  # get_by_email, get_by_username
+│   │   ├── project_repository.py # get_projects_by_pm, get_with_members
+│   │   └── task_repository.py  # get_tasks_by_project, get_critical_tasks
+│   ├── db/
+│   │   ├── session.py          # AsyncEngine + AsyncSessionLocal + get_db()
+│   │   ├── base.py             # Import tất cả models cho Alembic
+│   │   └── seed.py             # 7 Roles, 34 Permissions, 1 Admin
+│   ├── workers/                # Celery async tasks
+│   │   ├── celery_app.py       # Celery config (broker/backend Redis)
+│   │   ├── ai_tasks.py         # generate_project, impact_analysis, optimize_schedule, risk_analysis, parse_document
+│   │   ├── report_tasks.py     # DOCX/XLSX generation
+│   │   └── email_tasks.py      # Email sending
+│   └── utils/
+│       ├── cpm.py              # CPM Algorithm (CPMNode, topological_sort, forward_pass, backward_pass, compute_cpm)
+│       ├── date_utils.py       # Date helpers
+│       └── pagination.py       # Pagination utilities
+├── alembic/                    # Database migrations (async PostgreSQL)
+├── tests/
+│   ├── unit/
+│   └── integration/
+├── requirements.txt
+├── requirements-dev.txt
+├── pyproject.toml              # black, isort, ruff, mypy, pytest config
+├── alembic.ini
+├── Dockerfile
+└── .env.example
+```
 
 ---
 
-## Database Schema (SQLAlchemy)
+## Frontend Architecture
 
-Cơ sở dữ liệu bao gồm khoảng 32 bảng chính, chia thành các nhóm Domain:
+Frontend sử dụng **Next.js 15 App Router** theo mô hình **Feature-based architecture**:
 
-### 1. User & RBAC Domain
-- **User**: Bảng người dùng trung tâm.
-- **Role & Permission**: Quản lý phân quyền với mô hình RBAC nhiều-nhiều (User-Role-Permission).
-- **Skill**: Kỹ năng của nhân sự.
-- **Leave**: Quản lý ngày nghỉ, liên kết trực tiếp với resource leveling.
+```
+frontend/src/
+├── app/                        # Next.js App Router (routes, layouts, pages)
+│   └── [routes sẽ implement]
+├── features/                   # Feature-based modules (17 modules)
+│   ├── auth/                   # Login, register, reset password
+│   ├── dashboard/              # Portfolio & Project dashboards
+│   ├── portfolio/              # Portfolio management
+│   ├── projects/               # Project management
+│   ├── gantt/                  # Gantt Chart + drag & drop
+│   ├── phases/                 # Phase management UI
+│   ├── sprints/                # Sprint board (Kanban)
+│   ├── epics/                  # Epic management UI
+│   ├── milestones/             # Milestone tracker
+│   ├── tasks/                  # Task management + dependency graph
+│   ├── resources/              # Resource management + workload
+│   ├── documents/              # BRD/SRS upload & AI viewer
+│   ├── approvals/              # CR & approval workflow UI
+│   ├── reports/                # Report export UI (DOCX, XLSX)
+│   ├── audit/                  # Audit timeline view
+│   ├── versions/               # Version history & rollback UI
+│   └── ai/                     # AI prompt input + result viewer
+├── components/                 # Shared UI components
+│   ├── gantt/                  # Custom Gantt Chart component
+│   ├── charts/                 # Burndown, Burnup, Velocity, EVA (Recharts)
+│   ├── tables/                 # Data tables (TanStack Table v8)
+│   ├── dialogs/                # Modal & drawer components
+│   ├── forms/                  # Form components (React Hook Form + Zod)
+│   └── common/                 # Base UI (Button, Badge, Alert, Input...)
+├── services/                   # API call layer (Axios)
+│   # api.ts — Axios instance + interceptors
+│   # auth.service.ts, project.service.ts, task.service.ts,
+│   # gantt.service.ts, ai.service.ts
+├── hooks/                      # Custom React hooks
+│   # useAuth.ts, useProjects.ts, useTasks.ts
+├── store/                      # Zustand global state
+│   # authStore.ts, projectStore.ts, uiStore.ts
+├── types/                      # TypeScript interfaces & enums
+│   # auth.types.ts, project.types.ts, task.types.ts, api.types.ts
+└── lib/                        # Utility functions
+    # utils.ts, date.ts, cpm.ts, validators.ts
+```
 
-### 2. Project Core Domain
-- **Portfolio & Project**: Danh mục dự án và Dự án.
-- **Phase, Sprint, Epic, Milestone**: Cấu trúc phân cấp và nhóm công việc (WBS).
-- **Task & Subtask**: Đơn vị công việc nhỏ nhất, chứa các trường tính toán CPM (ES, EF, LS, LF, float_time, is_critical).
-- **Dependency**: Các mối quan hệ phụ thuộc giữa các Task (FS, SS, FF, SF) hỗ trợ độ trễ (lag days).
-- **Assignment**: Phân công nguồn lực cho Task.
-- **Worklog**: Ghi nhận thời gian thực tế (Timesheet).
+**State Management Strategy:**
+- **Zustand** — Local/Global UI state (auth token, active project, UI state)
+- **TanStack Query v5** — Server state (data fetching, caching, synchronization)
+- **React Hook Form + Zod** — Form state và validation
 
-### 3. Change Management & Audit Domain
-- **ChangeRequest & Approval**: Workflow phê duyệt thay đổi (có tích hợp AI phân tích tác động).
-- **ProjectVersion**: Lưu trữ snapshot (dạng JSON) của toàn bộ dự án tại một thời điểm để có thể rollback.
-- **AuditLog**: Lưu trữ mọi hành động thay đổi dữ liệu của hệ thống.
+---
 
-### 4. Other Domains
-- **Document**: Quản lý file đính kèm lưu trên MinIO.
-- **Notification**: Hệ thống thông báo.
+## Database Schema (SQLAlchemy — 7 Domains, 31 Tables)
+
+### ERD tổng quan
+
+```
+User Domain
+  users ←──── user_roles ────→ roles ←── role_permissions ──→ permissions
+  users ←──── user_skills ───→ skills
+  users ──── leaves
+
+Project Domain
+  portfolios ──── projects ──── project_members ──── users
+  projects ──── phases, sprints, epics, milestones
+  projects ──── tasks ──── subtasks
+  tasks ──── dependencies (self-ref: predecessor ↔ successor)
+  tasks ──── assignments ──── users
+  tasks ──── worklogs ──── users
+  tasks ──── comments ──── users
+
+Change Management Domain
+  projects ──── change_requests ──── approvals ──── users
+  change_requests ──── impact_reports
+  projects ──── project_versions
+  audit_logs (global entity tracking)
+
+AI Domain
+  projects ──── ai_requests ──── ai_outputs
+  projects ──── risk_reports
+
+Document & Notification Domain
+  projects ──── documents
+  users ──── notifications
+  email_logs
+```
+
+### CPM Fields trong bảng `tasks`
+
+```python
+class Task(Base):
+    __tablename__ = "tasks"
+    # ... standard fields ...
+    
+    # CPM computed fields (tự động cập nhật bởi cpm_service)
+    early_start   = Column(Float, nullable=True)   # ES
+    early_finish  = Column(Float, nullable=True)   # EF
+    late_start    = Column(Float, nullable=True)   # LS
+    late_finish   = Column(Float, nullable=True)   # LF
+    float_days    = Column(Float, nullable=True)   # Slack = LS - ES
+    is_critical   = Column(Boolean, default=False) # float_days < 0.001
+```
 
 ---
 
 ## Core Algorithms & Services
 
-### Critical Path Method (CPM)
-Được triển khai thuần Python tại `app/utils/cpm.py`. Thuật toán bao gồm:
-1. **Topological Sort (Kahn's Algorithm)**: Sắp xếp các task theo đồ thị có hướng không chu trình (DAG) và phát hiện vòng lặp (Cycle Detection).
-2. **Forward Pass**: Tính toán Early Start (ES) và Early Finish (EF).
-3. **Backward Pass**: Tính toán Late Start (LS), Late Finish (LF).
-4. **Float Calculation**: Tính toán Float Days. Task có float = 0 sẽ được đánh dấu là `is_critical = True`.
+### Critical Path Method (CPM) — `app/utils/cpm.py`
 
-Mỗi khi có thay đổi về ngày, thời lượng hoặc dependency của Task, `cpm_service` sẽ được gọi để tính toán lại và update database.
+```python
+# Dataclass node
+CPMNode(
+  id, duration,          # input
+  successors, predecessors,  # graph edges
+  early_start, early_finish,
+  late_start,  late_finish,
+  float_days,  is_critical   # output
+)
 
-### Background Task (Celery + Redis)
-Các tác vụ bất đồng bộ nặng được giao cho Celery worker:
-- **`ai.generate_project`**: Dịch prompt người dùng thành cấu trúc dự án WBS thông qua OpenAI/Gemini, ghi trực tiếp vào DB.
-- **`ai.impact_analysis`**: Đọc cấu trúc thay đổi, sinh ra báo cáo mức độ ảnh hưởng của CR.
-- **`reports.generate_docx`**: Sử dụng `python-docx` tổng hợp dữ liệu, vẽ biểu đồ, upload lên MinIO và trả về URL tải xuống.
+# Pipeline
+topological_sort(nodes) → order[]     # Kahn's Algorithm — phát hiện cycle
+forward_pass(nodes, order)
+  # ES = max(predecessor.early_finish + lag_days)  [0 nếu không có predecessor]
+  # EF = ES + duration
+backward_pass(nodes, order)
+  # LF = min(successor.late_start - lag_days)  [max(EF) nếu không có successor]
+  # LS = LF - duration
+  # float_days = LS - ES
+  # is_critical = float_days < 0.001
+
+compute_cpm(nodes) → (nodes[], critical_path[])
+```
+
+**Trigger Flow:**
+```
+PM kéo thả Task trên Gantt
+  → PATCH /api/v1/tasks/{id}
+  → cpm_service.recalculate(project_id)
+  → Cập nhật early_start/early_finish/late_start/late_finish/float_days/is_critical cho tất cả tasks
+  → Response trả về CPM results
+  → Frontend re-render Gantt (Critical Path highlight đỏ)
+```
+
+### Resource Leveling — `app/services/resource_leveling.py`
+
+```python
+def check_overload(user_id, date, max_hours=8.0) → OverloadResult:
+    # 1. Kiểm tra leave: nếu có approved leave → overloaded (on_leave)
+    # 2. Lấy tất cả assignments của user có task active trong ngày
+    # 3. Tính daily_hours = allocated_hours / working_days(task)
+    # 4. Cộng dồn total_hours
+    # 5. is_overloaded = total_hours > max_hours
+    return OverloadResult(is_overloaded, total_hours, max_hours, tasks_on_date)
+```
+
+### AI Provider Abstraction — `app/services/ai/`
+
+```python
+class BaseAIProvider(ABC):
+    @abstractmethod
+    async def generate_text(prompt: str, system_prompt: str = "") → str: ...
+    @abstractmethod
+    async def generate_json(prompt: str, system_prompt: str = "") → Dict: ...
+
+class OpenAIProvider(BaseAIProvider):   # GPT-4o via openai SDK
+class GeminiProvider(BaseAIProvider):  # Gemini Pro via google-generativeai
+
+# Celery task delegates to active provider:
+ACTIVE_AI_PROVIDER = settings.ACTIVE_AI_PROVIDER  # "openai" | "gemini"
+```
+
+### Background Tasks (Celery + Redis)
+
+```
+Celery Worker Pool
+├── ai.generate_project      ← SOP-AI-001: prompt → WBS JSON → DB insert → CPM
+├── ai.impact_analysis       ← SOP-AI-002: CR → ImpactReport
+├── ai.optimize_schedule     ← SOP-AI-003: CPM + resource re-plan → proposed schedule
+├── ai.risk_analysis         ← SOP-AI-005: periodic risk scoring
+├── ai.parse_document        ← SOP-DOC-001: MinIO doc → task suggestions
+├── reports.generate_docx    ← SOP-RPT-001: python-docx → MinIO → URL
+├── reports.generate_xlsx    ← SOP-RPT-001: openpyxl → MinIO → URL
+└── email.send               ← SOP-NOTI-001: fastapi-mail SMTP
+```
+
+---
+
+## Security Architecture
+
+### Authentication Flow
+
+```
+POST /api/v1/auth/login
+  → verify password (bcrypt)
+  → create access_token (JWT, 30min) + refresh_token (JWT, 7days)
+  → return { access_token, refresh_token, token_type }
+
+POST /api/v1/auth/refresh
+  → validate refresh_token
+  → return new access_token
+
+Protected Endpoint:
+  → Bearer token in Authorization header
+  → get_current_user() dependency: decode JWT → load User from DB
+  → require_roles(["PM", "BA"]) dependency: check user.roles intersection
+```
+
+### RBAC Implementation
+
+```python
+# FastAPI dependency
+def require_roles(roles: List[str]):
+    async def check(current_user = Depends(get_current_user)):
+        user_roles = {r.name for r in current_user.roles}
+        if not user_roles.intersection(roles) and not current_user.is_superuser:
+            raise ForbiddenException()
+    return check
+
+# Usage in endpoint
+@router.post("/projects/{id}/rollback/{version_id}")
+async def rollback(
+    ...,
+    _: None = Depends(require_roles(["PM", "Admin"]))
+):
+```
+
+---
+
+## Configuration (Environment Variables)
+
+File: `backend/.env.example`
+
+| Biến | Mô tả |
+|---|---|
+| `DATABASE_URL` | `postgresql+asyncpg://user:pass@postgres:5432/dbname` |
+| `DATABASE_POOL_SIZE` | `10` |
+| `REDIS_URL` | `redis://redis:6379/0` |
+| `CELERY_BROKER_URL` | `redis://redis:6379/1` |
+| `CELERY_RESULT_BACKEND` | `redis://redis:6379/2` |
+| `SECRET_KEY` | JWT signing key (strong random string) |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | `30` |
+| `REFRESH_TOKEN_EXPIRE_DAYS` | `7` |
+| `ACTIVE_AI_PROVIDER` | `openai` hoặc `gemini` |
+| `OPENAI_API_KEY` | OpenAI API key |
+| `OPENAI_MODEL` | `gpt-4o` |
+| `GEMINI_API_KEY` | Google Gemini API key |
+| `GEMINI_MODEL` | `gemini-pro` |
+| `MINIO_ENDPOINT` | `minio:9000` |
+| `MINIO_ACCESS_KEY` | MinIO access key |
+| `MINIO_SECRET_KEY` | MinIO secret key |
+| `MINIO_BUCKET` | `ai-project-files` |
+| `SMTP_HOST` | SMTP server |
+| `SMTP_PORT` | `587` |
+| `SMTP_USER` | SMTP username |
+| `SMTP_PASSWORD` | SMTP password |
+| `CORS_ORIGINS` | `["http://localhost:3000"]` |
+
+File: `frontend/.env.example`
+
+| Biến | Mô tả |
+|---|---|
+| `NEXT_PUBLIC_API_URL` | `http://localhost:8000/api/v1` |
+| `NEXT_PUBLIC_WS_URL` | `ws://localhost:8000/ws` (future) |
+
+---
+
+## Change History
+
+| Version | Date | Thay đổi |
+|---|---|---|
+| 1.0 | 2026-06-25 | Phiên bản ban đầu |
+| 2.0 | 2026-08-05 | Cập nhật toàn diện: Next.js 15 (thay Vite), 7 Domains/31 Tables, thêm chi tiết Layered Architecture, Repository Pattern, 34 Permissions, 13 Notification types, chi tiết Celery tasks, CPM fields, security flow |
+| 2.1 | 2026-08-13 | Đã hoàn thành Auth & User Onboarding Module (Login, Register, Google & Facebook OAuth, Password recovery, Email verification, Edge JWT Guard, Auth Services & Store). Cập nhật tài liệu sát thực tế. |
+
+---
+
+*Cập nhật lần cuối: 2026-08-13 — Version 2.1 — Stack: Python FastAPI + Next.js 15*

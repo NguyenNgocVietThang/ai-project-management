@@ -1,0 +1,42 @@
+"""add password reset fields
+
+Revision ID: 20260812_password_reset
+Revises: 20260810_social_oauth
+Create Date: 2026-08-12 22:30:00.000000
+
+"""
+
+from typing import Sequence, Union
+
+import sqlalchemy as sa
+
+from alembic import op
+
+# revision identifiers, used by Alembic.
+revision: str = "20260812_password_reset"
+down_revision: Union[str, None] = "20260810_social_oauth"
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+
+def upgrade() -> None:
+    op.add_column(
+        "users",
+        sa.Column("password_reset_token_hash", sa.String(length=64), nullable=True),
+    )
+    op.add_column(
+        "users",
+        sa.Column("password_reset_expires_at", sa.DateTime(timezone=True), nullable=True),
+    )
+    op.create_index(
+        op.f("ix_users_password_reset_token_hash"),
+        "users",
+        ["password_reset_token_hash"],
+        unique=True,
+    )
+
+
+def downgrade() -> None:
+    op.drop_index(op.f("ix_users_password_reset_token_hash"), table_name="users")
+    op.drop_column("users", "password_reset_expires_at")
+    op.drop_column("users", "password_reset_token_hash")
