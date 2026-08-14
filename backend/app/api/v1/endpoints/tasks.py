@@ -1,73 +1,97 @@
+from datetime import date
 from typing import Annotated, Optional
 
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Query, Response, status
 
-from app.core.dependencies import CurrentUser, require_permissions
-from app.models.user import User
-from app.schemas.common import MessageResponse, PaginatedResponse
-from app.schemas.task import TaskCreate, TaskResponse, TaskUpdate
+from app.core.dependencies import CurrentUser
+from app.schemas.common import PaginatedResponse
+from app.schemas.task import (
+    SubtaskCreate,
+    SubtaskResponse,
+    TaskBulkUpdate,
+    TaskCreate,
+    TaskDetailResponse,
+    TaskResponse,
+    TaskStatusUpdate,
+    TaskUpdate,
+)
 from app.services.task_service import TaskServiceDep
 
 router = APIRouter()
 
 
-@router.get("/", response_model=PaginatedResponse[TaskResponse])
+@router.get("/projects/{project_id}/tasks", response_model=PaginatedResponse[TaskResponse])
 async def list_tasks(
+    project_id: int,
     service: TaskServiceDep,
     current_user: CurrentUser,
     page: Annotated[int, Query(ge=1)] = 1,
-    page_size: Annotated[int, Query(ge=1, le=200)] = 20,
-    project_id: Optional[int] = None,
+    page_size: Annotated[int, Query(ge=1, le=200)] = 50,
+    search: Optional[str] = None,
+    phase_id: Optional[int] = None,
     sprint_id: Optional[int] = None,
+    epic_id: Optional[int] = None,
     assignee_id: Optional[int] = None,
     status_: Optional[str] = Query(default=None, alias="status"),
+    priority: Optional[str] = None,
+    labels: Annotated[Optional[list[str]], Query()] = None,
+    due_date_from: Optional[date] = None,
+    due_date_to: Optional[date] = None,
 ):
-    items, total = await service.list(
-        skip=(page - 1) * page_size,
-        limit=page_size,
-        project_id=project_id,
-        sprint_id=sprint_id,
-        assignee_id=assignee_id,
-        status=status_,
-    )
-    return PaginatedResponse(
-        items=items,
-        total=total,
+    return await service.list(
+        project_id,
+        current_user,
         page=page,
         page_size=page_size,
-        total_pages=(total + page_size - 1) // page_size if total else 0,
+        search=search,
+        phase_id=phase_id,
+        sprint_id=sprint_id,
+        epic_id=epic_id,
+        assignee_id=assignee_id,
+        status=status_,
+        priority=priority,
+        labels=labels,
+        due_date_from=due_date_from,
+        due_date_to=due_date_to,
     )
 
 
-@router.get("/{id}", response_model=TaskResponse)
-async def get_task(id: int, service: TaskServiceDep, current_user: CurrentUser):
-    return await service.get(id)
+@router.post("/projects/{project_id}/tasks", response_model=TaskResponse, status_code=201)
+async def create_task(project_id: int, body: TaskCreate, service: TaskServiceDep, current_user: CurrentUser):
+    return await service.create(project_id, body, current_user)
 
 
-@router.post("/", response_model=TaskResponse, status_code=status.HTTP_201_CREATED)
-async def create_task(
-    body: TaskCreate,
-    service: TaskServiceDep,
-    current_user: Annotated[User, Depends(require_permissions("task:create"))],
-):
-    return await service.create(body)
+@router.get("/tasks/{task_id}", response_model=TaskDetailResponse)
+async def get_task(task_id: int, service: TaskServiceDep, current_user: CurrentUser):
+    return await service.get(task_id, current_user)
 
 
-@router.put("/{id}", response_model=TaskResponse)
-async def update_task(
-    id: int,
-    body: TaskUpdate,
-    service: TaskServiceDep,
-    current_user: Annotated[User, Depends(require_permissions("task:update"))],
-):
-    return await service.update(id, body)
+@router.patch("/tasks/{task_id}", response_model=TaskResponse)
+async def update_task(task_id: int, body: TaskUpdate, service: TaskServiceDep, current_user: CurrentUser):
+    return await service.update(task_id, body, current_user)
 
 
-@router.delete("/{id}", response_model=MessageResponse)
-async def delete_task(
-    id: int,
-    service: TaskServiceDep,
-    current_user: Annotated[User, Depends(require_permissions("task:delete"))],
-):
-    await service.delete(id)
-    return MessageResponse(message="Deleted")
+@router.delete("/tasks/{task_id}", status_code=204)
+async def delete_task(task_id: int, service: TaskServiceDep, current_user: CurrentUser):
+    await service.delete(task_id, current_user)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.post("/tasks/{task_id}/status", response_model=TaskResponse)
+async def change_task_status(task_id: int, body: TaskStatusUpdate, service: TaskServiceDep, current_user: CurrentUser):
+    return await service.change_status(task_id, body, current_user)
+
+
+@router.patch("/projects/{project_id}/tasks/bulk", response_model=list[TaskResponse])
+async def bulk_update_tasks(project_id: int, body: TaskBulkUpdate, service: TaskServiceDep, current_user: CurrentUser):
+    return await service.bulk_update(project_id, body, current_user)
+
+
+@router.get("/tasks/{task_id}/subtasks", response_model=list[SubtaskResponse])
+async def list_subtasks(task_id: int, service: TaskServiceDep, current_user: CurrentUser):
+    return await service.list_subtasks(task_id, current_user)
+
+
+@router.post("/tasks/{task_id}/subtasks", response_model=SubtaskResponse, status_code=201)
+async def create_subtask(task_id: int, body: SubtaskCreate, service: TaskServiceDep, current_user: CurrentUser):
+    return await service.create_subtask(task_id, body, current_user)

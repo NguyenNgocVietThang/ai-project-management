@@ -1,33 +1,21 @@
-﻿from fastapi import APIRouter
+from datetime import date
+from typing import Optional
+
+from fastapi import APIRouter
+
+from app.core.dependencies import CurrentUser
+from app.schemas.task import ResourceWarning
+from app.services.resource_service import ResourceServiceDep
 
 router = APIRouter()
 
 
-@router.get("/")
-async def list_resource_leveling():
-    # TODO: Implement list
-    return []
-
-
-@router.get("/{id}")
-async def get_resource_leveling(id: int):
-    # TODO: Implement get by id
-    return {"id": id}
-
-
-@router.post("/")
-async def create_resource_leveling():
-    # TODO: Implement create
-    return {"message": "Created"}
-
-
-@router.put("/{id}")
-async def update_resource_leveling(id: int):
-    # TODO: Implement update
-    return {"message": "Updated"}
-
-
-@router.delete("/{id}")
-async def delete_resource_leveling(id: int):
-    # TODO: Implement delete
-    return {"message": "Deleted"}
+@router.get("/resource-leveling/{project_id}", response_model=list[ResourceWarning])
+async def resource_leveling(
+    project_id: int,
+    service: ResourceServiceDep,
+    current_user: CurrentUser,
+    start_date: Optional[date] = None,
+    end_date: Optional[date] = None,
+):
+    return await service.resource_leveling(project_id, current_user, start_date, end_date)

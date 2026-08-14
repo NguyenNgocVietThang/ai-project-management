@@ -1,33 +1,23 @@
-﻿from fastapi import APIRouter
+from fastapi import APIRouter, Response, status
+
+from app.core.dependencies import CurrentUser
+from app.schemas.task import AssignmentCreate, AssignmentMutationResponse, AssignmentResponse
+from app.services.resource_service import ResourceServiceDep
 
 router = APIRouter()
 
 
-@router.get("/")
-async def list_assignments():
-    # TODO: Implement list
-    return []
+@router.post("/tasks/{task_id}/assignments", response_model=AssignmentMutationResponse, status_code=201)
+async def create_assignment(task_id: int, body: AssignmentCreate, service: ResourceServiceDep, current_user: CurrentUser):
+    return await service.create_assignment(task_id, body, current_user)
 
 
-@router.get("/{id}")
-async def get_assignments(id: int):
-    # TODO: Implement get by id
-    return {"id": id}
+@router.delete("/assignments/{assignment_id}", status_code=204)
+async def delete_assignment(assignment_id: int, service: ResourceServiceDep, current_user: CurrentUser):
+    await service.delete_assignment(assignment_id, current_user)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-@router.post("/")
-async def create_assignments():
-    # TODO: Implement create
-    return {"message": "Created"}
-
-
-@router.put("/{id}")
-async def update_assignments(id: int):
-    # TODO: Implement update
-    return {"message": "Updated"}
-
-
-@router.delete("/{id}")
-async def delete_assignments(id: int):
-    # TODO: Implement delete
-    return {"message": "Deleted"}
+@router.get("/users/me/assignments", response_model=list[AssignmentResponse])
+async def my_assignments(service: ResourceServiceDep, current_user: CurrentUser):
+    return await service.my_assignments(current_user)

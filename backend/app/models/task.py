@@ -1,10 +1,7 @@
 ﻿import enum
 from datetime import date
 from typing import List, Optional
-from sqlalchemy import (
-    Boolean, CheckConstraint, Date, Enum, Float, ForeignKey,
-    Index, Integer, String, Text
-)
+from sqlalchemy import Boolean, Date, Enum, Float, ForeignKey, Index, Integer, JSON, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base
 
@@ -30,6 +27,7 @@ class Task(Base):
         Index("ix_tasks_project_status", "project_id", "status"),
         Index("ix_tasks_sprint_status", "sprint_id", "status"),
         Index("ix_tasks_assignee", "assignee_id"),
+        Index("ix_tasks_due_date", "due_date"),
     )
 
     # ─── Basic info ──────────────────────────────────────────────────────────
@@ -38,6 +36,7 @@ class Task(Base):
     status: Mapped[TaskStatus] = mapped_column(Enum(TaskStatus), default=TaskStatus.TODO, nullable=False)
     priority: Mapped[TaskPriority] = mapped_column(Enum(TaskPriority), default=TaskPriority.MEDIUM, nullable=False)
     story_points: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    labels: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=False)
     progress: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)  # 0-100%
 
     # ─── Time tracking ───────────────────────────────────────────────────────

@@ -1,6 +1,6 @@
 ﻿from datetime import date, datetime
 from typing import Optional
-from sqlalchemy import Date, DateTime, Float, ForeignKey, Index, Text
+from sqlalchemy import CheckConstraint, Date, DateTime, Float, ForeignKey, Index, Text, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base
 
@@ -10,6 +10,17 @@ class Worklog(Base):
     __table_args__ = (
         Index("ix_worklogs_task_date", "task_id", "log_date"),
         Index("ix_worklogs_user_date", "user_id", "log_date"),
+        Index(
+            "uq_worklogs_active_timer_user",
+            "user_id",
+            unique=True,
+            postgresql_where=text("start_time IS NOT NULL AND end_time IS NULL"),
+        ),
+        CheckConstraint("hours >= 0", name="chk_worklog_hours_nonnegative"),
+        CheckConstraint(
+            "end_time IS NULL OR start_time IS NULL OR end_time > start_time",
+            name="chk_worklog_time_range",
+        ),
     )
 
     task_id: Mapped[int] = mapped_column(ForeignKey("tasks.id", ondelete="CASCADE"), nullable=False)

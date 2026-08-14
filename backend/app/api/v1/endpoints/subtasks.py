@@ -1,33 +1,18 @@
-﻿from fastapi import APIRouter
+from fastapi import APIRouter, Response, status
+
+from app.core.dependencies import CurrentUser
+from app.schemas.task import SubtaskResponse, SubtaskUpdate
+from app.services.task_service import TaskServiceDep
 
 router = APIRouter()
 
 
-@router.get("/")
-async def list_subtasks():
-    # TODO: Implement list
-    return []
+@router.patch("/subtasks/{subtask_id}", response_model=SubtaskResponse)
+async def update_subtask(subtask_id: int, body: SubtaskUpdate, service: TaskServiceDep, current_user: CurrentUser):
+    return await service.update_subtask(subtask_id, body, current_user)
 
 
-@router.get("/{id}")
-async def get_subtasks(id: int):
-    # TODO: Implement get by id
-    return {"id": id}
-
-
-@router.post("/")
-async def create_subtasks():
-    # TODO: Implement create
-    return {"message": "Created"}
-
-
-@router.put("/{id}")
-async def update_subtasks(id: int):
-    # TODO: Implement update
-    return {"message": "Updated"}
-
-
-@router.delete("/{id}")
-async def delete_subtasks(id: int):
-    # TODO: Implement delete
-    return {"message": "Deleted"}
+@router.delete("/subtasks/{subtask_id}", status_code=204)
+async def delete_subtask(subtask_id: int, service: TaskServiceDep, current_user: CurrentUser):
+    await service.delete_subtask(subtask_id, current_user)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

@@ -1,6 +1,6 @@
 ﻿from datetime import date
 from typing import Optional
-from sqlalchemy import Date, Float, ForeignKey, String, UniqueConstraint
+from sqlalchemy import CheckConstraint, Date, Float, ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base
 
@@ -9,6 +9,15 @@ class Assignment(Base):
     __tablename__ = "assignments"
     __table_args__ = (
         UniqueConstraint("task_id", "user_id", name="uq_assignment_task_user"),
+        CheckConstraint("allocated_hours >= 0", name="chk_assignment_hours_nonnegative"),
+        CheckConstraint(
+            "allocation_percentage >= 0 AND allocation_percentage <= 100",
+            name="chk_assignment_percentage_range",
+        ),
+        CheckConstraint(
+            "end_date IS NULL OR start_date IS NULL OR end_date >= start_date",
+            name="chk_assignment_date_range",
+        ),
     )
 
     task_id: Mapped[int] = mapped_column(ForeignKey("tasks.id", ondelete="CASCADE"), nullable=False, index=True)
