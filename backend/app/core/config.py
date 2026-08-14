@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     APP_NAME: str = "AI Project Management API"
     APP_VERSION: str = "1.0.0"
     APP_ENV: str = "development"
+    APP_TIMEZONE: str = "Asia/Bangkok"
+    MAX_DAILY_WORK_HOURS: float = 8.0
     API_V1_PREFIX: str = "/api/v1"
     CORS_ORIGINS: List[str] = ["http://localhost:5173", "http://localhost:3000"]
 

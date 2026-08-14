@@ -309,6 +309,8 @@ types/
 ## PHASE 2 – Task Management & Work Breakdown Structure
 
 > **Mục tiêu:** PM có thể phân rã dự án thành Phase/Sprint/Task/Subtask, thiết lập Dependencies, phân công nhân sự
+>
+> **Trạng thái:** ✅ Hoàn thành và xác minh ngày 15/08/2026
 
 ---
 
@@ -577,11 +579,11 @@ Panels:
 - [x] Truy cập project không thuộc user -> 403 Forbidden
 
 ### Phase 2 – Tasks & Dependencies
-- [ ] Tạo Task với due_date < start_date -> validation error
-- [ ] Thêm dependency tạo circular loop -> reject với message rõ ràng
-- [ ] Chuyển Task status: todo -> in_progress -> review -> done
-- [ ] Member ghi WorkLog: hours > 0, work_date <= today
-- [ ] WorkLog tổng hợp đúng theo project/user/date range
+- [x] Tạo Task với due_date < start_date -> validation error
+- [x] Thêm dependency tạo circular loop -> reject với message rõ ràng
+- [x] Chuyển Task status: todo -> in_progress -> review -> done
+- [x] Member ghi WorkLog: hours > 0, work_date <= today
+- [x] WorkLog tổng hợp đúng theo project/user/date range
 
 ### Phase 3 – Dashboard & Notifications
 - [ ] Dashboard summary khớp với dữ liệu thực tế

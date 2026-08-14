@@ -231,14 +231,14 @@ Xem chi tiết trong [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)
 - [x] Route Protection Edge Guard (Next.js Middleware)
 - [x] Frontend Auth Service & Zustand Auth Store
 
-### Phase 2 — Portfolio & Project Core (Đang triển khai)
-- [ ] Portfolio CRUD API & UI
-- [ ] Project CRUD API & UI + Member Management
-- [ ] Phase / Sprint / Epic / Milestone CRUD
-- [ ] Task management + Subtasks + Dependency graph
-- [ ] CPM engine (Topological Sort + Forward/Backward Pass)
-- [ ] Gantt Chart (render + drag & drop)
-- [ ] Resource Assignment + WorkLog + Overload warning
+### Phase 2 — Portfolio & Project Core (Hoàn thành 15/08/2026)
+- [x] Portfolio CRUD API & UI
+- [x] Project CRUD API & UI + Member Management
+- [x] Phase / Sprint / Epic / Milestone CRUD
+- [x] Task management + Subtasks + Dependency graph
+- [x] CPM engine (Topological Sort + Forward/Backward Pass)
+- [ ] Gantt Chart (ngoài phạm vi Phase 2 hiện tại)
+- [x] Resource Assignment + WorkLog + Overload warning
 
 ### Phase 3 — AI Features
 - [ ] AI Project Generator (SOP-AI-001)

@@ -372,12 +372,12 @@ compute_cpm(nodes) -> (nodes, critical_path[])
 
 ### Kế hoạch tiếp theo (Portfolio & Project Core Module)
 
-- [ ] Portfolio CRUD API & UI Pages
-- [ ] Project CRUD API & UI Pages + Member Management
-- [ ] Phase / Sprint / Epic / Milestone CRUD
-- [ ] Task Management + Kanban Board + Task Detail Drawer
-- [ ] Task Dependencies Graph & CPM recalculation trigger
-- [ ] Assignment & WorkLog (Timesheet)
+- [x] Portfolio CRUD API & UI Pages
+- [x] Project CRUD API & UI Pages + Member Management
+- [x] Phase / Sprint / Epic / Milestone CRUD
+- [x] Task Management + Kanban Board + Task Detail Drawer
+- [x] Task Dependencies Graph & CPM recalculation trigger
+- [x] Assignment & WorkLog (Timesheet)
 - [ ] Portfolio & Project Dashboards
 
 ---
