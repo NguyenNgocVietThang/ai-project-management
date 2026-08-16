@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { FullPageSpinner } from '@/components/common/FullPageSpinner'
 import { EmailVerificationBanner } from '@/features/auth/components/EmailVerificationBanner'
+import { NotificationBell } from '@/features/notifications/components/NotificationBell'
 import { useAuth } from '@/hooks/useAuth'
 import { useAuthStore } from '@/store/authStore'
 
@@ -46,6 +47,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </nav>
         </div>
         <div className="flex items-center gap-4">
+          <NotificationBell />
           {user && (
             <Link
               href="/profile"

@@ -13,6 +13,7 @@ from app.models.associations import project_members
 from app.models.comment import Comment
 from app.models.dependency import Dependency, DependencyType
 from app.models.epic import Epic
+from app.models.notification import NotificationType
 from app.models.phase import Phase
 from app.models.sprint import Sprint
 from app.models.subtask import Subtask, SubtaskStatus
@@ -262,6 +263,19 @@ class TaskService:
                     end_date=task.due_date,
                 )
             )
+            # Phase 3.3 – notify the assignee
+            if task.assignee_id != user.id:
+                from app.services.notification_service import NotificationService
+                await NotificationService.push(
+                    self.db,
+                    user_id=task.assignee_id,
+                    title="New task assigned",
+                    message=f"You have been assigned to task '{task.name}'",
+                    ntype=NotificationType.TASK_ASSIGNED,
+                    link=f"/projects/{project_id}/tasks/{task.id}",
+                    entity_type="Task",
+                    entity_id=task.id,
+                )
         add_audit(self.db, user.id, "CREATE", "Task", task.id, new_values=serialize_model(task))
         await recalculate_project(self.db, project_id)
         task = await self._loaded_task(task.id)
@@ -282,24 +296,44 @@ class TaskService:
             values["priority"] = TaskPriority(values["priority"])
         for key, value in values.items():
             setattr(task, key, value)
-        if "assignee_id" in values and values["assignee_id"] is not None:
+        new_assignee_id = values.get("assignee_id")
+        old_assignee_id = old.get("assignee_id")
+        if new_assignee_id is not None:
             assignment = await self.db.scalar(
                 select(Assignment).where(
                     Assignment.task_id == task.id,
-                    Assignment.user_id == values["assignee_id"],
+                    Assignment.user_id == new_assignee_id,
                 )
             )
             if assignment is None:
                 self.db.add(
                     Assignment(
                         task_id=task.id,
-                        user_id=values["assignee_id"],
+                        user_id=new_assignee_id,
                         allocated_hours=task.estimated_hours or 0,
                         start_date=task.start_date,
                         end_date=task.due_date,
                     )
                 )
         await self.db.flush()
+        # Phase 3.3 – notify new assignee if assignee changed
+        if (
+            "assignee_id" in values
+            and new_assignee_id is not None
+            and new_assignee_id != old_assignee_id
+            and new_assignee_id != user.id
+        ):
+            from app.services.notification_service import NotificationService
+            await NotificationService.push(
+                self.db,
+                user_id=new_assignee_id,
+                title="Task assigned to you",
+                message=f"You have been assigned to task '{task.name}'",
+                ntype=NotificationType.TASK_ASSIGNED,
+                link=f"/projects/{task.project_id}/tasks/{task.id}",
+                entity_type="Task",
+                entity_id=task.id,
+            )
         add_audit(self.db, user.id, "UPDATE", "Task", task.id, old_values=old, new_values=values)
         await recalculate_project(self.db, task.project_id)
         loaded = await self._loaded_task(task.id)
