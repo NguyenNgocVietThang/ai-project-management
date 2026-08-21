@@ -8,6 +8,7 @@ import Cookies from 'js-cookie'
 import { FullPageSpinner } from '@/components/common/FullPageSpinner'
 import { EmailVerificationBanner } from '@/features/auth/components/EmailVerificationBanner'
 import { NotificationBell } from '@/features/notifications/components/NotificationBell'
+import { useNotificationSocket } from '@/features/notifications/hooks/useNotifications'
 import { useAuth } from '@/hooks/useAuth'
 import { isAdminUser } from '@/lib/rbac'
 import { useAuthStore } from '@/store/authStore'
@@ -38,6 +39,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       router.replace('/login')
     }
   }, [hasHydrated, isClient, isAuthenticated, router])
+
+  // Real-time notification push — connects once the user is authenticated;
+  // useNotificationSocket() itself no-ops if there's no access token yet.
+  useNotificationSocket()
 
   if (!isClient || !isAuthenticated) {
     return <FullPageSpinner />

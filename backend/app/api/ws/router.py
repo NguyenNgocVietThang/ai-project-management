@@ -4,9 +4,11 @@ these are not versioned REST routes."""
 from fastapi import APIRouter
 
 from app.api.ws.chat import chat_ws_router
+from app.api.ws.notifications import notifications_ws_router
 
 ws_router = APIRouter()
 
 # Sub-routers are registered here as each feature adds its own WS endpoint
 # (see app/api/ws/chat.py, app/api/ws/notifications.py).
 ws_router.include_router(chat_ws_router)
+ws_router.include_router(notifications_ws_router)

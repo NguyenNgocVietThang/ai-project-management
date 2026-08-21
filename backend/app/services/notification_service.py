@@ -161,7 +161,13 @@ class NotificationService:
         entity_type: Optional[str] = None,
         entity_id: Optional[int] = None,
     ) -> Notification:
-        """Create and persist a notification. Call `await db.flush()` after if needed."""
+        """Create, persist, and real-time-broadcast a notification.
+
+        Flushes immediately (needed to get the server-generated id/created_at
+        for the WS payload) — this is a behavior change from the earlier
+        "add only, caller flushes" contract, but flush() just sends pending
+        SQL without committing, so it's safe to call mid-transaction.
+        """
         notification = Notification(
             user_id=user_id,
             title=title,
@@ -172,6 +178,23 @@ class NotificationService:
             related_entity_id=entity_id,
         )
         db.add(notification)
+        await db.flush()
+
+        from app.core.ws_manager import publish  # local import: avoids importing ws infra on every service load
+
+        await publish(
+            f"notif:user:{user_id}",
+            {
+                "id": notification.id,
+                "title": title,
+                "message": message,
+                "notification_type": ntype.value,
+                "link": link,
+                "related_entity_type": entity_type,
+                "related_entity_id": entity_id,
+                "created_at": notification.created_at.isoformat() if notification.created_at else None,
+            },
+        )
         return notification
 
     # ─────────────────────────────────────────────────────────────────────────

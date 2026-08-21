@@ -61,18 +61,19 @@ Full approved plan: `C:\Users\VIET THANG\.claude\plans\t-i-mu-n-ti-p-t-c-soft-pr
 - [ ] Manual verification (2 browser sessions, real-time delivery + reconnect) — deferred, needs docker compose + live DB; will do a combined pass with Phase E
 
 ### Phase E — Real-time notification push over WebSocket
-**Status:** in_progress
-- [ ] `api/ws/notifications.py` — user-scoped channel
-- [ ] Hook `publish()` into `NotificationService.push()`
-- [ ] Frontend: useNotificationSocket(), wire into dashboard layout, relax poll interval
-- [ ] Test for push() -> publish() call
-- [ ] Manual verification
+**Status:** complete (pending live manual verification)
+- [x] `api/ws/notifications.py` — user-scoped channel `notif:user:{id}`, registered in api/ws/router.py
+- [x] Hook `publish()` into `NotificationService.push()` (now flushes to get id/created_at, then publishes; audited both existing call sites in task_service.py — safe)
+- [x] Frontend: `useNotificationSocket()` in useNotifications.ts, wired into dashboard layout (before early returns, rules-of-hooks), poll interval relaxed 30s -> 120s (safety net only)
+- [x] Tests: test_notification_service.py (2 tests: persists+broadcasts, contract test for publish() exception propagation)
+- [x] Verified: both /ws/chat/{project_id} and /ws/notifications routes registered; tsc clean; next lint clean; full backend suite 92/92
+- [ ] Manual verification (2 sessions, task change -> bell badge updates live) — deferred, needs docker compose + live DB
 
 ### Phase F — Wrap-up
-**Status:** not_started
+**Status:** in_progress
 - [ ] Full backend test suite run
 - [ ] Frontend `npm run build`
 - [ ] Document WS endpoints in .documents/
 
 ## Next Step
-Start Phase E: api/ws/notifications.py, hook publish() into NotificationService.push(), frontend useNotificationSocket() wired into dashboard layout.
+Start Phase F: run full backend suite + frontend build one more time, document the two WS endpoints, then write final summary for the user.
