@@ -1,9 +1,11 @@
-from typing import Annotated
+from typing import Annotated, Optional
 
-from fastapi import APIRouter, File, Query, Response, UploadFile
+from fastapi import APIRouter, Depends, File, Query, Response, UploadFile, status
 
-from app.core.dependencies import CurrentUser
-from app.schemas.common import MessageResponse
+from app.core.dependencies import CurrentUser, require_permissions
+from app.models.user import User
+from app.schemas.admin import AdminUserCreate, AdminUserResponse, AdminUserUpdate
+from app.schemas.common import MessageResponse, PaginatedResponse
 from app.schemas.project import UserSummary
 from app.schemas.user import (
     ChangePasswordRequest,
@@ -13,10 +15,43 @@ from app.schemas.user import (
     UserResponse,
     UserUpdate,
 )
+from app.services.admin_service import AdminUserServiceDep
 from app.services.oauth_service import OAuthServiceDep
 from app.services.user_service import UserServiceDep
 
 router = APIRouter()
+
+
+# ─── Admin: user management ─────────────────────────────────────────────────
+# NOTE: these use the explicit "{user_id:int}" path converter (not plain
+# "{user_id}") so that literal routes like "/me" and "/search" below never get
+# swallowed by the admin routes — Starlette's default str converter would
+# otherwise match "me"/"search" too and fail Pydantic's int coercion (422)
+# before ever falling through to the literal route.
+
+
+@router.get("/", response_model=PaginatedResponse[AdminUserResponse])
+async def list_users(
+    admin_service: AdminUserServiceDep,
+    current_user: Annotated[User, Depends(require_permissions("user:read"))],
+    q: Optional[str] = Query(default=None, max_length=200),
+    role_id: Optional[int] = Query(default=None),
+    is_active: Optional[bool] = Query(default=None),
+    page: Annotated[int, Query(ge=1)] = 1,
+    page_size: Annotated[int, Query(ge=1, le=200)] = 20,
+):
+    return await admin_service.list_users(
+        q=q, role_id=role_id, is_active=is_active, page=page, page_size=page_size
+    )
+
+
+@router.post("/", response_model=AdminUserResponse, status_code=status.HTTP_201_CREATED)
+async def create_user(
+    body: AdminUserCreate,
+    admin_service: AdminUserServiceDep,
+    current_user: Annotated[User, Depends(require_permissions("user:create"))],
+):
+    return await admin_service.create_user(body, current_user)
 
 
 @router.get("/search", response_model=list[UserSummary])
@@ -27,6 +62,43 @@ async def search_users(
     limit: Annotated[int, Query(ge=1, le=50)] = 20,
 ):
     return await user_service.search_active_users(q, limit)
+
+
+@router.get("/{user_id:int}", response_model=AdminUserResponse)
+async def get_user(
+    user_id: int,
+    admin_service: AdminUserServiceDep,
+    current_user: Annotated[User, Depends(require_permissions("user:read"))],
+):
+    return await admin_service.get_user(user_id)
+
+
+@router.patch("/{user_id:int}", response_model=AdminUserResponse)
+async def update_user(
+    user_id: int,
+    body: AdminUserUpdate,
+    admin_service: AdminUserServiceDep,
+    current_user: Annotated[User, Depends(require_permissions("user:update"))],
+):
+    return await admin_service.update_user(user_id, body, current_user)
+
+
+@router.delete("/{user_id:int}", response_model=AdminUserResponse)
+async def deactivate_user(
+    user_id: int,
+    admin_service: AdminUserServiceDep,
+    current_user: Annotated[User, Depends(require_permissions("user:delete"))],
+):
+    return await admin_service.deactivate_user(user_id, current_user)
+
+
+@router.post("/{user_id:int}/reactivate", response_model=AdminUserResponse)
+async def reactivate_user(
+    user_id: int,
+    admin_service: AdminUserServiceDep,
+    current_user: Annotated[User, Depends(require_permissions("user:update"))],
+):
+    return await admin_service.reactivate_user(user_id, current_user)
 
 
 @router.patch("/me", response_model=UserResponse)

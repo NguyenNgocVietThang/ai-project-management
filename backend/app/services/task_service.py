@@ -360,16 +360,54 @@ class TaskService:
         context = await get_project_context(self.db, project_id, user)
         if not context.is_admin and context.role not in {"PM", "BA"}:
             raise ForbiddenException("Only PM or BA can bulk update tasks")
-        results = []
+
+        # Load all tasks in a single query — avoids N+1 selects
+        tasks_map: dict[int, Task] = {
+            task.id: task
+            for task in (
+                await self.db.scalars(
+                    select(Task).where(
+                        Task.id.in_(data.task_ids),
+                        Task.project_id == project_id,
+                    )
+                )
+            ).all()
+        }
+
+        # Validate all IDs upfront before touching any row (atomicity)
         for task_id in data.task_ids:
-            task = await self.db.get(Task, task_id)
-            if task is None or task.project_id != project_id:
+            if task_id not in tasks_map:
                 raise BadRequestException(f"Task {task_id} does not belong to the project")
-            if data.status is not None:
-                results.append(await self.change_status(task_id, TaskStatusUpdate(status=data.status), user))
-            else:
-                update_data = TaskUpdate(**data.model_dump(exclude={"task_ids", "status"}, exclude_none=True))
+
+        results = []
+        if data.status is not None:
+            target = TaskStatus(data.status)
+            # Validate all transitions before applying any change
+            for task in tasks_map.values():
+                if target != task.status and target not in STATUS_TRANSITIONS.get(task.status, set()):
+                    raise ConflictException(
+                        f"Cannot transition task {task.id} from {task.status.value} to {target.value}"
+                    )
+            # Apply all status changes together
+            for task in tasks_map.values():
+                old = task.status
+                task.status = target
+                task.progress = 100.0 if target == TaskStatus.DONE else min(task.progress, 99.0)
+                add_audit(
+                    self.db, user.id, "STATUS", "Task", task.id,
+                    old_values={"status": old}, new_values={"status": target},
+                )
+            await self.db.flush()
+            # Single CPM recalculation for the entire batch
+            await recalculate_project(self.db, project_id)
+            for task_id in data.task_ids:
+                loaded = await self._loaded_task(task_id)
+                results.append(await self._response(loaded, user, context.role, context.is_admin))
+        else:
+            update_data = TaskUpdate(**data.model_dump(exclude={"task_ids", "status"}, exclude_none=True))
+            for task_id in data.task_ids:
                 results.append(await self.update(task_id, update_data, user))
+
         return results
 
     async def delete(self, task_id: int, user: User) -> None:

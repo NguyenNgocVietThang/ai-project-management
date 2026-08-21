@@ -1,8 +1,10 @@
+from datetime import datetime
 from typing import Literal, Optional
 
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
 from app.core.security import validate_password_policy
+from app.schemas.project import RoleSummary
 
 
 class UserBase(BaseModel):
@@ -67,8 +69,14 @@ OAuthProvider = Literal["google", "facebook"]
 
 
 class UserResponse(UserBase):
+    # Overrides UserBase.email (EmailStr): responses must reflect stored data as-is,
+    # including synthetic addresses like "deleted_<id>_<hex>@deleted.invalid" written by
+    # UserService.deactivate_account's anonymization — EmailStr rejects the reserved
+    # ".invalid" TLD (RFC 2606) and would 500 on any deactivated/anonymized account.
+    email: str
     id: int
     is_active: bool
+    is_superuser: bool
     email_verified: bool
     avatar_url: Optional[str] = None
     phone: Optional[str] = None
@@ -78,5 +86,7 @@ class UserResponse(UserBase):
     has_password: bool
     google_connected: bool
     facebook_connected: bool
+    roles: list[RoleSummary] = []
+    last_login: Optional[datetime] = None
 
     model_config = {"from_attributes": True}

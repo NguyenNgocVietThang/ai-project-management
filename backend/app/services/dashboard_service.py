@@ -39,6 +39,7 @@ from app.schemas.dashboard import (
     UserDashboardStats,
     UserDashboardSummary,
 )
+from app.services.phase2_common import is_admin as _is_admin
 
 # ── colour hints for task-status donut chart ──────────────────────────────────
 STATUS_COLORS: dict[str, str] = {
@@ -48,11 +49,6 @@ STATUS_COLORS: dict[str, str] = {
     TaskStatus.DONE.value: "#22c55e",
     TaskStatus.BLOCKED.value: "#ef4444",
 }
-
-
-def _is_admin(user: User) -> bool:
-    return bool(user.is_superuser or any(r.name == "Admin" for r in user.roles))
-
 
 def _iso_week_bounds(today: date) -> Tuple[date, date]:
     """Return (monday, sunday) of the ISO week containing *today*."""

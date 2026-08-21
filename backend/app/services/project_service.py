@@ -1,7 +1,6 @@
 import asyncio
 import logging
 from datetime import date, datetime, timezone
-from enum import Enum
 from typing import Annotated, Any, List, Optional, Tuple
 
 from fastapi import Depends
@@ -36,22 +35,11 @@ from app.schemas.project import (
     RoleSummary,
     UserSummary,
 )
+from app.services.phase2_common import is_admin as _is_admin, json_value as _json_value
 from app.workers.email_tasks import send_project_invitation_email_task
 
 logger = logging.getLogger(__name__)
 PROJECT_ROLES = {"PM", "BA", "PO", "Member", "Customer"}
-
-
-def _json_value(value: Any) -> Any:
-    if isinstance(value, Enum):
-        return value.value
-    if isinstance(value, (date, datetime)):
-        return value.isoformat()
-    return value
-
-
-def _is_admin(user: User) -> bool:
-    return bool(user.is_superuser or any(role.name == "Admin" for role in user.roles))
 
 
 class ProjectService:
