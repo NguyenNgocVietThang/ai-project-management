@@ -50,7 +50,15 @@
 - Full backend suite: 90/90 passing. Frontend: `tsc --noEmit` clean, `next lint` clean (whole repo, 0 warnings/errors).
 - Deferred: live 2-browser-session manual verification — needs `docker compose up`; will do a combined pass after Phase E lands too.
 
-### Now starting Phase E (real-time notification push over WebSocket).
+**Phase E — Real-time notification push over WebSocket (complete, pending live manual verification)**
+- Backend: `api/ws/notifications.py` — `/ws/notifications?token=...`, user-scoped channel `notif:user:{id}`, registered in `api/ws/router.py`.
+- Hooked `publish()` into the single choke point `NotificationService.push()` — now does `db.add()` then `await db.flush()` (to get server-generated `id`/`created_at` for the payload) then `publish()`. Audited both existing call sites (`task_service.py` create/reassignment) — safe, no caller depended on `push()` staying flush-free.
+- Frontend: `useNotificationSocket()` added to `features/notifications/hooks/useNotifications.ts` (opens one WS per session, increments the unread-count cache + invalidates the list on every push), wired into `(dashboard)/layout.tsx` — had to place the hook call **before** the layout's early `return <FullPageSpinner />` (same rules-of-hooks lesson as Phase D). `useUnreadCount`'s poll relaxed from 30s to 120s now that WS is the primary channel (poll kept only as a safety net for reconnect gaps/backgrounded tabs).
+- New test: `test_notification_service.py` (2 tests) — one verifies `push()` persists + calls `publish()` with the right channel/payload; the other documents a contract: `push()` does NOT shield callers from a `publish()` exception, so `ws_manager.publish()`'s own internal soft-fail (catch-all + log) is what actually protects notification creation from a Redis outage.
+- Verified: both `/ws/chat/{project_id}` and `/ws/notifications` routes registered on the running app; full backend suite 92/92; frontend `tsc --noEmit` and `next lint` both clean.
+- Deferred: live 2-session manual verification (needs `docker compose up` — postgres/redis/backend/celery worker/celery beat all running). This is the one remaining unchecked box across Phases B/D/E; recommend doing it as a single combined pass once the user has the stack running locally.
+
+### Now starting Phase F (wrap-up).
 
 ## Errors Encountered
 | Error | Attempt | Resolution |
