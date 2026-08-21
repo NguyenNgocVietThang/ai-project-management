@@ -50,3 +50,7 @@ from app.models.risk_report import RiskReport  # noqa: F401
 from app.models.document import Document  # noqa: F401
 from app.models.notification import Notification  # noqa: F401
 from app.models.email_log import EmailLog  # noqa: F401
+
+# ─── Domain 8: Chat ────────────────────────────────────────────────────────
+from app.models.chat_message import ChatMessage  # noqa: F401
+from app.models.chat_read_state import ChatReadState  # noqa: F401
