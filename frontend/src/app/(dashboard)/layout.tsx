@@ -1,17 +1,20 @@
 'use client'
 
-import { Briefcase, FolderKanban, LayoutDashboard, LogOut, User } from 'lucide-react'
+import { Briefcase, FolderKanban, LayoutDashboard, LogOut, ShieldCheck, User } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import Cookies from 'js-cookie'
 import { FullPageSpinner } from '@/components/common/FullPageSpinner'
 import { EmailVerificationBanner } from '@/features/auth/components/EmailVerificationBanner'
 import { NotificationBell } from '@/features/notifications/components/NotificationBell'
 import { useAuth } from '@/hooks/useAuth'
+import { isAdminUser } from '@/lib/rbac'
 import { useAuthStore } from '@/store/authStore'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
+  const [isClient, setIsClient] = useState(false)
   const hasHydrated = useAuthStore((s) => s.hasHydrated)
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated())
   const {
@@ -24,12 +27,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   } = useAuth()
 
   useEffect(() => {
-    if (hasHydrated && !isAuthenticated) {
+    setIsClient(true)
+    useAuthStore.setState({ hasHydrated: true })
+  }, [])
+
+  useEffect(() => {
+    if ((hasHydrated || isClient) && !isAuthenticated) {
+      Cookies.remove('auth-token', { path: '/' })
+      Cookies.remove('auth-token')
       router.replace('/login')
     }
-  }, [hasHydrated, isAuthenticated, router])
+  }, [hasHydrated, isClient, isAuthenticated, router])
 
-  if (!hasHydrated || !isAuthenticated) {
+  if (!isClient || !isAuthenticated) {
     return <FullPageSpinner />
   }
 
@@ -44,6 +54,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <Link href="/dashboard" className="inline-flex min-h-11 items-center gap-2 rounded-md px-3 text-sm text-muted-foreground hover:bg-accent hover:text-foreground"><LayoutDashboard className="h-4 w-4" /><span className="hidden sm:inline">Dashboard</span></Link>
             <Link href="/portfolios" className="inline-flex min-h-11 items-center gap-2 rounded-md px-3 text-sm text-muted-foreground hover:bg-accent hover:text-foreground"><Briefcase className="h-4 w-4" /><span className="hidden sm:inline">Portfolios</span></Link>
             <Link href="/projects" className="inline-flex min-h-11 items-center gap-2 rounded-md px-3 text-sm text-muted-foreground hover:bg-accent hover:text-foreground"><FolderKanban className="h-4 w-4" /><span className="hidden sm:inline">Projects</span></Link>
+            {isAdminUser(user) && <Link href="/admin" className="inline-flex min-h-11 items-center gap-2 rounded-md px-3 text-sm text-muted-foreground hover:bg-accent hover:text-foreground"><ShieldCheck className="h-4 w-4" /><span className="hidden sm:inline">Admin</span></Link>}
           </nav>
         </div>
         <div className="flex items-center gap-4">

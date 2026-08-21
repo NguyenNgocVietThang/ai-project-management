@@ -77,7 +77,13 @@ class AuthService:
 
     async def authenticate(self, email: str, password: str) -> User:
         user = await self.users.get_by_email(email)
-        if not user or not verify_password(password, user.hashed_password):
+        if not user:
+            raise UnauthorizedException("Incorrect email or password")
+        if user.hashed_password is None:
+            raise BadRequestException(
+                "This account uses social login. Please sign in with Google or Facebook."
+            )
+        if not verify_password(password, user.hashed_password):
             raise UnauthorizedException("Incorrect email or password")
         if not user.is_active:
             raise ForbiddenException("Inactive user")

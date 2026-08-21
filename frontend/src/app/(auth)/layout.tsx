@@ -1,26 +1,32 @@
 'use client'
 
 import { usePathname, useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { FullPageSpinner } from '@/components/common/FullPageSpinner'
 import { useAuthStore } from '@/store/authStore'
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
+  const [isClient, setIsClient] = useState(false)
   const hasHydrated = useAuthStore((s) => s.hasHydrated)
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated())
   const isVerificationRoute = pathname === '/verify-email'
 
   useEffect(() => {
-    if (hasHydrated && isAuthenticated && !isVerificationRoute) {
+    setIsClient(true)
+    useAuthStore.setState({ hasHydrated: true })
+  }, [])
+
+  useEffect(() => {
+    if ((hasHydrated || isClient) && isAuthenticated && !isVerificationRoute) {
       router.replace('/dashboard')
     }
-  }, [hasHydrated, isAuthenticated, isVerificationRoute, router])
+  }, [hasHydrated, isClient, isAuthenticated, isVerificationRoute, router])
 
   // Verification links are public and must render even when browser storage is
   // unavailable or still hydrating (for example, when opened from an email client).
-  if (!isVerificationRoute && (!hasHydrated || isAuthenticated)) {
+  if (!isVerificationRoute && (!isClient || isAuthenticated)) {
     return <FullPageSpinner />
   }
 

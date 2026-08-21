@@ -1,6 +1,5 @@
-from datetime import date, datetime, timezone
-from enum import Enum
-from typing import Annotated, Any, List, Optional, Tuple
+from datetime import datetime, timezone
+from typing import Annotated, List, Optional, Tuple
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -19,18 +18,8 @@ from app.schemas.portfolio import (
     PortfolioResponse,
     PortfolioUpdate,
 )
+from app.services.phase2_common import is_admin as _is_admin, json_value as _json_value
 
-
-def _json_value(value: Any) -> Any:
-    if isinstance(value, Enum):
-        return value.value
-    if isinstance(value, (date, datetime)):
-        return value.isoformat()
-    return value
-
-
-def _is_admin(user: User) -> bool:
-    return bool(user.is_superuser or any(role.name == "Admin" for role in user.roles))
 
 
 class PortfolioService:

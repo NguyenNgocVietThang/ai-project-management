@@ -2,13 +2,14 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 // Routes that require authentication
-const PROTECTED_PREFIXES = ['/dashboard', '/projects', '/portfolios', '/settings', '/profile']
+const PROTECTED_PREFIXES = ['/dashboard', '/projects', '/portfolios', '/settings', '/profile', '/admin']
 // Routes for unauthenticated users
-const AUTH_ROUTES = ['/login', '/register']
+const AUTH_ROUTES = ['/login', '/register', '/forgot-password', '/reset-password']
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
-  const token = request.cookies.get('auth-token')?.value
+  const rawToken = request.cookies.get('auth-token')?.value
+  const token = rawToken && rawToken !== 'undefined' && rawToken !== 'null' && rawToken.trim() !== '' ? rawToken : null
 
   const isProtectedRoute = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix))
   const isAuthRoute = AUTH_ROUTES.some((route) => pathname === route)
@@ -16,7 +17,11 @@ export function middleware(request: NextRequest) {
   if (isProtectedRoute && !token) {
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('from', pathname)
-    return NextResponse.redirect(loginUrl)
+    const response = NextResponse.redirect(loginUrl)
+    if (rawToken) {
+      response.cookies.delete('auth-token')
+    }
+    return response
   }
 
   if (isAuthRoute && token) {

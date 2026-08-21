@@ -35,12 +35,19 @@ export interface AuthMessageResponse {
   message: string
 }
 
+export interface RoleSummary {
+  id: number
+  name: string
+  description: string | null
+}
+
 export interface User {
   id: number
   email: string
   username: string
   full_name: string
   is_active: boolean
+  is_superuser: boolean
   email_verified: boolean
   avatar_url: string | null
   phone: string | null
@@ -50,6 +57,8 @@ export interface User {
   has_password: boolean
   google_connected: boolean
   facebook_connected: boolean
+  roles: RoleSummary[]
+  last_login: string | null
 }
 
 export interface UpdateProfileRequest {

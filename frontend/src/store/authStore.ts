@@ -31,15 +31,18 @@ export const useAuthStore = create<AuthState>()(
       hasHydrated: false,
       isAuthenticated: () => Boolean(get().accessToken),
       setTokens: (tokens) => {
-        Cookies.set(AUTH_COOKIE_KEY, tokens.access_token, { expires: 7, path: '/', sameSite: 'lax' })
+        if (tokens?.access_token) {
+          Cookies.set(AUTH_COOKIE_KEY, tokens.access_token, { expires: 7, path: '/', sameSite: 'lax' })
+        }
         set({
-          accessToken: tokens.access_token,
-          refreshToken: tokens.refresh_token,
+          accessToken: tokens?.access_token ?? null,
+          refreshToken: tokens?.refresh_token ?? null,
         })
       },
       setUser: (user) => set({ user }),
       clear: () => {
         Cookies.remove(AUTH_COOKIE_KEY, { path: '/' })
+        Cookies.remove(AUTH_COOKIE_KEY)
         set({ accessToken: null, refreshToken: null, user: null })
       },
       setHasHydrated: (value) => set({ hasHydrated: value }),
@@ -54,8 +57,11 @@ export const useAuthStore = create<AuthState>()(
       onRehydrateStorage: () => (state) => {
         if (state?.accessToken) {
           Cookies.set(AUTH_COOKIE_KEY, state.accessToken, { expires: 7, path: '/', sameSite: 'lax' })
+        } else {
+          Cookies.remove(AUTH_COOKIE_KEY, { path: '/' })
+          Cookies.remove(AUTH_COOKIE_KEY)
         }
-        state?.setHasHydrated(true)
+        useAuthStore.setState({ hasHydrated: true })
       },
     }
   )
