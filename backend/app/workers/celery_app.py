@@ -1,4 +1,5 @@
 ﻿from celery import Celery
+from celery.schedules import crontab
 
 from app.core.config import settings
 
@@ -10,6 +11,7 @@ celery_app = Celery(
         "app.workers.ai_tasks",
         "app.workers.report_tasks",
         "app.workers.email_tasks",
+        "app.workers.notification_tasks",
     ],
 )
 
@@ -34,3 +36,13 @@ celery_app.conf.update(
         "interval_start": 0,
     },
 )
+
+# Requires a separate `celery -A app.workers.celery_app beat` process running
+# (see docker-compose.yml's celery-beat service) — the worker alone never
+# fires scheduled tasks.
+celery_app.conf.beat_schedule = {
+    "sweep-task-dates-daily": {
+        "task": "notifications.sweep_task_dates",
+        "schedule": crontab(hour=8, minute=0),  # 08:00 Asia/Ho_Chi_Minh
+    },
+}

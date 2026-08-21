@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import date, datetime
 from enum import Enum
-from typing import Any, Optional
+from typing import Any, Iterable, Optional
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.exceptions import ForbiddenException, NotFoundException
 from app.models.associations import project_members
 from app.models.audit_log import AuditLog
+from app.models.notification import NotificationType
 from app.models.project import Project
 from app.models.role import Role
 from app.models.task import Task
@@ -63,6 +64,44 @@ async def get_task_context(db: AsyncSession, task_id: int, user: User):
         raise NotFoundException("Task not found")
     context = await get_project_context(db, task.project_id, user)
     return task, context
+
+
+async def notify_project_team(
+    db: AsyncSession,
+    project_id: int,
+    *,
+    title: str,
+    message: str,
+    ntype: NotificationType,
+    exclude_user_ids: Optional[Iterable[int]] = None,
+    link: Optional[str] = None,
+    entity_type: Optional[str] = None,
+    entity_id: Optional[int] = None,
+) -> None:
+    """Fan out one Notification row per `project_members` row for `project_id`,
+    skipping any id in `exclude_user_ids` (typically the actor who made the
+    change, and/or a user who already got a more specific push elsewhere)."""
+    from app.services.notification_service import NotificationService
+
+    exclude = set(exclude_user_ids) if exclude_user_ids else set()
+    member_ids = (
+        await db.scalars(
+            select(project_members.c.user_id).where(project_members.c.project_id == project_id)
+        )
+    ).all()
+    for user_id in member_ids:
+        if user_id in exclude:
+            continue
+        await NotificationService.push(
+            db,
+            user_id=user_id,
+            title=title,
+            message=message,
+            ntype=ntype,
+            link=link,
+            entity_type=entity_type,
+            entity_id=entity_id,
+        )
 
 
 def json_value(value: Any) -> Any:
