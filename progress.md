@@ -58,7 +58,23 @@
 - Verified: both `/ws/chat/{project_id}` and `/ws/notifications` routes registered on the running app; full backend suite 92/92; frontend `tsc --noEmit` and `next lint` both clean.
 - Deferred: live 2-session manual verification (needs `docker compose up` — postgres/redis/backend/celery worker/celery beat all running). This is the one remaining unchecked box across Phases B/D/E; recommend doing it as a single combined pass once the user has the stack running locally.
 
-### Now starting Phase F (wrap-up).
+**Phase F — Wrap-up (complete)**
+- Full backend suite: 92/92 passing (final run after all phases).
+- Frontend production build (`next build`): succeeds cleanly — 23 routes generated including `/projects/[id]/chat`; earlier `tsc --noEmit` and `next lint` passes (whole repo) also both clean.
+- Documented the WebSocket feature in `.documents/specs/system-architecture/design.md`: new "Real-Time Communication (WebSocket)" section (endpoints, auth handshake, delivery model, chat/notification integration points), fixed the stale `NEXT_PUBLIC_WS_URL` doc value (doc said the env var should already include `/ws` — actual code has it as a bare origin with `/ws/...` appended by callers), bumped the doc's version header (2.0 → 2.2, matching the Change History table which already listed 2.1 but the header hadn't been updated) and added a 2.2 Change History row.
+
+## Summary — all 6 phases complete
+| Phase | Status | Commit |
+|---|---|---|
+| A — Admin review & commit | ✅ complete | `742e23a` |
+| B — Notification triggers + Celery Beat | ✅ complete | `48c8da4` |
+| C — Shared WebSocket infrastructure | ✅ complete | `001ffb9` |
+| D — Chat feature (backend) | ✅ complete | `bcd31bc` |
+| D — Chat feature (frontend) | ✅ complete | `a0f2a4a` |
+| E — Real-time notification push | ✅ complete | `f329631` |
+| F — Wrap-up + docs | ✅ complete | (this commit) |
+
+Only remaining item: a live multi-session manual verification pass (needs `docker compose up` — Postgres/Redis/backend/celery-worker/celery-beat) to visually confirm real-time chat delivery, reconnect behavior, and live notification bell updates. Everything checkable without a running stack (unit tests, migration chain, type-check, lint, production build) is done and green.
 
 ## Errors Encountered
 | Error | Attempt | Resolution |

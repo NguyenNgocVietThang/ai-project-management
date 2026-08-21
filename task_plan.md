@@ -70,10 +70,13 @@ Full approved plan: `C:\Users\VIET THANG\.claude\plans\t-i-mu-n-ti-p-t-c-soft-pr
 - [ ] Manual verification (2 sessions, task change -> bell badge updates live) — deferred, needs docker compose + live DB
 
 ### Phase F — Wrap-up
-**Status:** in_progress
-- [ ] Full backend test suite run
-- [ ] Frontend `npm run build`
-- [ ] Document WS endpoints in .documents/
+**Status:** complete
+- [x] Full backend test suite run — 92/92 passing
+- [x] Frontend production build (`next build`) — succeeds, all 23 routes generated incl. `/projects/[id]/chat`
+- [x] Documented WS endpoints in `.documents/specs/system-architecture/design.md` (new "Real-Time Communication (WebSocket)" section + fixed the stale `NEXT_PUBLIC_WS_URL` doc value + Change History 2.2 entry)
+
+## All phases complete except live manual verification
+The one remaining item across Phases B/D/E is a live multi-session manual check (task notification fan-out, chat real-time delivery + reconnect, notification bell live update) — needs `docker compose up` with Postgres/Redis/backend/celery-worker/celery-beat all running. Everything else (unit tests, type-check, lint, production build, migration chain) is verified. See progress.md for the full session log.
 
 ## Next Step
-Start Phase F: run full backend suite + frontend build one more time, document the two WS endpoints, then write final summary for the user.
+All planned phases are implemented, tested, and committed. Only remaining step is the user running a live manual verification pass (docker compose up) whenever convenient — see "Manual verification" checklist notes in each phase above.

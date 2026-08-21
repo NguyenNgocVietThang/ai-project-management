@@ -1,8 +1,8 @@
 # System Architecture Design
 ## AI Project Planning & Portfolio Management System
 
-**Version:** 2.0
-**Date:** 2026-08-05
+**Version:** 2.2
+**Date:** 2026-08-22
 
 ---
 
@@ -398,6 +398,56 @@ Celery Worker Pool
 
 ---
 
+## Real-Time Communication (WebSocket)
+
+Two native FastAPI `WebSocket` endpoints, mounted at the **app root** under
+`/ws` (not under `/api/v1` — see `app/main.py`), backed by a Redis pub/sub
+bridge (`app/core/ws_manager.py`) so messages fan out correctly across
+multiple uvicorn workers:
+
+```
+/ws/chat/{project_id}?token=<JWT>   ← project team chat (1 channel per Project)
+/ws/notifications?token=<JWT>       ← per-user real-time notification push
+```
+
+**Auth handshake**: the JWT access token travels as a query parameter, not
+an `Authorization` header — browsers cannot set custom headers on a
+WebSocket handshake. `app/api/ws/deps.py::authenticate_ws()` decodes it the
+same way `get_current_user()` does for REST (same `auth_version`/`is_active`
+checks); on failure the server closes the socket with code `4401`.
+
+**Delivery model**: `app/core/ws_manager.py::publish(channel, payload)`
+publishes to Redis only (channel-prefixed `ws:<channel>`); a background
+`redis_listener()` task (started in the FastAPI `lifespan`, retries with
+backoff on a Redis outage) subscribes to `ws:*` and re-broadcasts to this
+process's local connections — including messages this same process
+published, so `publish()` deliberately does not also broadcast locally
+(would double-deliver). If Redis is briefly down, WS delivery fails silently
+rather than raising: chat still persists via the DB + REST history endpoint,
+notifications still land via the DB + the `useUnreadCount` poll fallback.
+
+**Chat** (`app/api/ws/chat.py`, `app/services/chat_service.py`): channel
+`chat:project:{id}`, gated by the same `get_project_context()` project-team
+membership check used by REST. Incoming `{"type":"message","content":...}`
+frames go through the identical `ChatService.create_message()` path as the
+REST fallback (`POST /api/v1/projects/{id}/messages`) — a single code path,
+so the sender receives their own message back via the pub/sub broadcast
+rather than a direct echo.
+
+**Notifications** (`app/api/ws/notifications.py`): channel
+`notif:user:{id}`. `NotificationService.push()` — the one choke point every
+notification trigger already goes through — flushes (to get the
+server-generated `id`/`created_at`) then calls `publish()`, so every
+existing and future trigger gets real-time push automatically with no
+per-call-site changes.
+
+Frontend: `frontend/src/lib/ws-client.ts` is a small shared
+reconnecting-WebSocket helper (exponential backoff, JSON parsing) used by
+both `features/chat/hooks/useChatSocket.ts` and
+`features/notifications/hooks/useNotifications.ts::useNotificationSocket()`.
+
+---
+
 ## Security Architecture
 
 ### Authentication Flow
@@ -473,7 +523,7 @@ File: `frontend/.env.example`
 | Biến | Mô tả |
 |---|---|
 | `NEXT_PUBLIC_API_URL` | `http://localhost:8000/api/v1` |
-| `NEXT_PUBLIC_WS_URL` | `ws://localhost:8000/ws` (future) |
+| `NEXT_PUBLIC_WS_URL` | `ws://localhost:8000` — bare origin; the app appends `/ws/...` itself (see [Real-Time Communication](#real-time-communication-websocket)) |
 
 ---
 
@@ -484,7 +534,8 @@ File: `frontend/.env.example`
 | 1.0 | 2026-06-25 | Phiên bản ban đầu |
 | 2.0 | 2026-08-05 | Cập nhật toàn diện: Next.js 15 (thay Vite), 7 Domains/31 Tables, thêm chi tiết Layered Architecture, Repository Pattern, 34 Permissions, 13 Notification types, chi tiết Celery tasks, CPM fields, security flow |
 | 2.1 | 2026-08-13 | Đã hoàn thành Auth & User Onboarding Module (Login, Register, Google & Facebook OAuth, Password recovery, Email verification, Edge JWT Guard, Auth Services & Store). Cập nhật tài liệu sát thực tế. |
+| 2.2 | 2026-08-22 | Đã hoàn thành Admin panel (user/role/permission CRUD + audit log), Notification triggers (task start/due-soon/change → toàn bộ project team, qua Celery Beat daily sweep), và Chat module (project-scoped, real-time). Thêm mục "Real-Time Communication (WebSocket)": `/ws/chat/{project_id}` và `/ws/notifications`, Redis pub/sub bridge (`app/core/ws_manager.py`), JWT-via-query-param auth handshake. Sửa `NEXT_PUBLIC_WS_URL` thành bare origin (trước đây tài liệu ghi nhầm có sẵn `/ws`). |
 
 ---
 
-*Cập nhật lần cuối: 2026-08-13 — Version 2.1 — Stack: Python FastAPI + Next.js 15*
+*Cập nhật lần cuối: 2026-08-22 — Version 2.2 — Stack: Python FastAPI + Next.js 15*
