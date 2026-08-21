@@ -38,15 +38,15 @@ Full approved plan: `C:\Users\VIET THANG\.claude\plans\t-i-mu-n-ti-p-t-c-soft-pr
 - [ ] Manual verification (deferred — needs docker compose + live DB; not blocking further phases)
 
 ### Phase C — Shared WebSocket infrastructure
-**Status:** in_progress
-- [ ] `core/redis_client.py` — async Redis singleton
-- [ ] `core/ws_manager.py` — ConnectionManager + publish() + redis_listener()
-- [ ] `api/ws/deps.py` — authenticate_ws()
-- [ ] Wire redis_listener() into main.py lifespan; mount ws_router at app root `/ws`
-- [ ] Test: test_ws_manager.py
+**Status:** complete
+- [x] `core/redis_client.py` — async Redis singleton
+- [x] `core/ws_manager.py` — ConnectionManager + publish() + redis_listener() (with retry/backoff on Redis outage)
+- [x] `api/ws/deps.py` — authenticate_ws() (raises WSAuthError, caller closes with code 4401)
+- [x] Wire redis_listener() into main.py lifespan; mount empty `ws_router` (from api/ws/router.py) at app root `/ws` — Phase D/E will register their sub-routers into it
+- [x] Test: test_ws_manager.py (5 tests, all passing)
 
 ### Phase D — Chat feature
-**Status:** not_started
+**Status:** in_progress
 - [ ] Models: ChatMessage, ChatReadState + register in db/base.py
 - [ ] Migration for chat_messages / chat_read_states (chained after Phase B migration)
 - [ ] Schemas: chat.py
@@ -72,4 +72,4 @@ Full approved plan: `C:\Users\VIET THANG\.claude\plans\t-i-mu-n-ti-p-t-c-soft-pr
 - [ ] Document WS endpoints in .documents/
 
 ## Next Step
-Start Phase C: build `core/redis_client.py` and `core/ws_manager.py`, then wire `redis_listener()` into `main.py` lifespan.
+Start Phase D: ChatMessage/ChatReadState models + migration, then chat_service.py, REST endpoints, WS endpoint, and frontend features/chat module.
