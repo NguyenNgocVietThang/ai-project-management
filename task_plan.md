@@ -20,25 +20,25 @@ Full approved plan: `C:\Users\VIET THANG\.claude\plans\t-i-mu-n-ti-p-t-c-soft-pr
 ## Phases
 
 ### Phase A — Admin review & commit checkpoint
-**Status:** in_progress
-- [ ] Run existing admin/audit unit tests, confirm pass
-- [ ] Spot-check endpoint guards (require_permissions/require_roles) on users/roles/permissions/audit_timeline
-- [ ] Confirm with user which unrelated modified files (.mcp.json, .claude/launch.json) to include/exclude from commit
-- [ ] Commit admin-related backend + frontend files as one logical unit
+**Status:** complete
+- [x] Run existing admin/audit unit tests, confirm pass — 16/16 passed
+- [x] Spot-check endpoint guards (require_permissions/require_roles) on users/roles/permissions/audit_timeline — all correct
+- [x] Confirm with user which unrelated modified files (.mcp.json, .claude/launch.json) to include/exclude from commit — user chose to commit everything together
+- [x] Commit admin-related backend + frontend files as one logical unit — commit `742e23a`
 
 ### Phase B — Notification triggers + Celery Beat
-**Status:** not_started
-- [ ] Add `notify_project_team()` fan-out helper to `phase2_common.py`
-- [ ] Hook task field-change + status-change notifications into `task_service.py`
-- [ ] Add `last_start_notified_at` / `last_due_soon_notified_at` columns to `Task` model
-- [ ] New Alembic migration for the two columns (down_revision = 20260814_phase2_task_wbs)
-- [ ] New `notification_tasks.py` Celery task (sweep) + beat_schedule in `celery_app.py`
-- [ ] Add `celery-beat` service to docker-compose.yml
-- [ ] Tests: test_notification_triggers.py, test_notification_tasks.py
-- [ ] Manual verification
+**Status:** complete
+- [x] Add `notify_project_team()` fan-out helper to `phase2_common.py`
+- [x] Hook task field-change + status-change notifications into `task_service.py` (update() + change_status())
+- [x] Add `last_start_notified_at` / `last_due_soon_notified_at` columns to `Task` model
+- [x] New Alembic migration for the two columns (down_revision = 20260814_phase2_task_wbs) — verified single head via `alembic heads`
+- [x] New `notification_tasks.py` Celery task (sweep) + beat_schedule in `celery_app.py` (daily 08:00 Asia/Ho_Chi_Minh)
+- [x] Add `celery-beat` service to docker-compose.yml
+- [x] Tests: test_notification_triggers.py (6 tests), test_notification_tasks.py (2 tests) — all passing
+- [ ] Manual verification (deferred — needs docker compose + live DB; not blocking further phases)
 
 ### Phase C — Shared WebSocket infrastructure
-**Status:** not_started
+**Status:** in_progress
 - [ ] `core/redis_client.py` — async Redis singleton
 - [ ] `core/ws_manager.py` — ConnectionManager + publish() + redis_listener()
 - [ ] `api/ws/deps.py` — authenticate_ws()
@@ -72,4 +72,4 @@ Full approved plan: `C:\Users\VIET THANG\.claude\plans\t-i-mu-n-ti-p-t-c-soft-pr
 - [ ] Document WS endpoints in .documents/
 
 ## Next Step
-Start Phase A: run the three existing admin/audit unit test files and report results.
+Start Phase C: build `core/redis_client.py` and `core/ws_manager.py`, then wire `redis_listener()` into `main.py` lifespan.

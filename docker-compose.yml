@@ -101,6 +101,26 @@ services:
       - ./backend:/app
     command: celery -A app.workers.celery_app worker --loglevel=info
 
+  # ─── Celery Beat (scheduled tasks, e.g. daily task-date notification sweep) ──
+
+  celery-beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ai-project-celery-beat
+    environment:
+      - APP_ENV=production
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/ai_project_management
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://redis:6379/2
+    depends_on:
+      - backend
+      - redis
+    volumes:
+      - ./backend:/app
+    command: celery -A app.workers.celery_app beat --loglevel=info
+
   # ─── Frontend (Next.js) ──────────────────────────────────
 
   frontend:

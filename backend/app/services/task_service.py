@@ -35,7 +35,13 @@ from app.schemas.task import (
     TaskStatusUpdate,
     TaskUpdate,
 )
-from app.services.phase2_common import add_audit, get_project_context, get_task_context, serialize_model
+from app.services.phase2_common import (
+    add_audit,
+    get_project_context,
+    get_task_context,
+    notify_project_team,
+    serialize_model,
+)
 from app.services.scheduling_service import recalculate_project
 from app.utils.cpm import CPMEdge, build_graph, topological_sort
 
@@ -47,6 +53,10 @@ STATUS_TRANSITIONS = {
     TaskStatus.DONE: {TaskStatus.IN_REVIEW},
     TaskStatus.BLOCKED: {TaskStatus.TODO, TaskStatus.IN_PROGRESS},
 }
+
+# Fields whose change is significant enough to notify the whole project team
+# (not just the assignee/actor) — see notify_project_team() calls below.
+SIGNIFICANT_TASK_FIELDS = {"status", "start_date", "due_date", "priority", "assignee_id"}
 
 
 class TaskService:
@@ -294,8 +304,15 @@ class TaskService:
         old = {key: getattr(task, key) for key in values}
         if "priority" in values and values["priority"] is not None:
             values["priority"] = TaskPriority(values["priority"])
+        changed_significant_fields = {
+            key for key in values
+            if key in SIGNIFICANT_TASK_FIELDS and old.get(key) != values[key]
+        }
         for key, value in values.items():
             setattr(task, key, value)
+        if "due_date" in changed_significant_fields:
+            # Due date moved — allow the "due soon" sweep to re-fire for the new date.
+            task.last_due_soon_notified_at = None
         new_assignee_id = values.get("assignee_id")
         old_assignee_id = old.get("assignee_id")
         if new_assignee_id is not None:
@@ -334,6 +351,23 @@ class TaskService:
                 entity_type="Task",
                 entity_id=task.id,
             )
+        # Notify the rest of the project team when a significant field changed
+        if changed_significant_fields:
+            exclude_ids = {user.id}
+            if new_assignee_id is not None and new_assignee_id != old_assignee_id:
+                exclude_ids.add(new_assignee_id)  # already got a dedicated TASK_ASSIGNED push above
+            field_list = ", ".join(sorted(changed_significant_fields))
+            await notify_project_team(
+                self.db,
+                task.project_id,
+                title=f"Task '{task.name}' updated",
+                message=f"{user.full_name} changed {field_list} on task '{task.name}'",
+                ntype=NotificationType.SYSTEM,
+                exclude_user_ids=exclude_ids,
+                link=f"/projects/{task.project_id}/tasks/{task.id}",
+                entity_type="Task",
+                entity_id=task.id,
+            )
         add_audit(self.db, user.id, "UPDATE", "Task", task.id, old_values=old, new_values=values)
         await recalculate_project(self.db, task.project_id)
         loaded = await self._loaded_task(task.id)
@@ -351,6 +385,18 @@ class TaskService:
         task.status = target
         task.progress = 100.0 if target == TaskStatus.DONE else min(task.progress, 99.0)
         await self.db.flush()
+        if target != old:
+            await notify_project_team(
+                self.db,
+                task.project_id,
+                title=f"Task '{task.name}' status changed",
+                message=f"{user.full_name} moved '{task.name}' from {old.value} to {target.value}",
+                ntype=NotificationType.SYSTEM,
+                exclude_user_ids={user.id},
+                link=f"/projects/{task.project_id}/tasks/{task.id}",
+                entity_type="Task",
+                entity_id=task.id,
+            )
         add_audit(self.db, user.id, "STATUS", "Task", task.id, old_values={"status": old}, new_values={"status": target})
         await recalculate_project(self.db, task.project_id)
         loaded = await self._loaded_task(task.id)

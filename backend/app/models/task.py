@@ -1,7 +1,7 @@
 ﻿import enum
-from datetime import date
+from datetime import date, datetime
 from typing import List, Optional
-from sqlalchemy import Boolean, Date, Enum, Float, ForeignKey, Index, Integer, JSON, String, Text
+from sqlalchemy import Boolean, Date, DateTime, Enum, Float, ForeignKey, Index, Integer, JSON, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base
 
@@ -46,6 +46,10 @@ class Task(Base):
     due_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)     # Ngày dự kiến kết thúc
     actual_start: Mapped[Optional[date]] = mapped_column(Date, nullable=True) # Ngày thực tế bắt đầu
     actual_end: Mapped[Optional[date]] = mapped_column(Date, nullable=True)   # Ngày thực tế kết thúc
+
+    # ─── Scheduled-notification idempotency (set by the daily Celery Beat sweep) ─
+    last_start_notified_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_due_soon_notified_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
     # ─── CPM fields (tính toán bởi CPM engine) ───────────────────────────────
     early_start: Mapped[Optional[date]] = mapped_column(Date, nullable=True)  # ES
