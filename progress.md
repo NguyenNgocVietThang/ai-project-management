@@ -32,7 +32,16 @@
 - Verified: `alembic heads` shows single head; model columns registered; celery beat_schedule wired; no circular imports.
 - Deferred: live manual verification (needs `docker compose up` with Postgres/Redis/Celery running) — not blocking, will do a combined manual pass after Phase D/E are also in place.
 
-### Now starting Phase C (shared WebSocket infrastructure).
+**Phase C — Shared WebSocket infrastructure (complete)**
+- `backend/app/core/redis_client.py`: lazy async Redis singleton (`get_redis()`), separate from Celery's broker/backend Redis DBs.
+- `backend/app/core/ws_manager.py`: `ConnectionManager` (per-process channel→sockets registry), `publish()` (Redis-only, no direct local broadcast — avoids double delivery since `redis_listener()` re-broadcasts everything it receives, including same-process publishes), `redis_listener()` (subscribes to `ws:*`, retries with exponential backoff up to 30s on connection loss instead of dying).
+- `backend/app/api/ws/deps.py`: `authenticate_ws(token, db)` — decodes JWT via existing `decode_token`, loads user via `UserRepository`, checks `auth_version` + `is_active`; raises `WSAuthError` for the caller to turn into a `4401` close.
+- `backend/app/api/ws/router.py`: empty `ws_router` aggregator — Phase D (chat) and Phase E (notifications) will register their websocket routes into it.
+- `backend/app/main.py`: starts `redis_listener()` as a background task in `lifespan` (cancelled cleanly on shutdown), mounts `ws_router` at app root `/ws` (matches existing `NEXT_PUBLIC_WS_URL=ws://localhost:8000/ws` in docker-compose/frontend env).
+- New test: `test_ws_manager.py` (5 tests — connect/disconnect/broadcast/failed-send-drops-connection). Note: had to use a plain class instead of `SimpleNamespace` for the fake WebSocket, since `SimpleNamespace` defines `__eq__` without `__hash__` and is therefore unhashable — can't go in a `set()` the way `ConnectionManager` stores connections.
+- Full suite: 83/83 passing. Verified `app.main` imports cleanly with the new wiring.
+
+### Now starting Phase D (chat feature).
 
 ## Errors Encountered
 | Error | Attempt | Resolution |
