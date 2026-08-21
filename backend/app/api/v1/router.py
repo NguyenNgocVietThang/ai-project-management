@@ -6,6 +6,7 @@ from app.api.v1.endpoints import (
     assignments,
     audit_timeline,
     auth,
+    chat,
     change_requests,
     cpm,
     dashboards,
@@ -52,6 +53,7 @@ api_router.include_router(subtasks.router, tags=["Subtasks"])
 api_router.include_router(dependencies.router, tags=["Dependencies"])
 api_router.include_router(assignments.router, tags=["Assignments"])
 api_router.include_router(worklogs.router, tags=["Worklogs"])
+api_router.include_router(chat.router, tags=["Chat"])
 api_router.include_router(leaves.router, prefix="/leaves", tags=["Leaves"])
 api_router.include_router(skills.router, prefix="/skills", tags=["Skills"])
 api_router.include_router(documents.router, prefix="/documents", tags=["Documents"])
