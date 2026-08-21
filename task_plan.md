@@ -46,19 +46,22 @@ Full approved plan: `C:\Users\VIET THANG\.claude\plans\t-i-mu-n-ti-p-t-c-soft-pr
 - [x] Test: test_ws_manager.py (5 tests, all passing)
 
 ### Phase D — Chat feature
-**Status:** in_progress
-- [ ] Models: ChatMessage, ChatReadState + register in db/base.py
-- [ ] Migration for chat_messages / chat_read_states (chained after Phase B migration)
-- [ ] Schemas: chat.py
-- [ ] Service: chat_service.py
-- [ ] REST endpoints: api/v1/endpoints/chat.py + router registration
-- [ ] WebSocket endpoint: api/ws/chat.py
-- [ ] Frontend: features/chat/{types,services,hooks,components}, new /projects/[id]/chat page, nav tab
-- [ ] Tests: test_chat_service.py
-- [ ] Manual verification (2 sessions, real-time delivery + reconnect)
+**Status:** complete (pending live manual verification)
+- [x] Models: ChatMessage, ChatReadState + register in db/base.py
+- [x] Migration for chat_messages / chat_read_states (chained after Phase B migration) — verified single alembic head
+- [x] Schemas: chat.py
+- [x] Service: chat_service.py (history/create_message/unread_count/mark_read, all gated by get_project_context)
+- [x] REST endpoints: api/v1/endpoints/chat.py + router registration
+- [x] WebSocket endpoint: api/ws/chat.py (registered in api/ws/router.py)
+- [x] Frontend: features/chat/{types,services,hooks,components} (ChatPanel, ChatMessageItem, useChatSocket, useChat), new /projects/[id]/chat page, "Chat" nav tab with unread badge in project layout
+- [x] Shared `lib/ws-client.ts` reconnecting-WebSocket helper (also used by Phase E)
+- [x] Fixed docker-compose.yml/frontend env NEXT_PUBLIC_WS_URL inconsistency (bare origin everywhere; code appends `/ws/...`)
+- [x] Tests: test_chat_service.py (7 tests) — all passing
+- [x] Frontend verification: `tsc --noEmit` clean, `next lint` clean (0 errors across whole repo)
+- [ ] Manual verification (2 browser sessions, real-time delivery + reconnect) — deferred, needs docker compose + live DB; will do a combined pass with Phase E
 
 ### Phase E — Real-time notification push over WebSocket
-**Status:** not_started
+**Status:** in_progress
 - [ ] `api/ws/notifications.py` — user-scoped channel
 - [ ] Hook `publish()` into `NotificationService.push()`
 - [ ] Frontend: useNotificationSocket(), wire into dashboard layout, relax poll interval
@@ -72,4 +75,4 @@ Full approved plan: `C:\Users\VIET THANG\.claude\plans\t-i-mu-n-ti-p-t-c-soft-pr
 - [ ] Document WS endpoints in .documents/
 
 ## Next Step
-Start Phase D: ChatMessage/ChatReadState models + migration, then chat_service.py, REST endpoints, WS endpoint, and frontend features/chat module.
+Start Phase E: api/ws/notifications.py, hook publish() into NotificationService.push(), frontend useNotificationSocket() wired into dashboard layout.

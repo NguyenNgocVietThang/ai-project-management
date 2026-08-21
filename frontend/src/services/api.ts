@@ -5,6 +5,10 @@ import type { TokenResponse } from '@/types/auth.types'
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/api/v1'
 
+/** Bare origin (e.g. "ws://localhost:8000") — WS routes are mounted at the
+ * app root under /ws, not under /api/v1, so callers append "/ws/..." themselves. */
+export const WS_BASE_URL = process.env.NEXT_PUBLIC_WS_URL ?? 'ws://localhost:8000'
+
 /** Main API client used by every service. Carries the access token automatically. */
 export const api = axios.create({
   baseURL: API_BASE_URL,

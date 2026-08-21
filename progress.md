@@ -41,7 +41,16 @@
 - New test: `test_ws_manager.py` (5 tests — connect/disconnect/broadcast/failed-send-drops-connection). Note: had to use a plain class instead of `SimpleNamespace` for the fake WebSocket, since `SimpleNamespace` defines `__eq__` without `__hash__` and is therefore unhashable — can't go in a `set()` the way `ConnectionManager` stores connections.
 - Full suite: 83/83 passing. Verified `app.main` imports cleanly with the new wiring.
 
-### Now starting Phase D (chat feature).
+**Phase D — Chat feature (complete, pending live manual verification)**
+- Backend: `ChatMessage`/`ChatReadState` models (mirrors `Comment`'s CASCADE convention), migration `20260821_chat_tables` (chained after Phase B's), `chat_service.py` (history cursor-paginated via `before_id`, create_message persists + publish()es, unread_count/mark_read via `ChatReadState`), REST endpoints under `/projects/{id}/messages|unread-count|read`, WS endpoint `/ws/chat/{project_id}?token=...` (checks membership before `accept()`, routes through the same `ChatService.create_message()` as REST).
+- Discovered + fixed a real inconsistency: `docker-compose.yml` had `NEXT_PUBLIC_WS_URL=ws://localhost:8000/ws` while `.env.local`/`.env.example` had the bare origin `ws://localhost:8000` — standardized on bare origin everywhere, frontend code always appends `/ws/...`.
+- Frontend: `features/chat/{types,services,hooks,components}` following the `features/notifications/` colocated pattern — `useChatSocket` (native WebSocket, reconnect w/ backoff via new shared `lib/ws-client.ts`, exposes `isConnected` so the composer falls back to REST `postMessage` if the socket isn't up yet), `useChat` (React Query: `useChatHistory` via `useInfiniteQuery`, `useChatUnreadCount`, `usePostChatMessage`, `useMarkChatRead`), `ChatPanel`/`ChatMessageItem` components. New route `/projects/[id]/chat`, "Chat" nav tab with unread badge added to the project layout.
+- Bug caught by ESLint (not by tsc): `useChatUnreadCount(id)` was called after two early `return` statements in the project layout — violates React's rules-of-hooks. Fixed by moving the hook call above the early returns.
+- Backend tests: `test_chat_service.py` (7 tests) — required fixing two test-authoring mistakes: (1) `db.scalars` mock needs `.all()` on its result, a bare list doesn't work; (2) `flush()` was mocked as a no-op, so it never populated the ORM object's `id`/`created_at` the way a real Postgres flush does via INSERT...RETURNING — had to make the mock simulate that.
+- Full backend suite: 90/90 passing. Frontend: `tsc --noEmit` clean, `next lint` clean (whole repo, 0 warnings/errors).
+- Deferred: live 2-browser-session manual verification — needs `docker compose up`; will do a combined pass after Phase E lands too.
+
+### Now starting Phase E (real-time notification push over WebSocket).
 
 ## Errors Encountered
 | Error | Attempt | Resolution |
