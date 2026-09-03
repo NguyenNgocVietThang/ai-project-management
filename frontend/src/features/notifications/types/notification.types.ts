@@ -1,4 +1,4 @@
-// Notification types – mirrors backend schemas/notification.py
+// Kiểu dữ liệu Notification – phản chiếu backend schemas/notification.py
 
 export type NotificationType =
   | 'TASK_ASSIGNED'

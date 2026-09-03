@@ -118,7 +118,7 @@ function ProfilePageContent() {
     try {
       await disconnectMutation.mutateAsync(provider)
     } catch {
-      // Mutation error is rendered below.
+      // Lỗi mutation được hiển thị bên dưới.
     }
   }
 

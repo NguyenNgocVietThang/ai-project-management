@@ -6,6 +6,7 @@ from fastapi.responses import RedirectResponse
 
 from app.core.config import settings
 from app.core.exceptions import BadRequestException
+from app.core.oauth_exchange import issue as issue_exchange_code
 from app.services.oauth_service import OAuthServiceDep
 
 router = APIRouter()
@@ -62,12 +63,15 @@ async def _handle_callback(
             )
         if tokens is None:
             raise BadRequestException("OAuth login did not return tokens")
-        query = urlencode(
-            {
-                "access_token": tokens.access_token,
-                "refresh_token": tokens.refresh_token,
-            }
-        )
+        # Redirect chỉ mang theo một mã dùng một lần, không bao giờ mang chính các token —
+        # xem app/core/oauth_exchange.py để biết lý do.
+        try:
+            code = await issue_exchange_code(tokens.access_token, tokens.refresh_token)
+        except Exception as exc:
+            raise BadRequestException(
+                "Sign-in is temporarily unavailable. Please try again."
+            ) from exc
+        query = urlencode({"code": code})
         return RedirectResponse(
             url=f"{settings.FRONTEND_URL.rstrip('/')}/oauth-callback?{query}",
             status_code=307,

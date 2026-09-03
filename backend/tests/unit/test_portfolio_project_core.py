@@ -6,7 +6,7 @@ import pytest
 from fastapi import HTTPException
 from pydantic import ValidationError
 
-import app.db.base  # noqa: F401 - register SQLAlchemy relationships
+import app.db.base  # noqa: F401 - đăng ký các quan hệ SQLAlchemy
 from app.models.portfolio import PortfolioStatus
 from app.models.project import ProjectMethodology, ProjectStatus
 from app.schemas.portfolio import PortfolioCreate, PortfolioUpdate

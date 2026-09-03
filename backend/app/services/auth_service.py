@@ -25,7 +25,9 @@ from app.core.security import (
     hash_password,
     verify_password,
 )
+from app.core.token_revocation import is_revoked, revoke
 from app.db.session import get_db
+from app.models.audit_log import AuditLog
 from app.models.user import User
 from app.repositories.user_repository import UserRepository
 from app.schemas.auth import RegisterRequest, ResetPasswordRequest, TokenResponse
@@ -68,32 +70,75 @@ class AuthService:
         try:
             send_email_verification_task.delay(user.email, verification_link)
         except Exception:
-            # Registration still succeeds. Do not log the recipient or link/token.
+            # Quá trình đăng ký vẫn thành công. Không ghi log địa chỉ người nhận hoặc đường link/token.
             logger.exception(
                 "Failed to enqueue email verification for newly registered user_id=%s",
                 user.id,
             )
         return user
 
+    def _audit(
+        self,
+        action: str,
+        *,
+        user_id: int | None = None,
+        description: str | None = None,
+    ) -> None:
+        """Ghi lại một sự kiện xác thực.
+
+        ip_address được điền tự động từ ngữ cảnh request (xem
+        app/models/audit_log.py). Không bao giờ ghi lại mật khẩu được gửi lên hoặc
+        email của một tài khoản không xác định — nếu không, một bản ghi đăng nhập thất bại
+        cho người dùng không tồn tại sẽ biến audit log thành một danh sách các địa chỉ phỏng đoán.
+        """
+        self.db.add(
+            AuditLog(
+                user_id=user_id,
+                action=action,
+                entity_type="Auth",
+                entity_id=user_id,
+                description=description,
+            )
+        )
+
     async def authenticate(self, email: str, password: str) -> User:
         user = await self.users.get_by_email(email)
         if not user:
+            # Không ghi audit: không có tài khoản nào để quy trách nhiệm, và việc ghi lại
+            # địa chỉ được thử sẽ tạo ra một danh bạ các phỏng đoán.
             raise UnauthorizedException("Incorrect email or password")
         if user.hashed_password is None:
             raise BadRequestException(
                 "This account uses social login. Please sign in with Google or Facebook."
             )
         if not verify_password(password, user.hashed_password):
+            self._audit(
+                "LOGIN_FAILED",
+                user_id=user.id,
+                description="Failed password authentication",
+            )
+            # Commit trước khi raise: get_db() sẽ rollback session trên bất kỳ
+            # exception nào, điều này sẽ loại bỏ đúng những bản ghi mà một cuộc
+            # điều tra brute-force cần. Bản ghi audit là thay đổi đang chờ duy nhất ở đây
+            # (mọi thứ phía trên nó đều là thao tác đọc), nên commit riêng nó là an toàn.
+            await self.db.commit()
             raise UnauthorizedException("Incorrect email or password")
         if not user.is_active:
+            self._audit(
+                "LOGIN_BLOCKED",
+                user_id=user.id,
+                description="Sign-in attempt on an inactive account",
+            )
+            await self.db.commit()  # xem nhánh LOGIN_FAILED phía trên
             raise ForbiddenException("Inactive user")
 
         user.last_login = datetime.now(timezone.utc)
+        self._audit("LOGIN_SUCCESS", user_id=user.id, description="Password sign-in")
         await self.db.flush()
         return user
 
     async def request_password_reset(self, email: str) -> None:
-        """Create a one-time token and enqueue its email without revealing account state."""
+        """Tạo token dùng một lần và đưa email vào hàng đợi mà không tiết lộ trạng thái tài khoản."""
         user = await self.users.get_by_email(email)
         if user is None:
             return
@@ -111,8 +156,8 @@ class AuthService:
         try:
             send_password_reset_email_task.delay(user.email, reset_link)
         except Exception:
-            # The endpoint deliberately remains email-agnostic. Operational details stay
-            # in server logs and must not expose the reset token or recipient address.
+            # Endpoint cố tình không phụ thuộc vào email. Chi tiết vận hành chỉ nằm
+            # trong log server và không được để lộ reset token hoặc địa chỉ người nhận.
             logger.exception("Failed to enqueue password reset email for user_id=%s", user.id)
 
     async def reset_password(self, data: ResetPasswordRequest) -> None:
@@ -131,6 +176,11 @@ class AuthService:
         user.auth_version = (getattr(user, "auth_version", 0) or 0) + 1
         user.password_reset_token_hash = None
         user.password_reset_expires_at = None
+        self._audit(
+            "PASSWORD_RESET_COMPLETED",
+            user_id=user.id,
+            description="Password reset via emailed token; all sessions revoked",
+        )
         await self.db.flush()
 
     async def verify_email(self, token: str | None) -> None:
@@ -152,10 +202,10 @@ class AuthService:
         await self.db.flush()
 
     async def resend_email_verification(self, user_id: int) -> bool:
-        """Queue a fresh token, enforcing cooldown under a row lock.
+        """Đưa một token mới vào hàng đợi, áp dụng cooldown dưới một row lock.
 
-        Returns False when the account is already verified. A queueing failure raises
-        so the request transaction rolls back and the previous token remains usable.
+        Trả về False khi tài khoản đã được xác minh. Một lỗi khi đưa vào hàng đợi sẽ raise
+        để transaction của request được rollback và token trước đó vẫn dùng được.
         """
         user = await self.users.get_by_id_for_update(user_id)
         if user is None:
@@ -236,6 +286,14 @@ class AuthService:
         )
 
     async def refresh(self, refresh_token: str) -> TokenResponse:
+        """Đổi một refresh token lấy một cặp token mới, xoay vòng token cũ ra.
+
+        Mỗi refresh token chỉ dùng một lần: sau khi được đổi, `jti` của nó bị thu hồi,
+        nên một bản sao bị đánh cắp trước đó sẽ ngừng hoạt động ngay khi client hợp lệ
+        refresh. Thấy một `jti` đã bị thu hồi nghĩa là hai bên đang giữ cùng một token —
+        token bị coi là đã bị đánh cắp và mọi session của người dùng đó bị hủy bằng cách
+        tăng `auth_version`.
+        """
         payload = decode_token(refresh_token)
         if payload is None or payload.get("type") != "refresh":
             raise UnauthorizedException("Invalid refresh token")
@@ -252,7 +310,42 @@ class AuthService:
         ):
             raise UnauthorizedException("Invalid refresh token")
 
+        jti = payload.get("jti")
+        if await is_revoked(jti):
+            user.auth_version = (user.auth_version or 0) + 1
+            self._audit(
+                "REFRESH_TOKEN_REUSED",
+                user_id=user.id,
+                description=(
+                    "A already-rotated refresh token was replayed; all sessions revoked"
+                ),
+            )
+            await self.db.commit()  # lưu lại việc thu hồi dù chúng ta có raise
+            raise UnauthorizedException("Invalid refresh token")
+
+        await revoke(jti, payload.get("exp"))
+        self._audit("TOKEN_REFRESH", user_id=user.id, description="Refresh token rotated")
         return self.issue_tokens(user)
+
+    async def logout(self, refresh_token: str | None) -> None:
+        """Đăng xuất phía server theo kiểu best-effort.
+
+        Thu hồi refresh token là điều khiến logout không chỉ là một hành động phía client;
+        access token được để tự hết hạn (30 phút) thay vì theo dõi từng token từng được
+        phát hành. Một token bị thiếu hoặc không parse được không phải là lỗi — dù sao thì
+        người gọi cũng đang đăng xuất.
+        """
+        if not refresh_token:
+            return
+        payload = decode_token(refresh_token)
+        if payload is None or payload.get("type") != "refresh":
+            return
+        await revoke(payload.get("jti"), payload.get("exp"))
+        user_id = payload.get("sub")
+        try:
+            self._audit("LOGOUT", user_id=int(user_id), description="Refresh token revoked")
+        except (TypeError, ValueError):
+            return
 
 
 async def get_auth_service(db: Annotated[AsyncSession, Depends(get_db)]) -> AuthService:

@@ -1,4 +1,4 @@
-"""Add task notification idempotency columns.
+"""Thêm các cột idempotency cho thông báo task.
 
 Revision ID: 20260821_task_notify_columns
 Revises: 20260814_phase2_task_wbs

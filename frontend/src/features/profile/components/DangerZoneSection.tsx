@@ -49,7 +49,7 @@ export function DangerZoneSection({ username, onDelete, isLoading, error }: Dang
             try {
               await onDelete(values)
             } catch {
-              // The mutation exposes the server error through the `error` prop.
+              // Mutation bộc lộ lỗi từ server qua prop `error`.
             }
           })}
           noValidate

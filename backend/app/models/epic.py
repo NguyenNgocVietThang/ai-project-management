@@ -19,7 +19,7 @@ class Epic(Base):
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     status: Mapped[EpicStatus] = mapped_column(Enum(EpicStatus), default=EpicStatus.OPEN)
     story_points: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
-    color: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)  # hex color VD: "#FF6B6B"
+    color: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)  # mã màu hex VD: "#FF6B6B"
     project_id: Mapped[int] = mapped_column(ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
 
     project: Mapped["Project"] = relationship("Project", back_populates="epics")

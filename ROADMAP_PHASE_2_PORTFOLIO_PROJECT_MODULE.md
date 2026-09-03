@@ -1,282 +1,87 @@
 # Roadmap: Portfolio & Project Core Module (Phase 2)
 
-> **Phiên bản:** 1.0 | **Cập nhật:** 2026-08-16  
-> **Trạng thái:** ✅ Đã hoàn thành (100%) | **Ngày hoàn thành:** 2026-08-16  
-> **Mức độ ưu tiên:** Critical – Module nghiệp vụ cốt lõi quản lý danh mục, dự án, WBS & CPM Engine  
+> **Phiên bản:** 1.1 | **Cập nhật:** 2026-08-22  
+> **Trạng thái:** ✅ Đã hoàn thành (100%) | **Ngày hoàn thành:** 2026-08-22  
+> **Mức độ ưu tiên:** Critical – Module nghiệp vụ cốt lõi quản lý danh mục, dự án, WBS, CPM Engine & Real-time Chat  
 > **Điều kiện tiên quyết:** [x] Phase 1 (Auth & User Onboarding) đã hoàn thành
 
 ---
 
 ## Tổng quan Module
 
-Module **Portfolio & Project Core (Phase 2)** xây dựng toàn bộ lớp quản lý danh mục, dự án, cấu trúc phân rã công việc (WBS) và động cơ tính toán đường găng (CPM Engine) — nền tảng vận hành của mọi hoạt động quản lý dự án trong hệ thống.
+Module **Portfolio & Project Core (Phase 2)** xây dựng toàn bộ lớp quản lý danh mục, dự án, cấu trúc phân rã công việc (WBS), động cơ tính toán đường găng (CPM Engine), hệ thống Real-time Project Chat và tự động hóa thông báo fan-out tới toàn nhóm dự án.
 
-### 5 Trụ cột chính:
+### 7 Trụ cột chính:
 1. **Portfolio Management (SOP-PM-001):** Quản lý danh mục dự án cấp chiến lược, phân bổ ngân sách tổng thể, theo dõi chỉ số sức khỏe (Health status) và tiến độ danh mục.
 2. **Project Management & Member RBAC (SOP-PM-002):** Khởi tạo dự án theo mô hình Agile / Waterfall / Hybrid, phân quyền thành viên dự án theo vai trò (PM, BA, PO, Member, Customer).
 3. **WBS, Phases, Sprints & Milestones (SOP-PM-003):** Phân rã cấu trúc dự án đa cấp độ (Project -> Phase -> Sprint/Epic -> Milestone -> Task -> Subtask).
 4. **Task Management & CPM Engine Integration:** Quản lý công việc chi tiết, thiết lập quan hệ phụ thuộc (FS, SS, FF, SF), phát hiện chu trình phụ thuộc (Cycle validation) và tính toán đường găng Critical Path (ES, EF, LS, LF, Float).
-5. **Assignments, WorkLogs & In-app Notifications:** Phân công nhân sự theo khối lượng công việc, ghi nhận nhật ký làm việc (WorkLog timesheet), theo dõi chi phí thực tế và phát thông báo in-app cho các sự kiện dự án.
+5. **Assignments, WorkLogs & Resource Tracking:** Phân công nhân sự theo khối lượng công việc, ghi nhận nhật ký làm việc (WorkLog timesheet), theo dõi chi phí thực tế.
+6. **Real-time Project Chat (SOP-CHAT-001):** Kênh chat nhóm dự án trực tiếp qua WebSocket `/ws/chat/{project_id}`, phân phối qua Redis Pub/Sub, lưu trữ lịch sử tin nhắn và đếm unread count.
+7. **Task Notification Triggers & Celery Beat Daily Sweep (SOP-NOTI-001):** Thông báo fan-out tới toàn bộ nhóm dự án khi Task có thay đổi quan trọng; Celery Beat quét định kỳ 08:00 AM gửi thông báo nhắc việc bắt đầu và sắp đến hạn.
 
 ---
 
-## Hiện trạng & Hạ tầng sẵn có
-
-| Thành phần | Trạng thái | Ghi chú |
-|---|---|---|
-| Database Schema: `portfolios`, `projects`, `phases`, `sprints`, `epics`, `milestones`, `tasks`, `subtasks`, `dependencies`, `assignments`, `worklogs`, `notifications` | Đã migrate | Toàn bộ bảng đã sẵn sàng trong PostgreSQL |
-| Seed Data: 7 Roles & 34 Permissions | Đã khởi tạo | `Admin`, `PM`, `BA`, `PO`, `Member`, `Customer`, `Investor` |
-| CPM Service Engine (Forward & Backward Pass) | Đã có sẵn | `backend/app/services/cpm_service.py` |
-| Next.js Dashboard Layout & Sidebar Nav | Đã có sẵn | `frontend/src/app/(dashboard)/layout.tsx` |
-| Zustand Stores (`projectStore`, `uiStore`, `authStore`) | Đã có sẵn | Quản lý state toàn cục cho Project & UI |
-
----
-
-## Danh mục tính năng cần triển khai
+## Danh mục tính năng đã triển khai
 
 | Tính năng | Mã SOP | Độ ưu tiên | Trạng thái | Backend Task | Frontend Component |
 |---|---|---|---|---|---|
-| Portfolio Management | SOP-PM-001 | Critical | ✅ Hoàn thành (2026-08-16) | `PortfolioService` + Endpoints | `PortfolioList`, `PortfolioCard`, `PortfolioForm` |
-| Project Management & Member RBAC | SOP-PM-002 | Critical | ✅ Hoàn thành (2026-08-16) | `ProjectService` + Endpoints | `ProjectList`, `ProjectWizardForm`, `ProjectMembersTable` |
-| WBS, Phases, Sprints & Milestones | SOP-PM-003 | High | ✅ Hoàn thành (2026-08-16) | `WBSService` + Endpoints | `WBSTreeView`, `PhaseManager`, `MilestoneTimeline` |
-| Task CRUD & Dependencies Graph | SOP-PM-003 | Critical | ✅ Hoàn thành (2026-08-16) | `TaskService` + `CPMService` | `KanbanBoard`, `TaskDetailDrawer`, `DependencyLinks` |
-| Assignments & WorkLogs Tracking | SOP-RM-001 | High | ✅ Hoàn thành (2026-08-16) | `AssignmentService` + `WorklogService` | `AssigneeSelector`, `WorkLogModal`, `TimesheetTable` |
-| Project & Portfolio Dashboard + Notifications | Reporting | High | ✅ Hoàn thành (2026-08-16) | `DashboardService` + `NotificationService` | `PortfolioDashboard`, `ProjectDashboard`, `NotificationBell` |
+| Portfolio Management | SOP-PM-001 | Critical | ✅ Hoàn thành | `PortfolioService` + Endpoints | `PortfolioList`, `PortfolioCard`, `PortfolioForm` |
+| Project Management & Member RBAC | SOP-PM-002 | Critical | ✅ Hoàn thành | `ProjectService` + Endpoints | `ProjectList`, `ProjectWizardForm`, `ProjectMembersTable` |
+| WBS, Phases, Sprints & Milestones | SOP-PM-003 | High | ✅ Hoàn thành | `WBSService` + Endpoints | `WBSTreeView`, `PhaseManager`, `MilestoneTimeline` |
+| Task CRUD & Dependencies Graph | SOP-PM-003 | Critical | ✅ Hoàn thành | `TaskService` + `scheduling_service.py` + `utils/cpm.py` | `KanbanBoard`, `TaskDrawer` |
+| Assignments & WorkLogs Tracking | SOP-RM-001 | High | ✅ Hoàn thành | `AssignmentService` + `WorklogService` | `AssigneeSelector`, `WorkLogModal`, `TimesheetTable` |
+| Project & Portfolio Dashboard | Reporting | High | ✅ Hoàn thành | `DashboardService` + `NotificationService` | `PortfolioDashboard`, `ProjectDashboard`, `NotificationBell` |
+| Real-time Project Chat | SOP-CHAT-001 | High | ✅ Hoàn thành | `ChatService` + `/ws/chat/{id}` | `ChatPanel`, `ChatMessageItem`, `useChatSocket` |
+| Notification Triggers & Beat Sweep | SOP-NOTI-001 | High | ✅ Hoàn thành | `notify_project_team` + Celery Beat | `NotificationBell`, `useNotificationSocket` |
 
 ---
 
-## Chi tiết kế hoạch triển khai theo Phase
+## Chi tiết các Giai đoạn đã hoàn thành
+
+### GIAI ĐOẠN 2.1 – Portfolio Management (SOP-PM-001)
+- Backend: `PortfolioService`, `/api/v1/portfolios` (CRUD danh mục, cascade soft-delete).
+- Frontend: `/app/(dashboard)/portfolios/page.tsx` & `[id]/page.tsx`, `PortfolioCard.tsx`, `PortfolioForm.tsx`.
+
+### GIAI ĐOẠN 2.2 – Project Management & Member RBAC (SOP-PM-002)
+- Backend: `ProjectService`, `/api/v1/projects` (CRUD dự án, quản lý thành viên qua `project_members`).
+- Frontend: `/app/(dashboard)/projects/page.tsx` & `[id]/overview/page.tsx`, `ProjectWizardForm.tsx`, `ProjectMembersTable.tsx`.
+
+### GIAI ĐOẠN 2.3 – WBS, Phases, Sprints & Milestones (SOP-PM-003)
+- Backend: `WBSService`, `/api/v1/phases`, `/api/v1/sprints`, `/api/v1/epics`, `/api/v1/milestones`.
+- Frontend: `/app/(dashboard)/projects/[id]/wbs/page.tsx`, `WBSTreeView.tsx`.
+
+### GIAI ĐOẠN 2.4 – Task Management, Dependencies & CPM Engine
+- Backend: `TaskService`, `scheduling_service.py`, pure Python CPM (`app/utils/cpm.py`), `/api/v1/tasks`, `/api/v1/dependencies`. CPM chạy nội bộ khi cập nhật task/dependency — **chưa có endpoint `/cpm` công khai** (`cpm.py` vẫn là stub).
+- Frontend: `/app/(dashboard)/projects/[id]/tasks/page.tsx`, `KanbanBoard.tsx`, `TaskDrawer.tsx`.
+
+### GIAI ĐOẠN 2.5 – Assignments, WorkLogs & Resource Tracking
+- Backend: `AssignmentService`, `WorklogService`, `resource_service.py`, `/api/v1/assignments`, `/api/v1/worklogs`, `/api/v1/resource-leveling`. **`/api/v1/leaves` và `/api/v1/skills` chưa mount** (model đã có, endpoint là stub).
+- Frontend: `WorkLogModal.tsx`, `AssigneeSelector.tsx`.
+
+### GIAI ĐOẠN 2.6 – Portfolio & Project Dashboard, In-App Notifications
+- Backend: `DashboardService`, `NotificationService`, `/api/v1/dashboards`, `/api/v1/notifications`.
+- Frontend: `/app/(dashboard)/dashboard/page.tsx`, `NotificationBell.tsx`, `NotificationList.tsx`.
+
+### GIAI ĐOẠN 2.7 – Real-Time Project Chat (SOP-CHAT-001)
+- Backend:
+  - Models: `ChatMessage`, `ChatReadState` (`app/models/chat_message.py`, `chat_read_state.py`).
+  - Service: `ChatService` (`app/services/chat_service.py`) — phân trang con trỏ `before_id`, lưu trữ và publish tới Redis.
+  - Endpoints: REST `/api/v1/projects/{id}/messages|unread-count|read` + WebSocket `/ws/chat/{project_id}`.
+  - WebSocket Infrastructure: `app/core/ws_manager.py` (ConnectionManager, `publish()`, `redis_listener()`), `app/api/ws/deps.py` (`authenticate_ws`).
+- Frontend:
+  - Modules: `frontend/src/features/chat/` (`ChatPanel.tsx`, `ChatMessageItem.tsx`, `useChatSocket.ts`, `useChat.ts`).
+  - Router: `/app/(dashboard)/projects/[id]/chat/page.tsx`, Tab Chat với huy hiệu số tin chưa đọc trên thanh điều hướng dự án.
+  - Helper: `frontend/src/lib/ws-client.ts` tự động kết nối lại khi mất mạng.
+
+### GIAI ĐOẠN 2.8 – Task Notification Triggers & Celery Beat Daily Sweep (SOP-NOTI-001)
+- Backend:
+  - Helper: `notify_project_team()` (`app/services/phase2_common.py`) fan-out thông báo tới toàn bộ thành viên dự án.
+  - Triggers: Hook vào `TaskService.update()` (phát hiện thay đổi `SIGNIFICANT_TASK_FIELDS`) và `TaskService.change_status()`.
+  - Task Columns: Thêm `last_start_notified_at` và `last_due_soon_notified_at` vào bảng `tasks` để chống gửi trùng.
+  - Celery Beat: `app/workers/notification_tasks.py` (`sweep_task_dates_task`) chạy định kỳ lúc 08:00 AM hàng ngày quét các task bắt đầu và sắp đến hạn.
+  - Service `celery-beat` bổ sung vào `docker-compose.yml`.
 
 ---
 
-## GIAI ĐOẠN 2.1 – Portfolio Management (SOP-PM-001)
-
-> **Trạng thái:** ✅ Hoàn thành | **Ngày hoàn thành:** 2026-08-16  
-> **Mục tiêu:** Cho phép PM và Admin tạo, quản lý và theo dõi các Portfolio chiến lược, phân bổ ngân sách, gắn kết các dự án trực thuộc và hiển thị thẻ tổng quan trực quan.
-
-### 1. Luồng xử lý (Workflow)
-```
-PM/Admin -> POST /api/v1/portfolios -> Lưu Portfolio vào DB -> Ghi Audit Log
-  -> GET /api/v1/portfolios -> Trả về danh sách kèm số lượng dự án, tổng ngân sách và tiến độ
-  -> GET /api/v1/portfolios/{id} -> Xem chi tiết Portfolio + danh sách dự án trực thuộc
-  -> PATCH / DELETE -> Cập nhật hoặc Soft-delete cascade dự án con
-```
-
-### 2. Backend Implementation
-
-**[NEW] `backend/app/services/portfolio_service.py`**
-```python
-class PortfolioService:
-    async def get_portfolios(self, user: User, db: AsyncSession) -> list[PortfolioResponse]:
-        """Lấy danh sách Portfolio theo quyền của người dùng (Admin thấy tất cả, PM thấy portfolio quản lý)."""
-        pass
-    
-    async def create_portfolio(self, data: PortfolioCreate, owner: User, db: AsyncSession) -> Portfolio:
-        """Tạo Portfolio mới và ghi nhận audit log."""
-        pass
-```
-
-**[MODIFY] `backend/app/api/v1/endpoints/portfolios.py`**
-- `GET /api/v1/portfolios` — Lấy danh sách Portfolio của user.
-- `POST /api/v1/portfolios` — Tạo Portfolio mới (yêu cầu role PM hoặc Admin).
-- `GET /api/v1/portfolios/{portfolio_id}` — Lấy chi tiết Portfolio và danh sách dự án con.
-- `PATCH /api/v1/portfolios/{portfolio_id}` — Cập nhật thông tin và ngân sách Portfolio.
-- `DELETE /api/v1/portfolios/{portfolio_id}` — Xóa Portfolio (cascade soft-delete).
-
-### 3. Frontend Implementation
-
-**[NEW] `frontend/src/app/(dashboard)/portfolios/page.tsx`** & `[id]/page.tsx`
-- Trang danh sách Portfolio dạng Grid/Table và trang chi tiết Portfolio kèm tab Projects/Overview.
-
-**[NEW] `frontend/src/features/portfolios/components/`**
-- `PortfolioCard.tsx`: Card hiển thị tên, số dự án, ngân sách đã cấp, tiến độ trung bình.
-- `PortfolioForm.tsx`: Modal tạo/sửa portfolio với validation react-hook-form + zod.
-
----
-
-## GIAI ĐOẠN 2.2 – Project Management & Member RBAC (SOP-PM-002)
-
-> **Trạng thái:** ✅ Hoàn thành | **Ngày hoàn thành:** 2026-08-16  
-> **Mục tiêu:** Cung cấp quy trình khởi tạo dự án đa bước (Wizard), phân quyền vai trò cho từng thành viên trong dự án (PM, BA, PO, Member, Customer) và kiểm soát truy cập nghiêm ngặt.
-
-### 1. Luồng xử lý (Workflow)
-```
-PM tạo dự án qua Wizard (3 bước: Thông tin cơ bản -> Mời thành viên & Gán Role -> Review)
-  -> POST /api/v1/projects -> Lưu Project & ProjectMembers
-  -> Gửi email thông báo mời thành viên
-  -> Middleware/Dependency `get_project_member` kiểm tra quyền cho mọi thao tác tiếp theo
-```
-
-### 2. Backend Implementation
-
-**[NEW] `backend/app/services/project_service.py`**
-```python
-class ProjectService:
-    async def create_project(self, data: ProjectCreate, owner: User, db: AsyncSession) -> Project:
-        """Khởi tạo dự án mới, gán owner làm PM và thiết lập cấu trúc ban đầu."""
-        pass
-    
-    async def add_member(self, project_id: UUID, user_id: UUID, role_id: UUID, inviter: User, db: AsyncSession) -> ProjectMember:
-        """Mời thành viên vào dự án với vai trò chỉ định."""
-        pass
-```
-
-**[MODIFY] `backend/app/api/v1/endpoints/projects.py`**
-- `GET /api/v1/projects` — Danh sách dự án (lọc theo portfolio, status, methodology, search).
-- `POST /api/v1/projects` — Tạo dự án mới.
-- `GET /api/v1/projects/{project_id}` — Chi tiết dự án, thống kê số lượng task, tiến độ hoàn thành.
-- `POST /api/v1/projects/{project_id}/members` — Mời thành viên vào dự án.
-- `DELETE /api/v1/projects/{project_id}/members/{user_id}` — Xóa thành viên khỏi dự án.
-
-### 3. Frontend Implementation
-
-**[NEW] `frontend/src/app/(dashboard)/projects/page.tsx`** & `[id]/overview/page.tsx`
-- Danh sách dự án toàn hệ thống và Dashboard tổng quan dự án.
-
-**[NEW] `frontend/src/features/projects/components/`**
-- `ProjectCard.tsx`: Thẻ hiển thị trạng thái, methodology chip, % hoàn thành và deadline.
-- `ProjectWizardForm.tsx`: Wizard 3 bước tạo dự án chuyên nghiệp.
-- `ProjectMembersTable.tsx`: Danh sách thành viên kèm role badge và chức năng mời/gỡ thành viên.
-
----
-
-## GIAI ĐOẠN 2.3 – WBS, Phases, Sprints & Milestones (SOP-PM-003)
-
-> **Trạng thái:** ✅ Hoàn thành | **Ngày hoàn thành:** 2026-08-16  
-> **Mục tiêu:** Xây dựng cấu trúc phân rã công việc (Work Breakdown Structure - WBS) theo mô hình phân cấp: Project -> Phases -> Sprints / Epics -> Milestones -> Tasks.
-
-### 1. Backend Implementation
-
-**[NEW] `backend/app/services/wbs_service.py`**
-```python
-class WBSService:
-    async def get_full_wbs(self, project_id: UUID, db: AsyncSession) -> WBSTreeResponse:
-        """Truy vấn và dựng cây phân cấp WBS hoàn chỉnh của dự án."""
-        pass
-```
-
-**[MODIFY] `backend/app/api/v1/endpoints/phases.py` & `sprints.py` & `milestones.py`**
-- `GET /api/v1/projects/{project_id}/phases` — Danh sách Phases theo trình tự.
-- `POST /api/v1/projects/{project_id}/phases` — Tạo Phase mới.
-- `POST /api/v1/phases/{phase_id}/sprints` — Tạo Sprint cho Phase.
-- `POST /api/v1/projects/{project_id}/milestones` — Tạo Milestone cột mốc quan trọng.
-
-### 2. Frontend Implementation
-
-**[NEW] `frontend/src/features/wbs/components/WBSTreeView.tsx`**
-- Giao diện dạng cây phân cấp (Tree Table) cho phép mở rộng/thu gọn Phases, Epics và Milestones.
-
----
-
-## GIAI ĐOẠN 2.4 – Task Management, Dependencies & CPM Engine
-
-> **Trạng thái:** ✅ Hoàn thành | **Ngày hoàn thành:** 2026-08-16  
-> **Mục tiêu:** Quản lý Task chi tiết (Kanban Board / Table view), thiết lập quan hệ phụ thuộc (FS, SS, FF, SF), tự động kiểm tra vòng lặp phụ thuộc (Cycle validation) và tính toán đường găng CPM.
-
-### 1. Luồng xử lý (CPM Calculation Flow)
-```
-Task Create / Update / Dependency Change
-  -> Validate không có circular loop bằng Topological Sort (Kahn's algorithm)
-  -> Chạy Forward Pass: Tính Early Start (ES) & Early Finish (EF)
-  -> Chạy Backward Pass: Tính Late Start (LS) & Late Finish (LF)
-  -> Tính Total Float = LS - ES: Nếu Float = 0 -> Đánh dấu `is_critical = True`
-  -> Cập nhật lại Task schedule và lưu vào DB
-```
-
-### 2. Backend Implementation
-
-**[NEW] `backend/app/services/task_service.py`**
-```python
-class TaskService:
-    async def create_task(self, data: TaskCreate, project_id: UUID, user: User, db: AsyncSession) -> Task:
-        """Tạo task mới và kích hoạt tính toán lại CPM schedule."""
-        pass
-    
-    async def change_status(self, task_id: UUID, new_status: str, user: User, db: AsyncSession) -> Task:
-        """Chuyển trạng thái task (todo -> in_progress -> review -> done)."""
-        pass
-```
-
-**[MODIFY] `backend/app/services/cpm_service.py`**
-- Thuật toán Topological Sort, Forward Pass, Backward Pass và tính Total Float / Free Float.
-
-**[MODIFY] `backend/app/api/v1/endpoints/tasks.py` & `dependencies.py`**
-- `GET /api/v1/projects/{project_id}/tasks` — Danh sách task kèm bộ lọc đa tiêu chí.
-- `POST /api/v1/projects/{project_id}/tasks` — Tạo task mới.
-- `POST /api/v1/tasks/{task_id}/dependencies` — Thiết lập quan hệ phụ thuộc.
-- `GET /api/v1/projects/{project_id}/dependencies` — Toàn bộ đồ thị phụ thuộc của dự án.
-
-### 3. Frontend Implementation
-
-**[NEW] `frontend/src/app/(dashboard)/projects/[id]/tasks/page.tsx`**
-- Giao diện Task Management hỗ trợ chuyển đổi linh hoạt giữa Kanban Board (Drag & Drop) và Table View.
-
-**[NEW] `frontend/src/features/tasks/components/`**
-- `KanbanBoard.tsx`: Bảng cột trạng thái (Todo / In Progress / Review / Done).
-- `TaskDetailDrawer.tsx`: Drawer chi tiết task, danh sách subtasks, logs giờ và dependencies.
-
----
-
-## GIAI ĐOẠN 2.5 – Assignments, WorkLogs & Resource Tracking
-
-> **Trạng thái:** ✅ Hoàn thành | **Ngày hoàn thành:** 2026-08-16  
-> **Mục tiêu:** Phân công nhân sự cho task, theo dõi khối lượng công việc, ghi nhận thời gian làm việc thực tế (WorkLog timesheet) và kiểm soát chi phí giờ công (`hourly_rate`).
-
-### 1. Backend Implementation
-
-**[MODIFY] `backend/app/api/v1/endpoints/assignments.py` & `worklogs.py`**
-- `POST /api/v1/tasks/{task_id}/assignments` — Phân công thành viên vào task.
-- `POST /api/v1/tasks/{task_id}/worklogs` — Ghi nhận nhật ký giờ làm việc thực tế.
-- `GET /api/v1/projects/{project_id}/worklogs` — Tổng hợp timesheet của toàn bộ dự án.
-
-### 2. Frontend Implementation
-
-**[NEW] `frontend/src/features/worklogs/components/WorkLogModal.tsx`**
-- Form ghi nhận số giờ làm việc, ngày thực hiện và mô tả công việc hoàn thành.
-
----
-
-## GIAI ĐOẠN 2.6 – Portfolio & Project Dashboard, In-App Notifications
-
-> **Trạng thái:** ✅ Hoàn thành | **Ngày hoàn thành:** 2026-08-16  
-> **Mục tiêu:** Tổng hợp toàn diện chỉ số tiến độ, ngân sách, số lượng task quá hạn trên Dashboard và cung cấp hệ thống chuông thông báo in-app thời gian thực.
-
-### 1. Backend Implementation
-
-**[NEW] `backend/app/services/dashboard_service.py`**
-- Tổng hợp chỉ số KPI cho Portfolio Dashboard và Project Overview.
-
-**[NEW] `backend/app/services/notification_service.py`**
-- Ghi nhận và phát thông báo in-app khi có sự kiện gán task, thay đổi trạng thái, chạm milestone.
-
-**[NEW] `backend/app/api/v1/endpoints/dashboards.py` & `notifications.py`**
-- `GET /api/v1/dashboard/summary` — Tổng quan Dashboard cá nhân.
-- `GET /api/v1/notifications` — Danh sách thông báo in-app của người dùng.
-- `PATCH /api/v1/notifications/{id}/read` — Đánh dấu đã đọc thông báo.
-
-### 2. Frontend Implementation
-
-**[NEW] `frontend/src/app/(dashboard)/dashboard/page.tsx`**
-- Trang Dashboard tổng quan: Thống kê số dự án active, task quá hạn, số giờ làm việc tuần này, thẻ Portfolio tóm tắt.
-
-**[NEW] `frontend/src/features/notifications/components/NotificationBell.tsx` & `NotificationPanel.tsx`**
-- Chuông thông báo trên thanh Header với huy hiệu số lượng chưa đọc và panel xem nhanh.
-
----
-
-## Kế hoạch kiểm thử (Testing Strategy)
-
-> **Trạng thái kiểm thử:** ✅ Đã vượt qua (Passed 100% - 2026-08-16)
-
-1. **Unit Tests (`tests/unit/services/`):**
-   - Test thuật toán CPM: Forward Pass, Backward Pass, phát hiện đường găng chính xác.
-   - Test thuật toán kiểm tra chu trình phụ thuộc (Cycle Detection) ngăn ngừa deadlock.
-   - Test tính toán tổng thời gian và chi phí từ WorkLogs.
-2. **Integration Tests (`tests/integration/test_portfolio_project.py`):**
-   - Test phân quyền RBAC: Thành viên (Member) không được phép tạo/xóa Project hay Portfolio (HTTP 403).
-   - Test luồng phân công Task -> sinh bản ghi Notification tương ứng cho Assignee.
-   - Test tính toàn vẹn khi xóa Portfolio (cascade soft-delete).
-3. **Correctness & Invariant Tests:**
-   - Đảm bảo đồ thị phụ thuộc luôn là đồ thị có hướng không chu trình (DAG invariant).
-   - Đảm bảo ngày bắt đầu luôn nhỏ hơn hoặc bằng ngày kết thúc (`start_date <= end_date`).
-   - Đảm bảo số giờ ghi nhận trong WorkLog luôn lớn hơn 0 và không vượt quá 24h/ngày.
+*Cập nhật lần cuối: 2026-09-03 — Phase 2 hoàn thành (lưu ý: endpoint `/cpm`, `/gantt`, `/leaves`, `/skills` vẫn là stub chưa mount; CPM chạy nội bộ).*

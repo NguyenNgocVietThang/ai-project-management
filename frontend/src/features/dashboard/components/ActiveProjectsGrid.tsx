@@ -1,8 +1,8 @@
 'use client'
 
 /**
- * ActiveProjectsGrid – cards grid for the Home Dashboard
- * Shows progress bar, budget meter, and days remaining badge
+ * ActiveProjectsGrid – lưới thẻ cho Home Dashboard
+ * Hiển thị thanh tiến độ, đồng hồ ngân sách và badge số ngày còn lại
  */
 import Link from 'next/link'
 import { CalendarClock, TrendingUp } from 'lucide-react'
@@ -40,7 +40,7 @@ function ProjectCard({ project }: { project: ActiveProjectSummary }) {
         </span>
       </div>
 
-      {/* Progress */}
+      {/* Tiến độ */}
       <div>
         <div className="mb-1.5 flex justify-between text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
@@ -54,7 +54,7 @@ function ProjectCard({ project }: { project: ActiveProjectSummary }) {
         <MiniProgressBar value={project.progress_percent} />
       </div>
 
-      {/* Tasks */}
+      {/* Task */}
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>
           Tasks:{' '}
@@ -74,7 +74,7 @@ function ProjectCard({ project }: { project: ActiveProjectSummary }) {
         )}
       </div>
 
-      {/* Budget */}
+      {/* Ngân sách */}
       {project.budget !== null && (
         <div>
           <div className="mb-1.5 flex justify-between text-xs text-muted-foreground">

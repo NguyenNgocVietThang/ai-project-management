@@ -35,7 +35,7 @@ class Notification(Base):
     notification_type: Mapped[NotificationType] = mapped_column(Enum(NotificationType), nullable=False)
     is_read: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     read_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
-    link: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # Frontend route VD: "/projects/5"
+    link: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # Route frontend VD: "/projects/5"
 
     # Liên kết đến entity gây ra notification
     related_entity_type: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)  # VD: "Task", "ChangeRequest"

@@ -13,15 +13,15 @@ logger = logging.getLogger(__name__)
 
 @celery_app.task(name="emails.send_notification")
 def send_notification_email_task(to_email: str, subject: str, body: str):
-    """Send notification email."""
-    # TODO: Implement email sending with smtplib or FastMail
+    """Gửi email thông báo."""
+    # TODO: Cài đặt phần gửi email bằng smtplib hoặc FastMail
     return {"status": "sent"}
 
 
 @celery_app.task(name="emails.send_welcome")
 def send_welcome_email_task(to_email: str, username: str):
-    """Send welcome email to new user."""
-    # TODO: Implement welcome email
+    """Gửi email chào mừng cho người dùng mới."""
+    # TODO: Cài đặt email chào mừng
     return {"status": "sent"}
 
 
@@ -35,11 +35,11 @@ def send_welcome_email_task(to_email: str, username: str):
     retry_kwargs={"max_retries": 3},
 )
 def send_password_reset_email_task(self, to_email: str, reset_link: str):
-    """Send a password-reset email with bounded exponential retries."""
+    """Gửi email đặt lại mật khẩu với số lần retry exponential có giới hạn."""
     try:
         asyncio.run(send_password_reset_email(to_email, reset_link))
     except Exception:
-        # Do not log the recipient or reset link because both contain sensitive data.
+        # Không log người nhận hay reset link vì cả hai đều chứa dữ liệu nhạy cảm.
         logger.exception("Password reset email delivery failed for task_id=%s", self.request.id)
         raise
     return {"status": "sent"}
@@ -55,11 +55,11 @@ def send_password_reset_email_task(self, to_email: str, reset_link: str):
     retry_kwargs={"max_retries": 3},
 )
 def send_email_verification_task(self, to_email: str, verification_link: str):
-    """Send an email-verification message with bounded exponential retries."""
+    """Gửi thông điệp xác minh email với số lần retry exponential có giới hạn."""
     try:
         asyncio.run(send_email_verification_email(to_email, verification_link))
     except Exception:
-        # The address and link are sensitive; task ID is enough for correlation.
+        # Địa chỉ và link là dữ liệu nhạy cảm; task ID là đủ để đối chiếu.
         logger.exception("Email verification delivery failed for task_id=%s", self.request.id)
         raise
     return {"status": "sent"}

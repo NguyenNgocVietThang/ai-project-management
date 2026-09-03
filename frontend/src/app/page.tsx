@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation'
 
-// The auth flow's true source of truth (authStore) only lives client-side, so `/`
-// hands off to `/login` immediately; the (auth) route group bounces already-authenticated
-// users on to `/dashboard` once the store rehydrates.
+// Nguồn dữ liệu chuẩn thực sự của luồng auth (authStore) chỉ tồn tại phía client, nên `/`
+// chuyển ngay sang `/login`; nhóm route (auth) sẽ đẩy những người dùng đã xác thực
+// sang `/dashboard` một khi store rehydrate xong.
 export default function RootPage() {
   redirect('/login')
 }

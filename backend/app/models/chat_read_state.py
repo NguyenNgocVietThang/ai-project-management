@@ -7,8 +7,8 @@ from app.models.base import Base
 
 
 class ChatReadState(Base):
-    """Tracks, per (project, user), the last chat message the user has read —
-    used to compute an unread count for the project's chat channel."""
+    """Theo dõi, theo từng (project, user), tin nhắn chat cuối cùng mà user đã đọc —
+    dùng để tính số tin chưa đọc cho kênh chat của project."""
 
     __tablename__ = "chat_read_states"
     __table_args__ = (

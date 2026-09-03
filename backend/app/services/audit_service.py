@@ -13,7 +13,7 @@ from app.schemas.common import PaginatedResponse
 
 
 class AuditService:
-    """Read-only access to the append-only audit_logs table."""
+    """Truy cập chỉ đọc vào bảng audit_logs chỉ-ghi-thêm."""
 
     def __init__(self, db: AsyncSession):
         self.db = db

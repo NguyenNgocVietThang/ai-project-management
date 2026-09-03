@@ -17,7 +17,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { formatDate, formatMoney } from '@/lib/format'
 import { getApiErrorMessage } from '@/types/api.types'
 
-// ── Helpers ────────────────────────────────────────────────────────────────
+// ── Hàm hỗ trợ ─────────────────────────────────────────────────────────────
 
 function greeting(): string {
   const h = new Date().getHours()
@@ -46,7 +46,7 @@ function statusBadge(s: string) {
   return map[s] ?? 'bg-muted text-muted-foreground'
 }
 
-// ── Stat card ──────────────────────────────────────────────────────────────
+// ── Thẻ thống kê ───────────────────────────────────────────────────────────
 
 function StatCard({
   icon,
@@ -73,7 +73,7 @@ function StatCard({
   )
 }
 
-// ── Project card ───────────────────────────────────────────────────────────
+// ── Thẻ dự án ──────────────────────────────────────────────────────────────
 
 function ProjectCard({ project }: { project: ActiveProjectSummary }) {
   const pct = Math.min(100, Math.max(0, project.progress_percent))
@@ -114,7 +114,7 @@ function ProjectCard({ project }: { project: ActiveProjectSummary }) {
   )
 }
 
-// ── My Tasks widget ─────────────────────────────────────────────────────────
+// ── Widget Công việc của tôi ───────────────────────────────────────────────
 
 function MyTasksWidget({ tasks }: { tasks: MyTaskItem[] }) {
   return (
@@ -167,7 +167,7 @@ function MyTasksWidget({ tasks }: { tasks: MyTaskItem[] }) {
   )
 }
 
-// ── Main page ──────────────────────────────────────────────────────────────
+// ── Trang chính ────────────────────────────────────────────────────────────
 
 export default function DashboardPage() {
   const { user } = useAuth()
@@ -178,7 +178,7 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      {/* Welcome */}
+      {/* Chào mừng */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight">
           {greeting()}, {user?.full_name?.split(' ')[0] ?? 'there'} 👋
@@ -188,7 +188,7 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Stats row */}
+      {/* Hàng thống kê */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           icon={<FolderKanban className="h-5 w-5" />}
@@ -213,7 +213,7 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* Projects grid */}
+      {/* Lưới dự án */}
       {data.active_projects.length > 0 && (
         <section>
           <div className="mb-4 flex items-center gap-2">
@@ -228,7 +228,7 @@ export default function DashboardPage() {
         </section>
       )}
 
-      {/* My Tasks + Recent Activity */}
+      {/* Công việc của tôi + Hoạt động gần đây */}
       <div className="grid gap-6 xl:grid-cols-2">
         <MyTasksWidget tasks={data.my_tasks} />
 

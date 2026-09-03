@@ -22,7 +22,7 @@ AsyncSessionLocal = async_sessionmaker(
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
-    """FastAPI dependency: yields an async DB session."""
+    """FastAPI dependency: trả về (yield) một async DB session."""
     async with AsyncSessionLocal() as session:
         try:
             yield session

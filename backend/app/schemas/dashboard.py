@@ -4,10 +4,10 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 
-# ─── Shared building blocks ────────────────────────────────────────────────────
+# ─── Các khối dùng chung ───────────────────────────────────────────────────────
 
 class MyTaskItem(BaseModel):
-    """A task currently assigned to the authenticated user."""
+    """Một task hiện được giao cho người dùng đã xác thực."""
     id: int
     name: str
     project_id: int
@@ -20,7 +20,7 @@ class MyTaskItem(BaseModel):
 
 
 class ActiveProjectSummary(BaseModel):
-    """Lightweight project card for the home dashboard grid."""
+    """Thẻ dự án gọn nhẹ cho lưới dashboard trang chủ."""
     id: int
     name: str
     status: str
@@ -45,24 +45,24 @@ class RecentActivityItem(BaseModel):
     created_at: datetime
 
 
-# ─── 3.1  User / Home Dashboard ────────────────────────────────────────────────
+# ─── 3.1  Dashboard người dùng / trang chủ ─────────────────────────────────────
 
 class UserDashboardStats(BaseModel):
     active_projects: int
-    total_tasks: int          # tasks across all user's projects
+    total_tasks: int          # tổng số task trên tất cả dự án của người dùng
     overdue_tasks: int
-    hours_this_week: float    # summed from worklogs this ISO-week
+    hours_this_week: float    # tổng hợp từ worklog trong tuần ISO hiện tại
 
 
 class UserDashboardSummary(BaseModel):
-    """Response for GET /dashboard/summary"""
+    """Dữ liệu phản hồi cho GET /dashboard/summary"""
     stats: UserDashboardStats
     active_projects: List[ActiveProjectSummary]
     my_tasks: List[MyTaskItem]
     recent_activity: List[RecentActivityItem]
 
 
-# ─── 3.1  Portfolio Health ─────────────────────────────────────────────────────
+# ─── 3.1  Tình trạng Portfolio ─────────────────────────────────────────────────
 
 class PortfolioProjectHealth(BaseModel):
     project_id: int
@@ -74,7 +74,7 @@ class PortfolioProjectHealth(BaseModel):
 
 
 class PortfolioHealthResponse(BaseModel):
-    """Response for GET /dashboard/portfolios/{portfolio_id}/health"""
+    """Dữ liệu phản hồi cho GET /dashboard/portfolios/{portfolio_id}/health"""
     portfolio_id: int
     portfolio_name: str
     total_projects: int
@@ -84,12 +84,12 @@ class PortfolioHealthResponse(BaseModel):
     projects: List[PortfolioProjectHealth]
 
 
-# ─── 3.2  Project Dashboard ────────────────────────────────────────────────────
+# ─── 3.2  Dashboard dự án ──────────────────────────────────────────────────────
 
 class TaskStatusCount(BaseModel):
     status: str
     count: int
-    color: str   # hex color hint for chart
+    color: str   # gợi ý màu hex cho biểu đồ
 
 
 class TeamMemberUtilization(BaseModel):
@@ -110,16 +110,16 @@ class BudgetSummary(BaseModel):
 
 
 class ProjectDashboardStats(BaseModel):
-    """Response for GET /dashboard/projects/{project_id}/stats"""
+    """Dữ liệu phản hồi cho GET /dashboard/projects/{project_id}/stats"""
     project_id: int
     project_name: str
-    # Task distribution for Donut / Stacked-bar chart
+    # Phân bố task cho biểu đồ Donut / Stacked-bar
     task_distribution: List[TaskStatusCount]
-    # Budget for Donut chart
+    # Ngân sách cho biểu đồ Donut
     budget: BudgetSummary
-    # Team utilization for Bar chart
+    # Mức sử dụng nhân sự của nhóm cho biểu đồ Bar
     team_utilization: List[TeamMemberUtilization]
-    # Burndown / progress over time
+    # Burndown / tiến độ theo thời gian
     burndown: List["BurndownPoint"]
     total_tasks: int
     completed_tasks: int
@@ -127,7 +127,7 @@ class ProjectDashboardStats(BaseModel):
     critical_tasks: int
 
 
-# ─── Legacy (kept for compatibility) ──────────────────────────────────────────
+# ─── Legacy (giữ lại để tương thích) ──────────────────────────────────────────
 
 class ProjectStats(BaseModel):
     total_tasks: int
@@ -135,8 +135,8 @@ class ProjectStats(BaseModel):
     in_progress_tasks: int
     overdue_tasks: int
     completion_percentage: float
-    cpi: float   # Cost Performance Index
-    spi: float   # Schedule Performance Index
+    cpi: float   # Cost Performance Index (chỉ số hiệu quả chi phí)
+    spi: float   # Schedule Performance Index (chỉ số hiệu quả tiến độ)
 
 
 class BurndownPoint(BaseModel):

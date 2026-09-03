@@ -17,8 +17,8 @@ PROTECTED_ROLE_NAME = "Admin"
 
 
 class RoleService:
-    """Admin-only role & role-permission management. Permissions themselves are a
-    fixed, seeded catalog — only role <-> permission assignment is editable."""
+    """Quản lý role và role-permission chỉ dành cho Admin. Bản thân các permission là một
+    catalog cố định, được seed sẵn — chỉ việc gán role <-> permission là có thể chỉnh sửa."""
 
     def __init__(self, db: AsyncSession):
         self.db = db

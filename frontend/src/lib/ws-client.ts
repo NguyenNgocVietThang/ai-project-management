@@ -1,8 +1,8 @@
-// Minimal reconnecting-WebSocket helper shared by the chat and notification
-// real-time hooks (features/chat/hooks/useChatSocket.ts,
-// features/notifications/hooks/useNotifications.ts). Not a general-purpose
-// library — just enough to open one socket, retry with backoff on drop, and
-// hand parsed JSON messages back to the caller.
+// Helper WebSocket tự kết nối lại tối giản, dùng chung bởi các hook real-time
+// của chat và notification (features/chat/hooks/useChatSocket.ts,
+// features/notifications/hooks/useNotifications.ts). Không phải thư viện đa dụng
+// — chỉ đủ để mở một socket, retry với backoff khi rớt kết nối, và trả các
+// message JSON đã parse về cho phía gọi.
 
 export interface WSClientOptions {
   url: string
@@ -41,7 +41,7 @@ export function connectWebSocket({ url, onMessage, onOpen, onClose }: WSClientOp
       try {
         onMessage(JSON.parse(event.data))
       } catch {
-        // Ignore malformed payloads rather than crashing the socket handler.
+        // Bỏ qua payload sai định dạng thay vì làm sập handler của socket.
       }
     }
     socket.onclose = () => {

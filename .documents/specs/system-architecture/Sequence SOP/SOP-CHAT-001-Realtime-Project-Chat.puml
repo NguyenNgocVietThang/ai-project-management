@@ -1,0 +1,34 @@
+@startuml SOP-CHAT-001-Realtime-Project-Chat
+autonumber
+actor "Member / PM" as User
+participant "Next.js Frontend\n(/projects/[id]/chat)" as FE
+participant "FastAPI Gateway\n(/ws/chat/{project_id})" as WS
+participant "ChatService" as Service
+database "PostgreSQL\n(chat_messages)" as DB
+queue "Redis Pub/Sub\n(ws:chat:project:{id})" as Redis
+participant "redis_listener\n(All Workers)" as Listener
+
+== WebSocket Connect & Handshake ==
+User -> FE: Truy cập trang Chat dự án
+FE -> WS: Kết nối ws://.../ws/chat/{id}?token=<JWT>
+WS -> WS: authenticate_ws(token)
+WS -> WS: get_project_context() (Kiểm tra project_members)
+WS -> FE: HTTP 101 Switching Protocols (WS Connected)
+
+== Send & Broadcast Message ==
+User -> FE: Nhập tin nhắn và gửi
+alt WebSocket Connected
+    FE -> WS: JSON {type: "message", content: "..."}
+    WS -> Service: create_message(project_id, user_id, content)
+else Fallback REST
+    FE -> Service: POST /api/v1/projects/{id}/messages
+end
+
+Service -> DB: INSERT INTO chat_messages
+Service -> Redis: publish("ws:chat:project:{id}", payload)
+Redis -> Listener: Message event received
+Listener -> WS: broadcast_local()
+WS -> FE: Gửi tin nhắn real-time tới toàn bộ thành viên đang online
+FE -> User: Render tin nhắn mới + Cập nhật Unread badge
+
+@enduml

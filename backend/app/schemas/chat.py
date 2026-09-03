@@ -1,4 +1,4 @@
-"""Schemas for the project-scoped team chat feature."""
+"""Schema cho tính năng chat nhóm theo phạm vi dự án."""
 
 from datetime import datetime
 from typing import Optional
@@ -24,7 +24,7 @@ class ChatMessageResponse(BaseModel):
 
 class ChatHistoryResponse(BaseModel):
     items: list[ChatMessageResponse]
-    next_before_id: Optional[int] = None  # pass as `before_id` to fetch the next (older) page
+    next_before_id: Optional[int] = None  # truyền vào `before_id` để lấy trang kế tiếp (cũ hơn)
     has_more: bool
 
 

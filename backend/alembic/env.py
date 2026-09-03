@@ -7,12 +7,12 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 
-# Import settings and models
+# Import settings và models
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.core.config import settings
-from app.db.base import Base  # noqa: F401 - imports all models
+from app.db.base import Base  # noqa: F401 - import toàn bộ models
 
 config = context.config
 config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)

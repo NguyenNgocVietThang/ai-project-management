@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-// Routes that require authentication
+// Các route yêu cầu xác thực
 const PROTECTED_PREFIXES = ['/dashboard', '/projects', '/portfolios', '/settings', '/profile', '/admin']
-// Routes for unauthenticated users
+// Các route dành cho người dùng chưa xác thực
 const AUTH_ROUTES = ['/login', '/register', '/forgot-password', '/reset-password']
 
 export function middleware(request: NextRequest) {

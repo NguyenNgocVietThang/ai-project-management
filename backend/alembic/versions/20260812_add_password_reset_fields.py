@@ -1,4 +1,4 @@
-"""add password reset fields
+"""thêm các trường password reset
 
 Revision ID: 20260812_password_reset
 Revises: 20260810_social_oauth
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 from alembic import op
 
-# revision identifiers, used by Alembic.
+# định danh revision, được Alembic sử dụng.
 revision: str = "20260812_password_reset"
 down_revision: Union[str, None] = "20260810_social_oauth"
 branch_labels: Union[str, Sequence[str], None] = None

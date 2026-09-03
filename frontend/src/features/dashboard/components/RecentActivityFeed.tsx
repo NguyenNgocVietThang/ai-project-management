@@ -1,7 +1,7 @@
 'use client'
 
 /**
- * RecentActivityFeed – timeline feed of latest audit log events
+ * RecentActivityFeed – dòng thời gian các sự kiện audit log mới nhất
  */
 import { formatDistanceToNow, parseISO } from 'date-fns'
 import { Activity } from 'lucide-react'

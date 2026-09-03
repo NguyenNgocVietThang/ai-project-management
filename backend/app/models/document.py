@@ -23,15 +23,15 @@ class Document(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     doc_type: Mapped[DocumentType] = mapped_column(Enum(DocumentType), default=DocumentType.OTHER)
 
-    # MinIO storage info
+    # Thông tin lưu trữ MinIO
     minio_bucket: Mapped[str] = mapped_column(String(100), nullable=False)
-    minio_key: Mapped[str] = mapped_column(Text, nullable=False)          # Path trong bucket
-    file_url: Mapped[str] = mapped_column(Text, nullable=False)           # Presigned URL cache
+    minio_key: Mapped[str] = mapped_column(Text, nullable=False)          # Đường dẫn trong bucket
+    file_url: Mapped[str] = mapped_column(Text, nullable=False)           # Cache của presigned URL
 
-    file_size: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)  # bytes
+    file_size: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)  # tính bằng byte
     mime_type: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
 
-    # AI parsing
+    # Phân tích bằng AI
     ai_parsed: Mapped[bool] = mapped_column(default=False, nullable=False)
     ai_summary: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     ai_parsed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)

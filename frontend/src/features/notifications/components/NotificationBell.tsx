@@ -11,7 +11,7 @@ export function NotificationBell() {
   const { data } = useUnreadCount()
   const unread = data?.unread_count ?? 0
 
-  // Close on outside click
+  // Đóng khi click ra ngoài
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) {
@@ -38,7 +38,7 @@ export function NotificationBell() {
         )}
       </button>
 
-      {/* Dropdown panel */}
+      {/* Bảng dropdown */}
       {open && (
         <div className="absolute right-0 top-full z-50 mt-2 overflow-hidden rounded-xl border bg-popover shadow-xl">
           <NotificationPanel onClose={() => setOpen(false)} />

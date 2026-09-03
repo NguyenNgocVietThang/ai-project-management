@@ -33,7 +33,7 @@ class AIRequest(Base):
     request_type: Mapped[AIRequestType] = mapped_column(Enum(AIRequestType), nullable=False)
     status: Mapped[AIRequestStatus] = mapped_column(Enum(AIRequestStatus), default=AIRequestStatus.PENDING)
     input_data_json: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
-    celery_task_id: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)  # Celery task ID
+    celery_task_id: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)  # ID của Celery task
     error_message: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 

@@ -30,7 +30,7 @@ class Task(Base):
         Index("ix_tasks_due_date", "due_date"),
     )
 
-    # ─── Basic info ──────────────────────────────────────────────────────────
+    # ─── Thông tin cơ bản ───────────────────────────────────────────────────
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     status: Mapped[TaskStatus] = mapped_column(Enum(TaskStatus), default=TaskStatus.TODO, nullable=False)
@@ -39,7 +39,7 @@ class Task(Base):
     labels: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=False)
     progress: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)  # 0-100%
 
-    # ─── Time tracking ───────────────────────────────────────────────────────
+    # ─── Theo dõi thời gian ─────────────────────────────────────────────────
     estimated_hours: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     actual_hours: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
     start_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)   # Ngày dự kiến bắt đầu
@@ -47,11 +47,11 @@ class Task(Base):
     actual_start: Mapped[Optional[date]] = mapped_column(Date, nullable=True) # Ngày thực tế bắt đầu
     actual_end: Mapped[Optional[date]] = mapped_column(Date, nullable=True)   # Ngày thực tế kết thúc
 
-    # ─── Scheduled-notification idempotency (set by the daily Celery Beat sweep) ─
+    # ─── Idempotency cho thông báo theo lịch (đặt bởi lượt quét Celery Beat hằng ngày) ─
     last_start_notified_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     last_due_soon_notified_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
-    # ─── CPM fields (tính toán bởi CPM engine) ───────────────────────────────
+    # ─── Các trường CPM (tính toán bởi CPM engine) ──────────────────────────
     early_start: Mapped[Optional[date]] = mapped_column(Date, nullable=True)  # ES
     early_finish: Mapped[Optional[date]] = mapped_column(Date, nullable=True) # EF
     late_start: Mapped[Optional[date]] = mapped_column(Date, nullable=True)   # LS
@@ -59,14 +59,14 @@ class Task(Base):
     float_days: Mapped[Optional[float]] = mapped_column(Float, nullable=True) # Slack = LS - ES
     is_critical: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
-    # ─── Foreign Keys ────────────────────────────────────────────────────────
+    # ─── Khóa ngoại ─────────────────────────────────────────────────────────
     project_id: Mapped[int] = mapped_column(ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
     phase_id: Mapped[Optional[int]] = mapped_column(ForeignKey("phases.id", ondelete="SET NULL"), nullable=True)
     sprint_id: Mapped[Optional[int]] = mapped_column(ForeignKey("sprints.id", ondelete="SET NULL"), nullable=True)
     epic_id: Mapped[Optional[int]] = mapped_column(ForeignKey("epics.id", ondelete="SET NULL"), nullable=True)
     assignee_id: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
 
-    # ─── Relationships ────────────────────────────────────────────────────────
+    # ─── Quan hệ ──────────────────────────────────────────────────────────────
     project: Mapped["Project"] = relationship("Project", back_populates="tasks")
     phase: Mapped[Optional["Phase"]] = relationship("Phase", back_populates="tasks")
     sprint: Mapped[Optional["Sprint"]] = relationship("Sprint", back_populates="tasks")

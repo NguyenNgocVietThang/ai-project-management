@@ -1,6 +1,6 @@
 /**
- * MiniProgressBar – simple inline progress bar
- * Used in project cards and portfolio health rows
+ * MiniProgressBar – thanh tiến độ inline đơn giản
+ * Dùng trong thẻ dự án và các hàng tình trạng danh mục đầu tư
  */
 import { cn } from '@/lib/utils'
 

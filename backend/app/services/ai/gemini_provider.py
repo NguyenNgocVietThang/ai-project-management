@@ -2,6 +2,7 @@
 import google.generativeai as genai
 from app.core.config import settings
 from app.services.ai.base import BaseAIProvider
+from app.services.ai.parsing import parse_json_object
 
 
 class GeminiProvider(BaseAIProvider):
@@ -15,8 +16,5 @@ class GeminiProvider(BaseAIProvider):
         return response.text
 
     async def generate_json(self, prompt: str, system_prompt: str = "") -> Dict[str, Any]:
-        import json
         text = await self.generate_text(prompt, system_prompt)
-        start = text.find("{")
-        end = text.rfind("}") + 1
-        return json.loads(text[start:end])
+        return parse_json_object(text)

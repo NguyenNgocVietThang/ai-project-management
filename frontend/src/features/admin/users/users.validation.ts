@@ -9,7 +9,7 @@ const usernameSchema = z
 
 const passwordSchema = z
   .string()
-  .min(8, 'Password must be at least 8 characters')
+  .min(12, 'Password must be at least 12 characters')
   .max(100)
   .refine((value) => /[0-9]/.test(value) || /[^a-zA-Z0-9\s]/.test(value), {
     message: 'Password must contain at least one number or special character',

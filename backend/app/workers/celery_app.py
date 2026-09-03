@@ -24,8 +24,8 @@ celery_app.conf.update(
     task_track_started=True,
     task_acks_late=True,
     worker_prefetch_multiplier=1,
-    # API requests enqueue email on a best-effort basis. Fail quickly when Redis is
-    # unavailable so registration/invitation still returns instead of blocking.
+    # Các request API đưa email vào hàng đợi theo kiểu best-effort. Fail nhanh khi Redis
+    # không sẵn sàng để việc đăng ký/mời vẫn trả về thay vì bị chặn.
     broker_connection_timeout=2,
     broker_connection_retry=False,
     task_publish_retry=False,
@@ -37,12 +37,12 @@ celery_app.conf.update(
     },
 )
 
-# Requires a separate `celery -A app.workers.celery_app beat` process running
-# (see docker-compose.yml's celery-beat service) — the worker alone never
-# fires scheduled tasks.
+# Cần một tiến trình `celery -A app.workers.celery_app beat` chạy riêng
+# (xem service celery-beat trong docker-compose.yml) — chỉ mình worker sẽ
+# không bao giờ kích hoạt các task theo lịch.
 celery_app.conf.beat_schedule = {
     "sweep-task-dates-daily": {
         "task": "notifications.sweep_task_dates",
-        "schedule": crontab(hour=8, minute=0),  # 08:00 Asia/Ho_Chi_Minh
+        "schedule": crontab(hour=8, minute=0),  # 08:00 giờ Asia/Ho_Chi_Minh
     },
 }

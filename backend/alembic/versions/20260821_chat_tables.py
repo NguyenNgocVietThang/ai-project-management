@@ -1,4 +1,4 @@
-"""Add chat_messages and chat_read_states tables (project-scoped team chat).
+"""Thêm các bảng chat_messages và chat_read_states (chat nhóm theo phạm vi project).
 
 Revision ID: 20260821_chat_tables
 Revises: 20260821_task_notify_columns

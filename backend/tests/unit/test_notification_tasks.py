@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 
-import app.db.base  # noqa: F401 - register SQLAlchemy relationships
+import app.db.base  # noqa: F401 - đăng ký các quan hệ SQLAlchemy
 from app.models.notification import NotificationType
 from app.models.task import TaskStatus
 from app.workers.notification_tasks import DUE_SOON_DAYS_AHEAD, sweep_task_dates

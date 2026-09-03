@@ -1,4 +1,4 @@
-"""Schemas for the Admin panel: user management, role/permission management, audit log."""
+"""Schema cho trang Admin: quản lý người dùng, quản lý role/permission, audit log."""
 
 from datetime import datetime
 from typing import Optional
@@ -8,14 +8,14 @@ from pydantic import BaseModel, EmailStr, Field, field_validator
 from app.core.security import validate_password_policy
 from app.schemas.user import UserResponse
 
-# ─── Users ──────────────────────────────────────────────────────────────────
+# ─── Người dùng ─────────────────────────────────────────────────────────────
 
 
 class AdminUserCreate(BaseModel):
     email: EmailStr
     username: str = Field(min_length=3, max_length=50, pattern=r"^[a-zA-Z0-9_]+$")
     full_name: str = Field(min_length=2, max_length=100)
-    password: str = Field(min_length=8, max_length=100)
+    password: str = Field(min_length=12, max_length=100)
     role_ids: list[int] = Field(default_factory=list)
     is_active: bool = True
 

@@ -55,7 +55,7 @@ export function ProfileDetailsForm({ user, onSubmit, isLoading, error, success }
           try {
             await onSubmit(values)
           } catch {
-            // The mutation exposes the server error through the `error` prop.
+            // Mutation bộc lộ lỗi từ server qua prop `error`.
           }
         })}
         noValidate

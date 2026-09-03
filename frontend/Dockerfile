@@ -1,20 +1,20 @@
-# Base stage
+# Giai đoạn cơ sở (Base stage)
 FROM node:18-alpine AS base
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 
-# Development stage
+# Giai đoạn phát triển (Development stage)
 FROM base AS development
 COPY . .
 CMD ["npm", "run", "dev"]
 
-# Build stage
+# Giai đoạn biên dịch (Build stage)
 FROM base AS build
 COPY . .
 RUN npm run build
 
-# Production stage
+# Giai đoạn vận hành (Production stage)
 FROM node:18-alpine AS production
 WORKDIR /app
 ENV NODE_ENV=production

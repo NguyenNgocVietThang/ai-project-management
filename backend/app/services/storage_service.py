@@ -12,7 +12,7 @@ from app.core.config import settings
 
 
 class StorageService:
-    """Small async wrapper around the synchronous MinIO client."""
+    """Lớp bọc async nhỏ quanh client MinIO đồng bộ."""
 
     def __init__(self, client: Optional[Minio] = None):
         self.client = client or Minio(

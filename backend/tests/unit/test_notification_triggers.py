@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 
-import app.db.base  # noqa: F401 - register SQLAlchemy relationships
+import app.db.base  # noqa: F401 - đăng ký các quan hệ SQLAlchemy
 from app.models.notification import NotificationType
 from app.models.task import TaskStatus
 from app.schemas.task import TaskStatusUpdate, TaskUpdate
@@ -85,8 +85,8 @@ async def test_task_update_notifies_team_on_significant_field_change():
     _, kwargs = notify_mock.call_args
     assert kwargs["ntype"] == NotificationType.SYSTEM
     assert actor.id in kwargs["exclude_user_ids"]
-    # due_date changed -> the "due soon" idempotency flag must reset so the
-    # scheduled sweep can re-fire for the newly rescheduled date.
+    # due_date thay đổi -> cờ idempotency "due soon" phải được reset để
+    # đợt sweep theo lịch có thể kích hoạt lại cho ngày vừa được lên lịch lại.
     assert task.last_due_soon_notified_at is None
 
 

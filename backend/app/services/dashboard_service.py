@@ -41,7 +41,7 @@ from app.schemas.dashboard import (
 )
 from app.services.phase2_common import is_admin as _is_admin
 
-# ── colour hints for task-status donut chart ──────────────────────────────────
+# ── gợi ý màu cho biểu đồ donut trạng thái task ──────────────────────────────────
 STATUS_COLORS: dict[str, str] = {
     TaskStatus.TODO.value: "#6b7280",
     TaskStatus.IN_PROGRESS.value: "#3b82f6",
@@ -51,7 +51,7 @@ STATUS_COLORS: dict[str, str] = {
 }
 
 def _iso_week_bounds(today: date) -> Tuple[date, date]:
-    """Return (monday, sunday) of the ISO week containing *today*."""
+    """Trả về (thứ hai, chủ nhật) của tuần ISO chứa *today*."""
     monday = today - timedelta(days=today.weekday())
     return monday, monday + timedelta(days=6)
 
@@ -62,31 +62,31 @@ class DashboardService:
         self.db = db
 
     # ─────────────────────────────────────────────────────────────────────────
-    #  3.1  Home Dashboard – user summary
+    #  3.1  Home Dashboard – tóm tắt cho người dùng
     # ─────────────────────────────────────────────────────────────────────────
 
     async def get_user_summary(self, user: User) -> UserDashboardSummary:
         today = date.today()
         admin = _is_admin(user)
 
-        # ── 1. Visible project ids ──────────────────────────────────────────
+        # ── 1. Danh sách id dự án mà người dùng nhìn thấy ──────────────────────────────────────────
         project_ids = await self._visible_project_ids(user.id, admin)
 
-        # ── 2. Per-project task counts (single query) ───────────────────────
+        # ── 2. Số lượng task theo từng dự án (một truy vấn duy nhất) ───────────────────────
         task_rows = await self._project_task_counts(project_ids, today)
         task_map: dict[int, dict] = {r.project_id: r for r in task_rows}
 
-        # ── 3. Active projects ──────────────────────────────────────────────
+        # ── 3. Các dự án đang hoạt động ──────────────────────────────────────────────
         projects = await self._active_projects(project_ids, task_map, today)
 
-        # ── 4. Global stats ─────────────────────────────────────────────────
+        # ── 4. Thống kê tổng thể ─────────────────────────────────────────────────
         total_tasks = sum(r.total for r in task_rows)
         overdue_tasks = sum(r.overdue for r in task_rows)
         active_project_count = sum(
             1 for p in projects if p.status == ProjectStatus.ACTIVE.value
         )
 
-        # ── 5. Hours this week (from worklogs) ──────────────────────────────
+        # ── 5. Số giờ trong tuần này (lấy từ worklog) ──────────────────────────────
         week_start, week_end = _iso_week_bounds(today)
         hours_result = await self.db.scalar(
             select(func.coalesce(func.sum(Worklog.hours), 0.0)).where(
@@ -97,10 +97,10 @@ class DashboardService:
         )
         hours_this_week = float(hours_result or 0.0)
 
-        # ── 6. My Tasks (assigned to me, not done) ──────────────────────────
+        # ── 6. Task của tôi (được giao cho tôi, chưa hoàn thành) ──────────────────────────
         my_tasks = await self._my_tasks(user.id, project_ids, today)
 
-        # ── 7. Recent activity (across all visible projects) ─────────────────
+        # ── 7. Hoạt động gần đây (trên tất cả dự án nhìn thấy được) ─────────────────
         recent_activity = await self._recent_activity(project_ids, limit=15)
 
         return UserDashboardSummary(
@@ -135,7 +135,7 @@ class DashboardService:
         if not admin and portfolio.owner_id != user.id:
             raise ForbiddenException("Access denied")
 
-        # All non-deleted projects in this portfolio
+        # Tất cả dự án chưa bị xóa trong portfolio này
         proj_result = await self.db.execute(
             select(Project).where(
                 Project.portfolio_id == portfolio_id,
@@ -186,7 +186,7 @@ class DashboardService:
         )
 
     # ─────────────────────────────────────────────────────────────────────────
-    #  3.2  Project Dashboard Stats
+    #  3.2  Thống kê Dashboard dự án
     # ─────────────────────────────────────────────────────────────────────────
 
     async def get_project_stats(
@@ -194,7 +194,7 @@ class DashboardService:
     ) -> ProjectDashboardStats:
         admin = _is_admin(user)
 
-        # Load project with full relations
+        # Nạp dự án kèm toàn bộ quan hệ
         project: Optional[Project] = await self.db.scalar(
             select(Project)
             .where(Project.id == project_id, Project.deleted_at.is_(None))
@@ -203,14 +203,14 @@ class DashboardService:
         if project is None:
             raise NotFoundException("Project not found")
 
-        # Check access
+        # Kiểm tra quyền truy cập
         is_member = any(m.id == user.id for m in project.members)
         if not admin and project.pm_id != user.id and not is_member:
             raise ForbiddenException("Access denied")
 
         today = date.today()
 
-        # ── Task distribution ───────────────────────────────────────────────
+        # ── Phân bố task theo trạng thái ───────────────────────────────────────────────
         dist_result = await self.db.execute(
             select(Task.status, func.count().label("cnt"))
             .where(Task.project_id == project_id)
@@ -231,7 +231,7 @@ class DashboardService:
             (r.count for r in task_distribution if r.status == TaskStatus.DONE.value), 0
         )
 
-        # Overdue count
+        # Số task quá hạn
         overdue_tasks = await self.db.scalar(
             select(func.count()).where(
                 Task.project_id == project_id,
@@ -240,7 +240,7 @@ class DashboardService:
             )
         ) or 0
 
-        # Critical tasks
+        # Task nằm trên đường găng
         critical_tasks = await self.db.scalar(
             select(func.count()).where(
                 Task.project_id == project_id,
@@ -249,7 +249,7 @@ class DashboardService:
             )
         ) or 0
 
-        # ── Budget ──────────────────────────────────────────────────────────
+        # ── Ngân sách ──────────────────────────────────────────────────────────
         remaining = None
         utilization = None
         if project.budget is not None:
@@ -265,10 +265,10 @@ class DashboardService:
             currency=project.currency,
         )
 
-        # ── Team utilization ────────────────────────────────────────────────
+        # ── Mức độ sử dụng nhân sự trong nhóm ────────────────────────────────────────────────
         team_utilization = await self._team_utilization(project_id, project.pm_id)
 
-        # ── Burndown (simple: track completed tasks per day for last 14 days)
+        # ── Burndown (đơn giản: theo dõi số task hoàn thành mỗi ngày trong 14 ngày gần nhất)
         burndown = await self._burndown(project_id, total_tasks, today)
 
         return ProjectDashboardStats(
@@ -285,11 +285,11 @@ class DashboardService:
         )
 
     # ─────────────────────────────────────────────────────────────────────────
-    #  Private helpers
+    #  Hàm hỗ trợ nội bộ
     # ─────────────────────────────────────────────────────────────────────────
 
     async def _visible_project_ids(self, user_id: int, admin: bool) -> List[int]:
-        """Return list of project IDs visible to this user."""
+        """Trả về danh sách ID dự án mà người dùng này nhìn thấy được."""
         if admin:
             result = await self.db.execute(
                 select(Project.id).where(Project.deleted_at.is_(None))
@@ -448,7 +448,7 @@ class DashboardService:
     async def _team_utilization(
         self, project_id: int, pm_id: int
     ) -> List[TeamMemberUtilization]:
-        # Get member ids from project_members + PM
+        # Lấy id thành viên từ project_members + PM
         members_result = await self.db.execute(
             select(
                 User.id,
@@ -462,7 +462,7 @@ class DashboardService:
 
         utilization = []
         for m in members:
-            # Task count assigned to this member
+            # Số task được giao cho thành viên này
             task_count = await self.db.scalar(
                 select(func.count(Task.id)).where(
                     Task.project_id == project_id,
@@ -477,7 +477,7 @@ class DashboardService:
                     ),
                 )
             ) or 0
-            # Logged hours on this project
+            # Số giờ đã ghi nhận trên dự án này
             logged = await self.db.scalar(
                 select(func.coalesce(func.sum(Worklog.hours), 0.0))
                 .join(Task, Task.id == Worklog.task_id)
@@ -486,7 +486,7 @@ class DashboardService:
                     Worklog.user_id == m.id,
                 )
             ) or 0.0
-            # Estimated hours (from assignments on this project)
+            # Số giờ ước lượng (từ các assignment trên dự án này)
             estimated = await self.db.scalar(
                 select(func.coalesce(func.sum(Assignment.allocated_hours), 0.0))
                 .join(Task, Task.id == Assignment.task_id)
@@ -511,7 +511,7 @@ class DashboardService:
     async def _burndown(
         self, project_id: int, total_tasks: int, today: date
     ) -> List[BurndownPoint]:
-        """Simple 14-day burndown: remaining = total - cumulative done tasks."""
+        """Burndown 14 ngày đơn giản: còn lại = tổng - số task đã hoàn thành cộng dồn."""
         days = 14
         start = today - timedelta(days=days - 1)
         points = []
@@ -535,7 +535,7 @@ class DashboardService:
         return points
 
 
-# ── FastAPI dependency injection ──────────────────────────────────────────────
+# ── Khai báo dependency injection cho FastAPI ──────────────────────────────────────────────
 
 async def get_dashboard_service(db: Annotated[AsyncSession, Depends(get_db)]) -> DashboardService:
     return DashboardService(db)

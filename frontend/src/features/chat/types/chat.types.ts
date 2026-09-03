@@ -1,4 +1,4 @@
-// Chat types – mirrors backend schemas/chat.py
+// Kiểu dữ liệu Chat – phản chiếu backend schemas/chat.py
 
 export interface ChatMessage {
   id: number

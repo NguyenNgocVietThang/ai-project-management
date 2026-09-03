@@ -6,9 +6,9 @@ import { WS_BASE_URL } from '@/services/api'
 import { useAuthStore } from '@/store/authStore'
 import type { ChatMessage } from '../types/chat.types'
 
-/** Opens a live WebSocket for a project's chat channel. `onMessage` fires for
- * every message broadcast on the channel, including ones this client sent
- * itself (the server doesn't echo directly — see backend api/ws/chat.py). */
+/** Mở một WebSocket trực tiếp cho kênh chat của một dự án. `onMessage` được gọi
+ * cho mọi tin nhắn được broadcast trên kênh, bao gồm cả tin nhắn do chính client
+ * này gửi (server không echo trực tiếp — xem backend api/ws/chat.py). */
 export function useChatSocket(projectId: number, onMessage: (message: ChatMessage) => void) {
   const onMessageRef = useRef(onMessage)
   onMessageRef.current = onMessage

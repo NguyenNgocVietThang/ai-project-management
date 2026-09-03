@@ -14,7 +14,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean
 }
 
-/** Base button. Min 44px tap target, visible focus ring, disabled + loading states. */
+/** Button cơ sở. Vùng chạm tối thiểu 44px, focus ring hiển thị, trạng thái disabled + loading. */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'default', isLoading = false, disabled, children, ...props }, ref) => {
     return (

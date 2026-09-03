@@ -1,0 +1,31 @@
+@startuml SOP-NOTI-001-Realtime-Notification-Sweep
+autonumber
+actor "Project Team Member" as Member
+participant "Celery Beat\n(Scheduler 08:00 AM)" as Beat
+participant "TaskService /\nnotification_tasks" as TaskWorker
+participant "NotificationService" as NotiService
+database "PostgreSQL\n(notifications, tasks)" as DB
+queue "Redis Pub/Sub\n(ws:notif:user:{id})" as Redis
+participant "FastAPI WS Gateway\n(/ws/notifications)" as WS
+participant "Next.js Frontend\n(useNotificationSocket)" as FE
+
+== Luồng 1: Task Thay đổi Quan trọng (Instant Fan-out) ==
+Member -> TaskWorker: Cập nhật status / start_date / due_date / assignee
+TaskWorker -> NotiService: notify_project_team(project_id, exclude_actor=True)
+NotiService -> DB: INSERT INTO notifications
+NotiService -> DB: db.flush() (lấy id, created_at)
+NotiService -> Redis: publish("ws:notif:user:{member_id}", payload)
+Redis -> WS: redis_listener receives event
+WS -> FE: Push notification frame qua WebSocket
+FE -> Member: Chuông thông báo nhảy số unread + Popup
+
+== Luồng 2: Celery Beat Daily Sweep (08:00 AM) ==
+Beat -> TaskWorker: Trigger sweep_task_dates_task()
+TaskWorker -> DB: Quét tasks bắt đầu hôm nay (start_date=today, status=TODO, chưa gửi)
+TaskWorker -> DB: Quét tasks sắp đến hạn (due_date=today+1, chưa DONE, chưa gửi)
+TaskWorker -> NotiService: push() thông báo nhắc nhở tới team
+TaskWorker -> DB: Cập nhật last_start_notified_at & last_due_soon_notified_at
+NotiService -> Redis: publish to ws:notif:user:{id}
+Redis -> FE: WebSocket push tới các thành viên online
+
+@enduml

@@ -59,14 +59,14 @@ export function NotificationItem({ notification, onMarkRead, onDelete }: Props) 
         notification.is_read ? 'opacity-70' : ''
       }`}
     >
-      {/* Icon */}
+      {/* Biểu tượng */}
       <span
         className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-background ${meta.color}`}
       >
         {meta.icon}
       </span>
 
-      {/* Content */}
+      {/* Nội dung */}
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-2">
           <p className={`text-sm leading-snug ${notification.is_read ? '' : 'font-semibold'}`}>
@@ -105,7 +105,7 @@ export function NotificationItem({ notification, onMarkRead, onDelete }: Props) 
         <p className="mt-1 text-[10px] text-muted-foreground/70">{timeAgo}</p>
       </div>
 
-      {/* Unread dot */}
+      {/* Chấm chưa đọc */}
       {!notification.is_read && (
         <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-primary" />
       )}

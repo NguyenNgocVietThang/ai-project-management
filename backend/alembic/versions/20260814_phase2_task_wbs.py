@@ -1,4 +1,4 @@
-"""Phase 2 task, WBS, assignment and worklog support.
+"""Hỗ trợ task, WBS, assignment và worklog cho Phase 2.
 
 Revision ID: 20260814_phase2_task_wbs
 Revises: 20260813_portfolio_project_core

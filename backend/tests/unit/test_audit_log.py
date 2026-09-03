@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, Mock
 
 import pytest
 
-import app.db.base  # noqa: F401 - register SQLAlchemy relationships
+import app.db.base  # noqa: F401 - đăng ký các quan hệ SQLAlchemy
 from app.services.audit_service import AuditService
 
 NOW = datetime(2026, 8, 20, tzinfo=timezone.utc)

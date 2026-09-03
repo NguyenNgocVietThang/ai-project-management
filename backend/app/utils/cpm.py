@@ -1,13 +1,13 @@
 """
-Critical Path Method (CPM) Algorithm
+Thuật toán Critical Path Method (CPM)
 -------------------------------------
-Topological Sort (Kahn's algorithm) + Forward Pass + Backward Pass.
+Topological Sort (thuật toán Kahn) + Forward Pass + Backward Pass.
 
-Supports all 4 dependency types used by `app.models.dependency.Dependency`
-(FS, SS, FF, SF) with positive/negative lag (lead time), multiple
-start/end nodes and disconnected sub-graphs.
+Hỗ trợ cả 4 loại dependency mà `app.models.dependency.Dependency` dùng
+(FS, SS, FF, SF) với lag dương/âm (lead time), nhiều node bắt đầu/kết thúc
+và các đồ thị con rời nhau.
 
-Usage (pure algorithm, framework-agnostic):
+Cách dùng (thuật toán thuần, không phụ thuộc framework):
 
     nodes = {
         1: CPMNode(id=1, duration=3),
@@ -18,7 +18,7 @@ Usage (pure algorithm, framework-agnostic):
     result.critical_path   # -> [1, 2]
     result.project_duration  # -> 8.0
 
-Usage (straight from ORM rows):
+Cách dùng (trực tiếp từ các bản ghi ORM):
 
     result = compute_cpm_for_project(tasks, dependencies)
     for task_id, node in result.nodes.items():
@@ -28,12 +28,12 @@ from dataclasses import dataclass, field
 from datetime import date, timedelta
 from typing import Dict, Iterable, List, Optional, Tuple
 
-# Dependency type constants (kept as plain strings so this module has no
-# hard dependency on the ORM / enum classes and stays trivially testable).
-FS = "FS"  # Finish-to-Start  (successor starts after predecessor finishes)
-SS = "SS"  # Start-to-Start   (successor starts after predecessor starts)
-FF = "FF"  # Finish-to-Finish (successor finishes after predecessor finishes)
-SF = "SF"  # Start-to-Finish  (successor finishes after predecessor starts)
+# Các hằng số loại dependency (giữ dạng chuỗi thuần để module này không phụ
+# thuộc cứng vào ORM / các lớp enum và vẫn dễ dàng viết test).
+FS = "FS"  # Finish-to-Start  (successor bắt đầu sau khi predecessor kết thúc)
+SS = "SS"  # Start-to-Start   (successor bắt đầu sau khi predecessor bắt đầu)
+FF = "FF"  # Finish-to-Finish (successor kết thúc sau khi predecessor kết thúc)
+SF = "SF"  # Start-to-Finish  (successor kết thúc sau khi predecessor bắt đầu)
 
 VALID_DEPENDENCY_TYPES = {FS, SS, FF, SF}
 
@@ -41,7 +41,7 @@ VALID_DEPENDENCY_TYPES = {FS, SS, FF, SF}
 @dataclass
 class CPMNode:
     id: int
-    duration: float  # in days, must be >= 0
+    duration: float  # tính bằng ngày, phải >= 0
     name: Optional[str] = None
     successors: List[int] = field(default_factory=list)
     predecessors: List[int] = field(default_factory=list)
@@ -85,8 +85,8 @@ def build_graph(
     edges: Iterable[CPMEdge],
 ) -> Dict[int, CPMNode]:
     """
-    Build a node graph from (task_id, duration) pairs and a list of edges.
-    Raises ValueError if an edge references an unknown task id.
+    Dựng đồ thị node từ các cặp (task_id, duration) và một danh sách edge.
+    Ném ValueError nếu một edge tham chiếu đến task id không tồn tại.
     """
     nodes: Dict[int, CPMNode] = {tid: CPMNode(id=tid, duration=max(0.0, dur)) for tid, dur in tasks}
 
@@ -106,7 +106,7 @@ def build_graph(
 
 
 def topological_sort(nodes: Dict[int, CPMNode]) -> List[int]:
-    """Kahn's algorithm for topological sort. Raises ValueError on a cycle."""
+    """Thuật toán Kahn cho topological sort. Ném ValueError nếu có chu trình."""
     in_degree: Dict[int, int] = {nid: 0 for nid in nodes}
     for node in nodes.values():
         for succ_id in node.successors:
@@ -145,8 +145,8 @@ def _edges_by_predecessor(edges: List[CPMEdge]) -> Dict[int, List[CPMEdge]]:
 
 def forward_pass(nodes: Dict[int, CPMNode], order: List[int], edges: List[CPMEdge]) -> None:
     """
-    Calculate Early Start (ES) and Early Finish (EF) for every node,
-    honoring the dependency type and lag/lead time of each incoming edge.
+    Tính Early Start (ES) và Early Finish (EF) cho từng node,
+    tôn trọng loại dependency và lag/lead time của mỗi edge đi vào.
     """
     incoming = _edges_by_successor(edges)
 
@@ -178,9 +178,9 @@ def forward_pass(nodes: Dict[int, CPMNode], order: List[int], edges: List[CPMEdg
 
 def backward_pass(nodes: Dict[int, CPMNode], order: List[int], edges: List[CPMEdge]) -> None:
     """
-    Calculate Late Start (LS), Late Finish (LF) and Total Float for every
-    node, honoring the dependency type and lag/lead time of each outgoing
-    edge. Must run after `forward_pass`.
+    Tính Late Start (LS), Late Finish (LF) và Total Float cho từng node,
+    tôn trọng loại dependency và lag/lead time của mỗi edge đi ra.
+    Phải chạy sau `forward_pass`.
     """
     outgoing = _edges_by_predecessor(edges)
     project_duration = max((n.early_finish for n in nodes.values()), default=0.0)
@@ -215,8 +215,8 @@ def backward_pass(nodes: Dict[int, CPMNode], order: List[int], edges: List[CPMEd
 
 def run_cpm(nodes: Dict[int, CPMNode], edges: List[CPMEdge]) -> CPMResult:
     """
-    Run the full CPM analysis (topological sort + forward pass + backward
-    pass) on an already-built node graph and edge list.
+    Chạy toàn bộ phân tích CPM (topological sort + forward pass + backward
+    pass) trên đồ thị node và danh sách edge đã dựng sẵn.
     """
     order = topological_sort(nodes)
     forward_pass(nodes, order, edges)
@@ -230,11 +230,11 @@ def run_cpm(nodes: Dict[int, CPMNode], edges: List[CPMEdge]) -> CPMResult:
 
 def compute_cpm(nodes: Dict[int, CPMNode]) -> Tuple[Dict[int, CPMNode], List[int]]:
     """
-    Backwards-compatible entry point: run CPM using only the FS
-    (Finish-to-Start, zero lag) relations already encoded in
+    Điểm vào tương thích ngược: chạy CPM chỉ dùng các quan hệ FS
+    (Finish-to-Start, lag bằng 0) đã được mã hóa sẵn trong
     `node.successors` / `node.predecessors`.
 
-    Returns: (updated nodes, critical_path task IDs)
+    Trả về: (các node đã cập nhật, danh sách task ID của critical_path)
     """
     edges = [
         CPMEdge(predecessor_id=nid, successor_id=succ_id, dependency_type=FS, lag_days=0)
@@ -253,10 +253,10 @@ def task_duration_days(
     default_days: float = 1.0,
 ) -> float:
     """
-    Best-effort duration (in days) for a task, in order of preference:
-    1) explicit start/due date range
-    2) estimated hours converted via `hours_per_day`
-    3) `default_days` fallback (e.g. for tasks with no estimate yet)
+    Ước lượng thời lượng (tính bằng ngày) cho một task, theo thứ tự ưu tiên:
+    1) khoảng ngày start/due được chỉ định rõ
+    2) số giờ ước tính quy đổi qua `hours_per_day`
+    3) giá trị dự phòng `default_days` (ví dụ cho task chưa có ước tính)
     """
     if start_date is not None and due_date is not None and due_date >= start_date:
         return float((due_date - start_date).days) or default_days
@@ -272,13 +272,13 @@ def compute_cpm_for_project(
     default_task_days: float = 1.0,
 ) -> CPMResult:
     """
-    Convenience wrapper that builds the graph directly from ORM-like
-    objects and runs the full CPM analysis.
+    Hàm bọc tiện lợi: dựng đồ thị trực tiếp từ các object kiểu ORM
+    và chạy toàn bộ phân tích CPM.
 
-    `tasks` items only need `.id` and optionally `.estimated_hours`,
+    Mỗi phần tử `tasks` chỉ cần `.id` và tùy chọn `.estimated_hours`,
     `.start_date`, `.due_date`.
-    `dependencies` items only need `.predecessor_id`, `.successor_id`,
-    `.dependency_type` (or `.dependency_type.value`) and `.lag_days`.
+    Mỗi phần tử `dependencies` chỉ cần `.predecessor_id`, `.successor_id`,
+    `.dependency_type` (hoặc `.dependency_type.value`) và `.lag_days`.
     """
     task_pairs = [
         (
@@ -297,7 +297,7 @@ def compute_cpm_for_project(
     edges = []
     for dep in dependencies:
         dep_type = getattr(dep, "dependency_type", FS)
-        dep_type = getattr(dep_type, "value", dep_type)  # unwrap enum if needed
+        dep_type = getattr(dep_type, "value", dep_type)  # bóc enum nếu cần
         edges.append(
             CPMEdge(
                 predecessor_id=dep.predecessor_id,
@@ -313,10 +313,10 @@ def compute_cpm_for_project(
 
 def offsets_to_dates(result: CPMResult, project_start: date) -> Dict[int, Dict[str, date]]:
     """
-    Convert day-offset CPM results into calendar dates, anchored at
-    `project_start` (day 0). Returns, per task id:
-    {early_start, early_finish, late_start, late_finish} as `date` objects,
-    ready to persist onto `Task.early_start` / `.early_finish` / etc.
+    Chuyển kết quả CPM dạng offset theo ngày thành ngày lịch, lấy mốc tại
+    `project_start` (ngày 0). Trả về, theo từng task id:
+    {early_start, early_finish, late_start, late_finish} dưới dạng object `date`,
+    sẵn sàng để lưu vào `Task.early_start` / `.early_finish` / v.v.
     """
     dates: Dict[int, Dict[str, date]] = {}
     for nid, node in result.nodes.items():

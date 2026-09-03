@@ -1,4 +1,4 @@
-"""Add Portfolio and Project Phase 1 core fields.
+"""Thêm các trường core cho Portfolio và Project ở Phase 1.
 
 Revision ID: 20260813_portfolio_project_core
 Revises: 20260813_profile_security

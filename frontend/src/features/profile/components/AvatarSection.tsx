@@ -60,7 +60,7 @@ export function AvatarSection({ user, onUpload, isLoading, error, success }: Ava
       setFile(null)
       if (inputRef.current) inputRef.current.value = ''
     } catch {
-      // The mutation exposes the server error through the `error` prop.
+      // Mutation bộc lộ lỗi từ server qua prop `error`.
     }
   }
 

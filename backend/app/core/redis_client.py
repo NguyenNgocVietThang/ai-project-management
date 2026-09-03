@@ -1,6 +1,6 @@
-"""Lazy, process-wide async Redis client — shared by ws_manager.py's pub/sub
-bridge. Uses the general-purpose REDIS_URL (db 0), distinct from the Celery
-broker/result-backend URLs (db 1/2) configured in celery_app.py.
+"""Redis client async, khởi tạo lazy, dùng chung toàn tiến trình — được chia sẻ bởi
+cầu nối pub/sub của ws_manager.py. Dùng REDIS_URL đa dụng (db 0), khác với
+các URL broker/result-backend của Celery (db 1/2) được cấu hình trong celery_app.py.
 """
 from redis.asyncio import Redis
 

@@ -31,9 +31,9 @@ export function ChatPanel({ projectId }: Props) {
       chatKeys.history(projectId),
       (current) => {
         if (!current || current.pages.length === 0) return current
-        // pages[0] holds the most recent page — the live message belongs at its end.
+        // pages[0] chứa trang mới nhất — tin nhắn trực tiếp thuộc về cuối trang đó.
         const [first, ...rest] = current.pages
-        if (first.items.some((item) => item.id === message.id)) return current // de-dupe
+        if (first.items.some((item) => item.id === message.id)) return current // loại bỏ trùng lặp
         return {
           ...current,
           pages: [{ ...first, items: [...first.items, message] }, ...rest],
@@ -55,7 +55,7 @@ export function ChatPanel({ projectId }: Props) {
     if (messages.length > 0) {
       markRead.mutate(messages[messages.length - 1].id)
     }
-    // Only re-mark-read when the page first loads or the newest message id changes.
+    // Chỉ đánh dấu đã đọc lại khi trang tải lần đầu hoặc id tin nhắn mới nhất thay đổi.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages[messages.length - 1]?.id])
 
@@ -65,7 +65,7 @@ export function ChatPanel({ projectId }: Props) {
     setDraft('')
     const sentOverSocket = sendMessage(content)
     if (!sentOverSocket) {
-      // WS not (yet) connected — fall back to REST so the message isn't lost.
+      // WS chưa kết nối — chuyển sang REST để không mất tin nhắn.
       const message = await postMessage.mutateAsync(content)
       appendLiveMessage(message)
     }

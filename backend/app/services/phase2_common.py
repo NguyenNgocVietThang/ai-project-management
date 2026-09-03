@@ -78,9 +78,9 @@ async def notify_project_team(
     entity_type: Optional[str] = None,
     entity_id: Optional[int] = None,
 ) -> None:
-    """Fan out one Notification row per `project_members` row for `project_id`,
-    skipping any id in `exclude_user_ids` (typically the actor who made the
-    change, and/or a user who already got a more specific push elsewhere)."""
+    """Tạo một dòng Notification cho mỗi dòng `project_members` của `project_id`,
+    bỏ qua bất kỳ id nào trong `exclude_user_ids` (thường là người thực hiện thay
+    đổi, và/hoặc người đã nhận được push cụ thể hơn ở nơi khác)."""
     from app.services.notification_service import NotificationService
 
     exclude = set(exclude_user_ids) if exclude_user_ids else set()

@@ -5,7 +5,7 @@ from app.models.base import Base
 
 
 class DependencyType(str, enum.Enum):
-    FS = "FS"  # Finish-to-Start (default — phổ biến nhất)
+    FS = "FS"  # Finish-to-Start (mặc định — phổ biến nhất)
     SS = "SS"  # Start-to-Start
     FF = "FF"  # Finish-to-Finish
     SF = "SF"  # Start-to-Finish

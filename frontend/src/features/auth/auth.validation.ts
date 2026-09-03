@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const passwordSchema = z
   .string()
-  .min(8, 'Password must be at least 8 characters')
+  .min(12, 'Password must be at least 12 characters')
   .refine((password) => new TextEncoder().encode(password).length <= 72, {
     message: 'Password must not exceed 72 bytes',
   })

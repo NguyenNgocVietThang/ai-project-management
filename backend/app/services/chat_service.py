@@ -44,7 +44,7 @@ class ChatService:
         before_id: Optional[int] = None,
         limit: int = 50,
     ) -> ChatHistoryResponse:
-        # Enforce project-membership (or admin) — raises Forbidden/NotFound otherwise.
+        # Bắt buộc phải là thành viên dự án (hoặc admin) — nếu không sẽ raise Forbidden/NotFound.
         await get_project_context(self.db, project_id, user)
 
         stmt = (
@@ -59,8 +59,8 @@ class ChatService:
         rows = (await self.db.scalars(stmt)).all()
         has_more = len(rows) > limit
         page = rows[:limit]
-        # DB order is newest-first (for the `before_id` cursor); flip to
-        # chronological order for straightforward top-to-bottom rendering.
+        # Thứ tự từ DB là mới nhất trước (phục vụ cursor `before_id`); đảo lại
+        # theo thứ tự thời gian để render từ trên xuống dưới cho đơn giản.
         items = [self._to_response(message) for message in reversed(page)]
         next_before_id = page[-1].id if has_more and page else None
         return ChatHistoryResponse(items=items, next_before_id=next_before_id, has_more=has_more)
@@ -73,7 +73,7 @@ class ChatService:
         message = ChatMessage(project_id=project_id, user_id=user.id, content=data.content.strip())
         self.db.add(message)
         await self.db.flush()
-        message.user = user  # avoid a round-trip; we already have the actor loaded
+        message.user = user  # tránh một vòng truy vấn; ta đã có sẵn actor được nạp
 
         response = self._to_response(message)
         await publish(f"chat:project:{project_id}", response.model_dump(mode="json"))

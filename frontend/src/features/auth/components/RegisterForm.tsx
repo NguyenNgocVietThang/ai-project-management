@@ -55,7 +55,7 @@ export function RegisterForm() {
         password: values.password,
       })
     } catch {
-      // Error is caught and exposed via registerError
+      // Lỗi được bắt và bộc lộ qua registerError
     }
   })
 
