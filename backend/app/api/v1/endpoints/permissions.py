@@ -18,10 +18,10 @@ async def list_permissions(
     current_user: Annotated[User, Depends(require_roles("Admin"))],
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
-    """Read-only listing of the fixed, seeded permission catalog (resource:action).
+    """Liệt kê chỉ đọc danh mục quyền cố định đã được seed (resource:action).
 
-    Permissions are not user-creatable — roles are composed by assigning a subset
-    of this catalog (see `POST/PATCH /roles`).
+    Người dùng không thể tạo quyền — vai trò được cấu thành bằng cách gán một tập con
+    của danh mục này (xem `POST/PATCH /roles`).
     """
     result = await db.execute(
         select(Permission).order_by(Permission.resource, Permission.action)

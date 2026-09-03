@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, Mock
 import pytest
 from fastapi import HTTPException
 
-import app.db.base  # noqa: F401 - register SQLAlchemy relationships
+import app.db.base  # noqa: F401 - đăng ký các quan hệ SQLAlchemy
 from app.models.user import User
 from app.schemas.admin import AdminUserCreate, AdminUserUpdate
 from app.services.admin_service import AdminUserService
@@ -37,7 +37,7 @@ def build_user(**overrides):
 
 @pytest.mark.asyncio
 async def test_create_user_success():
-    db = build_db(scalar_side_effect=[None, None])  # email free, username free
+    db = build_db(scalar_side_effect=[None, None])  # email trống, username trống
     service = AdminUserService(db)
     actor = build_user(id=1, is_superuser=True)
 
@@ -45,7 +45,7 @@ async def test_create_user_success():
         email="new@example.com",
         username="newuser",
         full_name="New User",
-        password="Passw0rd!",
+        password="Passw0rd!Secure",
         role_ids=[],
         is_active=True,
     )
@@ -54,7 +54,7 @@ async def test_create_user_success():
     assert isinstance(user, User)
     assert user.email == "new@example.com"
     db.flush.assert_awaited_once()
-    # first add() call is the new User, second is the AuditLog row
+    # lần gọi add() đầu tiên là User mới, lần thứ hai là dòng AuditLog
     assert db.add.call_count == 2
     audit_call = db.add.call_args_list[1].args[0]
     assert audit_call.action == "CREATE"
@@ -63,7 +63,7 @@ async def test_create_user_success():
 
 @pytest.mark.asyncio
 async def test_create_user_duplicate_email_conflicts():
-    db = build_db(scalar_side_effect=[1])  # email already exists
+    db = build_db(scalar_side_effect=[1])  # email đã tồn tại
     service = AdminUserService(db)
     actor = build_user(id=1, is_superuser=True)
 
@@ -71,7 +71,7 @@ async def test_create_user_duplicate_email_conflicts():
         email="dup@example.com",
         username="dupuser",
         full_name="Dup User",
-        password="Passw0rd!",
+        password="Passw0rd!Secure",
     )
     with pytest.raises(HTTPException) as error:
         await service.create_user(data, actor)
@@ -80,8 +80,8 @@ async def test_create_user_duplicate_email_conflicts():
 
 @pytest.mark.asyncio
 async def test_update_user_blocks_self_deactivation():
-    admin = build_user(id=1, roles=[SimpleNamespace(name="Admin")])
-    db = build_db(scalar_side_effect=[admin])  # get_user lookup
+    admin = build_user(id=1, roles=[SimpleNamespace(id=99, name="Admin")])
+    db = build_db(scalar_side_effect=[admin])  # tra cứu get_user
     service = AdminUserService(db)
 
     with pytest.raises(HTTPException) as error:
@@ -92,9 +92,9 @@ async def test_update_user_blocks_self_deactivation():
 
 @pytest.mark.asyncio
 async def test_update_user_blocks_removing_last_admin_role():
-    target = build_user(id=2, roles=[SimpleNamespace(name="Admin")])
+    target = build_user(id=2, roles=[SimpleNamespace(id=99, name="Admin")])
     actor = build_user(id=1, is_superuser=True)
-    # sequence: get_user -> target; _count_active_admins -> admin_role_id, then count=0
+    # trình tự: get_user -> target; _count_active_admins -> admin_role_id, rồi count=0
     db = build_db(scalar_side_effect=[target, 99, 0])
     service = AdminUserService(db)
 
@@ -106,9 +106,9 @@ async def test_update_user_blocks_removing_last_admin_role():
 
 @pytest.mark.asyncio
 async def test_update_user_allows_removing_admin_when_other_admins_remain():
-    target = build_user(id=2, roles=[SimpleNamespace(name="Admin")])
+    target = build_user(id=2, roles=[SimpleNamespace(id=99, name="Admin")])
     actor = build_user(id=1, is_superuser=True)
-    # sequence: get_user -> target; _count_active_admins -> admin_role_id, then count=2
+    # trình tự: get_user -> target; _count_active_admins -> admin_role_id, rồi count=2
     db = build_db(scalar_side_effect=[target, 99, 2])
     service = AdminUserService(db)
 
@@ -130,9 +130,9 @@ async def test_deactivate_user_blocks_self():
 
 @pytest.mark.asyncio
 async def test_deactivate_user_blocks_last_active_admin():
-    target = build_user(id=4, roles=[SimpleNamespace(name="Admin")])
+    target = build_user(id=4, roles=[SimpleNamespace(id=99, name="Admin")])
     actor = build_user(id=1, is_superuser=True)
-    # get_user -> target; _count_active_admins -> admin_role_id, then count=0
+    # get_user -> target; _count_active_admins -> admin_role_id, rồi count=0
     db = build_db(scalar_side_effect=[target, 99, 0])
     service = AdminUserService(db)
 
@@ -144,7 +144,7 @@ async def test_deactivate_user_blocks_last_active_admin():
 
 @pytest.mark.asyncio
 async def test_deactivate_user_succeeds_when_other_admins_remain():
-    target = build_user(id=5, roles=[SimpleNamespace(name="Member")])
+    target = build_user(id=5, roles=[SimpleNamespace(id=50, name="Member")])
     actor = build_user(id=1, is_superuser=True)
     db = build_db(scalar_side_effect=[target])
     service = AdminUserService(db)
@@ -153,3 +153,97 @@ async def test_deactivate_user_succeeds_when_other_admins_remain():
     assert updated.is_active is False
     audit_call = db.add.call_args_list[0].args[0]
     assert audit_call.action == "DEACTIVATE"
+
+
+# ─── Bảo vệ chống leo thang đặc quyền ─────────────────────────────────────────────
+# Các route quản lý người dùng được kiểm soát bởi permission "user:update" / "user:create",
+# thứ mà một Admin có thể cấp cho bất kỳ role tùy chỉnh nào. Các test này cố định
+# các kiểm tra bổ sung ngăn một role như vậy tự nâng mình lên superuser/Admin.
+
+
+@pytest.mark.asyncio
+async def test_update_user_blocks_self_granted_superuser():
+    """Một chủ thể có "user:update" PATCH tài khoản của chính mình thành is_superuser=true."""
+    actor = build_user(id=7, is_superuser=False)
+    db = build_db(scalar_side_effect=[actor])  # get_user -> chính chủ thể đó
+    service = AdminUserService(db)
+
+    with pytest.raises(HTTPException) as error:
+        await service.update_user(actor.id, AdminUserUpdate(is_superuser=True), actor=actor)
+    assert error.value.status_code == 403
+    assert "superuser" in error.value.detail
+
+
+@pytest.mark.asyncio
+async def test_update_user_blocks_non_superuser_granting_superuser_to_others():
+    target = build_user(id=8)
+    actor = build_user(id=7, is_superuser=False, roles=[SimpleNamespace(id=99, name="Admin")])
+    db = build_db(scalar_side_effect=[target])
+    service = AdminUserService(db)
+
+    with pytest.raises(HTTPException) as error:
+        await service.update_user(target.id, AdminUserUpdate(is_superuser=True), actor=actor)
+    assert error.value.status_code == 403
+
+
+@pytest.mark.asyncio
+async def test_update_user_blocks_changing_own_role_assignments():
+    """Ngay cả một Admin đầy đủ cũng không được viết lại tập role của chính mình — đó là nửa
+    sau của con đường tự leo thang (và nó cũng ngăn việc tự khóa mình ra ngoài)."""
+    actor = build_user(id=7, roles=[SimpleNamespace(id=99, name="Admin")])
+    db = build_db(scalar_side_effect=[actor])
+    service = AdminUserService(db)
+
+    with pytest.raises(HTTPException) as error:
+        await service.update_user(actor.id, AdminUserUpdate(role_ids=[50]), actor=actor)
+    assert error.value.status_code == 403
+    assert "own role assignments" in error.value.detail
+
+
+@pytest.mark.asyncio
+async def test_update_user_blocks_non_admin_changing_roles_of_others():
+    target = build_user(id=8, roles=[SimpleNamespace(id=50, name="Member")])
+    actor = build_user(id=7, roles=[SimpleNamespace(id=50, name="Member")])
+    db = build_db(scalar_side_effect=[target])
+    service = AdminUserService(db)
+
+    with pytest.raises(HTTPException) as error:
+        await service.update_user(target.id, AdminUserUpdate(role_ids=[99]), actor=actor)
+    assert error.value.status_code == 403
+    assert "Admin privileges" in error.value.detail
+
+
+@pytest.mark.asyncio
+async def test_update_user_allows_unchanged_privilege_fields_from_plain_updater():
+    """Admin UI luôn gửi toàn bộ form; một is_superuser / role_ids không thay đổi
+    trong payload không được kích hoạt cơ chế bảo vệ."""
+    target = build_user(id=8, is_superuser=False, roles=[SimpleNamespace(id=50, name="Member")])
+    actor = build_user(id=7, roles=[SimpleNamespace(id=50, name="Member")])
+    db = build_db(scalar_side_effect=[target])
+    service = AdminUserService(db)
+
+    updated = await service.update_user(
+        target.id,
+        AdminUserUpdate(full_name="Renamed", is_superuser=False),
+        actor=actor,
+    )
+    assert updated.full_name == "Renamed"
+
+
+@pytest.mark.asyncio
+async def test_create_user_blocks_non_admin_assigning_roles():
+    actor = build_user(id=7, roles=[SimpleNamespace(id=50, name="Member")])
+    db = build_db()
+    service = AdminUserService(db)
+
+    data = AdminUserCreate(
+        email="new@example.com",
+        username="newuser",
+        full_name="New User",
+        password="Passw0rd!Secure",
+        role_ids=[99],
+        is_active=True,
+    )
+    with pytest.raises(HTTPException) as error:
+        await service.create_user(data, actor)
+    assert error.value.status_code == 403

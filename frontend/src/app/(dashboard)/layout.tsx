@@ -40,8 +40,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   }, [hasHydrated, isClient, isAuthenticated, router])
 
-  // Real-time notification push — connects once the user is authenticated;
-  // useNotificationSocket() itself no-ops if there's no access token yet.
+  // Đẩy thông báo real-time — kết nối khi người dùng đã được xác thực;
+  // bản thân useNotificationSocket() không làm gì nếu chưa có access token.
   useNotificationSocket()
 
   if (!isClient || !isAuthenticated) {

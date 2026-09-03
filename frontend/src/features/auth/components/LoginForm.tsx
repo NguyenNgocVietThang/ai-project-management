@@ -30,7 +30,7 @@ export function LoginForm() {
     try {
       await login(values)
     } catch {
-      // Surfaced via `loginError` below.
+      // Được hiển thị qua `loginError` bên dưới.
     }
   })
 

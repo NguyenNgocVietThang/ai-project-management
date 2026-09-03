@@ -20,8 +20,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const { user } = useAuth()
   const isAdmin = isAdminUser(user)
 
-  // `(dashboard)/layout.tsx` already guarantees the user is authenticated by the time
-  // this renders — this guard only adds the role check on top of that.
+  // `(dashboard)/layout.tsx` đã đảm bảo người dùng được xác thực vào thời điểm
+  // component này render — guard này chỉ bổ sung việc kiểm tra vai trò lên trên đó.
   useEffect(() => {
     if (user && !isAdmin) {
       router.replace('/dashboard')

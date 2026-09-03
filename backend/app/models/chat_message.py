@@ -4,8 +4,8 @@ from app.models.base import Base
 
 
 class ChatMessage(Base):
-    """A single message in a project-scoped team chat channel. One channel
-    per Project, open to that project's `project_members`."""
+    """Một tin nhắn trong kênh chat nhóm theo phạm vi project. Mỗi Project có
+    một kênh, mở cho `project_members` của project đó."""
 
     __tablename__ = "chat_messages"
     __table_args__ = (

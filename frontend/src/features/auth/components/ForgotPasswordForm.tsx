@@ -33,7 +33,7 @@ export function ForgotPasswordForm() {
       const response = await forgotPassword(email)
       setSuccessMessage(response.message)
     } catch {
-      // The mutation error is rendered below.
+      // Lỗi của mutation được hiển thị bên dưới.
     }
   })
 

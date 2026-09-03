@@ -1,16 +1,16 @@
-"""Shared WebSocket connection registry + Redis pub/sub bridge, used by both
-the chat feature (app/api/ws/chat.py) and real-time notification push
+"""Registry kết nối WebSocket dùng chung + cầu nối pub/sub Redis, được dùng bởi cả
+tính năng chat (app/api/ws/chat.py) và việc đẩy notification thời gian thực
 (app/api/ws/notifications.py).
 
-Delivery model: `publish()` only publishes to Redis — it deliberately does
-NOT also broadcast to this process's local connections directly, because
-`redis_listener()` (subscribed to the same channel) already re-broadcasts
-every message it receives, including ones this same process published. Doing
-both would double-deliver to any locally-connected client. This means Redis
-is on the critical path for every chat message and notification; if Redis is
-briefly unavailable, WS delivery fails silently (chat still persists via the
-DB + REST history endpoint, notifications still land via DB + poll fallback)
-rather than raising — a soft-fail by design.
+Mô hình phân phối: `publish()` chỉ publish tới Redis — nó cố tình
+KHÔNG đồng thời broadcast trực tiếp tới các kết nối cục bộ của tiến trình này, vì
+`redis_listener()` (đã subscribe cùng channel) đã re-broadcast
+mọi message nó nhận được, kể cả những message do chính tiến trình này publish. Làm cả
+hai sẽ phân phối trùng lặp tới bất kỳ client nào kết nối cục bộ. Điều này nghĩa là Redis
+nằm trên đường tới hạn của mọi message chat và notification; nếu Redis
+tạm thời không khả dụng, việc phân phối qua WS thất bại âm thầm (chat vẫn được lưu qua
+DB + endpoint lịch sử REST, notification vẫn tới qua DB + fallback poll)
+thay vì ném lỗi — một soft-fail có chủ đích.
 """
 import asyncio
 import json
@@ -27,8 +27,8 @@ REDIS_CHANNEL_PREFIX = "ws:"
 
 
 class ConnectionManager:
-    """Per-process registry of live WebSocket connections, grouped by an
-    arbitrary channel name (e.g. "chat:project:7" or "notif:user:42")."""
+    """Registry theo từng tiến trình của các kết nối WebSocket đang hoạt động, nhóm theo một
+    tên channel tùy ý (ví dụ "chat:project:7" hoặc "notif:user:42")."""
 
     def __init__(self) -> None:
         self._channels: dict[str, set[WebSocket]] = {}
@@ -45,7 +45,7 @@ class ConnectionManager:
                 self._channels.pop(channel, None)
 
     async def broadcast_local(self, channel: str, payload: dict) -> None:
-        """Send `payload` to every connection on `channel` in THIS process only."""
+        """Gửi `payload` tới mọi kết nối trên `channel` CHỈ trong tiến trình NÀY."""
         for websocket in list(self._channels.get(channel, ())):
             try:
                 await websocket.send_json(payload)
@@ -57,9 +57,9 @@ manager = ConnectionManager()
 
 
 async def publish(channel: str, payload: dict[str, Any]) -> None:
-    """Cross-process broadcast: publish to Redis; delivery to local
-    connections happens via redis_listener() picking the message back up,
-    even for same-process publishes (see module docstring)."""
+    """Broadcast xuyên tiến trình: publish tới Redis; việc phân phối tới các kết nối
+    cục bộ diễn ra qua redis_listener() nhận lại message đó,
+    kể cả với các publish trong cùng tiến trình (xem docstring của module)."""
     try:
         await get_redis().publish(f"{REDIS_CHANNEL_PREFIX}{channel}", json.dumps(payload, default=str))
     except Exception:
@@ -67,22 +67,22 @@ async def publish(channel: str, payload: dict[str, Any]) -> None:
 
 
 async def redis_listener() -> None:
-    """Long-running background task (started in FastAPI's lifespan): subscribes
-    to every ws:* channel and re-broadcasts each message to this process's
-    local connections. Required so a message published by one uvicorn worker
-    reaches clients connected to a different worker.
+    """Task nền chạy dài (được khởi động trong lifespan của FastAPI): subscribe
+    mọi channel ws:* và re-broadcast từng message tới các kết nối cục bộ của
+    tiến trình này. Cần thiết để một message do một uvicorn worker publish
+    tới được các client kết nối vào một worker khác.
 
-    Retries with backoff on connection failure (e.g. Redis not up yet, or a
-    transient outage) instead of dying permanently — WS delivery degrades to
-    "nothing arrives live" in the meantime, which is the same soft-fail as a
-    publish() failure (see module docstring), not a crash."""
+    Retry với backoff khi kết nối thất bại (ví dụ Redis chưa lên, hoặc một
+    sự cố tạm thời) thay vì chết vĩnh viễn — trong lúc đó việc phân phối WS suy giảm về
+    "không có gì tới theo thời gian thực", đây cũng là soft-fail giống như một
+    lần publish() thất bại (xem docstring của module), không phải crash."""
     delay = 1
     while True:
         try:
             redis = get_redis()
             pubsub = redis.pubsub()
             await pubsub.psubscribe(f"{REDIS_CHANNEL_PREFIX}*")
-            delay = 1  # connected successfully — reset backoff
+            delay = 1  # kết nối thành công — reset backoff
             try:
                 async for message in pubsub.listen():
                     if message["type"] != "pmessage":

@@ -22,4 +22,4 @@ class GanttTask(BaseModel):
 class GanttResponse(BaseModel):
     project_id: int
     tasks: List[GanttTask]
-    critical_path: List[int]  # List of task IDs on the critical path
+    critical_path: List[int]  # Danh sách ID của các task nằm trên đường găng

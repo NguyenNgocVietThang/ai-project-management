@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 class AIGenerateProjectRequest(BaseModel):
     prompt: str
-    ai_provider: Optional[str] = None  # Override default provider
+    ai_provider: Optional[str] = None  # Ghi đè provider mặc định
 
 
 class AIImpactAnalysisRequest(BaseModel):

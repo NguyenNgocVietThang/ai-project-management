@@ -22,7 +22,7 @@ class Sprint(Base):
     start_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
     end_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
 
-    # Velocity metrics
+    # Các chỉ số velocity
     story_points_committed: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     story_points_completed: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     velocity: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)

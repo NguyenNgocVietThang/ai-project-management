@@ -7,7 +7,7 @@ export const DASHBOARD_KEYS = {
   projectStats: (id: number) => ['dashboard', 'project-stats', id] as const,
 }
 
-/** Home Dashboard – summary for current user */
+/** Home Dashboard – tổng quan cho người dùng hiện tại */
 export function useDashboardSummary() {
   return useQuery({
     queryKey: DASHBOARD_KEYS.summary,
@@ -16,7 +16,7 @@ export function useDashboardSummary() {
   })
 }
 
-/** Portfolio health metrics */
+/** Các chỉ số sức khỏe của Portfolio */
 export function usePortfolioHealth(portfolioId: number) {
   return useQuery({
     queryKey: DASHBOARD_KEYS.portfolioHealth(portfolioId),
@@ -26,7 +26,7 @@ export function usePortfolioHealth(portfolioId: number) {
   })
 }
 
-/** Project dashboard stats (charts) */
+/** Thống kê dashboard của dự án (biểu đồ) */
 export function useProjectStats(projectId: number) {
   return useQuery({
     queryKey: DASHBOARD_KEYS.projectStats(projectId),

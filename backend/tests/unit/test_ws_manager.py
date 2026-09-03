@@ -6,10 +6,10 @@ from app.core.ws_manager import ConnectionManager
 
 
 class FakeWebSocket:
-    """Stand-in for a Starlette WebSocket. Deliberately NOT a SimpleNamespace:
-    SimpleNamespace defines __eq__ without __hash__, making instances
-    unhashable — but ConnectionManager stores connections in a set(), same as
-    real WebSocket objects (which use default identity hashing)."""
+    """Vật thay thế cho một Starlette WebSocket. Cố ý KHÔNG dùng SimpleNamespace:
+    SimpleNamespace định nghĩa __eq__ mà không có __hash__, khiến các instance
+    không hashable — nhưng ConnectionManager lưu các kết nối trong một set(), giống
+    như các đối tượng WebSocket thật (vốn dùng hashing theo identity mặc định)."""
 
     def __init__(self, *, send_fails: bool = False):
         self.accept = AsyncMock()
@@ -49,7 +49,7 @@ async def test_disconnect_removes_websocket_and_empty_channel():
 
 def test_disconnect_on_unknown_channel_is_a_noop():
     manager = ConnectionManager()
-    # Should not raise even though nothing was ever connected.
+    # Không được raise dù chưa từng có kết nối nào.
     manager.disconnect("nope", fake_ws())
 
 
@@ -59,7 +59,7 @@ async def test_broadcast_local_sends_to_every_connection_on_channel():
     ws1, ws2 = fake_ws(), fake_ws()
     await manager.connect("chat:project:1", ws1)
     await manager.connect("chat:project:1", ws2)
-    await manager.connect("chat:project:2", fake_ws())  # different channel, must not receive
+    await manager.connect("chat:project:2", fake_ws())  # channel khác, không được nhận
 
     received = []
     ws1.send_json = AsyncMock(side_effect=lambda p: received.append((1, p)))

@@ -12,7 +12,7 @@ const VARIANT_CLASSES = {
   success: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
 } as const
 
-/** Inline status banner with accessible live-region semantics. */
+/** Banner trạng thái inline với ngữ nghĩa live-region hỗ trợ tiếp cận. */
 export function Alert({ children, className, variant = 'error' }: AlertProps) {
   const Icon = variant === 'success' ? CheckCircle2 : AlertCircle
 

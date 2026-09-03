@@ -2,7 +2,7 @@
 
 /**
  * TeamBarChart – Recharts BarChart wrapper
- * Displays Team Utilization: estimated vs. logged hours per member
+ * Hiển thị mức sử dụng nhân sự: giờ ước tính so với giờ đã ghi nhận của từng thành viên
  */
 import {
   Bar,
@@ -34,7 +34,7 @@ export function TeamBarChart({ data, height = 220 }: TeamBarChartProps) {
   }
 
   const chartData = data.map((m) => ({
-    name: m.full_name.split(' ').slice(-1)[0], // last name only for brevity
+    name: m.full_name.split(' ').slice(-1)[0], // chỉ lấy tên cuối cho ngắn gọn
     fullName: m.full_name,
     Estimated: m.estimated_hours,
     Logged: m.logged_hours,

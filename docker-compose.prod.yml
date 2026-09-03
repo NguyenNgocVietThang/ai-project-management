@@ -1,0 +1,141 @@
+# Môi trường Production.
+#
+# Khác biệt so với docker-compose.yml (môi trường development):
+#   - Không mount thư mục mã nguồn (bind-mount) và không dùng --reload; image container là đơn vị triển khai
+#   - APP_ENV=production, khiến app/core/config.py từ chối khởi động với
+#     SECRET_KEY / thông tin đăng nhập MinIO mặc định, đồng thời ẩn /docs
+#   - Các cổng dịch vụ hạ tầng không public ra máy chủ host; chỉ reverse proxy
+#     cần truy cập ứng dụng, và không có gì ngoài mạng compose cần
+#     kết nối trực tiếp tới Postgres, Redis hoặc MinIO
+#   - Mọi thông tin xác thực đều lấy từ biến môi trường, không lưu trữ thông tin nhạy cảm trên git
+#
+# Bắt buộc trong môi trường (hoặc file .env nằm cùng thư mục này):
+#   POSTGRES_PASSWORD  SECRET_KEY  MINIO_ROOT_USER  MINIO_ROOT_PASSWORD
+#   FRONTEND_URL  ALLOWED_HOSTS  NEXT_PUBLIC_API_URL  NEXT_PUBLIC_WS_URL
+#
+# Cách dùng: docker compose -f docker-compose.prod.yml up -d
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ai-project-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}
+      POSTGRES_DB: ${POSTGRES_DB:-ai_project_management}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-postgres}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: ai-project-redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    container_name: ai-project-minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?MINIO_ROOT_USER must be set}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD must be set}
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend: &backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ai-project-backend
+    restart: unless-stopped
+    environment:
+      APP_ENV: production
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:?ALLOWED_HOSTS must be set, e.g. ["api.example.com"]}
+      # Chỉ kích hoạt nếu reverse proxy phía trước ghi đè X-Forwarded-For.
+      TRUST_PROXY_HEADERS: ${TRUST_PROXY_HEADERS:-false}
+      FRONTEND_URL: ${FRONTEND_URL:?FRONTEND_URL must be set}
+      CORS_ORIGINS: ${CORS_ORIGINS:?CORS_ORIGINS must be set, e.g. ["https://app.example.com"]}
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-ai_project_management}
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+      MINIO_USE_SSL: 'false'
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      FACEBOOK_APP_ID: ${FACEBOOK_APP_ID:-}
+      FACEBOOK_APP_SECRET: ${FACEBOOK_APP_SECRET:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    # Mở cổng để reverse proxy (nginx/Caddy/Traefik) xử lý TLS có thể
+    # kết nối tới. Gán vào 127.0.0.1 nếu proxy chạy trên cùng máy chủ host.
+    ports:
+      - '8000:8000'
+
+  celery-worker:
+    <<: *backend
+    container_name: ai-project-celery
+    ports: []
+    command: celery -A app.workers.celery_app worker --loglevel=info
+
+  celery-beat:
+    <<: *backend
+    container_name: ai-project-celery-beat
+    ports: []
+    command: celery -A app.workers.celery_app beat --loglevel=info
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: production
+    container_name: ai-project-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:?NEXT_PUBLIC_API_URL must be set}
+      NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL:?NEXT_PUBLIC_WS_URL must be set}
+    depends_on:
+      - backend
+    ports:
+      - '3000:3000'
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+
+networks:
+  default:
+    name: ai-project-network

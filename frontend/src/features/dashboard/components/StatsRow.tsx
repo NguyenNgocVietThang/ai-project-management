@@ -1,8 +1,8 @@
 'use client'
 
 /**
- * StatsRow – 4 KPI cards for the Home Dashboard
- * Active Projects / Total Tasks / Overdue Tasks / Hours This Week
+ * StatsRow – 4 thẻ KPI cho Home Dashboard
+ * Dự án đang hoạt động / Tổng số task / Task quá hạn / Số giờ trong tuần này
  */
 import { AlertTriangle, Briefcase, CheckSquare, Clock } from 'lucide-react'
 import type { UserDashboardStats } from '@/features/dashboard/types/dashboard.types'

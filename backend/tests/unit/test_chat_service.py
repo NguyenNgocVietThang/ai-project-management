@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 
-import app.db.base  # noqa: F401 - register SQLAlchemy relationships
+import app.db.base  # noqa: F401 - đăng ký các quan hệ SQLAlchemy
 from app.core.exceptions import ForbiddenException
 from app.schemas.chat import ChatMessageCreate
 from app.services.chat_service import ChatService
@@ -33,7 +33,7 @@ def build_actor(**overrides):
 
 @pytest.mark.asyncio
 async def test_history_returns_items_in_chronological_order_and_flags_more():
-    # DB returns newest-first, one extra row beyond `limit` to signal has_more.
+    # DB trả về mới nhất trước, thêm một dòng ngoài `limit` để báo hiệu has_more.
     rows = [build_message(id=3), build_message(id=2), build_message(id=1)]
     scalars_result = SimpleNamespace(all=Mock(return_value=rows))
     db = SimpleNamespace(scalars=AsyncMock(return_value=scalars_result))
@@ -42,9 +42,9 @@ async def test_history_returns_items_in_chronological_order_and_flags_more():
     with patch("app.services.chat_service.get_project_context", AsyncMock()):
         result = await service.history(7, build_actor(), limit=2)
 
-    assert [item.id for item in result.items] == [2, 3]  # chronological, oldest first
+    assert [item.id for item in result.items] == [2, 3]  # theo thứ tự thời gian, cũ nhất trước
     assert result.has_more is True
-    assert result.next_before_id == 2  # oldest id in this page — cursor for the next call
+    assert result.next_before_id == 2  # id cũ nhất trong trang này — cursor cho lần gọi tiếp theo
 
 
 @pytest.mark.asyncio
@@ -76,9 +76,9 @@ async def test_history_rejects_non_member():
 
 @pytest.mark.asyncio
 async def test_create_message_persists_and_publishes():
-    # Simulate what a real flush() against Postgres does: populate the
-    # server-generated id/created_at via the INSERT...RETURNING SQLAlchemy
-    # issues automatically for server_default columns.
+    # Mô phỏng những gì một flush() thật với Postgres làm: điền các giá trị
+    # id/created_at do server sinh ra thông qua INSERT...RETURNING mà SQLAlchemy
+    # tự động phát ra cho các cột server_default.
     added = {}
 
     async def fake_flush():
@@ -121,7 +121,7 @@ async def test_unread_count_with_no_prior_read_state_counts_all_messages():
 @pytest.mark.asyncio
 async def test_mark_read_creates_state_when_absent():
     db = SimpleNamespace(
-        scalar=AsyncMock(side_effect=[10, None]),  # max(id), then no existing read-state row
+        scalar=AsyncMock(side_effect=[10, None]),  # max(id), rồi không có dòng read-state nào
         add=Mock(),
         flush=AsyncMock(),
     )
@@ -145,6 +145,6 @@ async def test_mark_read_only_advances_forward():
     service = ChatService(db)
 
     with patch("app.services.chat_service.get_project_context", AsyncMock()):
-        result = await service.mark_read(7, build_actor(), message_id=5)  # older than 8
+        result = await service.mark_read(7, build_actor(), message_id=5)  # cũ hơn 8
 
-    assert result.last_read_message_id == 8  # unchanged — 5 < 8
+    assert result.last_read_message_id == 8  # không đổi — 5 < 8

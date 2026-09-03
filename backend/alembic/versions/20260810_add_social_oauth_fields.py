@@ -11,7 +11,7 @@ from alembic import op
 import sqlalchemy as sa
 
 
-# revision identifiers, used by Alembic.
+# định danh revision, được Alembic sử dụng.
 revision: str = '20260810_social_oauth'
 down_revision: Union[str, None] = '13e3544bef02'
 branch_labels: Union[str, Sequence[str], None] = None

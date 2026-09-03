@@ -51,7 +51,7 @@ function VerifyEmailContent() {
             setUser(me)
             queryClient.setQueryData(['auth', 'me'], me)
           } catch {
-            // Verification succeeded even if refreshing the local profile did not.
+            // Việc xác minh vẫn thành công ngay cả khi làm mới hồ sơ cục bộ thất bại.
           }
         }
 

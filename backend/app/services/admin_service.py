@@ -4,7 +4,12 @@ from fastapi import Depends
 from sqlalchemy import exists, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import BadRequestException, ConflictException, NotFoundException
+from app.core.exceptions import (
+    BadRequestException,
+    ConflictException,
+    ForbiddenException,
+    NotFoundException,
+)
 from app.core.security import hash_password
 from app.db.session import get_db
 from app.models.associations import user_roles
@@ -16,7 +21,7 @@ from app.services.phase2_common import add_audit, is_admin
 
 
 class AdminUserService:
-    """Admin-only user management: list/create/update/deactivate any account."""
+    """Quản lý người dùng chỉ dành cho Admin: list/create/update/deactivate bất kỳ tài khoản nào."""
 
     def __init__(self, db: AsyncSession):
         self.db = db
@@ -108,6 +113,13 @@ class AdminUserService:
         return user
 
     async def create_user(self, data: AdminUserCreate, actor: User) -> User:
+        # Cùng một vector leo thang quyền như role_ids của update_user, chỉ qua một cửa khác:
+        # nếu không, người giữ quyền "user:create" có thể tạo một tài khoản mới mang
+        # role Admin và đăng nhập bằng tài khoản đó.
+        if data.role_ids and not is_admin(actor):
+            raise ForbiddenException(
+                "Admin privileges are required to assign roles to a new user"
+            )
         if await self.db.scalar(select(User.id).where(User.email == data.email)):
             raise ConflictException("Email already registered")
         if await self.db.scalar(select(User.id).where(User.username == data.username)):
@@ -144,9 +156,38 @@ class AdminUserService:
         )
         return user
 
+    def _authorize_privilege_changes(
+        self, user: User, data: AdminUserUpdate, changes: dict, actor: User
+    ) -> None:
+        """Kiểm soát hai trường trên payload này vốn là các vector leo thang quyền.
+
+        Bản thân endpoint chỉ được bảo vệ bởi quyền "user:update", quyền mà một
+        Admin có thể trao cho bất kỳ role tùy chỉnh nào. Nếu không có các kiểm tra này,
+        một role như vậy có thể PATCH chính tài khoản của nó với is_superuser=true
+        (hoặc role_ids=[<Admin>]) và chiếm quyền toàn hệ thống. Cả hai kiểm tra đều
+        so sánh với giá trị đã lưu để một trường không thay đổi trên payload — admin UI
+        luôn gửi toàn bộ form — không bao giờ kích hoạt chúng; chỉ một thay đổi thực sự
+        mới yêu cầu quyền cao hơn.
+        """
+        if "is_superuser" in changes and changes["is_superuser"] != user.is_superuser:
+            if not actor.is_superuser:
+                raise ForbiddenException("Only a superuser can change superuser status")
+            if user.id == actor.id:
+                raise ForbiddenException("You cannot change your own superuser status")
+
+        if data.role_ids is not None and set(data.role_ids) != {r.id for r in user.roles}:
+            if not is_admin(actor):
+                raise ForbiddenException(
+                    "Admin privileges are required to change role assignments"
+                )
+            if user.id == actor.id:
+                raise ForbiddenException("You cannot change your own role assignments")
+
     async def update_user(self, user_id: int, data: AdminUserUpdate, actor: User) -> User:
         user = await self.get_user(user_id)
         changes = data.model_dump(exclude_unset=True, exclude={"role_ids"})
+
+        self._authorize_privilege_changes(user, data, changes, actor)
 
         if changes.get("is_active") is False and user.id == actor.id:
             raise BadRequestException("You cannot deactivate your own account")

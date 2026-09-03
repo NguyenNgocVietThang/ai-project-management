@@ -1,4 +1,4 @@
-// Dashboard types – mirrors backend schemas/dashboard.py
+// Kiểu dữ liệu Dashboard – phản chiếu backend schemas/dashboard.py
 
 export interface MyTaskItem {
   id: number

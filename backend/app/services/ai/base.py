@@ -3,7 +3,7 @@ from typing import Any, Dict
 
 
 class BaseAIProvider(ABC):
-    """Abstract base class for AI providers."""
+    """Lớp cơ sở trừu tượng cho các AI provider."""
 
     @abstractmethod
     async def generate_text(self, prompt: str, system_prompt: str = "") -> str:

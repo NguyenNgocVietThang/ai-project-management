@@ -1,5 +1,5 @@
-// Notification types – Phase 3.3
-// Mirrors backend/app/schemas/notification.py and app/models/notification.py
+// Các type Notification – Phase 3.3
+// Phản chiếu backend/app/schemas/notification.py và app/models/notification.py
 
 export type NotificationType =
   | 'task_assigned'

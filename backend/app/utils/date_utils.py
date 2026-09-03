@@ -3,18 +3,18 @@ from typing import List
 
 
 def add_working_days(start: date, days: int) -> date:
-    """Add N working days (skip weekends) to a date."""
+    """Cộng thêm N ngày làm việc (bỏ qua cuối tuần) vào một ngày."""
     current = start
     added = 0
     while added < days:
         current += timedelta(days=1)
-        if current.weekday() < 5:  # Mon=0, Fri=4
+        if current.weekday() < 5:  # Thứ Hai=0, Thứ Sáu=4
             added += 1
     return current
 
 
 def working_days_between(start: date, end: date) -> int:
-    """Count working days between two dates."""
+    """Đếm số ngày làm việc giữa hai ngày."""
     count = 0
     current = start
     while current < end:
@@ -25,7 +25,7 @@ def working_days_between(start: date, end: date) -> int:
 
 
 def date_range(start: date, end: date) -> List[date]:
-    """Generate list of dates between start and end (inclusive)."""
+    """Tạo danh sách các ngày từ start đến end (bao gồm cả hai đầu)."""
     dates = []
     current = start
     while current <= end:

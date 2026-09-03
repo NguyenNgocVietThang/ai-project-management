@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, Mock
 import pytest
 from fastapi import HTTPException
 
-import app.db.base  # noqa: F401 - register SQLAlchemy relationships
+import app.db.base  # noqa: F401 - đăng ký các quan hệ SQLAlchemy
 from app.schemas.admin import RoleCreate, RoleUpdate
 from app.services.role_service import RoleService
 
@@ -32,7 +32,7 @@ def build_actor():
 
 @pytest.mark.asyncio
 async def test_create_role_rejects_duplicate_name():
-    db = build_db(scalar_side_effect=[1])  # name already exists
+    db = build_db(scalar_side_effect=[1])  # tên đã tồn tại
     service = RoleService(db)
 
     with pytest.raises(HTTPException) as error:
@@ -43,7 +43,7 @@ async def test_create_role_rejects_duplicate_name():
 @pytest.mark.asyncio
 async def test_update_role_blocks_renaming_admin_role():
     role = build_role(id=1, name="Admin")
-    db = build_db(scalar_side_effect=[role])  # role lookup
+    db = build_db(scalar_side_effect=[role])  # tra cứu role
     service = RoleService(db)
 
     with pytest.raises(HTTPException) as error:
@@ -54,7 +54,7 @@ async def test_update_role_blocks_renaming_admin_role():
 @pytest.mark.asyncio
 async def test_update_role_allows_renaming_custom_role():
     role = build_role(id=2, name="Custom")
-    # role lookup, then uniqueness check -> None (name free)
+    # tra cứu role, rồi kiểm tra tính duy nhất -> None (tên trống)
     db = build_db(scalar_side_effect=[role, None])
     service = RoleService(db)
 
@@ -78,7 +78,7 @@ async def test_delete_role_blocks_deleting_admin_role():
 @pytest.mark.asyncio
 async def test_delete_role_blocks_when_users_still_assigned():
     role = build_role(id=2, name="Custom")
-    db = build_db(scalar_side_effect=[role, 3])  # role lookup, then user_count=3
+    db = build_db(scalar_side_effect=[role, 3])  # tra cứu role, rồi user_count=3
     service = RoleService(db)
 
     with pytest.raises(HTTPException) as error:

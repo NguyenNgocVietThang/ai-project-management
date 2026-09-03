@@ -59,7 +59,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
     try {
       await resetPassword({ token, new_password })
     } catch {
-      // The mutation error is rendered below.
+      // Lỗi của mutation được hiển thị bên dưới.
     }
   })
 

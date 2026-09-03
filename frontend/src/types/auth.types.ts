@@ -1,4 +1,4 @@
-/** Mirrors backend app/schemas/auth.py + app/schemas/user.py */
+/** Phản chiếu backend app/schemas/auth.py + app/schemas/user.py */
 
 export interface LoginCredentials {
   email: string

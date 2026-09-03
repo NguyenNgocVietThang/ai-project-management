@@ -1,4 +1,4 @@
-"""add profile storage and auth version fields
+"""thêm các trường lưu trữ profile và auth version
 
 Revision ID: 20260813_profile_security
 Revises: 20260812_email_verification

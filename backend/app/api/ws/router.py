@@ -1,6 +1,6 @@
-"""Aggregates all WebSocket routers (chat, notifications, ...) mounted at the
-app root under /ws — see main.py. Kept separate from api/v1/router.py since
-these are not versioned REST routes."""
+"""Gom tất cả các WebSocket router (chat, notifications, ...) được mount tại
+gốc ứng dụng dưới /ws — xem main.py. Tách riêng khỏi api/v1/router.py vì
+đây không phải các route REST có version."""
 from fastapi import APIRouter
 
 from app.api.ws.chat import chat_ws_router
@@ -8,7 +8,7 @@ from app.api.ws.notifications import notifications_ws_router
 
 ws_router = APIRouter()
 
-# Sub-routers are registered here as each feature adds its own WS endpoint
-# (see app/api/ws/chat.py, app/api/ws/notifications.py).
+# Các sub-router được đăng ký ở đây khi mỗi tính năng bổ sung WS endpoint riêng
+# (xem app/api/ws/chat.py, app/api/ws/notifications.py).
 ws_router.include_router(chat_ws_router)
 ws_router.include_router(notifications_ws_router)

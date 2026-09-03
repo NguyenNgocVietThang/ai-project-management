@@ -15,9 +15,9 @@ export const authService = {
   },
 
   /**
-   * Backend `/auth/login` is an OAuth2PasswordRequestForm endpoint — it expects
-   * application/x-www-form-urlencoded with a `username` field (the email) and `password`,
-   * not JSON.
+   * Endpoint `/auth/login` ở backend là OAuth2PasswordRequestForm — nó mong đợi
+   * application/x-www-form-urlencoded với trường `username` (là email) và `password`,
+   * không phải JSON.
    */
   async login({ email, password }: LoginCredentials): Promise<TokenResponse> {
     const body = new URLSearchParams()
@@ -27,6 +27,13 @@ export const authService = {
     const { data } = await api.post<TokenResponse>('/auth/login', body, {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     })
+    return data
+  },
+
+  /** Đổi lấy mã dùng một lần mà OAuth redirect mang về. Backend không còn đặt
+   * token trong URL callback nữa — xem backend app/core/oauth_exchange.py. */
+  async exchangeOAuthCode(code: string): Promise<TokenResponse> {
+    const { data } = await api.post<TokenResponse>('/auth/oauth/exchange', { code })
     return data
   },
 
@@ -42,8 +49,11 @@ export const authService = {
     return data
   },
 
-  async logout(): Promise<void> {
-    await api.post('/auth/logout')
+  /** Gửi refresh token để server có thể thu hồi nó — nếu không có bước này,
+   * logout chỉ là việc bỏ token phía client và một refresh token bị đánh cắp vẫn
+   * hoạt động trong suốt vòng đời 7 ngày của nó. */
+  async logout(refreshToken: string | null): Promise<void> {
+    await api.post('/auth/logout', { refresh_token: refreshToken })
   },
 
   async forgotPassword(email: string): Promise<AuthMessageResponse> {

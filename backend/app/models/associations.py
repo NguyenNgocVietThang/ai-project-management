@@ -1,4 +1,4 @@
-"""Association tables for many-to-many relationships."""
+"""Các bảng liên kết cho quan hệ nhiều-nhiều."""
 
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Table, func
 

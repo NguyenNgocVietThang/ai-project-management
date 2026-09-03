@@ -6,13 +6,17 @@ from unittest.mock import AsyncMock, patch
 from urllib.parse import parse_qs, urlparse
 
 import pytest
-from fastapi import HTTPException
+from fastapi import HTTPException, Request
 from pydantic import ValidationError
 
+import app.db.base  # noqa: F401
 from app.api.v1.endpoints.auth import FORGOT_PASSWORD_MESSAGE, forgot_password
+from app.core.rate_limit import limiter
 from app.core.security import hash_password, verify_password
 from app.schemas.auth import ForgotPasswordRequest, RegisterRequest, ResetPasswordRequest
 from app.services.auth_service import AuthService
+
+limiter.enabled = False
 
 
 def build_service(user=None) -> tuple[AuthService, AsyncMock]:
@@ -29,11 +33,26 @@ def extract_token(reset_link: str) -> str:
     return parse_qs(urlparse(reset_link).query)["token"][0]
 
 
+def build_request() -> Request:
+    """ASGI scope tối thiểu — decorator rate-limit trên endpoint cần một
+    Request thật để lấy ra client key của nó."""
+    return Request(
+        {
+            "type": "http",
+            "method": "POST",
+            "path": "/api/v1/auth/forgot-password",
+            "headers": [],
+            "client": ("127.0.0.1", 12345),
+        }
+    )
+
+
 @pytest.mark.asyncio
 async def test_forgot_password_endpoint_always_returns_generic_message():
     service = SimpleNamespace(request_password_reset=AsyncMock())
 
     response = await forgot_password(
+        build_request(),
         ForgotPasswordRequest(email="person@example.com"),
         service,
     )
@@ -131,6 +150,7 @@ async def test_queue_failure_is_hidden_and_does_not_log_sensitive_values(caplog)
 async def test_valid_token_changes_password_and_cannot_be_replayed():
     token = "valid-token"
     user = SimpleNamespace(
+        id=11,
         hashed_password=hash_password("OldPassword1"),
         password_reset_token_hash=hashlib.sha256(token.encode()).hexdigest(),
         password_reset_expires_at=datetime.now(timezone.utc) + timedelta(minutes=30),
@@ -160,6 +180,7 @@ async def test_valid_token_changes_password_and_cannot_be_replayed():
 async def test_social_only_user_can_add_password_without_losing_provider_link():
     token = "social-token"
     user = SimpleNamespace(
+        id=12,
         hashed_password=None,
         password_reset_token_hash=hashlib.sha256(token.encode()).hexdigest(),
         password_reset_expires_at=datetime.now(timezone.utc) + timedelta(minutes=30),

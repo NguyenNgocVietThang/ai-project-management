@@ -8,8 +8,8 @@ export const chatKeys = {
   unread: (projectId: number) => [...chatKeys.all, 'unread', projectId] as const,
 }
 
-/** Paginated message history — first page is the most recent messages;
- * fetchNextPage() loads older messages via the `before_id` cursor. */
+/** Lịch sử tin nhắn phân trang — trang đầu tiên là các tin nhắn mới nhất;
+ * fetchNextPage() tải các tin nhắn cũ hơn qua cursor `before_id`. */
 export function useChatHistory(projectId: number) {
   return useInfiniteQuery<ChatHistoryResponse>({
     queryKey: chatKeys.history(projectId),
@@ -29,8 +29,8 @@ export function useChatUnreadCount(projectId: number) {
   })
 }
 
-/** REST fallback for sending a message — used only if the WebSocket send
- * isn't available (e.g. still connecting); the live path is useChatSocket. */
+/** Phương án REST dự phòng để gửi tin nhắn — chỉ dùng khi việc gửi qua WebSocket
+ * không khả dụng (vd đang kết nối); đường trực tiếp là useChatSocket. */
 export function usePostChatMessage(projectId: number) {
   return useMutation({
     mutationFn: (content: string) => chatService.postMessage(projectId, content),

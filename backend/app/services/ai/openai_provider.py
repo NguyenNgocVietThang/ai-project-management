@@ -2,6 +2,7 @@
 from openai import AsyncOpenAI
 from app.core.config import settings
 from app.services.ai.base import BaseAIProvider
+from app.services.ai.parsing import parse_json_object
 
 
 class OpenAIProvider(BaseAIProvider):
@@ -23,9 +24,5 @@ class OpenAIProvider(BaseAIProvider):
         return response.choices[0].message.content
 
     async def generate_json(self, prompt: str, system_prompt: str = "") -> Dict[str, Any]:
-        import json
         text = await self.generate_text(prompt, system_prompt)
-        # Extract JSON from response
-        start = text.find("{")
-        end = text.rfind("}") + 1
-        return json.loads(text[start:end])
+        return parse_json_object(text)

@@ -1,8 +1,8 @@
-/** Mirrors backend app/schemas/admin.py */
+/** Phản chiếu backend app/schemas/admin.py */
 
 import type { RoleSummary, User } from '@/types/auth.types'
 
-// ─── Users ──────────────────────────────────────────────────────────────────
+// ─── Người dùng ─────────────────────────────────────────────────────────────
 
 export interface AdminUser extends User {
   created_at: string
@@ -36,7 +36,7 @@ export interface AdminUserUpdate {
   role_ids?: number[]
 }
 
-// ─── Roles & Permissions ────────────────────────────────────────────────────
+// ─── Vai trò & Quyền ────────────────────────────────────────────────────────
 
 export interface Permission {
   id: number

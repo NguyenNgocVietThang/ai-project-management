@@ -8,10 +8,12 @@
 
 ## Overview
 
-Hệ thống **AI Project Planning & Portfolio Management** được thiết kế theo kiến trúc hiện đại, tập trung hoàn toàn vào **Python (FastAPI)** cho phía Server và **Next.js 15 (React + TypeScript)** cho phía Client. Thiết kế này loại bỏ hoàn toàn các di sản cũ (NestJS/Prisma/BullMQ), tối ưu hóa cho:
-- Tốc độ xử lý I/O bất đồng bộ (AsyncIO + SQLAlchemy Async)
+Hệ thống **AI Project Planning & Portfolio Management** được thiết kế theo kiến trúc hiện đại, tập trung hoàn toàn vào **Python (FastAPI)** cho phía Server và **Next.js 15 (React + TypeScript)** cho phía Client. Thiết kế tối ưu hóa cho:
+- Tốc độ xử lý I/O bất đồng bộ (AsyncIO + SQLAlchemy Async Engine với asyncpg)
 - Tính toán thuật toán CPM (thuần Python)
 - Tích hợp linh hoạt với các mô hình AI ngôn ngữ lớn (LLMs) qua abstraction layer
+- Giao tiếp thời gian thực hai chiều (Real-time WebSockets + Redis Pub/Sub đa tiến trình)
+- Tác vụ nền và quét lịch trình tự động (Celery Worker & Celery Beat)
 
 ---
 
@@ -30,9 +32,10 @@ Hệ thống **AI Project Planning & Portfolio Management** được thiết k�
 | Database Migrations | Alembic | 1.13.3 |
 | Security (JWT) | python-jose[cryptography] | 3.3.0 |
 | Security (Hash) | passlib[bcrypt] | 1.7.4 |
+| Real-time Bus | Redis Pub/Sub + ConnectionManager | 5.1.1 |
 | Task Queue | Celery[redis] | 5.4.0 |
+| Scheduler | Celery Beat | 5.4.0 |
 | Message Broker / Cache | Redis | 5.1.1 |
-| Celery Monitor | flower | 2.0.1 |
 | AI — OpenAI | openai | 1.51.0 |
 | AI — Gemini | google-generativeai | 0.8.0 |
 | File Storage | minio / boto3 | 7.2.9 / 1.35.0 |
@@ -41,7 +44,6 @@ Hệ thống **AI Project Planning & Portfolio Management** được thiết k�
 | Export XLSX | openpyxl | 3.1.5 |
 | HTTP Client | httpx | 0.27.2 |
 | Date Utils | python-dateutil, pytz | 2.9.0 / 2024.2 |
-| Linting / QA | black, isort, ruff, mypy | — |
 | Testing | pytest, pytest-asyncio, httpx | — |
 
 ### Frontend Layer
@@ -54,6 +56,7 @@ Hệ thống **AI Project Planning & Portfolio Management** được thiết k�
 | Server State | TanStack Query v5 | ^5.0.0 |
 | Global State | Zustand | ^4.4.0 |
 | HTTP Client | Axios | ^1.5.0 |
+| Real-time Client | lib/ws-client.ts (Native WebSocket) | — |
 | Styling | Tailwind CSS v3 | ^3.3.0 |
 | Forms | React Hook Form + Zod + @hookform/resolvers | ^7.47.0 / ^3.22.0 |
 | Tables | TanStack Table v8 | — |
@@ -63,7 +66,7 @@ Hệ thống **AI Project Planning & Portfolio Management** được thiết k�
 | Date | date-fns | ^2.30.0 |
 | CSS Utils | clsx + tailwind-merge | ^2.0.0 |
 
-### Infrastructure Layer
+### Infrastructure Layer (Docker Compose — 7 Services)
 
 | Service | Image / Tech | Port |
 |---|---|---|
@@ -72,6 +75,7 @@ Hệ thống **AI Project Planning & Portfolio Management** được thiết k�
 | `minio` | minio/minio:latest | 9000 (API), 9001 (Console) |
 | `backend` | ./backend Dockerfile (FastAPI) | 8000 |
 | `celery-worker` | ./backend Dockerfile | — |
+| `celery-beat` | ./backend Dockerfile | — |
 | `frontend` | ./frontend Dockerfile (Next.js) | 3000 |
 
 > Network: `ai-project-network`. Volumes: `postgres_data`, `redis_data`, `minio_data`.
@@ -80,54 +84,42 @@ Hệ thống **AI Project Planning & Portfolio Management** được thiết k�
 
 ## Backend Architecture
 
-Backend được thiết kế theo mô hình **Layered Architecture** (Kiến trúc phân tầng) để đảm bảo tính module hóa và dễ bảo trì:
+Backend được thiết kế theo mô hình **Layered Architecture** (Kiến trúc phân tầng):
 
 ```
-HTTP Request
+HTTP / WS Request
      │
      ▼
-┌─────────────────────────────────────────────────┐
-│ 1. ENDPOINTS LAYER  (app/api/v1/endpoints/)     │
-│    - Nhận HTTP request                          │
-│    - Kiểm tra quyền RBAC (require_roles())      │
-│    - Định tuyến đến Services                    │
-│    - Trả về Pydantic schemas (DTO)              │
-└────────────────────┬────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────┐
-│ 2. SERVICES LAYER  (app/services/)              │
-│    - Chứa toàn bộ Business Logic                │
-│    - AI services, CPM service, Email service    │
-│    - Không gọi trực tiếp ORM                   │
-└────────────────────┬────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────┐
-│ 3. REPOSITORIES LAYER  (app/repositories/)      │
-│    - Data Access Layer (Repository Pattern)     │
-│    - Kế thừa BaseRepository (CRUD generic)      │
-│    - Thực thi SQLAlchemy async queries          │
-└────────────────────┬────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────┐
-│ 4. MODELS LAYER  (app/models/)                  │
-│    - SQLAlchemy Declarative Base                │
-│    - 31 models, 7 Domains                      │
-└─────────────────────────────────────────────────┘
-
-Phụ trợ:
-┌─────────────────────────────────────────────────┐
-│ 5. SCHEMAS LAYER  (app/schemas/)                │
-│    - Pydantic DTOs (Request/Response)           │
-│    - Validate input, serialize output           │
-└─────────────────────────────────────────────────┘
-┌─────────────────────────────────────────────────┐
-│ 6. WORKERS LAYER  (app/workers/)                │
-│    - Celery tasks chạy ngầm (AI, Email, Report) │
-│    - Độc lập hoàn toàn với API thread           │
-└─────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────┐
+│ 1. ENDPOINTS & WS LAYER (app/api/v1/ & app/api/ws/)    │
+│    - 21 REST Routers mounted + 2 WebSocket Routers     │
+│    - Kiểm tra RBAC (require_roles, require_permissions)│
+│    - Xác thực WS handshake via JWT token query param  │
+│    - Trả về Pydantic DTO schemas                       │
+└──────────────────────────┬─────────────────────────────┘
+                           │
+                           ▼
+┌────────────────────────────────────────────────────────┐
+│ 2. SERVICES LAYER  (app/services/)                     │
+│    - Chứa toàn bộ Business Logic                       │
+│    - AI services, CPM engine, Chat, Notification Push  │
+│    - Quản lý Audit Log & Trigger Fan-out               │
+└──────────────────────────┬─────────────────────────────┘
+                           │
+                           ▼
+┌────────────────────────────────────────────────────────┐
+│ 3. REPOSITORIES LAYER  (app/repositories/)             │
+│    - Data Access Layer (Repository Pattern)            │
+│    - Kế thừa BaseRepository (CRUD generic)             │
+│    - Thực thi SQLAlchemy async queries                 │
+└──────────────────────────┬─────────────────────────────┘
+                           │
+                           ▼
+┌────────────────────────────────────────────────────────┐
+│ 4. MODELS LAYER  (app/models/)                         │
+│    - SQLAlchemy Declarative Base (34 models/tables)    │
+│    - 8 Domains chức năng                               │
+└────────────────────────────────────────────────────────┘
 ```
 
 ### Cấu trúc thư mục Backend thực tế
@@ -135,395 +127,185 @@ Phụ trợ:
 ```
 backend/
 ├── app/
-│   ├── main.py                 # FastAPI entrypoint + lifespan + CORS
-│   ├── api/v1/
-│   │   ├── router.py           # Tổng hợp 31 routers → api_router
-│   │   └── endpoints/          # 31 endpoint files
-│   │       ├── auth.py         # JWT login/refresh/logout
-│   │       ├── users.py        ├── roles.py  ├── permissions.py
-│   │       ├── portfolios.py   ├── projects.py ├── phases.py
-│   │       ├── sprints.py      ├── epics.py  ├── milestones.py
-│   │       ├── tasks.py        ├── subtasks.py ├── dependencies.py
-│   │       ├── assignments.py  ├── worklogs.py ├── leaves.py
-│   │       ├── skills.py       ├── documents.py ├── approvals.py
-│   │       ├── change_requests.py ├── gantt.py ├── cpm.py
-│   │       ├── resource_leveling.py ├── dashboards.py ├── reports.py
-│   │       ├── notifications.py ├── audit_timeline.py
-│   │       ├── project_versions.py ├── ai.py └── system.py
+│   ├── main.py                 # FastAPI entrypoint + lifespan + CORS + WS Router mount
+│   ├── api/
+│   │   ├── v1/
+│   │   │   ├── router.py       # Mount 21 REST routers (+11 stub bị comment) → api_router
+│   │   │   └── endpoints/      # 32 file (21 hiện thực, 11 stub TODO)
+│   │   │       ├── auth.py, oauth.py, users.py, roles.py, permissions.py
+│   │   │       ├── portfolios.py, projects.py, phases.py, sprints.py, epics.py, milestones.py
+│   │   │       ├── tasks.py, subtasks.py, dependencies.py, assignments.py, worklogs.py
+│   │   │       ├── chat.py, leaves.py, skills.py, documents.py, approvals.py
+│   │   │       ├── change_requests.py, gantt.py, cpm.py, resource_leveling.py
+│   │   │       ├── dashboards.py, reports.py, notifications.py, audit_timeline.py
+│   │   │       ├── project_versions.py, ai.py, system.py
+│   │   └── ws/
+│   │       ├── deps.py         # authenticate_ws (JWT validation via query param)
+│   │       ├── router.py       # ws_router mounted at app root /ws
+│   │       ├── chat.py         # /ws/chat/{project_id}
+│   │       └── notifications.py# /ws/notifications
 │   ├── core/
 │   │   ├── config.py           # Pydantic BaseSettings (đọc .env)
 │   │   ├── security.py         # JWT create/decode + bcrypt hash/verify
-│   │   ├── dependencies.py     # get_db, get_current_user, require_roles()
+│   │   ├── dependencies.py     # get_db, get_current_user, require_roles, require_permissions
+│   │   ├── redis_client.py     # Async Redis singleton (get_redis)
+│   │   ├── ws_manager.py       # ConnectionManager + publish() + redis_listener()
 │   │   └── exceptions.py       # Custom HTTP exceptions
-│   ├── models/                 # 31 SQLAlchemy models — 7 Domains
+│   ├── models/                 # 34 SQLAlchemy models — 8 Domains
 │   │   ├── base.py             # DeclarativeBase + id, created_at, updated_at
 │   │   ├── associations.py     # user_roles, role_permissions, user_skills, project_members
-│   │   ├── user.py  ├── role.py  ├── permission.py  ├── skill.py  ├── leave.py
-│   │   ├── portfolio.py  ├── project.py  ├── phase.py  ├── sprint.py
-│   │   ├── epic.py  ├── milestone.py
-│   │   ├── task.py  ├── subtask.py  ├── dependency.py  ├── assignment.py
-│   │   ├── worklog.py  ├── comment.py
-│   │   ├── change_request.py  ├── approval.py  ├── impact_report.py
-│   │   ├── project_version.py  ├── audit_log.py
-│   │   ├── ai_request.py  ├── ai_output.py  ├── risk_report.py
-│   │   ├── document.py  ├── notification.py  └── email_log.py
-│   ├── schemas/                # 9 Pydantic schema files
-│   │   ├── auth.py  ├── user.py  ├── project.py  ├── task.py
-│   │   ├── gantt.py  ├── dashboard.py  ├── ai.py  └── common.py
-│   ├── services/ai/            # AI Provider abstraction
-│   │   ├── base.py             # BaseAIProvider (ABC)
-│   │   ├── openai_provider.py  # OpenAI GPT-4o
-│   │   ├── gemini_provider.py  # Google Gemini Pro
-│   │   └── project_generator.py # SOP-AI-001
-│   │   # TODO: impact_analysis.py, schedule_optimizer.py,
-│   │   #       resource_recommender.py, risk_analyzer.py, document_parser.py
-│   ├── repositories/           # Repository Pattern
-│   │   ├── base_repository.py  # Generic CRUD (get_by_id, list, create, update, delete)
-│   │   ├── user_repository.py  # get_by_email, get_by_username
-│   │   ├── project_repository.py # get_projects_by_pm, get_with_members
-│   │   └── task_repository.py  # get_tasks_by_project, get_critical_tasks
+│   │   ├── user.py, role.py, permission.py, skill.py, leave.py (User & RBAC)
+│   │   ├── portfolio.py, project.py, phase.py, sprint.py, epic.py, milestone.py (Project Core)
+│   │   ├── task.py, subtask.py, dependency.py, assignment.py, worklog.py, comment.py (Task & CPM)
+│   │   ├── change_request.py, approval.py, project_version.py, audit_log.py, impact_report.py (Change Mgmt)
+│   │   ├── ai_request.py, ai_output.py, risk_report.py (AI Domain)
+│   │   ├── document.py, notification.py, email_log.py (Document & Notification)
+│   │   └── chat_message.py, chat_read_state.py (Chat Domain)
+│   ├── schemas/                # Pydantic schema files (admin, auth, chat, project, task, etc.)
+│   ├── services/               # Business logic layer
+│   │   ├── admin_service.py, audit_service.py, auth_service.py, chat_service.py
+│   │   ├── scheduling_service.py (CPM), dashboard_service.py, notification_service.py, oauth_service.py
+│   │   ├── phase2_common.py, portfolio_service.py, project_service.py, resource_service.py
+│   │   ├── role_service.py, task_service.py, user_service.py, wbs_service.py, storage_service.py
+│   │   └── ai/                 # base.py, openai_provider.py, gemini_provider.py, project_generator.py (chưa nối endpoint)
 │   ├── db/
-│   │   ├── session.py          # AsyncEngine + AsyncSessionLocal + get_db()
+│   │   ├── session.py          # AsyncEngine + async_sessionmaker + get_db()
 │   │   ├── base.py             # Import tất cả models cho Alembic
-│   │   └── seed.py             # 7 Roles, 34 Permissions, 1 Admin
-│   ├── workers/                # Celery async tasks
-│   │   ├── celery_app.py       # Celery config (broker/backend Redis)
-│   │   ├── ai_tasks.py         # generate_project, impact_analysis, optimize_schedule, risk_analysis, parse_document
-│   │   ├── report_tasks.py     # DOCX/XLSX generation
-│   │   └── email_tasks.py      # Email sending
+│   │   └── seed.py             # 7 Roles, 34 Permissions, 1 Admin Account
+│   ├── workers/                # Celery async tasks & Beat scheduler
+│   │   ├── celery_app.py       # Celery config + beat_schedule (daily task sweep)
+│   │   ├── notification_tasks.py # sweep_task_dates_task (task start & due-soon)
+│   │   ├── ai_tasks.py, report_tasks.py, email_tasks.py
+│   │   └── __init__.py
 │   └── utils/
-│       ├── cpm.py              # CPM Algorithm (CPMNode, topological_sort, forward_pass, backward_pass, compute_cpm)
-│       ├── date_utils.py       # Date helpers
-│       └── pagination.py       # Pagination utilities
+│       ├── cpm.py              # Pure Python CPM Algorithm (topological_sort, calculate_cpm)
+│       ├── date_utils.py, pagination.py, email.py
 ├── alembic/                    # Database migrations (async PostgreSQL)
-├── tests/
-│   ├── unit/
-│   └── integration/
-├── requirements.txt
-├── requirements-dev.txt
-├── pyproject.toml              # black, isort, ruff, mypy, pytest config
-├── alembic.ini
-├── Dockerfile
-└── .env.example
+└── tests/unit/                 # Automated unit test suite (123/123 passing)
 ```
 
 ---
 
 ## Frontend Architecture
 
-Frontend sử dụng **Next.js 15 App Router** theo mô hình **Feature-based architecture**:
+Frontend sử dụng **Next.js 15 App Router** theo mô hình **Feature-colocated architecture**:
 
 ```
 frontend/src/
-├── app/                        # Next.js App Router (routes, layouts, pages)
-│   └── [routes sẽ implement]
-├── features/                   # Feature-based modules (17 modules)
-│   ├── auth/                   # Login, register, reset password
-│   ├── dashboard/              # Portfolio & Project dashboards
-│   ├── portfolio/              # Portfolio management
-│   ├── projects/               # Project management
-│   ├── gantt/                  # Gantt Chart + drag & drop
-│   ├── phases/                 # Phase management UI
-│   ├── sprints/                # Sprint board (Kanban)
-│   ├── epics/                  # Epic management UI
-│   ├── milestones/             # Milestone tracker
-│   ├── tasks/                  # Task management + dependency graph
-│   ├── resources/              # Resource management + workload
-│   ├── documents/              # BRD/SRS upload & AI viewer
-│   ├── approvals/              # CR & approval workflow UI
-│   ├── reports/                # Report export UI (DOCX, XLSX)
-│   ├── audit/                  # Audit timeline view
-│   ├── versions/               # Version history & rollback UI
-│   └── ai/                     # AI prompt input + result viewer
-├── components/                 # Shared UI components
-│   ├── gantt/                  # Custom Gantt Chart component
-│   ├── charts/                 # Burndown, Burnup, Velocity, EVA (Recharts)
-│   ├── tables/                 # Data tables (TanStack Table v8)
-│   ├── dialogs/                # Modal & drawer components
-│   ├── forms/                  # Form components (React Hook Form + Zod)
-│   └── common/                 # Base UI (Button, Badge, Alert, Input...)
-├── services/                   # API call layer (Axios)
-│   # api.ts — Axios instance + interceptors
-│   # auth.service.ts, project.service.ts, task.service.ts,
-│   # gantt.service.ts, ai.service.ts
-├── hooks/                      # Custom React hooks
-│   # useAuth.ts, useProjects.ts, useTasks.ts
-├── store/                      # Zustand global state
-│   # authStore.ts, projectStore.ts, uiStore.ts
-├── types/                      # TypeScript interfaces & enums
-│   # auth.types.ts, project.types.ts, task.types.ts, api.types.ts
-└── lib/                        # Utility functions
-    # utils.ts, date.ts, cpm.ts, validators.ts
+├── app/                        # Next.js App Router
+│   ├── (auth)/                 # login, register, forgot-password, reset-password, verify-email, oauth-callback
+│   ├── (dashboard)/            # Authenticated layout with NotificationBell & WebSocket listener
+│   │   ├── layout.tsx          # Shell layout (wires useNotificationSocket)
+│   │   ├── dashboard/page.tsx  # KPI overview & project health
+│   │   ├── portfolios/         # Portfolio list & detail views
+│   │   ├── projects/           # Projects list page
+│   │   │   └── [id]/           # Project Detail Shell (Overview, Tasks, WBS, Members, Chat, Settings)
+│   │   │       ├── overview/page.tsx
+│   │   │       ├── tasks/page.tsx
+│   │   │       ├── wbs/page.tsx
+│   │   │       ├── members/page.tsx
+│   │   │       ├── chat/page.tsx
+│   │   │       └── settings/page.tsx
+│   │   ├── admin/              # Admin Portal
+│   │   │   ├── users/page.tsx  # User list & status toggle
+│   │   │   ├── roles/page.tsx  # Role CRUD & permission matrix
+│   │   │   └── audit/page.tsx  # System-wide audit timeline
+│   │   └── profile/page.tsx    # User profile & skills
+├── features/                   # Feature-colocated modules
+│   ├── admin/                  # AdminUserList, RoleForm, AuditTimeline
+│   ├── auth/                   # LoginForm, RegisterForm, SocialLoginButtons
+│   ├── chat/                   # ChatPanel, ChatMessageItem, useChatSocket, useChat
+│   ├── dashboard/              # KPI cards, EVA charts, ActivityFeed
+│   ├── notifications/          # NotificationBell, NotificationList, useNotifications
+│   ├── portfolios/             # PortfolioCard, PortfolioForm, usePortfolios
+│   ├── projects/               # ProjectWizard, ProjectCard, ProjectMembersTable
+│   ├── tasks/                  # KanbanBoard, TaskDrawer, useTasks
+│   ├── users/                  # UserProfileForm, useUsers
+│   └── wbs/                    # WBSTreeView, PhaseModal, useWBS
+├── components/common/          # Reusable UI primitives (Avatar, Button, Modal, Input, Spinner, etc.)
+├── lib/
+│   ├── ws-client.ts            # Reconnecting WebSocket helper (exponential backoff)
+│   ├── rbac.ts                 # isAdminUser helper
+│   └── utils.ts
+├── services/api.ts             # Axios client with JWT interceptor & refresh queue
+└── store/authStore.ts          # Zustand Auth Store (persisted token & cookie sync)
 ```
-
-**State Management Strategy:**
-- **Zustand** — Local/Global UI state (auth token, active project, UI state)
-- **TanStack Query v5** — Server state (data fetching, caching, synchronization)
-- **React Hook Form + Zod** — Form state và validation
 
 ---
 
-## Database Schema (SQLAlchemy — 7 Domains, 31 Tables)
+## Database Schema (SQLAlchemy — 8 Domains, 34 Tables)
 
 ### ERD tổng quan
 
 ```
-User Domain
+Domain 1: Base & Associations
+  user_roles, role_permissions, user_skills, project_members
+
+Domain 2: User & RBAC
   users ←──── user_roles ────→ roles ←── role_permissions ──→ permissions
   users ←──── user_skills ───→ skills
   users ──── leaves
 
-Project Domain
+Domain 3: Project Core
   portfolios ──── projects ──── project_members ──── users
   projects ──── phases, sprints, epics, milestones
   projects ──── tasks ──── subtasks
+
+Domain 4: Task & Scheduling
   tasks ──── dependencies (self-ref: predecessor ↔ successor)
   tasks ──── assignments ──── users
   tasks ──── worklogs ──── users
   tasks ──── comments ──── users
 
-Change Management Domain
+Domain 5: Change Management
   projects ──── change_requests ──── approvals ──── users
   change_requests ──── impact_reports
   projects ──── project_versions
   audit_logs (global entity tracking)
 
-AI Domain
+Domain 6: AI Domain
   projects ──── ai_requests ──── ai_outputs
   projects ──── risk_reports
 
-Document & Notification Domain
+Domain 7: Document & Notification
   projects ──── documents
   users ──── notifications
   email_logs
-```
 
-### CPM Fields trong bảng `tasks`
-
-```python
-class Task(Base):
-    __tablename__ = "tasks"
-    # ... standard fields ...
-    
-    # CPM computed fields (tự động cập nhật bởi cpm_service)
-    early_start   = Column(Float, nullable=True)   # ES
-    early_finish  = Column(Float, nullable=True)   # EF
-    late_start    = Column(Float, nullable=True)   # LS
-    late_finish   = Column(Float, nullable=True)   # LF
-    float_days    = Column(Float, nullable=True)   # Slack = LS - ES
-    is_critical   = Column(Boolean, default=False) # float_days < 0.001
-```
-
----
-
-## Core Algorithms & Services
-
-### Critical Path Method (CPM) — `app/utils/cpm.py`
-
-```python
-# Dataclass node
-CPMNode(
-  id, duration,          # input
-  successors, predecessors,  # graph edges
-  early_start, early_finish,
-  late_start,  late_finish,
-  float_days,  is_critical   # output
-)
-
-# Pipeline
-topological_sort(nodes) → order[]     # Kahn's Algorithm — phát hiện cycle
-forward_pass(nodes, order)
-  # ES = max(predecessor.early_finish + lag_days)  [0 nếu không có predecessor]
-  # EF = ES + duration
-backward_pass(nodes, order)
-  # LF = min(successor.late_start - lag_days)  [max(EF) nếu không có successor]
-  # LS = LF - duration
-  # float_days = LS - ES
-  # is_critical = float_days < 0.001
-
-compute_cpm(nodes) → (nodes[], critical_path[])
-```
-
-**Trigger Flow:**
-```
-PM kéo thả Task trên Gantt
-  → PATCH /api/v1/tasks/{id}
-  → cpm_service.recalculate(project_id)
-  → Cập nhật early_start/early_finish/late_start/late_finish/float_days/is_critical cho tất cả tasks
-  → Response trả về CPM results
-  → Frontend re-render Gantt (Critical Path highlight đỏ)
-```
-
-### Resource Leveling — `app/services/resource_leveling.py`
-
-```python
-def check_overload(user_id, date, max_hours=8.0) → OverloadResult:
-    # 1. Kiểm tra leave: nếu có approved leave → overloaded (on_leave)
-    # 2. Lấy tất cả assignments của user có task active trong ngày
-    # 3. Tính daily_hours = allocated_hours / working_days(task)
-    # 4. Cộng dồn total_hours
-    # 5. is_overloaded = total_hours > max_hours
-    return OverloadResult(is_overloaded, total_hours, max_hours, tasks_on_date)
-```
-
-### AI Provider Abstraction — `app/services/ai/`
-
-```python
-class BaseAIProvider(ABC):
-    @abstractmethod
-    async def generate_text(prompt: str, system_prompt: str = "") → str: ...
-    @abstractmethod
-    async def generate_json(prompt: str, system_prompt: str = "") → Dict: ...
-
-class OpenAIProvider(BaseAIProvider):   # GPT-4o via openai SDK
-class GeminiProvider(BaseAIProvider):  # Gemini Pro via google-generativeai
-
-# Celery task delegates to active provider:
-ACTIVE_AI_PROVIDER = settings.ACTIVE_AI_PROVIDER  # "openai" | "gemini"
-```
-
-### Background Tasks (Celery + Redis)
-
-```
-Celery Worker Pool
-├── ai.generate_project      ← SOP-AI-001: prompt → WBS JSON → DB insert → CPM
-├── ai.impact_analysis       ← SOP-AI-002: CR → ImpactReport
-├── ai.optimize_schedule     ← SOP-AI-003: CPM + resource re-plan → proposed schedule
-├── ai.risk_analysis         ← SOP-AI-005: periodic risk scoring
-├── ai.parse_document        ← SOP-DOC-001: MinIO doc → task suggestions
-├── reports.generate_docx    ← SOP-RPT-001: python-docx → MinIO → URL
-├── reports.generate_xlsx    ← SOP-RPT-001: openpyxl → MinIO → URL
-└── email.send               ← SOP-NOTI-001: fastapi-mail SMTP
+Domain 8: Real-Time Chat
+  projects ──── chat_messages ──── users
+  chat_messages ──── chat_read_states ──── users
 ```
 
 ---
 
 ## Real-Time Communication (WebSocket)
 
-Two native FastAPI `WebSocket` endpoints, mounted at the **app root** under
-`/ws` (not under `/api/v1` — see `app/main.py`), backed by a Redis pub/sub
-bridge (`app/core/ws_manager.py`) so messages fan out correctly across
-multiple uvicorn workers:
+Hệ thống cung cấp 2 native FastAPI `WebSocket` endpoints được mount tại **app root** dưới `/ws` (không nằm dưới `/api/v1` — xem `app/main.py`), sử dụng Redis Pub/Sub làm message bus đa tiến trình (`app/core/ws_manager.py`):
 
 ```
-/ws/chat/{project_id}?token=<JWT>   ← project team chat (1 channel per Project)
-/ws/notifications?token=<JWT>       ← per-user real-time notification push
+/ws/chat/{project_id}?token=<JWT>   ← Kênh chat theo từng dự án (dành cho project_members)
+/ws/notifications?token=<JWT>       ← Kênh đẩy thông báo cá nhân theo người dùng (notif:user:{id})
 ```
 
-**Auth handshake**: the JWT access token travels as a query parameter, not
-an `Authorization` header — browsers cannot set custom headers on a
-WebSocket handshake. `app/api/ws/deps.py::authenticate_ws()` decodes it the
-same way `get_current_user()` does for REST (same `auth_version`/`is_active`
-checks); on failure the server closes the socket with code `4401`.
+**Cơ chế xác thực (Auth handshake)**: JWT access token truyền qua query parameter (`?token=...`). `app/api/ws/deps.py::authenticate_ws()` giải mã và xác thực `auth_version`/`is_active`. Nếu không hợp lệ, đóng socket với mã code `4401`.
 
-**Delivery model**: `app/core/ws_manager.py::publish(channel, payload)`
-publishes to Redis only (channel-prefixed `ws:<channel>`); a background
-`redis_listener()` task (started in the FastAPI `lifespan`, retries with
-backoff on a Redis outage) subscribes to `ws:*` and re-broadcasts to this
-process's local connections — including messages this same process
-published, so `publish()` deliberately does not also broadcast locally
-(would double-deliver). If Redis is briefly down, WS delivery fails silently
-rather than raising: chat still persists via the DB + REST history endpoint,
-notifications still land via the DB + the `useUnreadCount` poll fallback.
+**Mô hình phân phối (Delivery model)**: `app/core/ws_manager.py::publish(channel, payload)` đẩy tin nhắn lên Redis (tiền tố `ws:<channel>`). Background task `redis_listener()` trong FastAPI lifespan nhận và phân phối về các WebSocket nội bộ của tiến trình.
 
-**Chat** (`app/api/ws/chat.py`, `app/services/chat_service.py`): channel
-`chat:project:{id}`, gated by the same `get_project_context()` project-team
-membership check used by REST. Incoming `{"type":"message","content":...}`
-frames go through the identical `ChatService.create_message()` path as the
-REST fallback (`POST /api/v1/projects/{id}/messages`) — a single code path,
-so the sender receives their own message back via the pub/sub broadcast
-rather than a direct echo.
+**Project Chat**: Gated bởi `get_project_context()` kiểm tra quyền thành viên dự án. Khung tin nhắn gửi lên qua socket được định tuyến qua cùng phương thức `ChatService.create_message()` như REST fallback (`POST /api/v1/projects/{id}/messages`).
 
-**Notifications** (`app/api/ws/notifications.py`): channel
-`notif:user:{id}`. `NotificationService.push()` — the one choke point every
-notification trigger already goes through — flushes (to get the
-server-generated `id`/`created_at`) then calls `publish()`, so every
-existing and future trigger gets real-time push automatically with no
-per-call-site changes.
-
-Frontend: `frontend/src/lib/ws-client.ts` is a small shared
-reconnecting-WebSocket helper (exponential backoff, JSON parsing) used by
-both `features/chat/hooks/useChatSocket.ts` and
-`features/notifications/hooks/useNotifications.ts::useNotificationSocket()`.
+**Real-time Notifications**: Single choke point `NotificationService.push()` lưu bản ghi vào DB, `flush()` lấy ID và timestamp rồi gọi `publish()`, giúp toàn bộ các trigger (tạo task, đổi trạng thái, cập nhật ngày, fan-out) tự động đẩy qua WebSocket tức thời.
 
 ---
 
-## Security Architecture
+## Celery Beat & Scheduled Tasks
 
-### Authentication Flow
-
-```
-POST /api/v1/auth/login
-  → verify password (bcrypt)
-  → create access_token (JWT, 30min) + refresh_token (JWT, 7days)
-  → return { access_token, refresh_token, token_type }
-
-POST /api/v1/auth/refresh
-  → validate refresh_token
-  → return new access_token
-
-Protected Endpoint:
-  → Bearer token in Authorization header
-  → get_current_user() dependency: decode JWT → load User from DB
-  → require_roles(["PM", "BA"]) dependency: check user.roles intersection
-```
-
-### RBAC Implementation
-
-```python
-# FastAPI dependency
-def require_roles(roles: List[str]):
-    async def check(current_user = Depends(get_current_user)):
-        user_roles = {r.name for r in current_user.roles}
-        if not user_roles.intersection(roles) and not current_user.is_superuser:
-            raise ForbiddenException()
-    return check
-
-# Usage in endpoint
-@router.post("/projects/{id}/rollback/{version_id}")
-async def rollback(
-    ...,
-    _: None = Depends(require_roles(["PM", "Admin"]))
-):
-```
-
----
-
-## Configuration (Environment Variables)
-
-File: `backend/.env.example`
-
-| Biến | Mô tả |
-|---|---|
-| `DATABASE_URL` | `postgresql+asyncpg://user:pass@postgres:5432/dbname` |
-| `DATABASE_POOL_SIZE` | `10` |
-| `REDIS_URL` | `redis://redis:6379/0` |
-| `CELERY_BROKER_URL` | `redis://redis:6379/1` |
-| `CELERY_RESULT_BACKEND` | `redis://redis:6379/2` |
-| `SECRET_KEY` | JWT signing key (strong random string) |
-| `ACCESS_TOKEN_EXPIRE_MINUTES` | `30` |
-| `REFRESH_TOKEN_EXPIRE_DAYS` | `7` |
-| `ACTIVE_AI_PROVIDER` | `openai` hoặc `gemini` |
-| `OPENAI_API_KEY` | OpenAI API key |
-| `OPENAI_MODEL` | `gpt-4o` |
-| `GEMINI_API_KEY` | Google Gemini API key |
-| `GEMINI_MODEL` | `gemini-pro` |
-| `MINIO_ENDPOINT` | `minio:9000` |
-| `MINIO_ACCESS_KEY` | MinIO access key |
-| `MINIO_SECRET_KEY` | MinIO secret key |
-| `MINIO_BUCKET` | `ai-project-files` |
-| `SMTP_HOST` | SMTP server |
-| `SMTP_PORT` | `587` |
-| `SMTP_USER` | SMTP username |
-| `SMTP_PASSWORD` | SMTP password |
-| `CORS_ORIGINS` | `["http://localhost:3000"]` |
-
-File: `frontend/.env.example`
-
-| Biến | Mô tả |
-|---|---|
-| `NEXT_PUBLIC_API_URL` | `http://localhost:8000/api/v1` |
-| `NEXT_PUBLIC_WS_URL` | `ws://localhost:8000` — bare origin; the app appends `/ws/...` itself (see [Real-Time Communication](#real-time-communication-websocket)) |
+Hệ thống thiết lập tiến trình `celery-beat` riêng biệt trong `docker-compose.yml`:
+- **Task**: `sweep-task-dates-daily` (`app/workers/notification_tasks.py`)
+- **Tần suất**: Chạy định kỳ lúc 08:00 AM hàng ngày (Múi giờ Asia/Ho_Chi_Minh).
+- **Nghiệp vụ**:
+  1. Quét các task bắt đầu hôm nay (`start_date == today`, trạng thái TODO, chưa gửi thông báo) → Gửi thông báo fan-out tới toàn bộ nhóm dự án và cập nhật `last_start_notified_at`.
+  2. Quét các task sắp đến hạn (`due_date == today + 1 day`, chưa DONE, chưa gửi thông báo) → Gửi thông báo fan-out tới nhóm dự án và cập nhật `last_due_soon_notified_at`.
 
 ---
 
@@ -534,8 +316,9 @@ File: `frontend/.env.example`
 | 1.0 | 2026-06-25 | Phiên bản ban đầu |
 | 2.0 | 2026-08-05 | Cập nhật toàn diện: Next.js 15 (thay Vite), 7 Domains/31 Tables, thêm chi tiết Layered Architecture, Repository Pattern, 34 Permissions, 13 Notification types, chi tiết Celery tasks, CPM fields, security flow |
 | 2.1 | 2026-08-13 | Đã hoàn thành Auth & User Onboarding Module (Login, Register, Google & Facebook OAuth, Password recovery, Email verification, Edge JWT Guard, Auth Services & Store). Cập nhật tài liệu sát thực tế. |
-| 2.2 | 2026-08-22 | Đã hoàn thành Admin panel (user/role/permission CRUD + audit log), Notification triggers (task start/due-soon/change → toàn bộ project team, qua Celery Beat daily sweep), và Chat module (project-scoped, real-time). Thêm mục "Real-Time Communication (WebSocket)": `/ws/chat/{project_id}` và `/ws/notifications`, Redis pub/sub bridge (`app/core/ws_manager.py`), JWT-via-query-param auth handshake. Sửa `NEXT_PUBLIC_WS_URL` thành bare origin (trước đây tài liệu ghi nhầm có sẵn `/ws`). |
+| 2.2 | 2026-08-22 | Đã hoàn thành Admin panel (users, roles, permissions, audit timeline), Notification triggers (task start/due-soon/change fan-out qua Celery Beat daily sweep), và Real-time Project Chat. Bổ sung Domain 8 (Chat) với 2 bảng `chat_messages` và `chat_read_states` (tổng 34 tables), Redis Pub/Sub bridge. |
+| 2.2.1 | 2026-09-03 | Đối soát tài liệu với mã nguồn thực tế: **21/32 REST router được mount** (11 router `leaves/skills/documents/approvals/change_requests/gantt/cpm/reports/versions/ai/system` vẫn là stub `TODO`, chưa mount); `workers/ai_tasks.py` và `report_tasks.py` là stub; CPM chạy nội bộ qua `utils/cpm.py` + `scheduling_service.py`; 123/123 unit test pass. Model DB đủ 34 bảng nhưng business logic Phase 3–5 phần lớn chưa hiện thực. |
 
 ---
 
-*Cập nhật lần cuối: 2026-08-22 — Version 2.2 — Stack: Python FastAPI + Next.js 15*
+*Cập nhật lần cuối: 2026-09-03 — Version 2.2.1 — Stack: Python FastAPI + Next.js 15*

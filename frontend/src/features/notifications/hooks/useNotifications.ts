@@ -13,9 +13,9 @@ export const NOTIFICATION_KEYS = {
   unreadCount: ['notifications', 'unread-count'] as const,
 }
 
-/** Unread badge count. Real-time push (useNotificationSocket) is the primary
- * update path; this poll is now just a safety net for reconnect gaps and
- * backgrounded tabs, so the interval is much longer than the old 30s. */
+/** Số lượng badge chưa đọc. Real-time push (useNotificationSocket) là đường
+ * cập nhật chính; poll này giờ chỉ là lưới an toàn cho các khoảng mất kết nối
+ * và tab chạy nền, nên interval dài hơn nhiều so với mức 30s cũ. */
 export function useUnreadCount() {
   return useQuery({
     queryKey: NOTIFICATION_KEYS.unreadCount,
@@ -25,9 +25,9 @@ export function useUnreadCount() {
   })
 }
 
-/** Opens one WebSocket for the current user's notification channel and keeps
- * the unread-count cache + notification list in sync as pushes arrive. Mount
- * once at the dashboard shell level (see (dashboard)/layout.tsx), not per-page. */
+/** Mở một WebSocket cho kênh thông báo của người dùng hiện tại và giữ cache
+ * số lượng chưa đọc + danh sách thông báo đồng bộ khi có push đến. Mount một
+ * lần ở cấp shell của dashboard (xem (dashboard)/layout.tsx), không phải mỗi trang. */
 export function useNotificationSocket() {
   const qc = useQueryClient()
 
@@ -50,7 +50,7 @@ export function useNotificationSocket() {
   }, [qc])
 }
 
-/** Paginated notification list */
+/** Danh sách thông báo phân trang */
 export function useNotifications(params?: {
   unread_only?: boolean
   page?: number
@@ -63,7 +63,7 @@ export function useNotifications(params?: {
   })
 }
 
-/** Mark single notification as read */
+/** Đánh dấu một thông báo là đã đọc */
 export function useMarkRead() {
   const qc = useQueryClient()
   return useMutation({
@@ -74,7 +74,7 @@ export function useMarkRead() {
   })
 }
 
-/** Mark all as read */
+/** Đánh dấu tất cả là đã đọc */
 export function useMarkAllRead() {
   const qc = useQueryClient()
   return useMutation({
@@ -85,7 +85,7 @@ export function useMarkAllRead() {
   })
 }
 
-/** Delete notification */
+/** Xóa thông báo */
 export function useDeleteNotification() {
   const qc = useQueryClient()
   return useMutation({

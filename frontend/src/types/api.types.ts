@@ -1,4 +1,4 @@
-/** Shape of FastAPI error responses (HTTPException + RequestValidationError). */
+/** Cấu trúc của các response lỗi từ FastAPI (HTTPException + RequestValidationError). */
 
 export interface ApiFieldError {
   loc: (string | number)[]
@@ -11,7 +11,7 @@ export interface ApiErrorBody {
 }
 
 /**
- * Extracts a human-readable message from an Axios error hitting our FastAPI backend.
+ * Trích xuất một thông điệp dễ đọc từ lỗi Axios khi gọi tới FastAPI backend của chúng ta.
  */
 export function getApiErrorMessage(error: unknown, fallback = 'Something went wrong. Please try again.'): string {
   if (typeof error === 'object' && error !== null && 'response' in error) {
@@ -21,8 +21,8 @@ export function getApiErrorMessage(error: unknown, fallback = 'Something went wr
     if (Array.isArray(detail) && detail.length > 0) {
       return detail.map((d) => d.msg).join(', ')
     }
-    // Axios error with no `response` means the request never reached the server
-    // (server down, CORS, offline) rather than a rejected login.
+    // Lỗi Axios không có `response` nghĩa là request chưa bao giờ tới được server
+    // (server sập, CORS, offline) chứ không phải là login bị từ chối.
     if (!response) {
       return 'Unable to reach the server. Please check your connection and try again.'
     }

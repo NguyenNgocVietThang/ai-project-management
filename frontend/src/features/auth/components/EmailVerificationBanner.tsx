@@ -24,7 +24,7 @@ export function EmailVerificationBanner({
     try {
       await onResend()
     } catch {
-      // The mutation exposes the server message through errorMessage.
+      // Mutation bộc lộ thông điệp từ server qua errorMessage.
     }
   }
 

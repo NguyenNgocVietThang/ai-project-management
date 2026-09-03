@@ -3,7 +3,7 @@ from typing import Annotated, Optional
 
 from fastapi import APIRouter, Depends, Query, Response, status
 
-from app.core.dependencies import CurrentUser, require_permissions
+from app.core.dependencies import CurrentUser, CurrentVerifiedUser, require_permissions
 from app.models.project import ProjectMethodology, ProjectStatus
 from app.models.user import User
 from app.schemas.common import PaginatedResponse
@@ -82,7 +82,8 @@ async def add_project_member(
     project_id: int,
     body: ProjectMemberCreate,
     service: ProjectServiceDep,
-    current_user: CurrentUser,
+    # Đã xác thực: thao tác này gửi email mời dưới danh nghĩa hệ thống.
+    current_user: CurrentVerifiedUser,
 ):
     return await service.add_member(project_id, body, current_user)
 

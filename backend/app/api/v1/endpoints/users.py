@@ -1,8 +1,9 @@
 from typing import Annotated, Optional
 
-from fastapi import APIRouter, Depends, File, Query, Response, UploadFile, status
+from fastapi import APIRouter, Depends, File, Query, Request, Response, UploadFile, status
 
-from app.core.dependencies import CurrentUser, require_permissions
+from app.core.dependencies import CurrentMediaUser, CurrentUser, require_permissions
+from app.core.rate_limit import AVATAR_UPLOAD_LIMIT, USER_SEARCH_LIMIT, limiter
 from app.models.user import User
 from app.schemas.admin import AdminUserCreate, AdminUserResponse, AdminUserUpdate
 from app.schemas.common import MessageResponse, PaginatedResponse
@@ -22,12 +23,12 @@ from app.services.user_service import UserServiceDep
 router = APIRouter()
 
 
-# ─── Admin: user management ─────────────────────────────────────────────────
-# NOTE: these use the explicit "{user_id:int}" path converter (not plain
-# "{user_id}") so that literal routes like "/me" and "/search" below never get
-# swallowed by the admin routes — Starlette's default str converter would
-# otherwise match "me"/"search" too and fail Pydantic's int coercion (422)
-# before ever falling through to the literal route.
+# ─── Admin: quản lý người dùng ─────────────────────────────────────────────────
+# NOTE: các route này dùng path converter tường minh "{user_id:int}" (không phải
+# "{user_id}" thường) để các route cố định như "/me" và "/search" bên dưới không bao giờ bị
+# các route admin nuốt mất — str converter mặc định của Starlette sẽ
+# khớp cả "me"/"search" và làm Pydantic ép kiểu int thất bại (422)
+# trước khi kịp rơi xuống route cố định.
 
 
 @router.get("/", response_model=PaginatedResponse[AdminUserResponse])
@@ -55,10 +56,15 @@ async def create_user(
 
 
 @router.get("/search", response_model=list[UserSummary])
+@limiter.limit(USER_SEARCH_LIMIT)
 async def search_users(
+    request: Request,
     current_user: CurrentUser,
     user_service: UserServiceDep,
-    q: Annotated[str, Query(min_length=1, max_length=200)],
+    # min_length=3: đây là bộ chọn thành viên, không phải nơi trút toàn bộ danh bạ. Một
+    # ký tự đơn ("a", "@") khớp gần như mọi tài khoản và cho phép bất kỳ người dùng đã đăng nhập
+    # nào thu thập toàn bộ danh sách nhân sự, bao gồm cả email.
+    q: Annotated[str, Query(min_length=3, max_length=200)],
     limit: Annotated[int, Query(ge=1, le=50)] = 20,
 ):
     return await user_service.search_active_users(q, limit)
@@ -121,7 +127,9 @@ async def change_password(
 
 
 @router.post("/me/avatar", response_model=UserResponse)
+@limiter.limit(AVATAR_UPLOAD_LIMIT)
 async def upload_avatar(
+    request: Request,
     current_user: CurrentUser,
     user_service: UserServiceDep,
     file: UploadFile = File(...),
@@ -130,7 +138,9 @@ async def upload_avatar(
 
 
 @router.get("/{user_id}/avatar")
-async def get_avatar(user_id: int, user_service: UserServiceDep):
+async def get_avatar(
+    user_id: int, current_user: CurrentMediaUser, user_service: UserServiceDep
+):
     data, content_type, storage_key = await user_service.get_avatar(user_id)
     return Response(
         content=data,

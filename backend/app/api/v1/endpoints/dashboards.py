@@ -1,9 +1,9 @@
 """
-Dashboard endpoints – Phase 3.1 & 3.2
+Các endpoint Dashboard – Phase 3.1 & 3.2
 
-GET /dashboard/summary                           → Home dashboard for current user
-GET /dashboard/portfolios/{portfolio_id}/health  → Portfolio health metrics
-GET /dashboard/projects/{project_id}/stats       → Project-level chart data
+GET /dashboard/summary                           → Dashboard trang chủ cho người dùng hiện tại
+GET /dashboard/portfolios/{portfolio_id}/health  → Các chỉ số sức khỏe của portfolio
+GET /dashboard/projects/{project_id}/stats       → Dữ liệu biểu đồ ở cấp dự án
 """
 from fastapi import APIRouter
 
@@ -24,13 +24,13 @@ async def get_dashboard_summary(
     current_user: CurrentUser,
 ):
     """
-    Home Dashboard overview for the authenticated user.
+    Tổng quan Dashboard trang chủ cho người dùng đã xác thực.
 
-    Returns:
-    - Stats (active projects, total tasks, overdue tasks, hours this week)
-    - Active projects list with progress and budget info
-    - Tasks currently assigned to the user (not done)
-    - Recent audit-log activity across all visible projects
+    Trả về:
+    - Số liệu thống kê (dự án đang hoạt động, tổng số task, task quá hạn, số giờ trong tuần)
+    - Danh sách dự án đang hoạt động kèm thông tin tiến độ và ngân sách
+    - Các task hiện được giao cho người dùng (chưa hoàn thành)
+    - Hoạt động audit-log gần đây trên tất cả dự án mà người dùng nhìn thấy
     """
     return await service.get_user_summary(current_user)
 
@@ -45,8 +45,8 @@ async def get_portfolio_health(
     current_user: CurrentUser,
 ):
     """
-    Portfolio health metrics: overall progress, per-project status,
-    overdue task counts, and budget utilization for each project.
+    Các chỉ số sức khỏe của portfolio: tiến độ tổng thể, trạng thái từng dự án,
+    số lượng task quá hạn, và mức sử dụng ngân sách của mỗi dự án.
     """
     return await service.get_portfolio_health(portfolio_id, current_user)
 
@@ -61,10 +61,10 @@ async def get_project_stats(
     current_user: CurrentUser,
 ):
     """
-    Project Dashboard data:
-    - Task status distribution (donut chart data)
-    - Budget summary (spent vs. allocated)
-    - Team utilization (estimated vs. logged hours per member)
-    - 14-day burndown curve
+    Dữ liệu Dashboard dự án:
+    - Phân bố trạng thái task (dữ liệu biểu đồ donut)
+    - Tóm tắt ngân sách (đã chi so với đã phân bổ)
+    - Mức sử dụng nhân lực của team (số giờ ước tính so với số giờ đã ghi nhận mỗi thành viên)
+    - Đường cong burndown 14 ngày
     """
     return await service.get_project_stats(project_id, current_user)

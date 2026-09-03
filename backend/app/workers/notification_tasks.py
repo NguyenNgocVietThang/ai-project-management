@@ -1,7 +1,7 @@
-"""Celery Beat task: sweeps tasks whose start_date/due_date crossed a
-notification-relevant threshold today, and fans out a notification to the
-whole project team (see notify_project_team). Runs once daily (see the
-beat_schedule entry in celery_app.py).
+"""Celery Beat task: quét các task có start_date/due_date vượt qua một
+ngưỡng liên quan đến thông báo trong hôm nay, và phát tán một thông báo tới
+toàn bộ đội dự án (xem notify_project_team). Chạy một lần mỗi ngày (xem
+mục beat_schedule trong celery_app.py).
 """
 import asyncio
 from datetime import date, datetime, timedelta, timezone
@@ -15,14 +15,14 @@ from app.models.task import Task, TaskStatus
 from app.services.phase2_common import notify_project_team
 from app.workers.celery_app import celery_app
 
-# How many days ahead of due_date counts as "due soon". Task.due_date has no
-# time component, so this is a whole-day granularity, not a rolling 24h window.
+# Bao nhiêu ngày trước due_date thì được tính là "sắp đến hạn". Task.due_date không
+# có thành phần thời gian, nên đây là độ mịn theo nguyên ngày, không phải cửa sổ trượt 24h.
 DUE_SOON_DAYS_AHEAD = 1
 
 
 @celery_app.task(name="notifications.sweep_task_dates")
 def sweep_task_dates_task() -> dict:
-    """Synchronous Celery entry point — runs the async sweep to completion."""
+    """Điểm vào Celery đồng bộ — chạy sweep bất đồng bộ đến khi hoàn tất."""
     return asyncio.run(_sweep_with_own_session())
 
 
@@ -34,9 +34,9 @@ async def _sweep_with_own_session() -> dict:
 
 
 async def sweep_task_dates(db: AsyncSession) -> dict:
-    """Fires 'task starting today' and 'task due soon' team notifications.
-    Idempotent per day via Task.last_start_notified_at / last_due_soon_notified_at.
-    Injectable `db` for testability — does not commit; caller is responsible.
+    """Bắn thông báo cho đội về 'task bắt đầu hôm nay' và 'task sắp đến hạn'.
+    Idempotent theo từng ngày qua Task.last_start_notified_at / last_due_soon_notified_at.
+    `db` có thể inject để dễ test — không commit; bên gọi chịu trách nhiệm việc đó.
     """
     today = date.today()
     now = datetime.now(timezone.utc)

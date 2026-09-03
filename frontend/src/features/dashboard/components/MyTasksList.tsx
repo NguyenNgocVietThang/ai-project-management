@@ -1,8 +1,8 @@
 'use client'
 
 /**
- * MyTasksList – tasks assigned to the current user (not done)
- * Shows up to 20 tasks, with overdue & critical badges
+ * MyTasksList – các task được giao cho người dùng hiện tại (chưa hoàn thành)
+ * Hiển thị tối đa 20 task, kèm badge quá hạn và mức nghiêm trọng
  */
 import Link from 'next/link'
 import { AlertTriangle, Flag } from 'lucide-react'

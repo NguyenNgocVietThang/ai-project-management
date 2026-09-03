@@ -12,13 +12,14 @@ import type {
 } from '@/types/auth.types'
 
 /**
- * Auth flow entry point for components: login, register, logout, and the current-user profile.
- * Token storage/refresh itself lives in `store/authStore.ts` + `services/api.ts`.
+ * Điểm vào luồng auth cho các component: login, register, logout, và hồ sơ người dùng hiện tại.
+ * Việc lưu trữ/refresh token nằm ở `store/authStore.ts` + `services/api.ts`.
  */
 export function useAuth() {
   const router = useRouter()
   const queryClient = useQueryClient()
-  const { accessToken, user, setTokens, setUser, clear, isAuthenticated } = useAuthStore()
+  const { accessToken, refreshToken, user, setTokens, setUser, clear, isAuthenticated } =
+    useAuthStore()
 
   const meQuery = useQuery({
     queryKey: ['auth', 'me'],
@@ -75,9 +76,9 @@ export function useAuth() {
 
   const logout = async () => {
     try {
-      await authService.logout()
+      await authService.logout(refreshToken)
     } catch {
-      // Best-effort — the client-side token clear below is what actually matters.
+      // Cố gắng hết sức — việc xóa token phía client bên dưới mới là điều thực sự quan trọng.
     } finally {
       clear()
       queryClient.clear()

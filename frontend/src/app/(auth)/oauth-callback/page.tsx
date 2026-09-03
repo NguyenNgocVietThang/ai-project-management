@@ -18,8 +18,7 @@ function OAuthCallbackContent() {
 
   useEffect(() => {
     async function processCallback() {
-      const accessToken = searchParams.get('access_token')
-      const refreshToken = searchParams.get('refresh_token')
+      const code = searchParams.get('code')
       const error = searchParams.get('error')
 
       if (error) {
@@ -28,18 +27,17 @@ function OAuthCallbackContent() {
         return
       }
 
-      if (!accessToken || !refreshToken) {
+      if (!code) {
         setErrorMessage('Invalid response from authentication server.')
         setIsProcessing(false)
         return
       }
 
       try {
-        setTokens({
-          access_token: accessToken,
-          refresh_token: refreshToken,
-          token_type: 'bearer',
-        })
+        // URL callback mang theo một code dùng một lần, không phải bản thân các token,
+        // nên không có gì nhạy cảm bị để lại trong lịch sử hay header Referer.
+        const tokens = await authService.exchangeOAuthCode(code)
+        setTokens(tokens)
         const user = await authService.me()
         setUser(user)
         router.replace('/dashboard')

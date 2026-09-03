@@ -1,4 +1,4 @@
-/** Mirrors backend app/schemas/common.py */
+/** Phản chiếu backend app/schemas/common.py */
 
 export interface PaginatedResponse<T> {
   items: T[]
@@ -16,7 +16,7 @@ export interface IDResponse {
   id: number
 }
 
-/** Query params shared by every `GET /{resource}` list endpoint. */
+/** Query param dùng chung cho mọi endpoint danh sách `GET /{resource}`. */
 export interface PaginationParams {
   page?: number
   page_size?: number

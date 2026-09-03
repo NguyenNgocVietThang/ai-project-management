@@ -1,5 +1,5 @@
-// Dashboard types – Phase 3.1 & 3.2
-// Mirrors backend/app/schemas/dashboard.py
+// Các type Dashboard – Phase 3.1 & 3.2
+// Phản chiếu backend/app/schemas/dashboard.py
 
 export interface UserDashboardStats {
   active_projects: number
@@ -52,7 +52,7 @@ export interface UserDashboardSummary {
   recent_activity: RecentActivityItem[]
 }
 
-// ── Portfolio Health (3.1) ──────────────────────────────────────────────────
+// ── Tình trạng danh mục đầu tư (3.1) ────────────────────────────────────────
 
 export interface PortfolioProjectHealth {
   project_id: number
@@ -73,7 +73,7 @@ export interface PortfolioHealthResponse {
   projects: PortfolioProjectHealth[]
 }
 
-// ── Project Dashboard Stats (3.2) ───────────────────────────────────────────
+// ── Thống kê Dashboard dự án (3.2) ──────────────────────────────────────────
 
 export interface TaskStatusCount {
   status: string

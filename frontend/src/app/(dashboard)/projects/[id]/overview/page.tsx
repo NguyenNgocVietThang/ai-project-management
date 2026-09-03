@@ -30,7 +30,7 @@ import { useProjectActivity, useProjectDetail } from '@/features/projects/hooks/
 import { formatDate, formatMoney, formatStatus } from '@/lib/format'
 import { getApiErrorMessage } from '@/types/api.types'
 
-// ── Stat card ──────────────────────────────────────────────────────────────
+// ── Thẻ thống kê ───────────────────────────────────────────────────────────
 
 function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
@@ -44,7 +44,7 @@ function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; va
   )
 }
 
-// ── Custom tooltip ─────────────────────────────────────────────────────────
+// ── Tooltip tùy chỉnh ──────────────────────────────────────────────────────
 
 function ChartTooltip({
   active,
@@ -68,7 +68,7 @@ function ChartTooltip({
   )
 }
 
-// ── Main page ──────────────────────────────────────────────────────────────
+// ── Trang chính ────────────────────────────────────────────────────────────
 
 export default function ProjectOverviewPage() {
   const id = Number(useParams<{ id: string }>().id)
@@ -86,7 +86,7 @@ export default function ProjectOverviewPage() {
     ? Math.max(0, differenceInCalendarDays(parseISO(project.end_date), new Date()))
     : null
 
-  // Budget donut data
+  // Dữ liệu biểu đồ vành khuyên ngân sách
   const budgetData = stats
     ? [
         { name: 'Spent', value: stats.budget.spent, fill: '#3b82f6' },
@@ -96,7 +96,7 @@ export default function ProjectOverviewPage() {
 
   return (
     <div className="space-y-6">
-      {/* ── Timeline progress ─────────────────────────────────────────── */}
+      {/* ── Tiến độ theo dòng thời gian ───────────────────────────────── */}
       <section className="rounded-xl border bg-card p-5">
         <p className="max-w-4xl text-sm text-muted-foreground">
           {project.description || 'No project description has been added.'}
@@ -114,7 +114,7 @@ export default function ProjectOverviewPage() {
         </div>
       </section>
 
-      {/* ── Stats row ─────────────────────────────────────────────────── */}
+      {/* ── Hàng thống kê ─────────────────────────────────────────────── */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Stat icon={<CheckCircle2 className="h-5 w-5" />} label="Tasks completed"
           value={`${project.completed_task_count} / ${project.task_count}`} />
@@ -126,10 +126,10 @@ export default function ProjectOverviewPage() {
           value={daysRemaining === null ? 'Not set' : daysRemaining.toString()} />
       </div>
 
-      {/* ── Charts row ────────────────────────────────────────────────── */}
+      {/* ── Hàng biểu đồ ──────────────────────────────────────────────── */}
       {stats && (
         <div className="grid gap-6 xl:grid-cols-3">
-          {/* Task distribution donut */}
+          {/* Biểu đồ vành khuyên phân bố công việc */}
           <section className="rounded-xl border bg-card p-5">
             <h2 className="mb-4 text-base font-semibold">Task Status</h2>
             <ResponsiveContainer width="100%" height={200}>
@@ -170,7 +170,7 @@ export default function ProjectOverviewPage() {
             </div>
           </section>
 
-          {/* Budget donut */}
+          {/* Biểu đồ vành khuyên ngân sách */}
           <section className="rounded-xl border bg-card p-5">
             <h2 className="mb-4 text-base font-semibold">Budget</h2>
             {stats.budget.budget ? (
@@ -209,7 +209,7 @@ export default function ProjectOverviewPage() {
             )}
           </section>
 
-          {/* Burndown line chart */}
+          {/* Biểu đồ đường burndown */}
           <section className="rounded-xl border bg-card p-5">
             <h2 className="mb-4 text-base font-semibold">14-day Burndown</h2>
             <ResponsiveContainer width="100%" height={220}>
@@ -218,7 +218,7 @@ export default function ProjectOverviewPage() {
                 <XAxis
                   dataKey="date"
                   tick={{ fontSize: 9 }}
-                  tickFormatter={(v) => v.slice(5)} // MM-DD
+                  tickFormatter={(v) => v.slice(5)} // Tháng-Ngày
                 />
                 <YAxis tick={{ fontSize: 9 }} />
                 <Tooltip content={<ChartTooltip />} />
@@ -231,7 +231,7 @@ export default function ProjectOverviewPage() {
         </div>
       )}
 
-      {/* ── Team utilization bar chart ─────────────────────────────────── */}
+      {/* ── Biểu đồ cột mức sử dụng nhân sự ───────────────────────────── */}
       {stats && stats.team_utilization.length > 0 && (
         <section className="rounded-xl border bg-card p-5">
           <div className="mb-4 flex items-center gap-2">
@@ -255,7 +255,7 @@ export default function ProjectOverviewPage() {
         </section>
       )}
 
-      {/* ── Phases & Milestones ───────────────────────────────────────── */}
+      {/* ── Giai đoạn & Cột mốc ───────────────────────────────────────── */}
       <div className="grid gap-6 xl:grid-cols-2">
         <section className="rounded-xl border bg-card p-5">
           <h2 className="text-lg font-semibold">Phases</h2>
@@ -304,7 +304,7 @@ export default function ProjectOverviewPage() {
         </section>
       </div>
 
-      {/* ── Recent Activity ───────────────────────────────────────────── */}
+      {/* ── Hoạt động gần đây ─────────────────────────────────────────── */}
       <section className="rounded-xl border bg-card p-5">
         <div className="flex items-center gap-2">
           <Clock3 className="h-5 w-5 text-primary" />

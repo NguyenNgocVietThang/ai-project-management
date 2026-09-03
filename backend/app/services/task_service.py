@@ -54,8 +54,8 @@ STATUS_TRANSITIONS = {
     TaskStatus.BLOCKED: {TaskStatus.TODO, TaskStatus.IN_PROGRESS},
 }
 
-# Fields whose change is significant enough to notify the whole project team
-# (not just the assignee/actor) — see notify_project_team() calls below.
+# Các trường mà khi thay đổi đủ quan trọng để thông báo cho cả nhóm dự án
+# (không chỉ người được giao/người thực hiện) — xem các lời gọi notify_project_team() bên dưới.
 SIGNIFICANT_TASK_FIELDS = {"status", "start_date", "due_date", "priority", "assignee_id"}
 
 
@@ -273,7 +273,7 @@ class TaskService:
                     end_date=task.due_date,
                 )
             )
-            # Phase 3.3 – notify the assignee
+            # Phase 3.3 – thông báo cho người được giao
             if task.assignee_id != user.id:
                 from app.services.notification_service import NotificationService
                 await NotificationService.push(
@@ -311,7 +311,7 @@ class TaskService:
         for key, value in values.items():
             setattr(task, key, value)
         if "due_date" in changed_significant_fields:
-            # Due date moved — allow the "due soon" sweep to re-fire for the new date.
+            # Hạn chót đã dời — cho phép lượt quét "sắp đến hạn" chạy lại cho ngày mới.
             task.last_due_soon_notified_at = None
         new_assignee_id = values.get("assignee_id")
         old_assignee_id = old.get("assignee_id")
@@ -333,7 +333,7 @@ class TaskService:
                     )
                 )
         await self.db.flush()
-        # Phase 3.3 – notify new assignee if assignee changed
+        # Phase 3.3 – thông báo cho người được giao mới nếu người được giao thay đổi
         if (
             "assignee_id" in values
             and new_assignee_id is not None
@@ -351,11 +351,11 @@ class TaskService:
                 entity_type="Task",
                 entity_id=task.id,
             )
-        # Notify the rest of the project team when a significant field changed
+        # Thông báo cho phần còn lại của nhóm dự án khi một trường quan trọng thay đổi
         if changed_significant_fields:
             exclude_ids = {user.id}
             if new_assignee_id is not None and new_assignee_id != old_assignee_id:
-                exclude_ids.add(new_assignee_id)  # already got a dedicated TASK_ASSIGNED push above
+                exclude_ids.add(new_assignee_id)  # đã nhận push TASK_ASSIGNED riêng ở trên
             field_list = ", ".join(sorted(changed_significant_fields))
             await notify_project_team(
                 self.db,
@@ -407,7 +407,7 @@ class TaskService:
         if not context.is_admin and context.role not in {"PM", "BA"}:
             raise ForbiddenException("Only PM or BA can bulk update tasks")
 
-        # Load all tasks in a single query — avoids N+1 selects
+        # Nạp tất cả task trong một truy vấn duy nhất — tránh N+1 selects
         tasks_map: dict[int, Task] = {
             task.id: task
             for task in (
@@ -420,7 +420,7 @@ class TaskService:
             ).all()
         }
 
-        # Validate all IDs upfront before touching any row (atomicity)
+        # Kiểm tra hợp lệ toàn bộ ID trước khi động vào bất kỳ dòng nào (tính nguyên tử)
         for task_id in data.task_ids:
             if task_id not in tasks_map:
                 raise BadRequestException(f"Task {task_id} does not belong to the project")
@@ -428,13 +428,13 @@ class TaskService:
         results = []
         if data.status is not None:
             target = TaskStatus(data.status)
-            # Validate all transitions before applying any change
+            # Kiểm tra hợp lệ toàn bộ chuyển trạng thái trước khi áp dụng bất kỳ thay đổi nào
             for task in tasks_map.values():
                 if target != task.status and target not in STATUS_TRANSITIONS.get(task.status, set()):
                     raise ConflictException(
                         f"Cannot transition task {task.id} from {task.status.value} to {target.value}"
                     )
-            # Apply all status changes together
+            # Áp dụng tất cả thay đổi trạng thái cùng lúc
             for task in tasks_map.values():
                 old = task.status
                 task.status = target
@@ -444,7 +444,7 @@ class TaskService:
                     old_values={"status": old}, new_values={"status": target},
                 )
             await self.db.flush()
-            # Single CPM recalculation for the entire batch
+            # Chỉ tính lại CPM một lần cho toàn bộ lô
             await recalculate_project(self.db, project_id)
             for task_id in data.task_ids:
                 loaded = await self._loaded_task(task_id)

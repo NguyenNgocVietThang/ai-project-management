@@ -49,7 +49,7 @@ class UserUpdate(BaseModel):
 
 class ChangePasswordRequest(BaseModel):
     current_password: Optional[str] = Field(default=None, max_length=100)
-    new_password: str = Field(..., min_length=8, max_length=100)
+    new_password: str = Field(..., min_length=12, max_length=100)
 
     @field_validator("new_password")
     @classmethod
@@ -69,10 +69,11 @@ OAuthProvider = Literal["google", "facebook"]
 
 
 class UserResponse(UserBase):
-    # Overrides UserBase.email (EmailStr): responses must reflect stored data as-is,
-    # including synthetic addresses like "deleted_<id>_<hex>@deleted.invalid" written by
-    # UserService.deactivate_account's anonymization — EmailStr rejects the reserved
-    # ".invalid" TLD (RFC 2606) and would 500 on any deactivated/anonymized account.
+    # Ghi đè UserBase.email (EmailStr): response phải phản ánh nguyên trạng dữ liệu đã lưu,
+    # bao gồm cả các địa chỉ tổng hợp như "deleted_<id>_<hex>@deleted.invalid" do
+    # quá trình ẩn danh của UserService.deactivate_account ghi ra — EmailStr từ chối
+    # TLD ".invalid" được dành riêng (RFC 2606) và sẽ gây lỗi 500 với bất kỳ tài khoản
+    # nào đã bị vô hiệu hóa/ẩn danh.
     email: str
     id: int
     is_active: bool

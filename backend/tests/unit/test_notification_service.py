@@ -3,7 +3,7 @@ from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 
-import app.db.base  # noqa: F401 - register SQLAlchemy relationships
+import app.db.base  # noqa: F401 - đăng ký các quan hệ SQLAlchemy
 from app.models.notification import NotificationType
 from app.services.notification_service import NotificationService
 
@@ -51,13 +51,12 @@ async def test_push_persists_and_broadcasts_over_websocket():
 
 @pytest.mark.asyncio
 async def test_push_does_not_shield_callers_from_a_broadcast_exception():
-    """push() does not wrap publish() in its own try/except — the guarantee
-    that a Redis outage can't take down notification creation lives entirely
-    in ws_manager.publish()'s own soft-fail (it catches everything and only
-    logs). This test documents that contract: if publish() ever stopped
-    swallowing its own errors, a WS blip would propagate here and roll back
-    the notification row along with it, so ws_manager.publish() must keep
-    catching broadly."""
+    """push() không bọc publish() trong try/except của riêng nó — sự bảo đảm rằng
+    một sự cố Redis không thể làm sập việc tạo notification nằm hoàn toàn trong
+    cơ chế soft-fail của chính ws_manager.publish() (nó bắt mọi thứ và chỉ ghi
+    log). Test này ghi lại hợp đồng đó: nếu publish() ngừng nuốt các lỗi của
+    chính nó, một trục trặc WS sẽ lan tới đây và rollback luôn dòng notification
+    cùng với nó, nên ws_manager.publish() phải tiếp tục bắt lỗi rộng rãi."""
     added = {}
 
     async def fake_flush():
@@ -78,6 +77,6 @@ async def test_push_does_not_shield_callers_from_a_broadcast_exception():
                 db, user_id=7, title="t", message="m", ntype=NotificationType.SYSTEM
             )
 
-    # The row was still added/flushed before the broadcast attempt.
+    # Dòng dữ liệu vẫn được add/flush trước khi thử broadcast.
     db.add.assert_called_once()
     db.flush.assert_awaited_once()

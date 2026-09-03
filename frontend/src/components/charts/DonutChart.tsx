@@ -2,7 +2,7 @@
 
 /**
  * DonutChart – Recharts PieChart wrapper
- * Used for: Task Status Distribution, Budget breakdown
+ * Dùng cho: Phân bố trạng thái task, phân tích ngân sách
  */
 import {
   Cell,
@@ -21,7 +21,7 @@ export interface DonutSlice {
 
 interface DonutChartProps {
   data: DonutSlice[]
-  /** Text shown in the center of the donut */
+  /** Chữ hiển thị ở giữa biểu đồ donut */
   centerLabel?: string
   centerValue?: string | number
   height?: number
@@ -78,7 +78,7 @@ export function DonutChart({
             wrapperStyle={{ fontSize: '12px', paddingTop: '8px' }}
           />
         )}
-        {/* Center label rendered via SVG foreignObject */}
+        {/* Nhãn ở giữa được render qua SVG foreignObject */}
         {centerLabel && (
           <text
             x="50%"

@@ -18,7 +18,7 @@ export function NotificationPanel({ onClose: _onClose }: Props) {
 
   return (
     <div className="flex flex-col" style={{ width: 380, maxHeight: 540 }}>
-      {/* Header */}
+      {/* Phần đầu */}
       <div className="flex items-center justify-between border-b px-4 py-3">
         <div className="flex items-center gap-2">
           <Bell className="h-4 w-4 text-primary" />
@@ -30,7 +30,7 @@ export function NotificationPanel({ onClose: _onClose }: Props) {
           )}
         </div>
         <div className="flex items-center gap-2">
-          {/* Unread filter toggle */}
+          {/* Nút bật/tắt lọc chưa đọc */}
           <button
             id="notif-toggle-unread"
             onClick={() => setUnreadOnly((p) => !p)}
@@ -42,7 +42,7 @@ export function NotificationPanel({ onClose: _onClose }: Props) {
           >
             Unread
           </button>
-          {/* Mark all read */}
+          {/* Đánh dấu tất cả đã đọc */}
           {data && data.unread_count > 0 && (
             <button
               id="notif-mark-all-read"
@@ -57,7 +57,7 @@ export function NotificationPanel({ onClose: _onClose }: Props) {
         </div>
       </div>
 
-      {/* List */}
+      {/* Danh sách */}
       <div className="flex-1 overflow-y-auto py-1">
         {isLoading && (
           <div className="flex items-center justify-center py-10 text-muted-foreground">
@@ -80,7 +80,7 @@ export function NotificationPanel({ onClose: _onClose }: Props) {
         ))}
       </div>
 
-      {/* Footer */}
+      {/* Chân trang */}
       {data && data.total > data.items.length && (
         <div className="border-t px-4 py-2.5 text-center">
           <span className="text-xs text-muted-foreground">

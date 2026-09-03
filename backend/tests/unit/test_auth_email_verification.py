@@ -9,7 +9,7 @@ import httpx
 import pytest
 from fastapi import HTTPException
 
-import app.db.base  # noqa: F401 - register all SQLAlchemy relationships for User construction
+import app.db.base  # noqa: F401 - đăng ký tất cả quan hệ SQLAlchemy để dựng User
 from app.models.user import User
 from app.main import app
 from app.schemas.auth import RegisterRequest
@@ -49,7 +49,7 @@ async def test_registration_stores_hashed_token_and_survives_queue_failure(caplo
         email="sensitive@example.com",
         username="sensitive_user",
         full_name="Sensitive User",
-        password="Password1",
+        password="Password1Secure",
     )
     started_at = datetime.now(timezone.utc)
 

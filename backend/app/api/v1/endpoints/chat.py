@@ -2,7 +2,7 @@ from typing import Annotated, Optional
 
 from fastapi import APIRouter, Body, Query, status
 
-from app.core.dependencies import CurrentUser
+from app.core.dependencies import CurrentUser, CurrentVerifiedUser
 from app.schemas.chat import (
     ChatHistoryResponse,
     ChatMessageCreate,
@@ -34,10 +34,10 @@ async def post_chat_message(
     project_id: int,
     body: ChatMessageCreate,
     service: ChatServiceDep,
-    current_user: CurrentUser,
+    current_user: CurrentVerifiedUser,
 ):
-    # REST fallback for clients without an open WebSocket — the WS endpoint
-    # (app/api/ws/chat.py) calls the same ChatService.create_message().
+    # Phương án REST dự phòng cho client không có WebSocket đang mở — endpoint WS
+    # (app/api/ws/chat.py) gọi cùng ChatService.create_message().
     return await service.create_message(project_id, current_user, body)
 
 

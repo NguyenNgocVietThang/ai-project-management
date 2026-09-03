@@ -1,5 +1,5 @@
 """
-Database seed script.
+Script seed cơ sở dữ liệu.
 Khởi tạo dữ liệu mặc định: 7 Roles, Permissions, và Admin user.
 
 Cách chạy:
@@ -9,12 +9,20 @@ Cách chạy:
 """
 
 import asyncio
+import os
+import secrets
 import sys
 
 sys.path.insert(0, ".")
 
+# Mật khẩu của admin khởi tạo lấy từ biến môi trường. Trước đây nó là chuỗi
+# "Admin@123456", được in trong README — điều đó có nghĩa mọi lần triển khai
+# chạy seed đều kèm một tài khoản superuser mà ai cũng biết mật khẩu.
+SEED_ADMIN_EMAIL = os.getenv("SEED_ADMIN_EMAIL", "admin@example.com")
+SEED_ADMIN_USERNAME = os.getenv("SEED_ADMIN_USERNAME", "admin")
 
-# ─── Seed data ────────────────────────────────────────────────────────────────
+
+# ─── Dữ liệu seed ─────────────────────────────────────────────────────────────
 
 ROLES = [
     {"name": "Admin", "description": "Quản trị hệ thống — toàn quyền"},
@@ -26,56 +34,56 @@ ROLES = [
     {"name": "Investor", "description": "Nhà đầu tư — chỉ xem Dashboard (read-only)"},
 ]
 
-# Format: (resource, action, description)
+# Định dạng: (resource, action, description)
 PERMISSIONS = [
-    # Portfolio
+    # Danh mục dự án (Portfolio)
     ("portfolio", "create", "Tạo Portfolio"),
     ("portfolio", "read", "Xem Portfolio"),
     ("portfolio", "update", "Cập nhật Portfolio"),
     ("portfolio", "delete", "Xóa Portfolio"),
-    # Project
+    # Dự án (Project)
     ("project", "create", "Tạo Project"),
     ("project", "read", "Xem Project"),
     ("project", "update", "Cập nhật Project"),
     ("project", "delete", "Xóa Project"),
     ("project", "manage_members", "Quản lý thành viên Project"),
     ("project", "rollback", "Rollback phiên bản Project"),
-    # Task
+    # Công việc (Task)
     ("task", "create", "Tạo Task"),
     ("task", "read", "Xem Task"),
     ("task", "update", "Cập nhật Task"),
     ("task", "delete", "Xóa Task"),
     ("task", "assign", "Phân công Task"),
-    # Worklog
+    # Nhật ký công việc (Worklog)
     ("worklog", "create", "Ghi Worklog"),
     ("worklog", "read", "Xem Worklog"),
     ("worklog", "update", "Sửa Worklog của mình"),
-    # Change Request
+    # Yêu cầu thay đổi (Change Request)
     ("change_request", "create", "Tạo Change Request"),
     ("change_request", "read", "Xem Change Request"),
     ("change_request", "approve", "Duyệt Change Request"),
     ("change_request", "apply", "Áp dụng Change Request vào dự án"),
-    # Report
+    # Báo cáo (Report)
     ("report", "read", "Xem báo cáo"),
     ("report", "export", "Xuất báo cáo (DOCX/XLSX)"),
     # AI
     ("ai", "generate_project", "Dùng AI tạo dự án"),
     ("ai", "analyze_impact", "Dùng AI phân tích tác động"),
     ("ai", "optimize_schedule", "Dùng AI tối ưu lịch trình"),
-    # User management
+    # Quản lý người dùng
     ("user", "create", "Tạo tài khoản"),
     ("user", "read", "Xem tài khoản"),
     ("user", "update", "Cập nhật tài khoản"),
     ("user", "delete", "Xóa tài khoản"),
-    # System
+    # Hệ thống
     ("system", "config", "Cấu hình hệ thống (AI provider, ...)"),
     ("audit", "read", "Xem Audit Log"),
     ("dashboard", "read", "Xem Dashboard"),
 ]
 
-# Role → Permissions mapping
+# Ánh xạ Role → Permissions
 ROLE_PERMISSIONS = {
-    "Admin": [f"{r}:{a}" for r, a, _ in PERMISSIONS],  # Admin có tất cả
+    "Admin": [f"{r}:{a}" for r, a, _ in PERMISSIONS],  # Admin có tất cả quyền
     "PM": [
         "portfolio:create",
         "portfolio:read",
@@ -122,7 +130,7 @@ ROLE_PERMISSIONS = {
 
 
 async def seed(db):
-    # Import app.db.base first — it imports ALL models in correct dependency order
+    # Import app.db.base trước — nó import TẤT CẢ models theo đúng thứ tự phụ thuộc
     import bcrypt as _bcrypt
     from sqlalchemy import insert
 
@@ -133,7 +141,7 @@ async def seed(db):
     from app.models.user import User
 
     def hash_password(password: str) -> str:
-        """Hash password using bcrypt directly (bypasses passlib/bcrypt 5.x incompatibility)."""
+        """Hash mật khẩu bằng bcrypt trực tiếp (né sự không tương thích của passlib/bcrypt 5.x)."""
         return _bcrypt.hashpw(password.encode("utf-8"), _bcrypt.gensalt()).decode("utf-8")
 
 
@@ -154,7 +162,7 @@ async def seed(db):
         role_map[role_data["name"]] = role
     await db.flush()
 
-    # Assign permissions to roles via direct insert into association table
+    # Gán permissions cho roles bằng cách insert trực tiếp vào association table
     role_perm_rows = []
     for role_name, perm_keys in ROLE_PERMISSIONS.items():
         role = role_map[role_name]
@@ -168,11 +176,18 @@ async def seed(db):
         await db.execute(insert(role_permissions), role_perm_rows)
 
     print("Seeding admin user...")
+    # Được sinh ra khi không được đặt, để một lần seed không giám sát không bao giờ
+    # quay về một mật khẩu ai cũng biết. In một lần, ở cuối, và không bao giờ lưu dạng plaintext.
+    admin_password = os.getenv("SEED_ADMIN_PASSWORD")
+    generated_password = admin_password is None
+    if generated_password:
+        admin_password = secrets.token_urlsafe(18)
+
     admin = User(
-        email="admin@example.com",
-        username="admin",
+        email=SEED_ADMIN_EMAIL,
+        username=SEED_ADMIN_USERNAME,
         full_name="System Administrator",
-        hashed_password=hash_password("Admin@123456"),
+        hashed_password=hash_password(admin_password),
         position="System Admin",
         is_active=True,
         is_superuser=True,
@@ -181,14 +196,20 @@ async def seed(db):
     db.add(admin)
     await db.flush()
 
-    # Assign Admin role to admin user via direct insert
+    # Gán role Admin cho admin user bằng cách insert trực tiếp
     await db.execute(insert(user_roles), [{"user_id": admin.id, "role_id": role_map["Admin"].id}])
 
     await db.commit()
     print("\n✅ Seeded:")
     print(f"   - {len(PERMISSIONS)} permissions")
     print(f"   - {len(ROLES)} roles")
-    print("   - 1 admin user: admin@example.com / Admin@123456")
+    print(f"   - 1 admin user: {SEED_ADMIN_EMAIL}")
+    if generated_password:
+        print("\n" + "=" * 62)
+        print("  Generated admin password (shown once — store it now):")
+        print(f"    {admin_password}")
+        print("  Set SEED_ADMIN_PASSWORD to choose your own instead.")
+        print("=" * 62)
 
 
 

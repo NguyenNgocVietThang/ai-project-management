@@ -1,11 +1,11 @@
 """
 NotificationService – CRUD + helper để tạo notifications từ các service khác.
 
-Usage (từ task_service hoặc các service khác):
+Cách dùng (từ task_service hoặc các service khác):
     await NotificationService.push(
         db, user_id=member.id,
-        title="Task assigned",
-        message=f"You have been assigned to '{task.name}'",
+        title="Công việc đã được phân công",
+        message=f"Bạn đã được phân công công việc '{task.name}'",
         ntype=NotificationType.TASK_ASSIGNED,
         link=f"/projects/{task.project_id}/tasks/{task.id}",
         entity_type="Task",
@@ -36,7 +36,7 @@ class NotificationService:
         self.db = db
 
     # ─────────────────────────────────────────────────────────────────────────
-    #  List
+    #  Danh sách
     # ─────────────────────────────────────────────────────────────────────────
 
     async def list(
@@ -75,7 +75,7 @@ class NotificationService:
         )
 
     # ─────────────────────────────────────────────────────────────────────────
-    #  Unread count  (lightweight, called frequently for badge)
+    #  Số lượng chưa đọc (nhẹ, được gọi thường xuyên cho badge)
     # ─────────────────────────────────────────────────────────────────────────
 
     async def unread_count(self, user_id: int) -> UnreadCountResponse:
@@ -94,7 +94,7 @@ class NotificationService:
         )
 
     # ─────────────────────────────────────────────────────────────────────────
-    #  Mark single notification as read
+    #  Đánh dấu một notification là đã đọc
     # ─────────────────────────────────────────────────────────────────────────
 
     async def mark_read(self, notification_id: int, user_id: int) -> NotificationResponse:
@@ -114,7 +114,7 @@ class NotificationService:
         return self._to_response(notification)
 
     # ─────────────────────────────────────────────────────────────────────────
-    #  Mark all as read
+    #  Đánh dấu tất cả là đã đọc
     # ─────────────────────────────────────────────────────────────────────────
 
     async def mark_all_read(self, user_id: int) -> MarkReadResponse:
@@ -131,7 +131,7 @@ class NotificationService:
         return MarkReadResponse(updated=updated, unread_count=0)
 
     # ─────────────────────────────────────────────────────────────────────────
-    #  Delete notification
+    #  Xóa notification
     # ─────────────────────────────────────────────────────────────────────────
 
     async def delete(self, notification_id: int, user_id: int) -> None:
@@ -146,7 +146,7 @@ class NotificationService:
         await self.db.flush()
 
     # ─────────────────────────────────────────────────────────────────────────
-    #  Static helper: push a notification (called from other services)
+    #  Hàm hỗ trợ static: đẩy một notification (được gọi từ các service khác)
     # ─────────────────────────────────────────────────────────────────────────
 
     @staticmethod
@@ -161,12 +161,12 @@ class NotificationService:
         entity_type: Optional[str] = None,
         entity_id: Optional[int] = None,
     ) -> Notification:
-        """Create, persist, and real-time-broadcast a notification.
+        """Tạo, lưu và phát real-time một notification.
 
-        Flushes immediately (needed to get the server-generated id/created_at
-        for the WS payload) — this is a behavior change from the earlier
-        "add only, caller flushes" contract, but flush() just sends pending
-        SQL without committing, so it's safe to call mid-transaction.
+        Gọi flush ngay lập tức (cần thiết để lấy id/created_at do server sinh ra
+        cho payload WS) — đây là thay đổi hành vi so với hợp đồng trước đây
+        "chỉ add, caller tự flush", nhưng flush() chỉ gửi các câu SQL đang chờ
+        mà không commit, nên an toàn khi gọi giữa transaction.
         """
         notification = Notification(
             user_id=user_id,
@@ -180,7 +180,7 @@ class NotificationService:
         db.add(notification)
         await db.flush()
 
-        from app.core.ws_manager import publish  # local import: avoids importing ws infra on every service load
+        from app.core.ws_manager import publish  # import cục bộ: tránh nạp hạ tầng ws mỗi lần load service
 
         await publish(
             f"notif:user:{user_id}",
@@ -198,7 +198,7 @@ class NotificationService:
         return notification
 
     # ─────────────────────────────────────────────────────────────────────────
-    #  Serialiser
+    #  Bộ chuyển đổi (serialiser)
     # ─────────────────────────────────────────────────────────────────────────
 
     @staticmethod
@@ -217,7 +217,7 @@ class NotificationService:
         )
 
 
-# ── FastAPI dependency injection ──────────────────────────────────────────────
+# ── Khai báo dependency injection cho FastAPI ──────────────────────────────────────────────
 
 async def get_notification_service(
     db: Annotated[AsyncSession, Depends(get_db)],

@@ -24,15 +24,15 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     }
   }, [hasHydrated, isClient, isAuthenticated, isVerificationRoute, router])
 
-  // Verification links are public and must render even when browser storage is
-  // unavailable or still hydrating (for example, when opened from an email client).
+  // Các liên kết xác minh là công khai và phải render được ngay cả khi browser storage
+  // không khả dụng hoặc vẫn đang hydrate (ví dụ, khi mở từ một email client).
   if (!isVerificationRoute && (!isClient || isAuthenticated)) {
     return <FullPageSpinner />
   }
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
-      {/* Brand panel — hidden on small screens, shown from lg breakpoint up */}
+      {/* Panel thương hiệu — ẩn trên màn hình nhỏ, hiện từ breakpoint lg trở lên */}
       <div className="relative hidden flex-col justify-between overflow-hidden bg-primary p-10 text-primary-foreground lg:flex">
         <div
           aria-hidden="true"
@@ -50,7 +50,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         </div>
       </div>
 
-      {/* Form panel */}
+      {/* Panel biểu mẫu */}
       <div className="flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-sm">{children}</div>
       </div>

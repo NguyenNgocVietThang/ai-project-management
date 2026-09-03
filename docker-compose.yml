@@ -1,7 +1,12 @@
 version: '3.8'
 
+# Môi trường Development. Tệp này mount trực tiếp cây mã nguồn và chạy uvicorn/next với
+# hot reload, do đó KHÔNG dùng cho triển khai production — vui lòng xem docker-compose.prod.yml.
+# Các thông tin bảo mật (SECRET_KEY, SMTP, OAuth, AI keys) được đọc từ
+# backend/.env (được gitignore); sao chép backend/.env.example để tạo tệp này.
+
 services:
-  # ─── Infrastructure ──────────────────────────────────────────
+  # ─── Hạ tầng (Infrastructure) ──────────────────────────────────────────
 
   postgres:
     image: postgres:16-alpine
@@ -58,8 +63,12 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: ai-project-backend
+    env_file:
+      - ./backend/.env
     environment:
-      - APP_ENV=production
+      # Ghi đè cấu hình cho mạng compose: các giá trị này phải trỏ tới tên service trong Docker,
+      # không dùng localhost như khi chạy bên ngoài Docker.
+      - APP_ENV=development
       - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/ai_project_management
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/1
@@ -88,8 +97,10 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: ai-project-celery
+    env_file:
+      - ./backend/.env
     environment:
-      - APP_ENV=production
+      - APP_ENV=development
       - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/ai_project_management
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/1
@@ -101,15 +112,17 @@ services:
       - ./backend:/app
     command: celery -A app.workers.celery_app worker --loglevel=info
 
-  # ─── Celery Beat (scheduled tasks, e.g. daily task-date notification sweep) ──
+  # ─── Celery Beat (các tác vụ định kỳ, ví dụ: quét thông báo hạn công việc hàng ngày) ──
 
   celery-beat:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: ai-project-celery-beat
+    env_file:
+      - ./backend/.env
     environment:
-      - APP_ENV=production
+      - APP_ENV=development
       - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/ai_project_management
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/1

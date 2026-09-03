@@ -1,6 +1,6 @@
 import { Spinner } from '@/components/common/Spinner'
 
-/** Shown while the auth store is rehydrating from localStorage, to avoid a redirect flash. */
+/** Hiển thị trong khi auth store đang khôi phục từ localStorage, để tránh nháy redirect. */
 export function FullPageSpinner() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">

@@ -1,7 +1,7 @@
 import type { User } from '@/types/auth.types'
 
-/** Mirrors the backend's `is_admin()` check (app/services/phase2_common.py):
- * superusers always count as admin, otherwise the user needs the "Admin" role. */
+/** Phản chiếu kiểm tra `is_admin()` ở backend (app/services/phase2_common.py):
+ * superuser luôn được tính là admin, ngược lại người dùng cần có role "Admin". */
 export function isAdminUser(user: User | null | undefined): boolean {
   if (!user) return false
   return user.is_superuser || user.roles.some((role) => role.name === 'Admin')

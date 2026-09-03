@@ -1,4 +1,4 @@
-"""add email verification fields
+"""thêm các trường xác minh email
 
 Revision ID: 20260812_email_verification
 Revises: 20260812_password_reset
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 from alembic import op
 
-# revision identifiers, used by Alembic.
+# định danh revision, được Alembic sử dụng.
 revision: str = "20260812_email_verification"
 down_revision: Union[str, None] = "20260812_password_reset"
 branch_labels: Union[str, Sequence[str], None] = None
@@ -20,8 +20,9 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    # Existing accounts are trusted during rollout. Switch the database default to
-    # False after the add/backfill so future non-ORM inserts follow local registration.
+    # Các tài khoản hiện có được tin cậy trong quá trình rollout. Chuyển giá trị mặc định
+    # của database sang False sau khi add/backfill để các lần insert không qua ORM về sau
+    # tuân theo luồng đăng ký local.
     op.add_column(
         "users",
         sa.Column(

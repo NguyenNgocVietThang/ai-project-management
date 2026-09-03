@@ -20,13 +20,13 @@ if TYPE_CHECKING:
 class User(Base):
     __tablename__ = "users"
 
-    # ─── Core fields ─────────────────────────────────────────────────────────
+    # ─── Các trường cốt lõi ─────────────────────────────────────────────────
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
     username: Mapped[str] = mapped_column(String(100), unique=True, index=True, nullable=False)
     full_name: Mapped[str] = mapped_column(String(255), nullable=False)
     hashed_password: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
-    # ─── Social Login / Auth Provider ───────────────────────────────────────
+    # ─── Đăng nhập mạng xã hội / Auth Provider ──────────────────────────────
     google_id: Mapped[Optional[str]] = mapped_column(
         String(255), unique=True, index=True, nullable=True
     )
@@ -36,7 +36,7 @@ class User(Base):
     auth_provider: Mapped[str] = mapped_column(String(50), default="local", nullable=False)
     auth_version: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
 
-    # ─── Password Recovery ───────────────────────────────────────────────────
+    # ─── Khôi phục mật khẩu ─────────────────────────────────────────────────
     password_reset_token_hash: Mapped[Optional[str]] = mapped_column(
         String(64), unique=True, index=True, nullable=True
     )
@@ -44,7 +44,7 @@ class User(Base):
         DateTime(timezone=True), nullable=True
     )
 
-    # Email Verification
+    # Xác minh email
     email_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     email_verification_token_hash: Mapped[Optional[str]] = mapped_column(
         String(64), unique=True, index=True, nullable=True
@@ -53,7 +53,7 @@ class User(Base):
         DateTime(timezone=True), nullable=True
     )
 
-    # ─── Profile ──────────────────────────────────────────────────────────────
+    # ─── Hồ sơ ────────────────────────────────────────────────────────────────
     avatar_url: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     avatar_storage_key: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     phone: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
@@ -61,12 +61,12 @@ class User(Base):
     department: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     hourly_rate: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
 
-    # ─── Status ───────────────────────────────────────────────────────────────
+    # ─── Trạng thái ───────────────────────────────────────────────────────────
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     is_superuser: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     last_login: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
-    # ─── Relationships ────────────────────────────────────────────────────────
+    # ─── Quan hệ ──────────────────────────────────────────────────────────────
     roles: Mapped[List["Role"]] = relationship(
         "Role", secondary="user_roles", back_populates="users", lazy="selectin"
     )

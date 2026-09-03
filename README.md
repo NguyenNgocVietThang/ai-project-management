@@ -1,11 +1,13 @@
 # AI Project Planning & Portfolio Management System
 
-> **Hệ thống quản lý dự án thông minh tích hợp AI — tương đương MS Project với lớp AI tự động phân tích, đề xuất và tối ưu hóa kế hoạch.**
+> **Hệ thống quản lý dự án & danh mục thông minh tích hợp AI — tương đương MS Project với lớp AI tự động phân tích, đề xuất và tối ưu hóa kế hoạch, hỗ trợ Real-time Project Chat và WebSocket Notifications.**
 
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI_0.115-009688?logo=fastapi)](https://fastapi.tiangolo.com)
 [![Next.js](https://img.shields.io/badge/Frontend-Next.js_15_(React_18)-black?logo=next.js)](https://nextjs.org)
 [![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL_16-336791?logo=postgresql)](https://www.postgresql.org)
-[![Celery](https://img.shields.io/badge/Queue-Celery_%2B_Redis-37814A?logo=celery)](https://docs.celeryq.dev)
+[![Redis](https://img.shields.io/badge/Cache%20%26%20PubSub-Redis_7-DC382D?logo=redis)](https://redis.io)
+[![Celery](https://img.shields.io/badge/Queue%20%26%20Beat-Celery_%2B_Redis-37814A?logo=celery)](https://docs.celeryq.dev)
+[![WebSocket](https://img.shields.io/badge/Real--time-WebSocket_%2B_Redis_PubSub-010101)](https://fastapi.tiangolo.com/advanced/websockets/)
 [![OpenAI & Gemini](https://img.shields.io/badge/AI-OpenAI_GPT--4o_%7C_Gemini_Pro-412991)](https://openai.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -18,11 +20,11 @@
 3. [Technology Stack](#3-technology-stack)
 4. [Phân cấp cấu trúc dự án (WBS)](#4-phân-cấp-cấu-trúc-dự-án-wbs)
 5. [Cấu trúc thư mục dự án](#5-cấu-trúc-thư-mục-dự-án)
-6. [Database Schema (7 Domains & 32+ Tables)](#6-database-schema-7-domains--32-tables)
-7. [Hệ thống phân quyền (RBAC)](#7-hệ-thống-phân-quyền-rbac)
+6. [Database Schema (8 Domains & 34 Tables)](#6-database-schema-8-domains--34-tables)
+7. [Hệ thống phân quyền (RBAC) & Quản trị Admin](#7-hệ-thống-phân-quyền-rbac--quản-trị-admin)
 8. [Quy trình vận hành chuẩn (SOP)](#8-quy-trình-vận-hành-chuẩn-sop)
-9. [Thuật toán cốt lõi & Luồng AI](#9-thuật-toán-cốt-lõi--luồng-ai)
-10. [API Specification & Endpoints](#10-api-specification--endpoints)
+9. [Thuật toán cốt lõi & Hạ tầng Real-time](#9-thuật-toán-cốt-lõi--hạ-tầng-real-time)
+10. [API Specification & WebSocket Endpoints](#10-api-specification--websocket-endpoints)
 11. [Cài đặt và Chạy hệ thống](#11-cài-đặt-và-chạy-hệ-thống)
 12. [Cấu hình & Biến môi trường](#12-cấu-hình--biến-môi-trường)
 13. [Quy tắc phát triển](#13-quy-tắc-phát-triển)
@@ -34,60 +36,84 @@
 
 ## 1. Tổng quan dự án
 
-Xây dựng một **web application quản lý dự án thông minh** tích hợp AI, tương đương MS Project nhưng có thêm lớp AI tự động phân tích, đề xuất và tối ưu kế hoạch. Hệ thống phục vụ nhiều vai trò (multi-role) và quản lý theo cấu trúc phân cấp Portfolio → Project → Task.
+Xây dựng một **web application quản lý dự án và danh mục đầu tư thông minh** tích hợp AI, tương đương MS Project nhưng được trang bị lớp AI tự động phân tích, sinh kế hoạch, đề xuất nhân sự, phát hiện rủi ro và đánh giá tác động thay đổi. Hệ thống hỗ trợ đa người dùng (multi-role), giao tiếp thời gian thực (Real-time Project Chat & WebSocket Notification Push) và quét lịch trình tự động qua Celery Beat.
 
-### Mục tiêu cốt lõi:
-- **Quản lý danh mục dự án (Portfolio & Project Management)** theo chuẩn PMI/Agile lai.
-- **Sinh kế hoạch dự án tự động (AI Project Generator)** từ prompt ngôn ngữ tự nhiên bằng AI (OpenAI/Gemini).
-- **Tính toán Critical Path (CPM)**, Topological Sort, Resource Leveling tự động.
-- **Phân tích tác động thay đổi (AI Impact Analysis)** và tối ưu lịch (Schedule Optimization) khi có Change Request.
-- **Dashboard đa chiều**: Gantt Chart, Burndown, Burnup, Velocity, EVA, CPI, SPI.
-- **Quản lý phiên bản dự án (Versioning & Rollback)**, xuất báo cáo DOCX/XLSX, ghi nhận Audit Log toàn diện.
+### Mục tiêu cốt lõi (tầm nhìn sản phẩm — không phải toàn bộ đã hoàn thành, xem [§14 Roadmap](#14-roadmap-phát-triển)):
+- **Quản lý danh mục & dự án (Portfolio & Project Management)** theo chuẩn kết hợp Waterfall & Agile.
+- **Sinh kế hoạch dự án tự động (AI Project Generator)** từ mô tả ngôn ngữ tự nhiên (Prompt) thông qua OpenAI / Google Gemini.
+- **Tính toán đường găng (Critical Path Method - CPM)**, sắp xếp tô-pô (Topological Sort) và cân bằng tải nhân sự (Resource Leveling).
+- **Giao tiếp thời gian thực (Real-time Collaboration)**: Kênh Chat nội bộ theo từng dự án (`/ws/chat/{project_id}`) và đẩy thông báo tức thời (`/ws/notifications`) qua WebSocket kết hợp Redis Pub/Sub đa tiến trình.
+- **Hệ thống Quản trị & Audit Timeline**: Quản lý người dùng, vai trò, 34 quyền hạn (permissions) chi tiết và truy vết toàn bộ thay đổi hệ thống.
+- **Tự động quét lịch & gửi thông báo định kỳ**: Celery Beat quét định kỳ hàng ngày (08:00 Asia/Ho_Chi_Minh) các công việc bắt đầu trong ngày hoặc sắp đến hạn để gửi thông báo fan-out tới toàn bộ nhóm dự án.
+- **Phân tích tác động thay đổi (AI Impact Analysis)** và tối ưu lịch (Schedule Optimization) khi phát sinh Change Request.
+- **Dashboard & Báo cáo đa chiều**: Gantt Chart tương tác, Burndown, Burnup, Velocity, Earned Value Analysis (EVA, CPI, SPI), xuất file DOCX/XLSX.
+
+### Trạng thái triển khai thực tế (cập nhật 2026-09-03)
+
+| Nhóm chức năng | Trạng thái | Ghi chú |
+|---|---|---|
+| Auth, RBAC, Admin Portal, OAuth, Profile | ✅ Chạy thật + test | Phase 1 hoàn thành |
+| Portfolio / Project / WBS / Task / Dependency / Assignment / WorkLog | ✅ Chạy thật + test | Phase 2 hoàn thành |
+| CPM Engine | ✅ Chạy nội bộ | `app/utils/cpm.py` + `scheduling_service.py`; **chưa có** endpoint `/cpm` và `/gantt` (mới là stub) |
+| Real-time Chat + Notification Push + Celery Beat daily sweep | ✅ Chạy thật + test | Phase 2/5 hoàn thành |
+| Dashboard KPI / EVA / Burndown | ✅ Chạy thật | endpoint `/dashboards` đã mount |
+| AI (Generator, Impact, Optimize, Risk, Resource) | 🟡 Chỉ hạ tầng | Có `BaseAIProvider` + `OpenAIProvider` + `GeminiProvider` + `project_generator.py` và models; **chưa mount** endpoint `/ai`, Celery `ai_tasks` vẫn là stub |
+| Change Request / Approvals / Project Versioning / Rollback | 🟡 Chỉ model DB | Endpoint là stub `TODO`, **chưa mount**, chưa có UI |
+| Reports DOCX/XLSX | 🟡 Chỉ scaffold | `report_tasks.py` là stub trả về rỗng, endpoint `/reports` chưa mount |
+| Documents / AI Document Parser | 🟡 Chỉ model DB | endpoint `/documents` là stub, chưa mount |
+| Leaves / Skills catalog | 🟡 Chỉ model DB | endpoint là stub, chưa mount |
+| Investor Read-only Dashboard, Mobile polish | ❌ Chưa làm | — |
+
+> **API thực tế đang phục vụ:** 21 REST router (`/api/v1/...`) + 2 WebSocket router (`/ws/...`). 11 router còn lại (`leaves, skills, documents, approvals, change_requests, gantt, cpm, reports, project_versions, ai, system`) vẫn là stub `TODO: Implement`, bị comment trong [`router.py`](./backend/app/api/v1/router.py) và **không** được mount.
 
 ---
 
 ## 2. Kiến trúc hệ thống
 
 ```
-┌────────────────────────────────────────────────────────┐
-│               Frontend (Next.js 15 / React 18)         │
-│          Dashboard + Interactive Gantt + UI/UX         │
-└───────────────────────────┬────────────────────────────┘
-                            │ REST API / WebSocket
-                            ▼
-┌────────────────────────────────────────────────────────┐
-│             FastAPI Backend (Python 3.11+)             │
-└──────┬────────────────────┬────────────────────┬───────┘
-       │                    │                    │
-  ┌────▼────────┐      ┌────▼────────┐     ┌─────▼────────┐
-  │ PostgreSQL  │      │ Redis Cache │     │    MinIO     │
-  │ (SQLAlchemy)│      │  & Session  │     │(File Storage)│
-  └─────────────┘      └────┬────────┘     └──────────────┘
-                            │
-                       ┌────▼────────┐
-                       │Celery Worker│ (Async Job Queue)
-                       └────┬────────┘
-                            │
-               ┌────────────▼────────────┐
-               │    AI Provider Layer    │
-               │  ├─ OpenAI (GPT-4o)     │
-               │  └─ Google Gemini Pro   │
-               └─────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────┐
+│                    Frontend (Next.js 15 / React 18)                    │
+│    App Router + Zustand + TanStack Query + Interactive Gantt + Chat    │
+└──────────────────┬───────────────────────────────┬─────────────────────┘
+                   │ REST API (/api/v1/...)        │ WebSocket (/ws/...)
+                   ▼                               ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                    FastAPI Backend (Python 3.11+)                      │
+│     Layered Architecture: Endpoints → Services → Repositories → Models │
+│     ConnectionManager (Redis Pub/Sub Bus) + AsyncIO Event Loop         │
+└──────┬───────────────────┬───────────────────────┬──────────────┬──────┘
+       │                   │                       │              │
+  ┌────▼────────┐     ┌────▼────────┐        ┌─────▼────────┐ ┌───▼────────┐
+  │ PostgreSQL  │     │ Redis Cache │        │    MinIO     │ │Celery Beat │
+  │ (SQLAlchemy │     │  & Pub/Sub  │        │(File Storage)│ │ (Scheduler)│
+  │  Async Engine)    └────┬────────┘        └──────────────┘ └───┬────────┘
+  └─────────────┘          │                                      │
+                      ┌────▼────────┐                             │
+                      │Celery Worker│ ◄───────────────────────────┘
+                      │ (Async Queue)  Async Tasks (AI, Emails, Sweeps, Reports)
+                      └────┬────────┘
+                           │
+              ┌────────────▼────────────┐
+              │    AI Provider Layer    │
+              │  ├─ OpenAI (GPT-4o)     │
+              │  └─ Google Gemini Pro   │
+              └─────────────────────────┘
 ```
 
-### AI Provider Architecture
+### Hạ tầng Real-time & WebSocket Architecture
 
 ```
-BaseAIProvider (ABC: generate_text, generate_json)
-├── OpenAIProvider (openai_provider.py)
-├── GeminiProvider (gemini_provider.py)
-└── AI Services:
-    ├── ProjectGeneratorService (SOP-AI-001)
-    ├── ImpactAnalysisService (SOP-AI-002)
-    ├── ScheduleOptimizationService (SOP-AI-003)
-    ├── ResourceRecommendationService (SOP-RM-001)
-    ├── RiskAnalysisService (SOP-AI-005)
-    └── DocumentParserService (SOP-DOC-001)
+Client WebSocket (/ws/chat/{id} hoặc /ws/notifications?token=...)
+   │
+   ▼
+FastAPI WS Endpoint (authenticate_ws verifies JWT & checks project membership)
+   │
+   ├── ConnectionManager (Local In-Memory Sockets Registry)
+   │
+   └── Redis Pub/Sub Bus (Cross-process broadcasting: ws:chat:{project_id}, ws:notif:user:{user_id})
+       │
+       ▼
+   redis_listener (Background task in FastAPI lifespan, receives & dispatches to local sockets)
 ```
 
 ---
@@ -95,520 +121,299 @@ BaseAIProvider (ABC: generate_text, generate_json)
 ## 3. Technology Stack
 
 ### Backend (Python)
-| Thành phần | Công nghệ / Thư viện | Mô tả |
-|---|---|---|
-| **Framework** | **FastAPI 0.115+** | Asynchronous Web Framework |
-| **Language** | Python 3.11+ | Type hints, async/await |
-| **ORM** | **SQLAlchemy 2.0+ (Async)** | Async ORM & Session management |
-| **Migrations** | **Alembic** | Database Schema Migration |
-| **Validation** | **Pydantic v2** | Data parsing & validation |
-| **Auth & Security** | `python-jose`, `passlib[bcrypt]` | JWT Tokens, Refresh Tokens, Password Hashing |
-| **Queue / Worker** | **Celery + Redis** | Background tasks & AI async processing |
-| **Caching** | Redis (`redis-py`) | In-memory caching & session store |
-| **AI Providers** | `openai`, `google-generativeai` | OpenAI GPT-4o & Google Gemini Pro APIs |
-| **File Storage** | `minio` (S3-compatible) | BRD, SRS, deliverable file attachments |
-| **Email Service** | `FastAPI-Mail` / `smtplib` + Jinja2 | Email templates (verification, notifications) |
-| **Reporting & Export** | `python-docx`, `openpyxl` | DOCX and XLSX export engines |
-| **Testing** | `pytest`, `pytest-asyncio`, `httpx` | Unit & Integration testing |
+| Thành phần | Công nghệ / Thư viện | Phiên bản | Mô tả |
+|---|---|---|---|
+| **Framework** | **FastAPI** | `0.115+` | Asynchronous High-performance Web Framework |
+| **ASGI Server** | `uvicorn[standard]` | `0.30.0` | ASGI Server với hỗ trợ native WebSocket |
+| **Language** | Python | `3.11+` | Type hints nghiêm ngặt, async/await |
+| **ORM** | **SQLAlchemy** | `2.0.35+` | Async ORM & Session management (Mapped/mapped_column) |
+| **Database Driver** | `asyncpg` | `0.29.0` | High-performance Async PostgreSQL driver |
+| **Migrations** | **Alembic** | `1.13.3` | Database Schema Migration tool |
+| **Validation** | **Pydantic v2** | `2.9.0` | Data parsing & strict validation |
+| **Auth & Security** | `python-jose`, `passlib[bcrypt]` | — | JWT Access/Refresh tokens, Password hashing |
+| **Real-time Bus** | **Redis Pub/Sub + ConnectionManager** | `5.1.1` | Cross-process WebSocket broadcasting |
+| **Queue & Worker** | **Celery** | `5.4.0` | Background tasks & AI processing queue |
+| **Scheduler** | **Celery Beat** | `5.4.0` | Cron scheduler (quét task start/due-soon hàng ngày) |
+| **Caching** | Redis (`redis.asyncio`) | `5.1.1` | In-memory caching & session store |
+| **AI Providers** | `openai`, `google-generativeai` | — | OpenAI GPT-4o & Google Gemini Pro APIs |
+| **File Storage** | `minio` / `boto3` | `7.2.9` | S3-compatible storage (BRD/SRS, Avatar, Reports) |
+| **Email Service** | `fastapi-mail` + Jinja2 | `1.4.1` | Template email async dispatch |
+| **Reporting** | `python-docx`, `openpyxl` | — | Xuất báo cáo dự án định dạng DOCX & XLSX |
+| **Testing** | `pytest`, `pytest-asyncio`, `httpx` | — | Automated unit testing suite (`backend/tests/unit/`, 123/123 passed) |
 
-### Frontend (React / TypeScript)
-| Thành phần | Công nghệ / Thư viện | Mô tả |
-|---|---|---|
-| **Framework** | **Next.js 15 (React 18)** | React Framework với App Router |
-| **Language** | TypeScript | Full type-safety |
-| **Routing** | **Next.js App Router** | File-based routing (`src/app/`) |
-| **State (Global)** | **Zustand** | Lightweight global state management |
-| **State (Server)** | **TanStack Query v5** | Server state caching & mutation sync |
-| **HTTP Client** | **Axios** | Interceptors for JWT & error handling |
-| **Styling** | **Tailwind CSS v3** | Utility-first CSS |
-| **Forms** | **React Hook Form + Zod** | Schema-based form validation |
-| **Tables** | **TanStack Table v8** | Headless data tables |
-| **Charts** | **Recharts** | Burndown, Burnup, Velocity, EVA charts |
-| **Drag & Drop** | `@dnd-kit/core` | Task reordering, Kanban, Gantt manipulation |
-| **Icons** | `lucide-react` | Modern icon system |
+### Frontend (Next.js / React / TypeScript)
+| Thành phần | Công nghệ / Thư viện | Phiên bản | Mô tả |
+|---|---|---|---|
+| **Framework** | **Next.js 15 (App Router)** | `15.0.0` | React Framework với Route Groups & Layouts |
+| **UI Runtime** | **React** | `18.3.0` | Modern React with Server & Client components |
+| **Language** | **TypeScript** | `5.2.2+` | Full type-safety across frontend |
+| **Global State** | **Zustand** | `4.4.0+` | Auth state persistence & Cookie synchronization |
+| **Server State** | **TanStack Query v5** | `5.0.0+` | React Query server-state caching & mutations |
+| **HTTP Client** | **Axios** | `1.5.0+` | Interceptors for JWT attach & refresh flow |
+| **Real-time Client** | `lib/ws-client.ts` (Native WS) | — | Reconnecting WebSocket client với exponential backoff |
+| **Styling** | **Tailwind CSS v3** | `3.3.0+` | Utility-first CSS & responsive theme |
+| **Forms** | **React Hook Form + Zod** | — | Schema-based form validation |
+| **Tables** | **TanStack Table v8** | — | Headless data tables |
+| **Charts** | **Recharts** | `2.8.0+` | Gantt, Burndown, Burnup, Velocity, EVA charts |
+| **Drag & Drop** | `@dnd-kit/core`, `@dnd-kit/sortable` | `6.0.0+` | Task reordering & Kanban board |
+| **Icons** | `lucide-react` | `0.290.0+` | Modern icon system |
+| **Date Utils** | `date-fns` | `2.30.0` | Date formatting and manipulation |
+
+### Hạ tầng Docker (7 Dịch vụ trong `docker-compose.yml`)
+| Container Service | Base Image | Cổng ánh xạ | Chức năng |
+|---|---|---|---|
+| `postgres` | `postgres:16-alpine` | `5432:5432` | Cơ sở dữ liệu quan hệ chính |
+| `redis` | `redis:7-alpine` | `6379:6379` | Cache, Celery Broker & WebSocket Pub/Sub Bus |
+| `minio` | `minio/minio:latest` | `9000:9000`, `9001:9001` | Object Storage API & Web Console |
+| `backend` | `./backend Dockerfile` | `8000:8000` | FastAPI REST API & WebSocket Server |
+| `celery-worker` | `./backend Dockerfile` | — | Background Worker xử lý AI, Email, Report |
+| `celery-beat` | `./backend Dockerfile` | — | Scheduled Task Runner (08:00 AM daily sweep) |
+| `frontend` | `./frontend Dockerfile` | `3000:3000` | Next.js Web Application |
 
 ---
 
 ## 4. Phân cấp cấu trúc dự án (WBS)
 
-Hệ thống quản lý dữ liệu theo cấu trúc phân rã công việc (Work Breakdown Structure - WBS):
-
 ```
-Portfolio
-└── Project
-     ├── Phase
-     ├── Sprint
-     ├── Epic
-     ├── Milestone
-     └── Task
-          └── SubTask
-               ├── Dependencies (Finish-to-Start FS, SS, FF, SF)
-               ├── Assignments (Phân công nhân sự)
-               ├── WorkLogs (Timesheet giờ thực tế)
-               └── Comments (Thảo luận trao đổi)
+Portfolio (Danh mục chiến lược)
+└── Project (Dự án: Agile / Waterfall / Hybrid)
+     ├── Project Members (PM, BA, PO, Member, Customer)
+     ├── Project Chat (/projects/[id]/chat & /ws/chat/[id])
+     ├── Phase (Giai đoạn)
+     ├── Sprint (Chu kỳ Agile)
+     ├── Epic (Nhóm tính năng lớn)
+     ├── Milestone (Cột mốc quan trọng)
+     └── Task (Công việc chi tiết)
+          ├── SubTask (Hạng mục công việc con)
+          ├── Dependencies (Mối quan hệ FS, SS, FF, SF + Lag hours)
+          ├── Assignments (Phân bổ nhân sự theo khối lượng/chi phí)
+          ├── WorkLogs (Timesheet ghi nhận giờ thực tế)
+          └── Comments (Bình luận & thảo luận)
 ```
 
 ---
 
 ## 5. Cấu trúc thư mục dự án
 
-### Tổng quan thư mục gốc
-
 ```
 AI Project Planning & Portfolio Management system/
-├── backend/                        # Python FastAPI backend source code
-├── frontend/                       # Next.js 15 (React + TypeScript) frontend source code
-├── docker-compose.yml              # Orchestration toàn bộ services
-├── erd_ai_project_management.html  # ERD diagram (Interactive HTML)
-├── .documents/                     # Tài liệu thiết kế hệ thống
-│   └── specs/system-architecture/  # BRD, SRS, Design, Sequence SOP Diagrams
-├── ROADMAP_PHASE_1_AUTH_MODULE.md              # Chi tiết triển khai Phase 1: Auth Module
-├── ROADMAP_PHASE_2_PORTFOLIO_PROJECT_MODULE.md # Chi tiết triển khai Phase 2: Core
-├── ROADMAP_PHASE_3_AI_FEATURES_MODULE.md       # Chi tiết triển khai Phase 3: AI Features
-├── ROADMAP_PHASE_4_WORKFLOW_REPORTING_MODULE.md # Chi tiết triển khai Phase 4: Workflow
-├── ROADMAP_PHASE_5_DOCUMENT_AI_POLISH_MODULE.md # Chi tiết triển khai Phase 5: Polish
-└── README.md                                   # Tài liệu hướng dẫn toàn diện hệ thống (File này)
+├── backend/                                  # Python FastAPI Backend
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── main.py                           # FastAPI App + lifespan + CORS + WS Router mount
+│   │   ├── api/
+│   │   │   ├── __init__.py
+│   │   │   ├── v1/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── router.py                 # Aggregator: 21 REST routers được mount (+11 stub bị comment)
+│   │   │   │   └── endpoints/                # 32 file handler (21 đã hiện thực, 11 còn là stub TODO)
+│   │   │   └── ws/
+│   │   │       ├── __init__.py
+│   │   │       ├── deps.py                   # authenticate_ws (JWT validation via query param)
+│   │   │       ├── router.py                 # WebSocket router aggregator mounted at /ws
+│   │   │       ├── chat.py                   # /ws/chat/{project_id}
+│   │   │       └── notifications.py          # /ws/notifications
+│   │   ├── core/
+│   │   │   ├── __init__.py
+│   │   │   ├── config.py                     # Pydantic BaseSettings (.env loading)
+│   │   │   ├── security.py                   # JWT create/decode + bcrypt hashing
+│   │   │   ├── dependencies.py               # get_db, CurrentUser, require_roles, require_permissions
+│   │   │   ├── exceptions.py                 # Custom exception handlers
+│   │   │   ├── redis_client.py               # Async Redis singleton (get_redis)
+│   │   │   └── ws_manager.py                 # ConnectionManager + publish() + redis_listener()
+│   │   ├── db/
+│   │   │   ├── __init__.py
+│   │   │   ├── session.py                    # SQLAlchemy AsyncEngine & async_sessionmaker
+│   │   │   ├── base.py                       # Model aggregator (34 tables)
+│   │   │   └── seed.py                       # Seed data (7 Roles, 34 Permissions, Admin account)
+│   │   ├── models/                           # 34 SQLAlchemy ORM models (8 Domains)
+│   │   │   ├── base.py, associations.py, user.py, role.py, permission.py, skill.py, leave.py
+│   │   │   ├── portfolio.py, project.py, phase.py, sprint.py, epic.py, milestone.py
+│   │   │   ├── task.py, subtask.py, dependency.py, assignment.py, worklog.py, comment.py
+│   │   │   ├── change_request.py, approval.py, project_version.py, audit_log.py, impact_report.py
+│   │   │   ├── ai_request.py, ai_output.py, risk_report.py
+│   │   │   ├── document.py, notification.py, email_log.py
+│   │   │   └── chat_message.py, chat_read_state.py
+│   │   ├── schemas/                          # Pydantic v2 Request/Response DTOs
+│   │   │   ├── admin.py, auth.py, chat.py, dashboard.py, project.py, task.py, wbs.py, etc.
+│   │   ├── services/                         # Business Logic Layer
+│   │   │   ├── admin_service.py              # User & Role Admin management
+│   │   │   ├── audit_service.py              # Audit log inspection
+│   │   │   ├── auth_service.py               # Authentication & token issuance
+│   │   │   ├── chat_service.py               # Project chat history, unread counts & publish
+│   │   │   ├── scheduling_service.py         # Critical Path Method engine (dùng utils/cpm.py)
+│   │   │   ├── dashboard_service.py          # KPIs, EVA, Burndown metrics
+│   │   │   ├── notification_service.py       # Notification push & WS publish
+│   │   │   ├── oauth_service.py              # Google & Facebook OAuth 2.0
+│   │   │   ├── phase2_common.py              # get_project_context, notify_project_team, add_audit
+│   │   │   ├── portfolio_service.py, project_service.py, task_service.py, wbs_service.py
+│   │   │   ├── resource_service.py, role_service.py, user_service.py, storage_service.py
+│   │   │   └── ai/                           # AI Provider implementations (OpenAI, Gemini)
+│   │   ├── templates/email/                  # Jinja2 HTML email templates
+│   │   ├── utils/                            # Helper utilities (cpm.py, email.py, pagination.py)
+│   │   └── workers/                          # Celery Background Workers & Scheduler
+│   │       ├── celery_app.py                 # Celery app + beat_schedule (daily task sweep)
+│   │       ├── notification_tasks.py         # sweep_task_dates_task (task start & due-soon)
+│   │       ├── ai_tasks.py, email_tasks.py, report_tasks.py
+│   │   ├── alembic/versions/                 # Database migrations chain
+│   │   └── tests/unit/                       # Automated unit test suite (123/123 passing)
+│
+├── frontend/                                 # Next.js 15 React / TypeScript Frontend
+│   ├── src/
+│   │   ├── app/                              # Next.js App Router
+│   │   │   ├── (auth)/                       # login, register, forgot-password, reset-password, verify-email, oauth-callback
+│   │   │   ├── (dashboard)/                  # Authenticated layout with NotificationBell & Nav
+│   │   │   │   ├── layout.tsx                # Shell layout with useNotificationSocket
+│   │   │   │   ├── dashboard/page.tsx        # Unified portfolio & project dashboard
+│   │   │   │   ├── portfolios/               # Portfolio list & detail pages
+│   │   │   │   ├── projects/                 # Projects list page
+│   │   │   │   │   └── [id]/                 # Project Shell (Tabs: Overview, Tasks, WBS, Members, Chat, Settings)
+│   │   │   │   │       ├── overview/page.tsx
+│   │   │   │   │       ├── tasks/page.tsx    # Kanban & Task list views
+│   │   │   │   │       ├── wbs/page.tsx      # WBS hierarchy tree view
+│   │   │   │   │       ├── members/page.tsx  # Project team members management
+│   │   │   │   │       ├── chat/page.tsx     # Real-time Project Chat room
+│   │   │   │   │       └── settings/page.tsx
+│   │   │   │   ├── admin/                    # Admin Portal (users, roles, audit)
+│   │   │   │   │   ├── users/page.tsx
+│   │   │   │   │   ├── roles/page.tsx
+│   │   │   │   │   └── audit/page.tsx
+│   │   │   │   └── profile/page.tsx          # Profile & User settings
+│   │   │   ├── globals.css                   # Tailwind styles
+│   │   │   ├── layout.tsx                    # Root Layout
+│   │   │   └── page.tsx                      # Landing redirect
+│   │   ├── features/                         # Feature-colocated modules
+│   │   │   ├── admin/                        # AdminUserList, RoleForm, AuditTimeline
+│   │   │   ├── auth/                         # LoginForm, RegisterForm, SocialLoginButtons
+│   │   │   ├── chat/                         # ChatPanel, ChatMessageItem, useChatSocket, useChat
+│   │   │   ├── dashboard/                    # KPI cards, EVA charts, ActivityFeed
+│   │   │   ├── notifications/                # NotificationBell, NotificationList, useNotifications
+│   │   │   ├── portfolios/                   # PortfolioCard, PortfolioForm, usePortfolios
+│   │   │   ├── projects/                     # ProjectWizard, ProjectCard, ProjectMembersTable
+│   │   │   ├── tasks/                        # KanbanBoard, TaskDrawer, useTasks
+│   │   │   ├── users/                        # UserProfileForm, useUsers
+│   │   │   └── wbs/                          # WBSTreeView, PhaseModal, useWBS
+│   │   ├── components/common/                # Shared UI primitives (Avatar, Button, Modal, Input, Spinner, etc.)
+│   │   ├── lib/
+│   │   │   ├── ws-client.ts                  # Reconnecting WebSocket client helper
+│   │   │   ├── rbac.ts                       # isAdminUser helper
+│   │   │   └── utils.ts                      # Styling & date utilities
+│   │   ├── services/api.ts                   # Axios client with JWT interceptor & refresh queue
+│   │   ├── store/authStore.ts                # Zustand Auth Store (persisted token & cookie sync)
+│   │   └── middleware.ts                     # Next.js Edge Route Guard
+│
+├── docker-compose.yml                        # 7-service orchestration configuration
+├── erd_ai_project_management.html            # Interactive HTML ERD diagram
+└── .documents/specs/system-architecture/     # BRD, SRS, Design, Sequence Diagrams
 ```
 
 ---
 
-### Backend (Python — FastAPI)
+## 6. Database Schema (8 Domains & 34 Tables)
 
-```
-backend/
-├── app/
-│   ├── __init__.py
-│   ├── main.py                     # FastAPI app entrypoint + lifespan + CORS
-│   ├── api/
-│   │   ├── __init__.py
-│   │   └── v1/
-│   │       ├── __init__.py
-│   │       ├── router.py           # Tổng hợp tất cả 32 routers vào api_router
-│   │       └── endpoints/          # Các route handlers (32 files theo module)
-│   │           ├── __init__.py
-│   │           ├── auth.py         # Register, Login, Forgot, Reset, Verify
-│   │           ├── oauth.py        # Google & Facebook OAuth endpoints
-│   │           ├── users.py        # User CRUD & Profile
-│   │           ├── roles.py        # Role management
-│   │           ├── permissions.py  # Permission management
-│   │           ├── portfolios.py   # Portfolio CRUD
-│   │           ├── projects.py     # Project CRUD + Member management
-│   │           ├── phases.py       # Phase management
-│   │           ├── sprints.py      # Sprint management
-│   │           ├── epics.py        # Epic management
-│   │           ├── milestones.py   # Milestone tracking
-│   │           ├── tasks.py        # Task CRUD + CPM trigger
-│   │           ├── subtasks.py     # Subtask CRUD
-│   │           ├── dependencies.py # Task dependencies graph
-│   │           ├── assignments.py  # Resource assignments
-│   │           ├── worklogs.py     # Timesheet worklog tracking
-│   │           ├── leaves.py       # Member leave management
-│   │           ├── skills.py       # Skill catalog
-│   │           ├── documents.py    # Document upload & MinIO linkage
-│   │           ├── approvals.py    # Approval multi-step workflow
-│   │           ├── change_requests.py # Change Request management
-│   │           ├── gantt.py        # Gantt Chart data API
-│   │           ├── cpm.py          # Critical Path calculation trigger
-│   │           ├── resource_leveling.py # Overload checking API
-│   │           ├── dashboards.py   # Dashboard aggregations (EVA, CPI, SPI)
-│   │           ├── reports.py      # DOCX & XLSX export
-│   │           ├── notifications.py # Notification management
-│   │           ├── audit_timeline.py # Audit log history
-│   │           ├── project_versions.py # Snapshot & Rollback
-│   │           ├── ai.py           # AI generation, impact, risk endpoints
-│   │           └── system.py       # Health check & system configuration
-│   ├── core/
-│   │   ├── __init__.py
-│   │   ├── config.py               # Settings (Pydantic BaseSettings đọc từ .env)
-│   │   ├── security.py             # JWT create/decode + bcrypt hashing
-│   │   ├── dependencies.py         # get_db, get_current_user, require_roles()
-│   │   └── exceptions.py           # Custom exception handlers
-│   ├── models/                     # SQLAlchemy ORM models (31 models — 7 Domains)
-│   │   ├── __init__.py
-│   │   ├── base.py                 # Base model with id, created_at, updated_at
-│   │   ├── associations.py         # M2M: user_roles, role_permissions, user_skills, project_members
-│   │   ├── user.py, role.py, permission.py, skill.py, leave.py (User & RBAC)
-│   │   ├── portfolio.py, project.py, phase.py, sprint.py, epic.py, milestone.py (Project Core)
-│   │   ├── task.py, subtask.py, dependency.py, assignment.py, worklog.py, comment.py (Task & CPM)
-│   │   ├── change_request.py, approval.py, impact_report.py, project_version.py, audit_log.py (Change Mgmt)
-│   │   ├── ai_request.py, ai_output.py, risk_report.py (AI Domain)
-│   │   └── document.py, notification.py, email_log.py (Document & Notification)
-│   ├── schemas/                    # Pydantic v2 schemas (Request/Response)
-│   │   ├── __init__.py
-│   │   ├── auth.py, user.py, project.py, task.py, gantt.py, dashboard.py, ai.py, common.py...
-│   ├── services/                   # Business logic layer
-│   │   ├── __init__.py
-│   │   ├── auth_service.py         # Auth logic, JWT issuance
-│   │   ├── oauth_service.py        # Social OAuth verification
-│   │   ├── cpm_service.py          # Critical Path engine
-│   │   ├── resource_leveling.py    # Resource overload detector
-│   │   ├── minio_service.py        # S3 storage interaction
-│   │   └── ai/                     # AI provider implementations
-│   │       ├── base.py, openai_provider.py, gemini_provider.py, project_generator.py...
-│   ├── repositories/               # Data access layer (Repository Pattern)
-│   ├── db/
-│   │   ├── __init__.py
-│   │   ├── session.py              # AsyncEngine & async_sessionmaker
-│   │   ├── base.py                 # Model aggregator for Alembic
-│   │   └── seed.py                 # Seed script (7 Roles, 34 Permissions, Admin account)
-│   ├── templates/                  # Jinja2 HTML email templates
-│   ├── utils/                      # Utilities (cpm.py, date_utils.py, pagination.py, email.py)
-│   └── workers/                    # Celery async task definitions
-│       ├── celery_app.py, ai_tasks.py, report_tasks.py, email_tasks.py
-├── alembic/                        # Database migration scripts
-├── tests/                          # Automated tests (API & services)
-├── requirements.txt                # Python dependencies
-├── pyproject.toml                  # Linting & formatting config
-├── Dockerfile                      # Backend container definition
-└── .env.example
-```
+Cơ sở dữ liệu gồm **34 bảng** (4 bảng quan hệ Many-to-Many + 30 bảng thực thể) chia thành **8 Domains chức năng**:
 
----
-
-### Frontend (Next.js 15 — React + TypeScript)
-
-```
-frontend/
-├── src/
-│   ├── app/                        # Next.js App Router
-│   │   ├── (auth)/                 # Auth routes (login, register, forgot, reset, verify, oauth)
-│   │   ├── (dashboard)/            # Authenticated dashboard & project management views
-│   │   │   ├── layout.tsx
-│   │   │   ├── dashboard/page.tsx
-│   │   │   ├── portfolios/
-│   │   │   ├── projects/
-│   │   │   │   └── [id]/           # Project Detail (Overview, WBS, Gantt, Kanban, Team, Settings)
-│   │   │   └── profile/
-│   │   ├── globals.css             # Tailwind base & custom styles
-│   │   ├── layout.tsx              # Root Layout
-│   │   └── page.tsx                # Landing / Redirect page
-│   ├── features/                   # Feature-based modular code
-│   │   ├── auth/                   # LoginForm, RegisterForm, SocialLoginButtons...
-│   │   ├── dashboard/              # Portfolio & Project dashboard widgets
-│   │   ├── portfolio/              # Portfolio list & forms
-│   │   ├── projects/               # Project management components & detail views
-│   │   ├── gantt/                  # Gantt chart interactive timeline
-│   │   ├── tasks/                  # Task drawer, Kanban board, assignment modals
-│   │   ├── resources/              # Resource allocation matrix & leveling alerts
-│   │   ├── approvals/              # Change Request workflow UI
-│   │   ├── reports/                # Report generator & export dialogs
-│   │   ├── audit/                  # Audit trail timeline viewer
-│   │   ├── versions/               # Snapshot comparison & rollback modal
-│   │   └── ai/                     # AI Project Generator & Impact Analysis UI
-│   ├── components/                 # Shared UI components (Button, Modal, Table, Badge, Card...)
-│   ├── services/                   # Axios API service layer (api.ts, auth, project, task, portfolio...)
-│   ├── hooks/                      # Custom React hooks (useAuth, useProjects, useTasks...)
-│   ├── store/                      # Zustand global state (authStore, projectStore...)
-│   ├── middleware.ts               # Next.js Edge JWT route guard
-│   ├── types/                      # TypeScript definitions (auth, project, task, cpm, api...)
-│   └── lib/                        # Utility helpers
-├── public/                         # Static assets & favicon
-├── tailwind.config.ts              # Tailwind CSS configuration
-├── tsconfig.json                   # TypeScript configuration
-├── package.json
-└── .env.example
-```
-
----
-
-### Docker Compose Services
-
-```yaml
-# docker-compose.yml configuration
-services:
-  postgres:      # PostgreSQL 16 (Port 5432)
-  redis:         # Redis 7 (Port 6379)
-  minio:         # MinIO Object Storage (Port 9000: API, 9001: Console)
-  backend:       # FastAPI Application (Port 8000)
-  celery-worker: # Celery Async Background Worker
-  frontend:      # Next.js 15 Web Application (Port 3000)
-```
-
----
-
-## 6. Database Schema (7 Domains & 32+ Tables)
-
-Database bao gồm 32 bảng được chuẩn hóa thành 7 Domains chức năng:
-
-| Domain | Số bảng | Bảng thành phần | Mô tả chức năng |
+| Domain | Số bảng | Danh sách bảng | Mô tả chức năng |
 |---|---|---|---|
-| **1. Base & Associations** | 4 | `user_roles`, `role_permissions`, `user_skills`, `project_members` | Junction tables liên kết Many-to-Many |
-| **2. User & RBAC** | 5 | `users`, `roles`, `permissions`, `skills`, `leaves` | Tài khoản, phân quyền, kỹ năng, lịch nghỉ phép |
-| **3. Project Core** | 6 | `portfolios`, `projects`, `phases`, `sprints`, `epics`, `milestones` | Cấu trúc phân cấp dự án (WBS) |
-| **4. Task & Scheduling** | 6 | `tasks`, `subtasks`, `dependencies`, `assignments`, `worklogs`, `comments` | Công việc, CPM fields, phân công, timesheet |
-| **5. Change Management** | 5 | `change_requests`, `approvals`, `impact_reports`, `project_versions`, `audit_logs` | Luồng CR, duyệt đa cấp, snapshot, audit log |
-| **6. AI Domain** | 3 | `ai_requests`, `ai_outputs`, `risk_reports` | Lịch sử prompt AI, tokens, đánh giá rủi ro |
-| **7. Document & Notification** | 3 | `documents`, `notifications`, `email_logs` | Quản lý file MinIO, 13 loại thông báo in-app & email |
+| **1. Base & Associations** | 4 | `user_roles`, `role_permissions`, `user_skills`, `project_members` | Bảng liên kết N-N cho Role, Permission, Skill, Project Team |
+| **2. User & RBAC** | 5 | `users`, `roles`, `permissions`, `skills`, `leaves` | Tài khoản, 34 quyền hệ thống, danh mục kỹ năng, lịch nghỉ phép |
+| **3. Project Core** | 6 | `portfolios`, `projects`, `phases`, `sprints`, `epics`, `milestones` | Cấu trúc phân rã công việc WBS & Danh mục |
+| **4. Task & Scheduling** | 6 | `tasks`, `subtasks`, `dependencies`, `assignments`, `worklogs`, `comments` | Công việc, CPM fields, phân bổ nhân sự, timesheet, cờ thông báo |
+| **5. Change Management** | 5 | `change_requests`, `approvals`, `project_versions`, `audit_logs`, `impact_reports` | Quy trình CR đa cấp (BA→PO→PM), snapshot, rollback, audit trail |
+| **6. AI Domain** | 3 | `ai_requests`, `ai_outputs`, `risk_reports` | Lịch sử prompt AI, tokens tiêu thụ, phân tích rủi ro |
+| **7. Document & Notification** | 3 | `documents`, `notifications`, `email_logs` | Quản lý tệp MinIO, thông báo in-app và nhật ký gửi email |
+| **8. Real-Time Chat** | 2 | `chat_messages`, `chat_read_states` | Tin nhắn trò chuyện theo dự án, trạng thái đã đọc theo người dùng |
 
-### Key Fields phục vụ Critical Path Method (CPM) trên bảng `tasks`
+### Bảng `tasks` với các trường CPM và cờ thông báo định kỳ
 
 ```python
-# app/models/task.py
 class Task(Base):
     __tablename__ = "tasks"
     
-    id = Column(Integer, primary_key=True, index=True)
-    project_id = Column(Integer, ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
-    phase_id = Column(Integer, ForeignKey("phases.id", ondelete="SET NULL"), nullable=True)
-    sprint_id = Column(Integer, ForeignKey("sprints.id", ondelete="SET NULL"), nullable=True)
-    epic_id = Column(Integer, ForeignKey("epics.id", ondelete="SET NULL"), nullable=True)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    project_id: Mapped[int] = mapped_column(ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    status: Mapped[TaskStatus] = mapped_column(default=TaskStatus.TODO)
+    priority: Mapped[TaskPriority] = mapped_column(default=TaskPriority.MEDIUM)
+    estimated_hours: Mapped[float] = mapped_column(Float, default=0.0)
+    actual_hours: Mapped[float] = mapped_column(Float, default=0.0)
     
-    name = Column(String(255), nullable=False)
-    description = Column(Text, nullable=True)
-    status = Column(Enum(TaskStatus), default=TaskStatus.TODO)
-    priority = Column(Enum(TaskPriority), default=TaskPriority.MEDIUM)
-    story_points = Column(Integer, nullable=True)
-    
-    estimated_hours = Column(Float, default=0.0)
-    actual_hours = Column(Float, default=0.0)
-    
-    planned_start = Column(DateTime(timezone=True), nullable=True)
-    planned_end = Column(DateTime(timezone=True), nullable=True)
-    actual_start = Column(DateTime(timezone=True), nullable=True)
-    actual_end = Column(DateTime(timezone=True), nullable=True)
+    start_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    due_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     
     # CPM Scheduling Fields
-    es = Column(Float, default=0.0)        # Earliest Start (hours/days offset)
-    ef = Column(Float, default=0.0)        # Earliest Finish
-    ls = Column(Float, default=0.0)        # Latest Start
-    lf = Column(Float, default=0.0)        # Latest Finish
-    float_time = Column(Float, default=0.0) # Total Slack/Float
-    is_critical = Column(Boolean, default=False) # Đường găng
+    es: Mapped[float] = mapped_column(Float, default=0.0)         # Earliest Start
+    ef: Mapped[float] = mapped_column(Float, default=0.0)         # Earliest Finish
+    ls: Mapped[float] = mapped_column(Float, default=0.0)         # Latest Start
+    lf: Mapped[float] = mapped_column(Float, default=0.0)         # Latest Finish
+    float_time: Mapped[float] = mapped_column(Float, default=0.0) # Slack/Float
+    is_critical: Mapped[bool] = mapped_column(Boolean, default=False)
+    
+    # Idempotency timestamp columns for Celery Beat sweeps
+    last_start_notified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_due_soon_notified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 ```
 
 ---
 
-## 7. Hệ thống phân quyền (RBAC)
+## 7. Hệ thống phân quyền (RBAC) & Quản trị Admin
 
-### 7 Roles trong hệ thống
+### 7 Roles hệ thống
 
 | Role | Mô tả | Quyền chính |
 |---|---|---|
-| **Admin** | Quản trị hệ thống | Quản lý tài khoản, roles, permissions, AI providers, cấu hình hệ thống, xem toàn bộ audit logs |
-| **PM** | Project Manager | Tạo/quản lý Portfolio & Project, phân công nhân sự, duyệt Change Request cuối, apply kế hoạch, rollback version, xuất báo cáo |
-| **BA** | Business Analyst | Review & Approve Change Request, xem Impact Report do AI sinh ra, nhận thông báo thay đổi |
-| **PO** | Product Owner | Approve Change Request (về mặt nghiệp vụ), xem Impact Report, theo dõi tiến độ Dashboard |
-| **Member** | Thành viên dự án | Xem task được giao, Start/Stop công việc, ghi WorkLog (timesheet), upload file deliverables |
-| **Customer** | Khách hàng | Tạo yêu cầu thay đổi (Change Request), theo dõi tiến độ và trạng thái phê duyệt |
-| **Investor** | Nhà đầu tư | Xem Dashboard tổng quan cấp Portfolio (chế độ **Read-only**) |
+| **Admin** | Quản trị hệ thống | Quản trị toàn diện Người dùng, Vai trò, Gán 34 permissions, Xem Audit Logs, Cấu hình AI |
+| **PM** | Project Manager | Tạo/quản lý Portfolio & Project, Phân công nhân sự, Quản lý thành viên, Duyệt CR, Rollback, Xuất báo cáo |
+| **BA** | Business Analyst | Xem xét và phê duyệt Change Request (bước 1), Xem báo cáo AI Impact Report |
+| **PO** | Product Owner | Phê duyệt Change Request (bước 2), Theo dõi tiến độ & Roadmap dự án |
+| **Member** | Thành viên dự án | Xem task được phân công, Cập nhật trạng thái, Ghi nhận WorkLog timesheet, Chat nhóm dự án |
+| **Customer** | Khách hàng | Khởi tạo Change Request, Theo dõi tiến độ dự án của mình |
+| **Investor** | Nhà đầu tư | Xem Dashboard chỉ số Portfolio / Dự án ở chế độ **Read-only** |
 
-### Nguyên tắc phân quyền
-1. Phân quyền chặt chẽ thông qua bảng `role_permissions` (34 granular permissions).
-2. **Chỉ PM** mới có quyền bấm Apply thay đổi vào cấu trúc dự án chính thức.
-3. Investor chỉ có quyền đọc (read-only) Dashboard, không thể tạo, chỉnh sửa hay xóa bất kỳ thực thể nào.
-4. Mọi hành vi tạo/sửa/xóa đều bắt buộc tự động ghi một bản ghi vào `audit_logs`.
+### Quản trị Admin Panel (Frontend `/admin`)
+- **Users (`/admin/users`)**: Tạo người dùng, chỉnh sửa thông tin, kích hoạt / vô hiệu hóa tài khoản an toàn (bảo vệ tài khoản admin cuối cùng).
+- **Roles (`/admin/roles`)**: Tạo vai trò tùy chỉnh, gán nhóm quyền theo tài nguyên từ 34 permissions (bảo vệ vai trò mặc định "Admin").
+- **Audit Logs (`/admin/audit`)**: Bảng truy vết toàn bộ thao tác hệ thống với bộ lọc theo loại đối tượng (`entity_type`) và phân trang.
 
 ---
 
 ## 8. Quy trình vận hành chuẩn (SOP)
 
-### SOP-PM-001: Tạo dự án mới
-- **Người thực hiện:** PM
-- **Luồng:** PM nhập thông tin (Tên, Mục tiêu, Ngày bắt đầu/kết thúc, Ngân sách, Thành viên) → Upload BRD/SRS (tùy chọn) → Hệ thống khởi tạo Project → Ghi Audit Log.
+- **SOP-PM-001: Khởi tạo dự án & Quản lý thành viên**: PM tạo dự án, phân bổ ngân sách, gán thành viên qua `project_members`.
+- **SOP-AI-001: AI Project Generator**: PM nhập Prompt tự nhiên → AI sinh cấu trúc WBS (Phases, Sprints, Epics, Tasks, Dependencies) → Tự động tính toán CPM.
+- **SOP-PM-002: Time Tracking & Timesheets**: Member bấm `Start`/`Stop` hoặc ghi nhận WorkLog thủ công → Cập nhật `actual_hours` và chi phí.
+- **SOP-PM-003: Critical Path Method (CPM)**: Tự động chạy thuật toán Topological Sort + Forward/Backward pass khi có cập nhật thời lượng hoặc quan hệ phụ thuộc.
+- **SOP-RM-001 & SOP-AI-004: Resource Leveling & Đề xuất AI**: Đề xuất nhân sự tối ưu dựa trên kỹ năng (`user_skills`), chi phí và lịch nghỉ phép (`leaves`), cảnh báo khi quá tải >8h/ngày.
+- **SOP-CR-001: Change Request Workflow**: Quy trình duyệt đa cấp tuần tự `Customer → BA → PO → AI Impact Analysis → PM Final Approval → Snapshot Version → Apply`.
+- **SOP-PM-004: Project Versioning & Rollback**: Tự động lưu snapshot baseline trước khi cập nhật lớn, cho phép so sánh Diff và khôi phục khi cần.
+- **SOP-CHAT-001: Project Real-time Chat**: Kênh chat nội bộ dự án kết nối qua WebSocket `/ws/chat/{project_id}`, lưu trữ lịch sử tin nhắn và đếm unread count.
+- **SOP-NOTI-001: Real-time Notification & Daily Sweep**: Đẩy thông báo tức thời qua WebSocket `/ws/notifications` khi có sự kiện (giao task, đổi trạng thái, cập nhật ngày); Celery Beat quét định kỳ 08:00 AM hàng ngày gửi thông báo task bắt đầu và sắp đến hạn.
+- **SOP-RPT-001: Xuất báo cáo tự động**: Xuất file tổng hợp tiến độ và tài chính định dạng DOCX và XLSX qua Celery worker.
 
 ---
 
-### SOP-AI-001: AI Project Generator
-- **Người thực hiện:** PM
-- **Luồng:**
-  ```
-  PM nhập Prompt ("Xây dựng sàn TMĐT B2C đa nhà cung cấp")
-    → Backend gửi prompt tới AI Provider (OpenAI / Gemini)
-    → AI sinh cấu trúc JSON có cấu trúc đầy đủ (Phases, Sprints, Epics, Tasks, Dependencies, Milestones)
-    → Backend validate JSON Schema qua Pydantic
-    → Khởi tạo các thực thể vào Database
-    → Tự động kích hoạt CPM Engine tính toán lịch trình
-    → Hiển thị kế hoạch và Render biểu đồ Gantt trực quan
-  ```
+## 9. Thuật toán cốt lõi & Hạ tầng Real-time
 
-#### JSON Schema AI trả về:
-```json
-{
-  "project_name": "string",
-  "phases": [
-    { "name": "string", "order": 1, "start_date": "YYYY-MM-DD", "end_date": "YYYY-MM-DD" }
-  ],
-  "tasks": [
-    {
-      "id": "task-1",
-      "name": "string",
-      "phase": "string",
-      "sprint": "string",
-      "epic": "string",
-      "estimated_hours": 16.0,
-      "dependencies": ["task-0"],
-      "milestone": "string | null"
-    }
-  ]
-}
-```
-
----
-
-### SOP-RM-001: Phân công nhân sự & Đề xuất AI
-- **Người thực hiện:** PM
-- **Luồng:** PM chọn Task → Kích hoạt AI Recommend Resource → AI phân tích (Skill match, Kinh nghiệm, Đơn giá giờ, Lịch rảnh, Lịch nghỉ phép) → Trả về danh sách ứng viên có ranking điểm phù hợp → PM xác nhận phân công → Hệ thống kiểm tra Resource Leveling.
-
----
-
-### SOP-PM-002: Time Tracking & Timesheet
-- **Người thực hiện:** Member
-- **Luồng:** Member chọn Task → Nhấn `Start Work` (ghi nhận timestamp) → Thực hiện công việc → Nhấn `Stop Work` → Ghi nhận `WorkLog` (số giờ thực tế, ghi chú) → Cập nhật `actual_hours` lên Task.
-
----
-
-### SOP-CR-001 & SOP-CR-002: Quy trình Change Request đa cấp
-- **Người khởi tạo:** Customer / PM
-- **Luồng phê duyệt:**
-  ```
-  Customer tạo Change Request
-    → BA Review → Approve / Reject
-        → (nếu Approve) PO Review → Approve / Reject
-            → (nếu Approve) AI Impact Analysis chạy tự động (SOP-AI-002)
-                → PM Review Impact Report → Approve / Reject
-                    → (nếu Approve) AI Schedule Optimization chạy tự động (SOP-AI-003)
-                        → PM xác nhận phương án tối ưu
-                            → Hệ thống tạo Snapshot Version (Baseline)
-                                → Apply thay đổi vào dữ liệu dự án thực tế
-  ```
-- **Ràng buộc:** Chỉ PM được nhấn nút Apply sau khi toàn bộ chuỗi phê duyệt đã hoàn thành.
-
----
-
-### SOP-AI-002: AI Impact Analysis
-- **Kích hoạt:** Tự động ngay sau khi PO Approve Change Request.
-- **Nội dung phân tích:**
-  - Danh sách Task trực tiếp & gián tiếp bị ảnh hưởng.
-  - Sprint & Phase bị kéo dài.
-  - Milestone có nguy cơ trễ hạn.
-  - Chi phí phát sinh ước tính và tải tài nguyên.
-  - Sinh bản ghi `impact_reports` lưu trữ vào cơ sở dữ liệu.
-
----
-
-### SOP-AI-003: Schedule Optimization
-- **Kích hoạt:** Sau khi PM Approve kết quả Impact Report.
-- **Nghiệp vụ:** AI tính toán lại chuỗi phụ thuộc, tái phân bổ nguồn lực, nén tiến độ (Fast-tracking/Crashing) và đề xuất ngày kết thúc mới cho từng Task.
-
----
-
-### SOP-PM-003: Critical Path Method (CPM)
-- **Thuật toán:**
-  1. Xây dựng đồ thị có hướng (Directed Acyclic Graph - DAG).
-  2. **Topological Sort** (Kahn's Algorithm) phát hiện vòng lặp và xác định thứ tự thực hiện.
-  3. **Forward Pass**: Tính $ES$ (Earliest Start) và $EF = ES + Duration$.
-  4. **Backward Pass**: Tính $LF$ (Latest Finish) và $LS = LF - Duration$.
-  5. **Float/Slack**: $Float = LS - ES = LF - EF$.
-  6. **Critical Path**: Tập hợp tất cả các task có $Float = 0$.
-- **Trigger:** Kéo thả thay đổi ngày hoặc quan hệ trên Gantt Chart sẽ kích hoạt recalculate toàn bộ các task hạ nguồn (downstream).
-
----
-
-### SOP-AI-004: Resource Leveling (Kiểm tra quá tải)
-- **Kích hoạt:** Khi assign Task cho nhân sự hoặc thay đổi thời gian thực hiện.
-- **Cơ chế:** Kiểm tra tổng giờ làm việc trong ngày (vượt quá 8h/ngày hoặc ngưỡng cấu hình) + kiểm tra lịch nghỉ phép (`leaves`). Nếu quá tải, hiển thị cảnh báo đỏ và AI đề xuất dời lịch hoặc hoán đổi nhân sự.
-
----
-
-### SOP-DOC-001: Quản lý tài liệu & AI Document Parser
-- **Thao tác:** Upload tài liệu (BRD, SRS, tài liệu nghiệm thu) lên MinIO Storage → AI tự động đọc và phân tích nội dung để trích xuất các User Story, Tasks đề xuất.
-
----
-
-### SOP-PM-004 & SOP-PM-005: Version Snapshot & Rollback
-- **Tạo Version:** Tự động tạo snapshot trước khi apply Change Request hoặc PM chủ động tạo Baseline snapshot.
-- **Rollback:** PM chọn phiên bản cũ → Xem so sánh Diff → Xác nhận Rollback → Hệ thống khôi phục toàn bộ cấu trúc WBS và dependencies về trạng thái snapshot.
-
----
-
-### SOP-AUD-001: Hệ thống Audit Log
-- Ghi nhận toàn bộ thao tác thêm/sửa/xóa trong hệ thống bao gồm: Actor, Action, Entity Type, Entity ID, Old Value (JSON), New Value (JSON), IP Address, Timestamp.
-
----
-
-### SOP-NOTI-001: Thông báo đa kênh (13 Events)
-- Phát tín hiệu in-app và gửi Email qua Celery Worker khi có: CR mới, Thay đổi trạng thái phê duyệt, Thay đổi Critical Path, Cảnh báo quá tải nhân sự, Cảnh báo rủi ro cao.
-
----
-
-### SOP-RPT-001: Xuất báo cáo dự án (DOCX, XLSX)
-- Xuất file báo cáo toàn diện gồm: Tiến độ tổng thể, Chỉ số EVA (PV, EV, AC, CV, SV), Chỉ số hiệu suất (CPI, SPI), Biểu đồ phân bổ công việc, Ma trận rủi ro.
-
----
-
-### SOP-DB-001: Dashboard & Metrics
-- Cung cấp giao diện biểu đồ: Gantt tương tác, Burndown Chart, Burnup Chart, Velocity Chart, Heatmap sử dụng tài nguyên, Phân bổ trạng thái Task.
-
----
-
-### SOP-AI-005: AI Risk Analysis
-- Đánh giá định kỳ các yếu tố: Trễ tiến độ đường găng, Quá tải tài nguyên, Vượt ngân sách → Xếp hạng mức độ rủi ro (Low / Medium / High / Critical) và gửi thông báo cảnh báo tức thời.
-
----
-
-## 9. Thuật toán cốt lõi & Luồng AI
-
-### Thuật toán CPM (Python Implementation)
+### Thuật toán Critical Path Method (Pure Python in `app/utils/cpm.py`)
 
 ```python
-# app/utils/cpm.py
-from typing import List, Dict, Set
-from collections import defaultdict, deque
-
-def topological_sort(tasks: List[Dict], dependencies: List[Dict]) -> List[int]:
-    """Kahn's Algorithm xác định thứ tự thực hiện và phát hiện cycle"""
-    graph = defaultdict(list)
-    in_degree = defaultdict(int)
-    task_ids = {t["id"] for t in tasks}
-
-    for tid in task_ids:
-        in_degree[tid] = 0
-
-    for dep in dependencies:
-        from_id, to_id = dep["from_task_id"], dep["to_task_id"]
-        if from_id in task_ids and to_id in task_ids:
-            graph[from_id].append(to_id)
-            in_degree[to_id] += 1
-
-    queue = deque([tid for tid in task_ids if in_degree[tid] == 0])
-    ordered = []
-
-    while queue:
-        curr = queue.popleft()
-        ordered.append(curr)
-        for neighbor in graph[curr]:
-            in_degree[neighbor] -= 1
-            if in_degree[neighbor] == 0:
-                queue.append(neighbor)
-
-    if len(ordered) != len(task_ids):
-        raise ValueError("Phát hiện vòng lặp phụ thuộc (Circular Dependency) giữa các Task!")
-
-    return ordered
-
 def calculate_cpm(tasks_dict: Dict[int, Dict], dependencies: List[Dict]) -> List[int]:
     """Tính toán Forward Pass, Backward Pass, Total Float và Critical Path"""
     order = topological_sort(list(tasks_dict.values()), dependencies)
     
-    # 1. Forward Pass (Tính ES, EF)
+    # 1. Forward Pass (ES, EF)
     for tid in order:
         task = tasks_dict[tid]
         preds = [d for d in dependencies if d["to_task_id"] == tid]
-        if preds:
-            task["es"] = max(tasks_dict[d["from_task_id"]]["ef"] + d.get("lag_hours", 0) for d in preds)
-        else:
-            task["es"] = 0.0
+        task["es"] = max((tasks_dict[d["from_task_id"]]["ef"] + d.get("lag_hours", 0) for d in preds), default=0.0)
         task["ef"] = task["es"] + task["estimated_hours"]
 
-    # 2. Backward Pass (Tính LF, LS)
+    # 2. Backward Pass (LF, LS)
     max_ef = max((t["ef"] for t in tasks_dict.values()), default=0.0)
     for tid in reversed(order):
         task = tasks_dict[tid]
         succs = [d for d in dependencies if d["from_task_id"] == tid]
-        if succs:
-            task["lf"] = min(tasks_dict[d["to_task_id"]]["ls"] - d.get("lag_hours", 0) for d in succs)
-        else:
-            task["lf"] = max_ef
+        task["lf"] = min((tasks_dict[d["to_task_id"]]["ls"] - d.get("lag_hours", 0) for d in succs), default=max_ef)
         task["ls"] = task["lf"] - task["estimated_hours"]
 
     # 3. Float & Critical Path Identification
@@ -622,72 +427,76 @@ def calculate_cpm(tasks_dict: Dict[int, Dict], dependencies: List[Dict]) -> List
     return critical_path
 ```
 
----
-
-### Kiểm tra quá tải tài nguyên (Resource Leveling)
+### WebSocket ConnectionManager & Redis Pub/Sub Bus (`app/core/ws_manager.py`)
 
 ```python
-# app/services/resource_leveling.py
-from datetime import date
-from typing import Dict, Any
+class ConnectionManager:
+    """Quản lý các kết nối WebSocket cục bộ và phân phối message từ Redis Pub/Sub."""
+    def __init__(self):
+        self.active_connections: dict[str, set[WebSocket]] = defaultdict(set)
 
-def check_resource_overload(user_id: int, target_date: date, max_daily_hours: float = 8.0) -> Dict[str, Any]:
-    # 1. Kiểm tra lịch nghỉ phép đã được duyệt
-    leave = db.query(Leave).filter(
-        Leave.user_id == user_id,
-        Leave.start_date <= target_date,
-        Leave.end_date >= target_date,
-        Leave.status == "approved"
-    ).first()
-    
-    if leave:
-        return {
-            "is_overloaded": True,
-            "reason": "on_leave",
-            "total_allocated_hours": 0.0,
-            "max_hours": max_daily_hours,
-            "tasks": []
-        }
+    async def connect(self, channel: str, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections[channel].add(websocket)
 
-    # 2. Tính tổng giờ được phân bổ từ các active tasks trong ngày
-    active_assignments = db.query(Assignment).join(Task).filter(
-        Assignment.user_id == user_id,
-        Task.planned_start <= target_date,
-        Task.planned_end >= target_date
-    ).all()
+    def disconnect(self, channel: str, websocket: WebSocket):
+        self.active_connections[channel].discard(websocket)
 
-    total_hours = sum(a.allocated_hours / max((a.task.planned_end - a.task.planned_start).days + 1, 1) for a in active_assignments)
+    async def broadcast_local(self, channel: str, message: dict):
+        for ws in list(self.active_connections.get(channel, set())):
+            try:
+                await ws.send_json(message)
+            except Exception:
+                self.disconnect(channel, ws)
 
-    return {
-        "is_overloaded": total_hours > max_daily_hours,
-        "reason": "hours_exceeded" if total_hours > max_daily_hours else "normal",
-        "total_allocated_hours": round(total_hours, 2),
-        "max_hours": max_daily_hours,
-        "task_count": len(active_assignments)
-    }
+async def publish(channel: str, message: dict):
+    """Đẩy message lên Redis Pub/Sub để phát tán tới mọi tiến trình backend worker."""
+    redis = await get_redis()
+    await redis.publish(f"ws:{channel}", json.dumps(message))
 ```
 
 ---
 
-## 10. API Specification & Endpoints
+## 10. API Specification & WebSocket Endpoints
 
-Tất cả REST endpoints đều sử dụng chuẩn prefix `/api/v1/`.
+### Danh mục REST API Routers (`/api/v1/...`)
 
-| Nhóm Endpoint | Route Prefix | Mô tả chức năng |
-|---|---|---|
-| **Authentication** | `/api/v1/auth` | Đăng ký, đăng nhập, cấp lại token, quên mật khẩu, xác thực email |
-| **OAuth 2.0** | `/api/v1/oauth` | Google & Facebook Social Login |
-| **Users & Roles** | `/api/v1/users`, `/api/v1/roles`, `/api/v1/permissions` | Quản lý người dùng, phân quyền hệ thống |
-| **Portfolios** | `/api/v1/portfolios` | CRUD danh mục dự án cấp cao |
-| **Projects** | `/api/v1/projects` | CRUD dự án, quản lý thành viên, thống kê tiến độ |
-| **WBS Elements** | `/api/v1/phases`, `/api/v1/sprints`, `/api/v1/epics`, `/api/v1/milestones` | Quản lý các cấp phân rã công việc |
-| **Tasks & Subtasks** | `/api/v1/tasks`, `/api/v1/subtasks`, `/api/v1/dependencies` | Quản lý công việc và đồ thị ràng buộc phụ thuộc |
-| **Scheduling & CPM** | `/api/v1/gantt`, `/api/v1/cpm`, `/api/v1/resource-leveling` | Dữ liệu biểu đồ Gantt, tính toán đường găng, kiểm tra quá tải |
-| **Timesheet** | `/api/v1/worklogs`, `/api/v1/assignments`, `/api/v1/leaves` | Ghi nhận thời gian làm việc thực tế, phân công và nghỉ phép |
-| **Change Management** | `/api/v1/change-requests`, `/api/v1/approvals`, `/api/v1/versions` | Luồng phê duyệt CR, snapshot và rollback dự án |
-| **AI Features** | `/api/v1/ai` | Sinh dự án, phân tích tác động, gợi ý nhân sự, dự báo rủi ro |
-| **Reporting & Dashboards** | `/api/v1/dashboards`, `/api/v1/reports`, `/api/v1/audit` | Tổng hợp chỉ số EVA, xuất file DOCX/XLSX, timeline audit |
-| **System** | `/api/v1/system` | Healthcheck, cấu hình AI provider hoạt động |
+**21 router đang được mount & phục vụ thật:**
+
+| STT | Endpoint Prefix | Router File | Mô tả chức năng |
+|---|---|---|---|
+| 1 | `/auth` | `auth.py` | Đăng ký, đăng nhập, cấp token, đổi mật khẩu, xác thực email |
+| 2 | `/oauth` | `oauth.py` | Google & Facebook OAuth 2.0 Social Login |
+| 3 | `/users` | `users.py` | CRUD người dùng, xem & cập nhật hồ sơ cá nhân |
+| 4 | `/roles` | `roles.py` | Quản lý vai trò (Role CRUD) và gán quyền |
+| 5 | `/permissions` | `permissions.py` | Danh sách 34 permissions hệ thống |
+| 6 | `/portfolios` | `portfolios.py` | CRUD danh mục dự án cấp cao |
+| 7 | `/projects` | `projects.py` | CRUD dự án & quản lý thành viên (`/projects/{id}/members`) |
+| 8 | `/phases` | `phases.py` | Quản lý các giai đoạn (Phase) của dự án |
+| 9 | `/sprints` | `sprints.py` | Quản lý Sprint theo chu kỳ Agile |
+| 10 | `/epics` | `epics.py` | Quản lý Epic (tính năng lớn) |
+| 11 | `/milestones` | `milestones.py` | Theo dõi các cột mốc quan trọng |
+| 12 | `/tasks` | `tasks.py` | CRUD Task, đổi trạng thái, kích hoạt CPM & thông báo |
+| 13 | `/subtasks` | `subtasks.py` | Quản lý công việc con (Subtask) |
+| 14 | `/dependencies` | `dependencies.py` | Thiết lập liên kết phụ thuộc (FS, SS, FF, SF) & kiểm tra chu trình |
+| 15 | `/assignments` | `assignments.py` | Phân bổ nhân sự cho công việc |
+| 16 | `/worklogs` | `worklogs.py` | Ghi nhận thời gian làm việc thực tế (Timesheet) |
+| 17 | `/projects/{id}/messages` | `chat.py` | Lấy lịch sử tin nhắn chat theo dự án (cursor pagination) + unread-count / read |
+| 18 | `/resource-leveling` | `resource_leveling.py` | Kiểm tra và cảnh báo quá tải nhân sự |
+| 19 | `/dashboards` | `dashboards.py` | Tổng hợp chỉ số KPI, EVA, Burndown/Burnup/Velocity |
+| 20 | `/notifications` | `notifications.py` | Lấy danh sách thông báo, đếm unread count, đánh dấu đã đọc |
+| 21 | `/audit` | `audit_timeline.py` | Truy vết lịch sử biến động toàn hệ thống (Audit Trail) |
+
+**11 router còn là stub `TODO: Implement` — bị comment trong `router.py`, CHƯA mount:**
+`/leaves` · `/skills` · `/documents` · `/approvals` · `/change-requests` · `/gantt` · `/cpm` · `/reports` · `/versions` · `/ai` · `/system`
+> Các file này tồn tại trong `api/v1/endpoints/` nhưng chỉ trả về placeholder và không có dependency auth. Xem chú thích trong [`router.py`](./backend/app/api/v1/router.py).
+
+### Danh mục WebSocket Endpoints (`/ws/...`)
+
+| Endpoint Route | Giao thức | Xác thực | Mục đích |
+|---|---|---|---|
+| `/ws/chat/{project_id}` | WebSocket | `?token=<JWT>` | Kênh chat thời gian thực cho thành viên dự án (`project_members`) |
+| `/ws/notifications` | WebSocket | `?token=<JWT>` | Đẩy thông báo cá nhân tức thời tới người dùng (`notif:user:{user_id}`) |
 
 > - **Swagger UI Interactive Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
 > - **ReDoc OpenAPI Documentation:** [http://localhost:8000/redoc](http://localhost:8000/redoc)
@@ -696,26 +505,29 @@ Tất cả REST endpoints đều sử dụng chuẩn prefix `/api/v1/`.
 
 ## 11. Cài đặt và Chạy hệ thống
 
-### Điều kiện tiên quyết (Prerequisites)
+### Điều kiện tiên quyết
 - **Python:** >= 3.11
 - **Node.js:** >= 18.x (khuyên dùng Node 20 LTS)
-- **PostgreSQL:** >= 14
-- **Redis:** >= 6.x
-- **MinIO:** MinIO Server hoặc Amazon S3 compatible
-- *(Tùy chọn)* **Docker & Docker Compose**
+- **PostgreSQL:** >= 16
+- **Redis:** >= 7.x
+- **MinIO:** MinIO Server (hoặc S3 compatible)
+- *(Khuyên dùng)* **Docker & Docker Compose**
 
 ---
 
-### Cách 1: Khởi chạy bằng Docker Compose (Khuyên dùng)
+### Cách 1: Khởi chạy toàn bộ hệ thống bằng Docker Compose
 
 ```bash
-# 1. Khởi động toàn bộ 6 dịch vụ (PostgreSQL, Redis, MinIO, Backend, Celery, Frontend)
+# 1. Khởi động 7 dịch vụ (PostgreSQL, Redis, MinIO, Backend, Celery Worker, Celery Beat, Frontend)
 docker-compose up -d
 
-# 2. Theo dõi logs backend
-docker-compose logs -f backend
+# 2. Kiểm tra trạng thái các container
+docker-compose ps
 
-# 3. Dừng tất cả dịch vụ
+# 3. Xem logs thời gian thực của backend & celery
+docker-compose logs -f backend celery-worker celery-beat
+
+# 4. Dừng hệ thống khi kết thúc làm việc
 docker-compose down
 ```
 
@@ -723,53 +535,58 @@ docker-compose down
 
 ### Cách 2: Cài đặt và chạy thủ công (Local Development)
 
-#### 1. Backend Setup (FastAPI)
+#### 1. Khởi động Backend (FastAPI)
 
 ```bash
 cd backend
 
-# Tạo và kích hoạt môi trường ảo
-python -m venv venv
-source venv/bin/activate       # Trên Linux / macOS
-venv\Scripts\activate          # Trên Windows
+# Tạo và kích hoạt môi trường ảo Python
+python -m venv .venv
+# Trên Windows:
+.venv\Scripts\activate
+# Trên Linux/macOS:
+source .venv/bin/activate
 
-# Cài đặt dependencies
+# Cài đặt thư viện dependencies
 pip install -r requirements.txt
 
-# Tạo file cấu hình môi trường
+# Cấu hình biến môi trường
 cp .env.example .env
-# (Chỉnh sửa các tham số kết nối DB, Redis, AI API Keys trong file .env)
 
-# Thực thi migration tạo bảng cơ sở dữ liệu
+# Chạy migration database
 alembic upgrade head
 
-# Nạp dữ liệu mẫu khởi tạo (7 Roles, 34 Permissions, 1 Admin account)
+# Nạp dữ liệu seed ban đầu (7 Roles, 34 Permissions, 1 Admin Account)
+# Mật khẩu admin lấy từ SEED_ADMIN_PASSWORD; nếu không đặt, script sinh ngẫu nhiên
+# và in ra MỘT LẦN duy nhất — hãy lưu lại ngay.
+# Tuỳ chọn: SEED_ADMIN_EMAIL, SEED_ADMIN_USERNAME
 python -m app.db.seed
 
-# Khởi động Backend Server
+# Khởi chạy server FastAPI kèm WebSocket support
 uvicorn app.main:app --reload --port 8000
 ```
 
-#### 2. Khởi động Celery Worker (xử lý AI & Email Async)
+#### 2. Khởi động Celery Worker & Celery Beat
 
 ```bash
+# Terminal 2: Khởi động Celery Worker
 cd backend
-# Đảm bảo môi trường ảo venv đang active
+.venv\Scripts\activate
 celery -A app.workers.celery_app worker --loglevel=info
+
+# Terminal 3: Khởi động Celery Beat (Quét task định kỳ hàng ngày)
+cd backend
+.venv\Scripts\activate
+celery -A app.workers.celery_app beat --loglevel=info
 ```
 
-#### 3. Frontend Setup (Next.js 15)
+#### 3. Khởi động Frontend (Next.js 15)
 
 ```bash
+# Terminal 4: Khởi động Next.js App
 cd frontend
-
-# Cài đặt các gói phụ thuộc
 npm install
-
-# Tạo file cấu hình môi trường
 cp .env.example .env.local
-
-# Khởi chạy Development Server
 npm run dev
 ```
 
@@ -779,48 +596,30 @@ Truy cập ứng dụng tại: **[http://localhost:3000](http://localhost:3000)*
 
 ## 12. Cấu hình & Biến môi trường
 
-### Các tham số hệ thống (`core/config.py`)
-
-| Tên biến | Kiểu dữ liệu | Mặc định | Ý nghĩa |
-|---|---|---|---|
-| `APP_NAME` | `str` | `AI Project Management API` | Tên định danh ứng dụng |
-| `API_V1_PREFIX` | `str` | `/api/v1` | Prefix toàn bộ REST routes |
-| `SECRET_KEY` | `str` | *Bắt buộc cấu hình* | Khóa mã hóa JWT Token (tối thiểu 32 ký tự) |
-| `ACCESS_TOKEN_EXPIRE_MINUTES` | `int` | `30` | Thời hạn hiệu lực JWT Access Token |
-| `REFRESH_TOKEN_EXPIRE_DAYS` | `int` | `7` | Thời hạn hiệu lực Refresh Token |
-| `DATABASE_URL` | `str` | `postgresql+asyncpg://...` | Chuỗi kết nối Async PostgreSQL |
-| `REDIS_URL` | `str` | `redis://localhost:6379/0` | URL kết nối Redis Cache |
-| `CELERY_BROKER_URL` | `str` | `redis://localhost:6379/1` | Redis Broker cho Celery queue |
-| `ACTIVE_AI_PROVIDER` | `str` | `openai` | AI Provider hoạt động (`openai` hoặc `gemini`) |
-| `OPENAI_MODEL` | `str` | `gpt-4o` | Tên model OpenAI sử dụng |
-| `GEMINI_MODEL` | `str` | `gemini-pro` | Tên model Gemini sử dụng |
-| `MINIO_BUCKET` | `str` | `ai-project-files` | Tên bucket lưu trữ file trên MinIO |
-
----
-
-### Mẫu cấu hình Backend (`backend/.env`)
+### Backend Environment (`backend/.env`)
 
 ```env
 # Application
 APP_ENV=development
 APP_NAME=AI Project Management API
+APP_VERSION=2.2.0
 SECRET_KEY=your-super-secret-key-min-32-chars-change-in-production
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 REFRESH_TOKEN_EXPIRE_DAYS=7
 
-# Database (Async PostgreSQL via asyncpg)
+# Database (PostgreSQL Async via asyncpg)
 DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/ai_project_management
 DATABASE_POOL_SIZE=10
 DATABASE_MAX_OVERFLOW=20
 
-# Redis & Celery
+# Redis (Cache, Pub/Sub & Celery)
 REDIS_URL=redis://localhost:6379/0
 CELERY_BROKER_URL=redis://localhost:6379/1
 CELERY_RESULT_BACKEND=redis://localhost:6379/2
 
-# CORS Origins
-CORS_ORIGINS=["http://localhost:5173","http://localhost:3000"]
+# CORS
+CORS_ORIGINS=["http://localhost:3000","http://localhost:5173"]
 
 # MinIO Object Storage
 MINIO_ENDPOINT=localhost:9000
@@ -844,133 +643,103 @@ SMTP_PASSWORD=your-app-password
 EMAIL_FROM=noreply@aiprojectmanagement.com
 ```
 
-### Mẫu cấu hình Frontend (`frontend/.env.local`)
+### Frontend Environment (`frontend/.env.local`)
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
-NEXT_PUBLIC_WS_URL=ws://localhost:8000/ws
+NEXT_PUBLIC_WS_URL=ws://localhost:8000
 ```
+
+> **Lưu ý**: `NEXT_PUBLIC_WS_URL` sử dụng định dạng bare origin (không có đuôi `/ws`), mã nguồn frontend sẽ tự động ghép nối `/ws/chat/{project_id}` và `/ws/notifications`.
 
 ---
 
 ## 13. Quy tắc phát triển
 
-### 1. Quy tắc chung
-- **Ngôn ngữ chuẩn:** Backend sử dụng **Python 3.11+** với Type Hints đầy đủ. Frontend sử dụng **TypeScript** nghiêm ngặt.
-- **Chuẩn định dạng API Response:** Mọi response gửi về client đều tuân thủ cấu trúc đồng nhất:
-  ```json
-  {
-    "success": true,
-    "data": {},
-    "message": "Thao tác thành công",
-    "meta": {}
-  }
-  ```
-- **Xử lý bất đồng bộ:** Tuyệt đối không gọi trực tiếp AI API đồng bộ làm nghẽn API request. Toàn bộ AI tasks phải đẩy vào **Celery Job Queue**.
-- **Lưu trữ tệp:** Tất cả tài liệu tải lên phải thông qua dịch vụ **MinIO**, lưu metadata trong DB, không ghi file trực tiếp lên ổ cứng local server.
-
-### 2. Backend (FastAPI)
-- Tuân thủ kiến trúc phân lớp chuẩn: **Endpoint / Router → Service Layer → Repository / CRUD Layer → ORM Models**.
-- Sử dụng **SQLAlchemy 2.0 Async Session** cho toàn bộ tương tác cơ sở dữ liệu.
-- Mọi dữ liệu đầu vào và đầu ra đều được kiểm định chặt chẽ bằng **Pydantic v2 Schemas**.
-- Thuật toán CPM (`utils/cpm.py`) phải được viết dưới dạng Pure Functions để thuận tiện cho việc viết Unit Test tự động.
-
-### 3. Frontend (Next.js 15)
-- Tận dụng tối đa **Next.js App Router** kết hợp với Server & Client Components hợp lý.
-- Quản lý trạng thái Client bằng **Zustand**, đồng bộ Server Cache bằng **TanStack React Query v5**.
-- Bắt buộc thực hiện **Optimistic Updates** đối với các thao tác thay đổi dữ liệu nhanh (kéo thả Task, cập nhật trạng thái) và có cơ chế Rollback nếu API báo lỗi.
-
-### 4. AI Provider Layer
-- Kế thừa từ abstract class `BaseAIProvider` để dễ dàng mở rộng thêm các nhà cung cấp LLM khác (Claude, DeepSeek, v.v.).
-- Cơ chế tự động thử lại (**Retry 3 lần với Exponential Backoff**) khi gặp lỗi rate-limit hoặc timeout.
-- Mọi lượt gọi AI phải được ghi log chi tiết vào 2 bảng `ai_requests` và `ai_outputs` phục vụ debug và tối ưu chi phí token.
+1. **Chuẩn kiến trúc phân tầng (Layered Architecture)**: `Endpoints (Router)` → `Services (Business Logic)` → `Repositories (Data Access)` → `Models (SQLAlchemy Declarative)`.
+2. **Xử lý Real-time qua Redis Pub/Sub**: WebSocket messages đẩy qua hàm `publish(channel, data)`, `redis_listener` nhận và phân phối về các socket cục bộ nhằm hỗ trợ scale đa tiến trình worker.
+3. **Quản lý Token & Bảo mật**:
+   - Access Token có thời hạn 30 phút, Refresh Token 7 ngày.
+   - WebSocket xác thực qua Query Token (`authenticate_ws`) với kiểm tra `auth_version` và `is_active`.
+   - Phân quyền endpoint qua `require_roles()` hoặc `require_permissions()`.
+4. **Không block Event Loop**: Toàn bộ tác vụ nặng (AI generation, Document parsing, Gửi email, Xuất báo cáo, Quét lịch trình) bắt buộc chạy qua Celery Background Tasks.
+5. **Đồng bộ hóa Frontend State**:
+   - Quản lý Server State bằng **TanStack Query v5** theo mô hình Feature-colocated (`features/<feature>/hooks/`).
+   - Sử dụng `lib/ws-client.ts` để tự động kết nối lại khi mất mạng (Reconnection w/ exponential backoff).
 
 ---
 
 ## 14. Roadmap phát triển
 
 ```
-[Phase 1: Core Auth] ────► [Phase 2: Project Core] ────► [Phase 3: AI Engine]
-      (Hoàn thành)               (Hoàn thành)                 (Đang xử lý)
-                                                                   │
-[Phase 5: Document AI & Polish] ◄─── [Phase 4: Workflow & Reports] ┘
+[Phase 1: Core Auth & RBAC] ──► [Phase 2: Project Core & Chat] ──► [Phase 3: AI Engine]
+       (100% Hoàn thành)                (100% Hoàn thành)             (~15% — chỉ có Provider layer)
+                                                                            │
+[Phase 5: Document AI & Polish] ◄──── [Phase 4: Workflow & Reporting] ◄─────┘
+  (~40% — WS/Beat/Notif xong,          (~30% — chỉ Audit Timeline + WS xong,
+   Document/Investor chưa làm)          CR/Versioning/Reports mới ở mức model DB)
 ```
 
-- [x] **Phase 1 — Core Auth & Onboarding** *(Hoàn thành)*
-  - [x] Hệ thống xác thực JWT + Refresh Token, mã hóa bcrypt.
-  - [x] Đăng ký, đăng nhập, quên mật khẩu, kích hoạt email.
+- [x] **Phase 1 — Core Auth & User Onboarding** *(Hoàn thành)*
+  - [x] Xác thực JWT Access + Refresh Token, mã hóa bcrypt, Edge Middleware route guard.
+  - [x] Đăng ký, đăng nhập, quên/đổi mật khẩu, xác thực email qua SMTP.
   - [x] Social Login Google & Facebook OAuth 2.0.
-  - [x] Next.js Edge Middleware bảo vệ route.
-  - [x] Frontend Auth Service & Zustand Auth Store.
+  - [x] Quản lý hồ sơ người dùng & Avatar MinIO.
+  - [x] Quản trị Admin: Quản lý người dùng (`/admin/users`), phân quyền Roles & 34 Permissions (`/admin/roles`).
 
-- [x] **Phase 2 — Portfolio & Project Core** *(Hoàn thành 15/08/2026)*
-  - [x] CRUD Danh mục (Portfolio) & Dự án (Project) API + UI.
-  - [x] Quản lý thành viên dự án và phân quyền vai trò.
-  - [x] Cấu trúc WBS: Phase / Sprint / Epic / Milestone.
-  - [x] Quản lý Task, Subtask, Kanban board, Drawer chi tiết.
-  - [x] Đồ thị quan hệ phụ thuộc Task (FS/SS/FF/SF) & Thuật toán CPM.
-  - [x] Phân công nhân sự, ghi nhận Timesheet WorkLog, kiểm tra quá tải tài nguyên.
+- [x] **Phase 2 — Portfolio & Project Core + Real-time Chat** *(Hoàn thành)*
+  - [x] CRUD Portfolio & Project kèm phân quyền thành viên dự án (`project_members`).
+  - [x] Cấu trúc phân rã WBS: Phases, Sprints, Epics, Milestones, Tasks, Subtasks.
+  - [x] Đồ thị quan hệ phụ thuộc Task (FS/SS/FF/SF) & Động cơ tính đường găng CPM (nội bộ `utils/cpm.py`).
+  - [x] Phân bổ nhân sự, Timesheet WorkLogs, Resource Leveling kiểm tra quá tải.
+  - [x] **Real-time Project Chat (`/projects/[id]/chat`, `/ws/chat/{id}`)** với lịch sử tin nhắn và unread badge.
+  - [x] **Notification triggers & Celery Beat daily sweep** (thông báo task bắt đầu và sắp đến hạn lúc 08:00 AM).
+  - [ ] Endpoint `/gantt`, `/cpm` công khai (hiện chỉ tính nội bộ, chưa có API/UI Gantt).
 
-- [ ] **Phase 3 — AI Features** *(Kế hoạch tiếp theo)*
-  - [ ] AI Project Generator từ prompt (SOP-AI-001).
-  - [ ] AI Impact Analysis phân tích tác động thay đổi (SOP-AI-002).
-  - [ ] AI Schedule Optimization tối ưu lịch trình (SOP-AI-003).
-  - [ ] AI Resource Recommendation gợi ý phân bổ nhân sự (SOP-RM-001).
-  - [ ] AI Risk Analysis tự động đánh giá rủi ro dự án (SOP-AI-005).
+- [ ] **Phase 3 — AI Features Module** *(~15% — mới có Provider layer)*
+  - [x] Tầng trừu tượng hóa AI Provider (`BaseAIProvider`, `OpenAIProvider`, `GeminiProvider`).
+  - [x] `project_generator.py` — hàm `generate_project_from_prompt()` (chưa được gọi từ endpoint/worker nào).
+  - [x] Models logging (`ai_requests`, `ai_outputs`, `risk_reports`) đã migrate.
+  - [ ] Endpoint `/ai` (đang là stub, chưa mount) + Celery `ai_tasks` (đang là stub).
+  - [ ] AI Project Generator UI, Impact Analysis, Schedule Optimization, Resource Recommendation, Risk Analysis.
 
-- [ ] **Phase 4 — Workflow & Reporting**
-  - [ ] Quy trình Change Request đa cấp (BA → PO → PM).
-  - [ ] Project Versioning Snapshot & Rollback.
-  - [ ] Dashboard nâng cao: Burndown, Burnup, Velocity, EVA (PV, EV, AC, CPI, SPI).
-  - [ ] Xuất báo cáo tự động ra định dạng DOCX và XLSX.
-  - [ ] Audit Log Timeline & Hệ thống thông báo in-app / email.
+- [ ] **Phase 4 — Workflow & Reporting Module** *(~30%)*
+  - [x] Hệ thống Quản trị & Audit Timeline toàn diện (`/admin/audit`, cursor pagination).
+  - [x] Hạ tầng WebSocket + Redis Pub/Sub (`ws_manager.py`).
+  - [x] Models DB: `change_requests`, `approvals`, `project_versions`, `impact_reports` đã migrate.
+  - [x] Dashboard endpoints (`/dashboards`: KPI, EVA, Burndown).
+  - [ ] Change Request & Multi-Level Approval workflow (endpoint stub, chưa mount, chưa có UI).
+  - [ ] Project Versioning snapshot & Rollback (endpoint stub, chưa mount).
+  - [ ] Interactive Gantt Chart endpoint + UI.
+  - [ ] DOCX / XLSX Export (`report_tasks.py` là stub trả về rỗng, endpoint `/reports` chưa mount).
 
-- [ ] **Phase 5 — Document AI & Polish**
-  - [ ] Upload & AI Document Parser trích xuất Task từ file BRD/SRS.
-  - [ ] Giao diện Dashboard dành riêng cho Nhà đầu tư (Investor - Read-only).
-  - [ ] Quản lý Profile cá nhân, Avatar upload MinIO.
-  - [ ] Tối ưu hiệu năng, responsive trên thiết bị di động.
+- [ ] **Phase 5 — Document AI & Polish** *(~40%)*
+  - [x] **Real-time Notification Push qua WebSocket (`/ws/notifications`)**.
+  - [x] **Celery Beat Scheduled Runner trong Docker Compose**.
+  - [x] Profile & Avatar MinIO (frontend + backend).
+  - [ ] Document upload & AI parser (endpoint `/documents` là stub, chưa mount).
+  - [ ] Investor Read-Only Dashboard view.
+  - [ ] Mobile navigation & UI fine-tuning polish.
 
 ---
 
 ## 15. Tài liệu tham khảo & Thuật ngữ
 
-### Tài liệu đặc tả kỹ thuật
-
-| Tài liệu | Vị trí tệp | Mô tả |
+### Danh mục tài liệu kỹ thuật
+| Tài liệu | Vị trí | Mô tả |
 |---|---|---|
-| **BRD** | [brd.md](./.documents/specs/system-architecture/brd.md) | Business Requirements Document — Yêu cầu nghiệp vụ |
-| **SRS** | [srs.md](./.documents/specs/system-architecture/srs.md) | Software Requirements Specification — Đặc tả phần mềm |
-| **Architecture Design** | [design.md](./.documents/specs/system-architecture/design.md) | Thiết kế kiến trúc kỹ thuật chi tiết |
+| **BRD** | [.documents/specs/system-architecture/brd.md](./.documents/specs/system-architecture/brd.md) | Business Requirements Document — Yêu cầu nghiệp vụ |
+| **SRS** | [.documents/specs/system-architecture/srs.md](./.documents/specs/system-architecture/srs.md) | Software Requirements Specification — Đặc tả chức năng chi tiết |
+| **Architecture Design** | [.documents/specs/system-architecture/design.md](./.documents/specs/system-architecture/design.md) | Tài liệu thiết kế kiến trúc hệ thống tổng thể |
 | **Sequence Diagrams** | [.documents/specs/system-architecture/Sequence SOP/](./.documents/specs/system-architecture/Sequence%20SOP/) | Chuỗi Sequence Diagrams PlantUML cho từng SOP |
-| **Interactive ERD** | [erd_ai_project_management.html](./erd_ai_project_management.html) | Sơ đồ cấu trúc 32 bảng Database (HTML tương tác) |
-
-### Bảng giải thích thuật ngữ chuyên ngành
-
-| Thuật ngữ | Tên đầy đủ | Giải thích nghiệp vụ |
-|---|---|---|
-| **CPM** | Critical Path Method | Phương pháp đường găng xác định chuỗi công việc quyết định thời gian hoàn thành dự án |
-| **ES / EF** | Earliest Start / Earliest Finish | Thời điểm sớm nhất có thể bắt đầu / kết thúc công việc |
-| **LS / LF** | Latest Start / Latest Finish | Thời điểm muộn nhất phải bắt đầu / kết thúc công việc để không làm trễ dự án |
-| **Float / Slack** | Total Float / Total Slack | Thời gian dự trữ của công việc ($Float = LS - ES$). Task có $Float = 0$ nằm trên đường găng |
-| **WBS** | Work Breakdown Structure | Cấu trúc phân rã công việc theo cấp bậc hình cây |
-| **EVA** | Earned Value Analysis | Phương pháp đo lường giá trị thu được để kiểm soát tiến độ và chi phí dự án |
-| **PV / EV / AC** | Planned Value / Earned Value / Actual Cost | Giá trị kế hoạch / Giá trị thu được / Chi phí thực tế đã chi |
-| **CPI** | Cost Performance Index | Chỉ số hiệu suất chi phí ($CPI = EV / AC$). $CPI > 1$ là tiết kiệm chi phí |
-| **SPI** | Schedule Performance Index | Chỉ số hiệu suất tiến độ ($SPI = EV / PV$). $SPI > 1$ là vượt tiến độ |
-| **CR** | Change Request | Yêu cầu thay đổi phạm vi, thời gian hoặc ngân sách dự án |
-| **Resource Leveling** | San bằng tài nguyên | Kỹ thuật điều chỉnh lịch trình công việc để tránh tình trạng nhân sự bị làm việc quá tải |
+| **Interactive ERD** | [erd_ai_project_management.html](./erd_ai_project_management.html) | Sơ đồ tương tác cấu trúc 34 bảng Database |
 
 ---
 
 ## 16. License & Contributors
 
-### License
-Dự án được phân phối dưới giấy phép mã nguồn mở **MIT License**. Xem chi tiết tại tệp [LICENSE](./LICENSE) nếu có.
-
-### Tác giả & Đóng góp
-- **Nguyễn Ngọc Việt Thắng** — Lead Developer & Architect
+- **Lead Architect & Developer:** Nguyễn Ngọc Việt Thắng
+- **Giấy phép:** [MIT License](./LICENSE)
 
 ---
-
-*Hệ thống AI Project Planning & Portfolio Management — Cập nhật 2026*
+*Cập nhật toàn diện hệ thống: 2026-09-03 (đối soát README với mã nguồn thực tế: 21/32 REST router đang mount, 123/123 unit test pass, Phase 3–5 mới ở mức hạ tầng).*

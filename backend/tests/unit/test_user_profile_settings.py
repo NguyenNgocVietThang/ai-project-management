@@ -6,7 +6,7 @@ import pytest
 from fastapi import HTTPException
 from PIL import Image
 
-import app.db.base  # noqa: F401 - register SQLAlchemy relationships
+import app.db.base  # noqa: F401 - đăng ký các quan hệ SQLAlchemy
 from app.core.security import create_refresh_token, verify_password
 from app.schemas.user import ChangePasswordRequest, DeleteAccountRequest, UserUpdate
 from app.services.auth_service import AuthService

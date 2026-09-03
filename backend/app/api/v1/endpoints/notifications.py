@@ -1,11 +1,11 @@
 """
-Notification endpoints – Phase 3.3
+Endpoint thông báo – Phase 3.3
 
-GET    /notifications/                → List notifications (paginated, filterable)
-GET    /notifications/unread-count    → Badge count
-PATCH  /notifications/{id}/read       → Mark single as read
-PATCH  /notifications/read-all        → Mark all as read
-DELETE /notifications/{id}            → Delete a notification
+GET    /notifications/                → Liệt kê thông báo (phân trang, có thể lọc)
+GET    /notifications/unread-count    → Số lượng hiển thị trên badge
+PATCH  /notifications/{id}/read       → Đánh dấu một thông báo đã đọc
+PATCH  /notifications/read-all        → Đánh dấu tất cả đã đọc
+DELETE /notifications/{id}            → Xóa một thông báo
 """
 from typing import Annotated
 
@@ -27,13 +27,13 @@ router = APIRouter()
 async def list_notifications(
     service: NotificationServiceDep,
     current_user: CurrentUser,
-    unread_only: bool = Query(default=False, description="Filter to unread only"),
+    unread_only: bool = Query(default=False, description="Chỉ lọc các thông báo chưa đọc"),
     page: Annotated[int, Query(ge=1)] = 1,
     page_size: Annotated[int, Query(ge=1, le=100)] = 20,
 ):
     """
-    List notifications for the authenticated user.
-    Sorted by newest first.
+    Liệt kê thông báo cho người dùng đã xác thực.
+    Sắp xếp theo mới nhất trước.
     """
     return await service.list(
         current_user.id,
@@ -49,8 +49,8 @@ async def get_unread_count(
     current_user: CurrentUser,
 ):
     """
-    Lightweight endpoint for the notification bell badge.
-    Returns only the unread count without fetching full list.
+    Endpoint nhẹ dành cho badge trên chuông thông báo.
+    Chỉ trả về số lượng chưa đọc mà không lấy toàn bộ danh sách.
     """
     return await service.unread_count(current_user.id)
 
@@ -61,7 +61,7 @@ async def mark_notification_read(
     service: NotificationServiceDep,
     current_user: CurrentUser,
 ):
-    """Mark a single notification as read."""
+    """Đánh dấu một thông báo là đã đọc."""
     return await service.mark_read(notification_id, current_user.id)
 
 
@@ -70,7 +70,7 @@ async def mark_all_notifications_read(
     service: NotificationServiceDep,
     current_user: CurrentUser,
 ):
-    """Mark ALL unread notifications for the current user as read."""
+    """Đánh dấu TẤT CẢ thông báo chưa đọc của người dùng hiện tại là đã đọc."""
     return await service.mark_all_read(current_user.id)
 
 
@@ -80,6 +80,6 @@ async def delete_notification(
     service: NotificationServiceDep,
     current_user: CurrentUser,
 ):
-    """Permanently delete a notification."""
+    """Xóa vĩnh viễn một thông báo."""
     await service.delete(notification_id, current_user.id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

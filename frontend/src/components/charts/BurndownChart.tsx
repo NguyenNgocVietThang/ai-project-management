@@ -2,7 +2,7 @@
 
 /**
  * BurndownChart – Recharts LineChart wrapper
- * Displays 14-day burndown: ideal vs. actual remaining tasks
+ * Hiển thị burndown 14 ngày: số task còn lại lý tưởng so với thực tế
  */
 import {
   CartesianGrid,

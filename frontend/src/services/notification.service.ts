@@ -1,4 +1,4 @@
-// Notification API service – Phase 3.3
+// Service API Notification – Phase 3.3
 import { api } from './api'
 import type {
   MarkReadResponse,
@@ -9,14 +9,14 @@ import type {
 } from '@/types/notification.types'
 
 export const notificationService = {
-  /** GET /notifications/ – paginated list */
+  /** GET /notifications/ – danh sách phân trang */
   getNotifications(params: NotificationListParams = {}): Promise<NotificationListResponse> {
     return api
       .get<NotificationListResponse>('/notifications/', { params })
       .then((r) => r.data)
   },
 
-  /** GET /notifications/unread-count – badge count only */
+  /** GET /notifications/unread-count – chỉ lấy số đếm cho badge */
   getUnreadCount(): Promise<UnreadCountResponse> {
     return api.get<UnreadCountResponse>('/notifications/unread-count').then((r) => r.data)
   },
