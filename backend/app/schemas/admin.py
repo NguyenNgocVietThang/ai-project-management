@@ -1,7 +1,6 @@
 """Schema cho trang Admin: quản lý người dùng, quản lý role/permission, audit log."""
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
@@ -34,20 +33,20 @@ class AdminUserCreate(BaseModel):
 
 
 class AdminUserUpdate(BaseModel):
-    full_name: Optional[str] = Field(default=None, min_length=2, max_length=100)
-    username: Optional[str] = Field(
+    full_name: str | None = Field(default=None, min_length=2, max_length=100)
+    username: str | None = Field(
         default=None, min_length=3, max_length=50, pattern=r"^[a-zA-Z0-9_]+$"
     )
-    phone: Optional[str] = Field(default=None, max_length=20)
-    position: Optional[str] = Field(default=None, max_length=100)
-    department: Optional[str] = Field(default=None, max_length=100)
-    is_active: Optional[bool] = None
-    is_superuser: Optional[bool] = None
-    role_ids: Optional[list[int]] = None
+    phone: str | None = Field(default=None, max_length=20)
+    position: str | None = Field(default=None, max_length=100)
+    department: str | None = Field(default=None, max_length=100)
+    is_active: bool | None = None
+    is_superuser: bool | None = None
+    role_ids: list[int] | None = None
 
     @field_validator("full_name", "username")
     @classmethod
-    def required_strings_are_not_blank(cls, value: Optional[str]) -> Optional[str]:
+    def required_strings_are_not_blank(cls, value: str | None) -> str | None:
         if value is None:
             return value
         normalized = value.strip()
@@ -67,14 +66,14 @@ class PermissionResponse(BaseModel):
     id: int
     resource: str
     action: str
-    description: Optional[str] = None
+    description: str | None = None
 
     model_config = {"from_attributes": True}
 
 
 class RoleCreate(BaseModel):
     name: str = Field(min_length=2, max_length=50)
-    description: Optional[str] = Field(default=None, max_length=1000)
+    description: str | None = Field(default=None, max_length=1000)
     permission_ids: list[int] = Field(default_factory=list)
 
     @field_validator("name")
@@ -87,13 +86,13 @@ class RoleCreate(BaseModel):
 
 
 class RoleUpdate(BaseModel):
-    name: Optional[str] = Field(default=None, min_length=2, max_length=50)
-    description: Optional[str] = Field(default=None, max_length=1000)
-    permission_ids: Optional[list[int]] = None
+    name: str | None = Field(default=None, min_length=2, max_length=50)
+    description: str | None = Field(default=None, max_length=1000)
+    permission_ids: list[int] | None = None
 
     @field_validator("name")
     @classmethod
-    def name_not_blank(cls, value: Optional[str]) -> Optional[str]:
+    def name_not_blank(cls, value: str | None) -> str | None:
         if value is None:
             return value
         normalized = value.strip()
@@ -105,9 +104,24 @@ class RoleUpdate(BaseModel):
 class RoleDetailResponse(BaseModel):
     id: int
     name: str
-    description: Optional[str] = None
+    description: str | None = None
     permissions: list[PermissionResponse] = []
     user_count: int = 0
+
+    model_config = {"from_attributes": True}
+
+
+class RoleOptionResponse(BaseModel):
+    """Chỉ đủ để đổ vào một bộ chọn vai trò dự án.
+
+    Cố tình bỏ `permissions`: RoleDetailResponse mang toàn bộ ma trận
+    role -> permission của hệ thống, và route này mở cho mọi người dùng đã đăng
+    nhập vì bất kỳ PM nào cũng cần nó để mời thành viên. Phát tán bản đồ quyền đầy
+    đủ cho mọi tài khoản là món quà trinh sát cho việc leo thang quyền.
+    """
+    id: int
+    name: str
+    description: str | None = None
 
     model_config = {"from_attributes": True}
 
@@ -125,15 +139,15 @@ class AuditActorSummary(BaseModel):
 
 class AuditLogResponse(BaseModel):
     id: int
-    user_id: Optional[int] = None
-    user: Optional[AuditActorSummary] = None
+    user_id: int | None = None
+    user: AuditActorSummary | None = None
     action: str
     entity_type: str
-    entity_id: Optional[int] = None
-    old_values: Optional[dict] = None
-    new_values: Optional[dict] = None
-    ip_address: Optional[str] = None
-    description: Optional[str] = None
+    entity_id: int | None = None
+    old_values: dict | None = None
+    new_values: dict | None = None
+    ip_address: str | None = None
+    description: str | None = None
     created_at: datetime
 
     model_config = {"from_attributes": True}

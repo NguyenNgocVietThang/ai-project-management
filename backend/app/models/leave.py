@@ -1,8 +1,10 @@
 ﻿import enum
 from datetime import date, datetime
 from typing import Optional
-from sqlalchemy import Date, DateTime, Enum, ForeignKey, Index, String, Text
+
+from sqlalchemy import Date, DateTime, Enum, ForeignKey, Index, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.models.base import Base
 
 
@@ -30,10 +32,10 @@ class Leave(Base):
     leave_type: Mapped[LeaveType] = mapped_column(Enum(LeaveType), nullable=False)
     start_date: Mapped[date] = mapped_column(Date, nullable=False)
     end_date: Mapped[date] = mapped_column(Date, nullable=False)
-    reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    reason: Mapped[str | None] = mapped_column(Text, nullable=True)
     status: Mapped[LeaveStatus] = mapped_column(Enum(LeaveStatus), default=LeaveStatus.PENDING, nullable=False)
-    approved_by_id: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id"), nullable=True)
-    approved_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    approved_by_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     user: Mapped["User"] = relationship("User", foreign_keys=[user_id], back_populates="leaves")
     approved_by: Mapped[Optional["User"]] = relationship("User", foreign_keys=[approved_by_id])

@@ -3,13 +3,12 @@ import time
 from collections import deque
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, WebSocket, WebSocketDisconnect
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect
 
-from app.api.ws.deps import WSAuthError, authenticate_ws, enforce_token_lifetime
+from app.api.ws.deps import WSAuthError, authenticate_ws, enforce_connection_validity
 from app.core.exceptions import ForbiddenException, NotFoundException
 from app.core.ws_manager import manager
-from app.db.session import get_db
+from app.db.session import AsyncSessionLocal
 from app.schemas.chat import ChatMessageCreate
 from app.services.chat_service import ChatService
 
@@ -40,31 +39,52 @@ class _MessageBudget:
         return True
 
 
+async def _is_still_a_member(project_id: int, user) -> bool:
+    """Người dùng còn quyền truy cập dự án này không.
+
+    Được watchdog gọi định kỳ. Nếu không có nó, một người bị xoá khỏi dự án vẫn
+    tiếp tục nhận mọi tin nhắn của kênh cho tới khi họ tự đóng tab — có thể là
+    nhiều ngày. Chiều gửi vốn đã an toàn vì create_message kiểm tra lại mỗi lần.
+    """
+    from app.services.phase2_common import get_project_context
+
+    try:
+        async with AsyncSessionLocal() as db:
+            await get_project_context(db, project_id, user)
+        return True
+    except (ForbiddenException, NotFoundException):
+        return False
+
+
 @chat_ws_router.websocket("/chat/{project_id}")
 async def chat_ws(
     websocket: WebSocket,
     project_id: int,
-    token: Annotated[str, Query()],
-    db: Annotated[AsyncSession, Depends(get_db)],
+    ticket: Annotated[str, Query()],
 ):
     try:
-        user = await authenticate_ws(token, db)
+        user = await authenticate_ws(ticket)
         if not user.email_verified:
             # Phản chiếu CurrentVerifiedUser trên route REST POST — nếu không thì
             # socket trở thành cách để lách nó.
             raise WSAuthError("Email address is not verified")
-        chat_service = ChatService(db)
         # Kiểm tra thành viên ngay từ đầu để không accept() trước khi phân quyền.
-        await chat_service.history(project_id, user, limit=1)
-    except (WSAuthError, ForbiddenException, NotFoundException):
+        if not await _is_still_a_member(project_id, user):
+            raise WSAuthError("No access to this project")
+    except WSAuthError:
         await websocket.close(code=4401)
         return
 
     channel = f"chat:project:{project_id}"
     await manager.connect(channel, websocket)
-    # Các socket sống lâu phải liên tục chứng minh token còn hợp lệ; xem
-    # app/api/ws/deps.py::enforce_token_lifetime.
-    watchdog = asyncio.create_task(enforce_token_lifetime(websocket, token))
+    watchdog = asyncio.create_task(
+        enforce_connection_validity(
+            websocket,
+            user.id,
+            user.auth_version or 0,
+            still_allowed=lambda: _is_still_a_member(project_id, user),
+        )
+    )
     budget = _MessageBudget()
     try:
         while True:
@@ -83,16 +103,22 @@ async def chat_ws(
                     {"type": "error", "detail": "You are sending messages too quickly."}
                 )
                 continue
-            await chat_service.create_message(
-                project_id, user, ChatMessageCreate(content=content)
-            )
-            await db.commit()
+            # Session ngắn hạn cho từng tin nhắn: giữ một session mở suốt vòng đời
+            # socket sẽ chiếm một connection trong pool cho tới khi người dùng
+            # đóng tab.
+            async with AsyncSessionLocal() as db:
+                await ChatService(db).create_message(
+                    project_id, user, ChatMessageCreate(content=content)
+                )
+                await db.commit()
     except WebSocketDisconnect:
-        manager.disconnect(channel, websocket)
+        pass
     except Exception:
         # Bất kỳ lỗi bất ngờ nào (payload sai, DB trục trặc, v.v.) — hủy kết nối
         # này thay vì để nó ở trạng thái nửa hỏng.
-        manager.disconnect(channel, websocket)
         raise
     finally:
+        # Phải nằm ở finally, không phải chỉ trong nhánh WebSocketDisconnect: nhánh
+        # thoát sớm khi frame quá lớn từng bỏ lại socket đã đóng nằm trong registry.
         watchdog.cancel()
+        manager.disconnect(channel, websocket)

@@ -1,11 +1,13 @@
-from typing import Annotated, Optional
+from typing import Annotated
 
 from fastapi import Depends, Request
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.auth_cookies import MEDIA_COOKIE_NAME
 from app.core.exceptions import ForbiddenException, UnauthorizedException
 from app.core.security import decode_token
+from app.core.token_revocation import is_revoked
 from app.db.session import get_db
 from app.models.user import User
 
@@ -20,7 +22,13 @@ async def _user_from_token(token: str, db: AsyncSession) -> User:
     if payload is None or payload.get("type") != "access":
         raise credentials_exception
 
-    user_id: Optional[str] = payload.get("sub")
+    # Access token mang `jti` chính là để có thể thu hồi riêng lẻ. Nếu không tra
+    # danh sách thu hồi ở đây thì `jti` chỉ là trang trí, và logout không thực sự
+    # kết thúc phiên cho tới khi token tự hết hạn.
+    if await is_revoked(payload.get("jti")):
+        raise credentials_exception
+
+    user_id: str | None = payload.get("sub")
     if user_id is None:
         raise credentials_exception
 
@@ -57,18 +65,21 @@ async def get_current_user_media(
     """Xác thực cho các route mà trình duyệt tự fetch (<img src>, <a href>).
 
     Các request đó không mang Authorization header, nên hàm này cũng chấp nhận
-    cookie `auth-token` mà frontend đã sao chép access token vào (xem
-    frontend/src/store/authStore.ts). Nó mở rộng nơi token có thể đến từ đâu, chứ không
-    thay đổi điều gì được coi là hợp lệ — vẫn áp dụng các kiểm tra decode + auth_version + is_active
-    như nhau. Xác thực bằng cookie ở đây là an toàn vì các route này là
-    GET chỉ đọc, nên không có thay đổi trạng thái nào có thể bị CSRF.
+    cookie media (xem app/core/auth_cookies.py). Cookie đó là httpOnly và bó path
+    vào chính các route user, nên XSS không đọc được nó và nó không đi kèm bất kỳ
+    request nào khác — khác với cookie `auth-token` mà JavaScript đọc được trước đây.
+
+    Nó mở rộng nơi token có thể đến từ đâu, chứ không thay đổi điều gì được coi là
+    hợp lệ — vẫn áp dụng các kiểm tra decode + revocation + auth_version + is_active
+    như nhau. Xác thực bằng cookie ở đây là an toàn vì các route này là GET chỉ đọc,
+    nên không có thay đổi trạng thái nào có thể bị CSRF.
     """
-    token: Optional[str] = None
+    token: str | None = None
     authorization = request.headers.get("authorization", "")
     if authorization.lower().startswith("bearer "):
         token = authorization[7:].strip()
     if not token:
-        token = request.cookies.get("auth-token")
+        token = request.cookies.get(MEDIA_COOKIE_NAME)
     if not token:
         raise UnauthorizedException("Could not validate credentials")
     return await _user_from_token(token, db)

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Annotated, Optional
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 
@@ -16,11 +16,11 @@ router = APIRouter()
 async def list_audit_logs(
     audit_service: AuditServiceDep,
     current_user: Annotated[User, Depends(require_permissions("audit:read"))],
-    entity_type: Optional[str] = Query(default=None, max_length=100),
-    user_id: Optional[int] = Query(default=None),
-    action: Optional[str] = Query(default=None, max_length=100),
-    date_from: Optional[datetime] = Query(default=None),
-    date_to: Optional[datetime] = Query(default=None),
+    entity_type: str | None = Query(default=None, max_length=100),
+    user_id: int | None = Query(default=None),
+    action: str | None = Query(default=None, max_length=100),
+    date_from: datetime | None = Query(default=None),
+    date_to: datetime | None = Query(default=None),
     page: Annotated[int, Query(ge=1)] = 1,
     page_size: Annotated[int, Query(ge=1, le=200)] = 20,
 ):

@@ -1,4 +1,4 @@
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock, patch
 
@@ -18,7 +18,7 @@ async def test_notify_project_team_excludes_given_users():
     db = SimpleNamespace(scalars=AsyncMock(return_value=scalars_result))
 
     with patch(
-        "app.services.notification_service.NotificationService.push", new=AsyncMock()
+        "app.services.notification_service.NotificationService.push_many", new=AsyncMock()
     ) as push_mock:
         await notify_project_team(
             db,
@@ -29,9 +29,10 @@ async def test_notify_project_team_excludes_given_users():
             exclude_user_ids={2},
         )
 
-    assert push_mock.await_count == 2
-    called_user_ids = {call.kwargs["user_id"] for call in push_mock.call_args_list}
-    assert called_user_ids == {1, 3}
+    # Một lời gọi cho cả nhóm, không phải một lời gọi cho mỗi người nhận: vòng lặp
+    # cũ tốn một flush và một round-trip Redis cho từng thành viên.
+    push_mock.assert_awaited_once()
+    assert set(push_mock.await_args.args[1]) == {1, 3}
 
 
 @pytest.mark.asyncio
@@ -40,13 +41,14 @@ async def test_notify_project_team_with_no_exclusions_notifies_everyone():
     db = SimpleNamespace(scalars=AsyncMock(return_value=scalars_result))
 
     with patch(
-        "app.services.notification_service.NotificationService.push", new=AsyncMock()
+        "app.services.notification_service.NotificationService.push_many", new=AsyncMock()
     ) as push_mock:
         await notify_project_team(
             db, 1, title="t", message="m", ntype=NotificationType.SYSTEM
         )
 
-    assert push_mock.await_count == 2
+    push_mock.assert_awaited_once()
+    assert set(push_mock.await_args.args[1]) == {5, 6}
 
 
 @pytest.mark.asyncio
@@ -60,7 +62,7 @@ async def test_task_update_notifies_team_on_significant_field_change():
         assignee_id=None,
         start_date=date(2026, 8, 1),
         due_date=date(2026, 8, 10),
-        last_due_soon_notified_at=datetime(2026, 8, 1, tzinfo=timezone.utc),
+        last_due_soon_notified_at=datetime(2026, 8, 1, tzinfo=UTC),
     )
     context = ProjectContext(project=SimpleNamespace(id=7), role="PM", is_admin=False)
     db = SimpleNamespace(flush=AsyncMock(), add=Mock())
@@ -129,7 +131,7 @@ async def test_task_update_does_not_notify_team_when_nothing_significant_changed
 @pytest.mark.asyncio
 async def test_change_status_notifies_team_on_transition():
     task = SimpleNamespace(
-        id=5, project_id=7, name="Task A", status=TaskStatus.TODO, progress=0.0, assignee_id=2
+        id=5, project_id=7, name="Task A", status=TaskStatus.TODO, progress=0.0, assignee_id=2, actual_start=None, actual_end=None
     )
     context = ProjectContext(project=SimpleNamespace(id=7), role="PM", is_admin=False)
     db = SimpleNamespace(flush=AsyncMock(), add=Mock())

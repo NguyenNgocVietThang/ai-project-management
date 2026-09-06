@@ -1,5 +1,4 @@
 from datetime import date, datetime
-from typing import Optional
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -8,10 +7,10 @@ from app.models.portfolio import PortfolioStatus
 
 class PortfolioBase(BaseModel):
     name: str = Field(..., min_length=3, max_length=200)
-    description: Optional[str] = Field(default=None, max_length=5000)
-    start_date: Optional[date] = None
-    end_date: Optional[date] = None
-    budget: Optional[float] = Field(default=None, ge=0)
+    description: str | None = Field(default=None, max_length=5000)
+    start_date: date | None = None
+    end_date: date | None = None
+    budget: float | None = Field(default=None, ge=0)
     currency: str = Field(default="VND", min_length=3, max_length=10)
 
     @field_validator("name")
@@ -24,7 +23,7 @@ class PortfolioBase(BaseModel):
 
     @field_validator("description")
     @classmethod
-    def normalize_description(cls, value: Optional[str]) -> Optional[str]:
+    def normalize_description(cls, value: str | None) -> str | None:
         return value.strip() or None if value is not None else None
 
     @field_validator("currency")
@@ -44,17 +43,17 @@ class PortfolioCreate(PortfolioBase):
 
 
 class PortfolioUpdate(BaseModel):
-    name: Optional[str] = Field(default=None, min_length=3, max_length=200)
-    description: Optional[str] = Field(default=None, max_length=5000)
-    start_date: Optional[date] = None
-    end_date: Optional[date] = None
-    status: Optional[PortfolioStatus] = None
-    budget: Optional[float] = Field(default=None, ge=0)
-    currency: Optional[str] = Field(default=None, min_length=3, max_length=10)
+    name: str | None = Field(default=None, min_length=3, max_length=200)
+    description: str | None = Field(default=None, max_length=5000)
+    start_date: date | None = None
+    end_date: date | None = None
+    status: PortfolioStatus | None = None
+    budget: float | None = Field(default=None, ge=0)
+    currency: str | None = Field(default=None, min_length=3, max_length=10)
 
     @field_validator("name")
     @classmethod
-    def normalize_name(cls, value: Optional[str]) -> Optional[str]:
+    def normalize_name(cls, value: str | None) -> str | None:
         if value is None:
             return None
         normalized = value.strip()
@@ -64,13 +63,20 @@ class PortfolioUpdate(BaseModel):
 
     @field_validator("description")
     @classmethod
-    def normalize_description(cls, value: Optional[str]) -> Optional[str]:
+    def normalize_description(cls, value: str | None) -> str | None:
         return value.strip() or None if value is not None else None
 
     @field_validator("currency")
     @classmethod
-    def normalize_currency(cls, value: Optional[str]) -> Optional[str]:
+    def normalize_currency(cls, value: str | None) -> str | None:
         return value.strip().upper() if value else value
+
+    @model_validator(mode="after")
+    def dates_are_ordered(self):
+        """Cung rang buoc nhu khi tao - xem ghi chu o ProjectUpdate."""
+        if self.start_date and self.end_date and self.end_date < self.start_date:
+            raise ValueError("End date must be on or after start date")
+        return self
 
 
 class PortfolioCapabilities(BaseModel):
@@ -84,20 +90,20 @@ class PortfolioProjectSummary(BaseModel):
     name: str
     status: str
     methodology: str
-    start_date: Optional[date]
-    end_date: Optional[date]
+    start_date: date | None
+    end_date: date | None
     progress_percent: float
-    budget: Optional[float]
+    budget: float | None
 
 
 class PortfolioResponse(BaseModel):
     id: int
     name: str
-    description: Optional[str]
+    description: str | None
     status: str
-    start_date: Optional[date]
-    end_date: Optional[date]
-    budget: Optional[float]
+    start_date: date | None
+    end_date: date | None
+    budget: float | None
     currency: str
     owner_id: int
     project_count: int

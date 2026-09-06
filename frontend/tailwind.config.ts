@@ -1,6 +1,9 @@
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
+  // Theo class chu khong theo media: nut chuyen theme phai ep duoc ca hai chieu.
+  // Mac dinh van la "theo he dieu hanh" — ThemeProvider tu phan giai ra class.
+  darkMode: 'class',
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',

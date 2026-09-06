@@ -1,5 +1,6 @@
-from datetime import datetime, timezone
-from typing import Annotated, Optional, Type, TypeVar
+from collections import defaultdict
+from datetime import UTC, datetime
+from typing import Annotated, TypeVar
 
 from fastapi import Depends
 from sqlalchemy import delete, func, or_, select, update
@@ -53,7 +54,7 @@ class WBSService:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def _project_item(self, model: Type[ModelT], item_id: int) -> ModelT:
+    async def _project_item(self, model: type[ModelT], item_id: int) -> ModelT:
         item = await self.db.get(model, item_id)
         if item is None:
             raise NotFoundException(f"{model.__name__} not found")
@@ -235,7 +236,7 @@ class WBSService:
         for key, value in values.items():
             setattr(item, key, value)
         if item.status == MilestoneStatus.COMPLETED and item.completed_at is None:
-            item.completed_at = datetime.now(timezone.utc)
+            item.completed_at = datetime.now(UTC)
         elif item.status != MilestoneStatus.COMPLETED:
             item.completed_at = None
         await self.db.flush()
@@ -247,7 +248,7 @@ class WBSService:
             item_id, MilestoneUpdate(status="COMPLETED"), user
         )
 
-    async def delete_simple(self, model: Type[ModelT], item_id: int, user: User) -> None:
+    async def delete_simple(self, model: type[ModelT], item_id: int, user: User) -> None:
         item = await self._project_item(model, item_id)
         await require_project_roles(self.db, item.project_id, user, "PM")
         snapshot = serialize_model(item)
@@ -325,7 +326,7 @@ class WBSService:
         phase_id: int,
         strategy: str,
         user: User,
-        target_phase_id: Optional[int] = None,
+        target_phase_id: int | None = None,
     ) -> None:
         phase = await self._project_item(Phase, phase_id)
         await require_project_roles(self.db, phase.project_id, user, "PM")
@@ -363,13 +364,22 @@ class WBSService:
         )
         await recalculate_project(self.db, phase.project_id)
 
-    async def tree(self, project_id: int, user: User) -> WBSTree:
+    async def tree(
+        self, project_id: int, user: User, *, include_tasks: bool = False
+    ) -> WBSTree:
+        """Cau truc WBS cua mot du an.
+
+        Mac dinh chi tra cau truc kem so dem. Viec serialize moi task cua du an vao
+        mot response - dieu ham nay van luon lam - khien payload tang tuyen tinh
+        theo kich thuoc du an, trong khi nguoi goi chinh (dropdown loc tren trang
+        Tasks) chi can ten phase, sprint va epic.
+        """
         context = await get_project_context(self.db, project_id, user)
         phases = list((await self.db.scalars(select(Phase).where(Phase.project_id == project_id).order_by(Phase.order_index, Phase.id))).all())
         sprints = list((await self.db.scalars(select(Sprint).where(Sprint.project_id == project_id).order_by(Sprint.id))).all())
         epics = list((await self.db.scalars(select(Epic).where(Epic.project_id == project_id).order_by(Epic.id))).all())
         milestones = list((await self.db.scalars(select(Milestone).where(Milestone.project_id == project_id).order_by(Milestone.due_date, Milestone.id))).all())
-        tasks = list((await self.db.scalars(select(Task).options(selectinload(Task.assignee)).where(Task.project_id == project_id).order_by(Task.id))).all())
+
         capabilities = TaskCapabilities(
             can_update=context.is_admin or context.role in {"PM", "BA"},
             can_delete=context.is_admin or context.role == "PM",
@@ -386,28 +396,100 @@ class WBSService:
             response.capabilities = capabilities
             return response
 
+        # Gom theo khoa cha mot lan thay vi quet lai danh sach task cho tung sprint
+        # roi tung phase - cach cu la O(so_phase x so_task).
+        by_sprint: dict[int, list] = defaultdict(list)
+        by_phase: dict[int, list] = defaultdict(list)
+        unphased: list = []
+        sprint_counts: dict[int, int] = {}
+        phase_counts: dict[int, int] = {}
+        unphased_count = 0
+
+        if include_tasks:
+            tasks = list((await self.db.scalars(select(Task).options(selectinload(Task.assignee)).where(Task.project_id == project_id).order_by(Task.id))).all())
+            for task in tasks:
+                response = task_response(task)
+                if task.sprint_id is not None:
+                    by_sprint[task.sprint_id].append(response)
+                elif task.phase_id is not None:
+                    by_phase[task.phase_id].append(response)
+                else:
+                    unphased.append(response)
+            sprint_counts = {sid: len(items) for sid, items in by_sprint.items()}
+            phase_counts = {pid: len(items) for pid, items in by_phase.items()}
+            unphased_count = len(unphased)
+        else:
+            # Truy van dem gop thay vi nap moi dong task ve roi dem trong Python.
+            sprint_counts = {
+                sprint_id: count
+                for sprint_id, count in (
+                    await self.db.execute(
+                        select(Task.sprint_id, func.count())
+                        .where(Task.project_id == project_id, Task.sprint_id.is_not(None))
+                        .group_by(Task.sprint_id)
+                    )
+                ).all()
+            }
+            phase_counts = {
+                phase_id: count
+                for phase_id, count in (
+                    await self.db.execute(
+                        select(Task.phase_id, func.count())
+                        .where(
+                            Task.project_id == project_id,
+                            Task.phase_id.is_not(None),
+                            Task.sprint_id.is_(None),
+                        )
+                        .group_by(Task.phase_id)
+                    )
+                ).all()
+            }
+            unphased_count = int(
+                await self.db.scalar(
+                    select(func.count()).where(
+                        Task.project_id == project_id,
+                        Task.phase_id.is_(None),
+                        Task.sprint_id.is_(None),
+                    )
+                )
+                or 0
+            )
+
         sprint_nodes = {
             sprint.id: SprintNode(
                 **SprintResponse.model_validate(sprint).model_dump(),
-                tasks=[task_response(task) for task in tasks if task.sprint_id == sprint.id],
+                tasks=by_sprint.get(sprint.id, []),
+                task_count=sprint_counts.get(sprint.id, 0),
             )
             for sprint in sprints
         }
+        sprints_by_phase: dict[int, list] = defaultdict(list)
+        unphased_sprints = []
+        for sprint in sprints:
+            if sprint.phase_id is None:
+                unphased_sprints.append(sprint_nodes[sprint.id])
+            else:
+                sprints_by_phase[sprint.phase_id].append(sprint_nodes[sprint.id])
+
         phase_nodes = [
             PhaseNode(
                 **PhaseResponse.model_validate(phase).model_dump(),
-                sprints=[sprint_nodes[s.id] for s in sprints if s.phase_id == phase.id],
-                tasks=[task_response(task) for task in tasks if task.phase_id == phase.id and task.sprint_id is None],
+                sprints=sprints_by_phase.get(phase.id, []),
+                tasks=by_phase.get(phase.id, []),
+                task_count=phase_counts.get(phase.id, 0)
+                + sum(node.task_count for node in sprints_by_phase.get(phase.id, [])),
             )
             for phase in phases
         ]
         return WBSTree(
             project_id=project_id,
             phases=phase_nodes,
-            unphased_sprints=[sprint_nodes[s.id] for s in sprints if s.phase_id is None],
-            unphased_tasks=[task_response(task) for task in tasks if task.phase_id is None and task.sprint_id is None],
+            unphased_sprints=unphased_sprints,
+            unphased_tasks=unphased,
+            unphased_task_count=unphased_count,
             epics=[EpicResponse.model_validate(item) for item in epics],
             milestones=[MilestoneResponse.model_validate(item) for item in milestones],
+            includes_tasks=include_tasks,
         )
 
 

@@ -54,7 +54,7 @@ Xây dựng một **web application quản lý dự án và danh mục đầu t�
 |---|---|---|
 | Auth, RBAC, Admin Portal, OAuth, Profile | ✅ Chạy thật + test | Phase 1 hoàn thành |
 | Portfolio / Project / WBS / Task / Dependency / Assignment / WorkLog | ✅ Chạy thật + test | Phase 2 hoàn thành |
-| CPM Engine | ✅ Chạy nội bộ | `app/utils/cpm.py` + `scheduling_service.py`; **chưa có** endpoint `/cpm` và `/gantt` (mới là stub) |
+| CPM Engine | ✅ Chạy thật + test | `app/utils/cpm.py` + `scheduling_service.py`; endpoint `GET /projects/{id}/cpm` đã mount (chỉ đọc). `/gantt` vẫn là stub (Phase 4) |
 | Real-time Chat + Notification Push + Celery Beat daily sweep | ✅ Chạy thật + test | Phase 2/5 hoàn thành |
 | Dashboard KPI / EVA / Burndown | ✅ Chạy thật | endpoint `/dashboards` đã mount |
 | AI (Generator, Impact, Optimize, Risk, Resource) | 🟡 Chỉ hạ tầng | Có `BaseAIProvider` + `OpenAIProvider` + `GeminiProvider` + `project_generator.py` và models; **chưa mount** endpoint `/ai`, Celery `ai_tasks` vẫn là stub |
@@ -64,7 +64,7 @@ Xây dựng một **web application quản lý dự án và danh mục đầu t�
 | Leaves / Skills catalog | 🟡 Chỉ model DB | endpoint là stub, chưa mount |
 | Investor Read-only Dashboard, Mobile polish | ❌ Chưa làm | — |
 
-> **API thực tế đang phục vụ:** 21 REST router (`/api/v1/...`) + 2 WebSocket router (`/ws/...`). 11 router còn lại (`leaves, skills, documents, approvals, change_requests, gantt, cpm, reports, project_versions, ai, system`) vẫn là stub `TODO: Implement`, bị comment trong [`router.py`](./backend/app/api/v1/router.py) và **không** được mount.
+> **API thực tế đang phục vụ:** 22 REST router (`/api/v1/...`) + 2 WebSocket router (`/ws/...`). 10 router còn lại (`leaves, skills, documents, approvals, change_requests, gantt, reports, project_versions, ai, system`) vẫn là stub `TODO: Implement`, bị comment trong [`router.py`](./backend/app/api/v1/router.py) và **không** được mount.
 
 ---
 
@@ -269,7 +269,7 @@ AI Project Planning & Portfolio Management system/
 │   │   │   │   ├── projects/                 # Projects list page
 │   │   │   │   │   └── [id]/                 # Project Shell (Tabs: Overview, Tasks, WBS, Members, Chat, Settings)
 │   │   │   │   │       ├── overview/page.tsx
-│   │   │   │   │       ├── tasks/page.tsx    # Kanban & Task list views
+│   │   │   │   │       ├── tasks/page.tsx    # Kanban, danh sách & sprint (nội tuyến trong trang)
 │   │   │   │   │       ├── wbs/page.tsx      # WBS hierarchy tree view
 │   │   │   │   │       ├── members/page.tsx  # Project team members management
 │   │   │   │   │       ├── chat/page.tsx     # Real-time Project Chat room
@@ -290,9 +290,9 @@ AI Project Planning & Portfolio Management system/
 │   │   │   ├── notifications/                # NotificationBell, NotificationList, useNotifications
 │   │   │   ├── portfolios/                   # PortfolioCard, PortfolioForm, usePortfolios
 │   │   │   ├── projects/                     # ProjectWizard, ProjectCard, ProjectMembersTable
-│   │   │   ├── tasks/                        # KanbanBoard, TaskDrawer, useTasks
+│   │   │   ├── tasks/                        # TaskDrawer, useTasks, useTimesheet
 │   │   │   ├── users/                        # UserProfileForm, useUsers
-│   │   │   └── wbs/                          # WBSTreeView, PhaseModal, useWBS
+│   │   │   └── wbs/                          # useWBS (giao diện nội tuyến trong trang wbs)
 │   │   ├── components/common/                # Shared UI primitives (Avatar, Button, Modal, Input, Spinner, etc.)
 │   │   ├── lib/
 │   │   │   ├── ws-client.ts                  # Reconnecting WebSocket client helper
@@ -694,7 +694,8 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
   - [x] Phân bổ nhân sự, Timesheet WorkLogs, Resource Leveling kiểm tra quá tải.
   - [x] **Real-time Project Chat (`/projects/[id]/chat`, `/ws/chat/{id}`)** với lịch sử tin nhắn và unread badge.
   - [x] **Notification triggers & Celery Beat daily sweep** (thông báo task bắt đầu và sắp đến hạn lúc 08:00 AM).
-  - [ ] Endpoint `/gantt`, `/cpm` công khai (hiện chỉ tính nội bộ, chưa có API/UI Gantt).
+  - [x] Endpoint `/cpm` công khai (`GET /projects/{id}/cpm`, chỉ đọc).
+  - [ ] Endpoint `/gantt` + UI Gantt (thuộc Phase 4).
 
 - [ ] **Phase 3 — AI Features Module** *(~15% — mới có Provider layer)*
   - [x] Tầng trừu tượng hóa AI Provider (`BaseAIProvider`, `OpenAIProvider`, `GeminiProvider`).

@@ -1,7 +1,7 @@
 'use client'
 
 import { UserPlus } from 'lucide-react'
-import { useParams } from 'next/navigation'
+import { useNumericParam } from '@/hooks/useNumericParam'
 import { useState } from 'react'
 import { Button } from '@/components/common/Button'
 import { ErrorState, LoadingState } from '@/components/common/PageState'
@@ -13,7 +13,7 @@ import { getApiErrorMessage } from '@/types/api.types'
 import type { ProjectMemberCreate } from '@/types/project.types'
 
 export default function ProjectMembersPage() {
-  const id = Number(useParams<{ id: string }>().id)
+  const id = useNumericParam()
   const [inviting, setInviting] = useState(false)
   const project = useProjectDetail(id)
   const members = useProjectMembers(id)

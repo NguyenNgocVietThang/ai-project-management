@@ -1,5 +1,4 @@
 ﻿from datetime import date, timedelta
-from typing import List
 
 
 def add_working_days(start: date, days: int) -> date:
@@ -24,7 +23,7 @@ def working_days_between(start: date, end: date) -> int:
     return count
 
 
-def date_range(start: date, end: date) -> List[date]:
+def date_range(start: date, end: date) -> list[date]:
     """Tạo danh sách các ngày từ start đến end (bao gồm cả hai đầu)."""
     dates = []
     current = start

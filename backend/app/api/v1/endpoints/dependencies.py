@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Response, status
 
-from app.core.dependencies import CurrentUser
+from app.core.dependencies import CurrentUser, CurrentVerifiedUser
 from app.schemas.task import DependencyCreate, DependencyResponse
 from app.services.task_service import TaskServiceDep
 
@@ -8,12 +8,12 @@ router = APIRouter()
 
 
 @router.post("/tasks/{task_id}/dependencies", response_model=DependencyResponse, status_code=201)
-async def create_dependency(task_id: int, body: DependencyCreate, service: TaskServiceDep, current_user: CurrentUser):
+async def create_dependency(task_id: int, body: DependencyCreate, service: TaskServiceDep, current_user: CurrentVerifiedUser):
     return await service.add_dependency(task_id, body, current_user)
 
 
 @router.delete("/dependencies/{dependency_id}", status_code=204)
-async def delete_dependency(dependency_id: int, service: TaskServiceDep, current_user: CurrentUser):
+async def delete_dependency(dependency_id: int, service: TaskServiceDep, current_user: CurrentVerifiedUser):
     await service.delete_dependency(dependency_id, current_user)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Annotated, Optional
+from typing import Annotated
 
 from fastapi import Depends
 from sqlalchemy import func, select
@@ -21,11 +21,11 @@ class AuditService:
     async def list(
         self,
         *,
-        entity_type: Optional[str] = None,
-        user_id: Optional[int] = None,
-        action: Optional[str] = None,
-        date_from: Optional[datetime] = None,
-        date_to: Optional[datetime] = None,
+        entity_type: str | None = None,
+        user_id: int | None = None,
+        action: str | None = None,
+        date_from: datetime | None = None,
+        date_to: datetime | None = None,
         page: int = 1,
         page_size: int = 20,
     ) -> PaginatedResponse[AuditLogResponse]:

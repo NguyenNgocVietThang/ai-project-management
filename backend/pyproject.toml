@@ -9,8 +9,17 @@ line_length = 100
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+
+[tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP"]
 ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# Quan he SQLAlchemy dung forward reference dang chuoi (Mapped["User"]) duoc phan
+# giai luc cau hinh mapper, khong phai luc import. Ruff khong theo duoc chuoi do
+# nen bao undefined-name cho moi quan he trong tang model. Chung khong phai loi -
+# app import duoc va bo test chung minh mapper cau hinh dung.
+"app/models/*.py" = ["F821"]
 
 [tool.mypy]
 python_version = "3.11"

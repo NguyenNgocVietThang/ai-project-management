@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { connectWebSocket } from '@/lib/ws-client'
+import { authService } from '@/services/auth.service'
 import { WS_BASE_URL } from '@/services/api'
 import { useAuthStore } from '@/store/authStore'
 import { notificationService } from '../services/notification.service'
@@ -30,14 +31,20 @@ export function useUnreadCount() {
  * lần ở cấp shell của dashboard (xem (dashboard)/layout.tsx), không phải mỗi trang. */
 export function useNotificationSocket() {
   const qc = useQueryClient()
+  // Hook này mount ở shell của dashboard, có thể trước khi phiên được khôi phục
+  // từ cookie refresh. Access token là dependency thật sự: nếu không, effect chạy
+  // một lần với token rỗng, bỏ cuộc, rồi không bao giờ thử lại.
+  const accessToken = useAuthStore((state) => state.accessToken)
 
   useEffect(() => {
-    const token = useAuthStore.getState().accessToken
-    if (!token) return
+    if (!accessToken) return
 
-    const url = `${WS_BASE_URL}/ws/notifications?token=${encodeURIComponent(token)}`
     const client = connectWebSocket({
-      url,
+      buildUrl: async () => {
+        if (!useAuthStore.getState().accessToken) return null
+        const ticket = await authService.webSocketTicket()
+        return `${WS_BASE_URL}/ws/notifications?ticket=${encodeURIComponent(ticket)}`
+      },
       onMessage: () => {
         qc.setQueryData<UnreadCountResponse>(NOTIFICATION_KEYS.unreadCount, (old) => ({
           unread_count: (old?.unread_count ?? 0) + 1,
@@ -47,7 +54,7 @@ export function useNotificationSocket() {
     })
 
     return () => client.close()
-  }, [qc])
+  }, [qc, accessToken])
 }
 
 /** Danh sách thông báo phân trang */

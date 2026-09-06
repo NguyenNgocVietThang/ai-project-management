@@ -1,8 +1,9 @@
 ﻿import enum
 from datetime import date, datetime
-from typing import Optional
-from sqlalchemy import Date, DateTime, Enum, ForeignKey, String, Text
+
+from sqlalchemy import Date, DateTime, Enum, ForeignKey, Index, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.models.base import Base
 
 
@@ -15,12 +16,18 @@ class MilestoneStatus(str, enum.Enum):
 
 class Milestone(Base):
     __tablename__ = "milestones"
+    __table_args__ = (
+        # Postgres KHÔNG tự tạo index cho khoá ngoại. Nếu không có các dòng
+        # dưới đây, mọi truy vấn lọc theo dự án ở wbs_service và
+        # scheduling_service đều là seq scan toàn bảng.
+        Index("ix_milestones_project_due", "project_id", "due_date"),
+    )
 
     name: Mapped[str] = mapped_column(String(255), nullable=False)
-    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    due_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    due_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     status: Mapped[MilestoneStatus] = mapped_column(Enum(MilestoneStatus), default=MilestoneStatus.PENDING)
-    completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     project_id: Mapped[int] = mapped_column(ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
 
     project: Mapped["Project"] = relationship("Project", back_populates="milestones")

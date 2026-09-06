@@ -1,5 +1,4 @@
 from datetime import date
-from typing import Optional
 
 from fastapi import APIRouter
 
@@ -15,7 +14,7 @@ async def resource_leveling(
     project_id: int,
     service: ResourceServiceDep,
     current_user: CurrentUser,
-    start_date: Optional[date] = None,
-    end_date: Optional[date] = None,
+    start_date: date | None = None,
+    end_date: date | None = None,
 ):
     return await service.resource_leveling(project_id, current_user, start_date, end_date)

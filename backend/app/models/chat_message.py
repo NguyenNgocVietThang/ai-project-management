@@ -1,5 +1,6 @@
-from sqlalchemy import ForeignKey, Index, Text
+from sqlalchemy import ForeignKey, Index, Text, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.models.base import Base
 
 
@@ -9,7 +10,10 @@ class ChatMessage(Base):
 
     __tablename__ = "chat_messages"
     __table_args__ = (
-        Index("ix_chat_messages_project_created", "project_id", "created_at"),
+        # ChatService.history lọc theo project_id + id < before_id và ORDER BY id
+        # DESC. Index trên created_at không phục vụ được thứ tự đó, nên Postgres
+        # vẫn phải sort toàn bộ lịch sử của dự án ở mỗi lần cuộn.
+        Index("ix_chat_messages_project_id_desc", "project_id", text("id DESC")),
     )
 
     project_id: Mapped[int] = mapped_column(ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)

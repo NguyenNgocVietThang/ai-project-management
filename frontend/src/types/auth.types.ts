@@ -12,9 +12,10 @@ export interface RegisterCredentials {
   password: string
 }
 
-export interface TokenResponse {
+/** Những gì /auth/login, /auth/refresh và /auth/oauth/exchange trả về.
+ *  Refresh token cố tình vắng mặt — nó nằm trong cookie httpOnly mà JS không đọc được. */
+export interface AccessTokenResponse {
   access_token: string
-  refresh_token: string
   token_type: string
 }
 

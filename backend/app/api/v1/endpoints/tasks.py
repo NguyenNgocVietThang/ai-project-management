@@ -1,9 +1,10 @@
 from datetime import date
-from typing import Annotated, Optional
+from typing import Annotated
 
-from fastapi import APIRouter, Query, Response, status
+from fastapi import APIRouter, Query, Request, Response, status
 
-from app.core.dependencies import CurrentUser
+from app.core.dependencies import CurrentUser, CurrentVerifiedUser
+from app.core.rate_limit import BULK_WRITE_LIMIT, limiter
 from app.schemas.common import PaginatedResponse
 from app.schemas.task import (
     SubtaskCreate,
@@ -27,16 +28,16 @@ async def list_tasks(
     current_user: CurrentUser,
     page: Annotated[int, Query(ge=1)] = 1,
     page_size: Annotated[int, Query(ge=1, le=200)] = 50,
-    search: Optional[str] = None,
-    phase_id: Optional[int] = None,
-    sprint_id: Optional[int] = None,
-    epic_id: Optional[int] = None,
-    assignee_id: Optional[int] = None,
-    status_: Optional[str] = Query(default=None, alias="status"),
-    priority: Optional[str] = None,
-    labels: Annotated[Optional[list[str]], Query()] = None,
-    due_date_from: Optional[date] = None,
-    due_date_to: Optional[date] = None,
+    search: str | None = None,
+    phase_id: int | None = None,
+    sprint_id: int | None = None,
+    epic_id: int | None = None,
+    assignee_id: int | None = None,
+    status_: str | None = Query(default=None, alias="status"),
+    priority: str | None = None,
+    labels: Annotated[list[str] | None, Query()] = None,
+    due_date_from: date | None = None,
+    due_date_to: date | None = None,
 ):
     return await service.list(
         project_id,
@@ -57,7 +58,7 @@ async def list_tasks(
 
 
 @router.post("/projects/{project_id}/tasks", response_model=TaskResponse, status_code=201)
-async def create_task(project_id: int, body: TaskCreate, service: TaskServiceDep, current_user: CurrentUser):
+async def create_task(project_id: int, body: TaskCreate, service: TaskServiceDep, current_user: CurrentVerifiedUser):
     return await service.create(project_id, body, current_user)
 
 
@@ -67,23 +68,24 @@ async def get_task(task_id: int, service: TaskServiceDep, current_user: CurrentU
 
 
 @router.patch("/tasks/{task_id}", response_model=TaskResponse)
-async def update_task(task_id: int, body: TaskUpdate, service: TaskServiceDep, current_user: CurrentUser):
+async def update_task(task_id: int, body: TaskUpdate, service: TaskServiceDep, current_user: CurrentVerifiedUser):
     return await service.update(task_id, body, current_user)
 
 
 @router.delete("/tasks/{task_id}", status_code=204)
-async def delete_task(task_id: int, service: TaskServiceDep, current_user: CurrentUser):
+async def delete_task(task_id: int, service: TaskServiceDep, current_user: CurrentVerifiedUser):
     await service.delete(task_id, current_user)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.post("/tasks/{task_id}/status", response_model=TaskResponse)
-async def change_task_status(task_id: int, body: TaskStatusUpdate, service: TaskServiceDep, current_user: CurrentUser):
+async def change_task_status(task_id: int, body: TaskStatusUpdate, service: TaskServiceDep, current_user: CurrentVerifiedUser):
     return await service.change_status(task_id, body, current_user)
 
 
 @router.patch("/projects/{project_id}/tasks/bulk", response_model=list[TaskResponse])
-async def bulk_update_tasks(project_id: int, body: TaskBulkUpdate, service: TaskServiceDep, current_user: CurrentUser):
+@limiter.limit(BULK_WRITE_LIMIT)
+async def bulk_update_tasks(request: Request, project_id: int, body: TaskBulkUpdate, service: TaskServiceDep, current_user: CurrentVerifiedUser):
     return await service.bulk_update(project_id, body, current_user)
 
 
@@ -93,5 +95,5 @@ async def list_subtasks(task_id: int, service: TaskServiceDep, current_user: Cur
 
 
 @router.post("/tasks/{task_id}/subtasks", response_model=SubtaskResponse, status_code=201)
-async def create_subtask(task_id: int, body: SubtaskCreate, service: TaskServiceDep, current_user: CurrentUser):
+async def create_subtask(task_id: int, body: SubtaskCreate, service: TaskServiceDep, current_user: CurrentVerifiedUser):
     return await service.create_subtask(task_id, body, current_user)

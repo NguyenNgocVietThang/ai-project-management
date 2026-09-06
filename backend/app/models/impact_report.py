@@ -1,7 +1,8 @@
 ﻿import enum
-from typing import Optional
-from sqlalchemy import Enum, Float, ForeignKey, Integer, JSON, Text
+
+from sqlalchemy import JSON, Enum, Float, ForeignKey, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.models.base import Base
 
 
@@ -22,9 +23,9 @@ class ImpactReport(Base):
     risk_score: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)  # 0-10
     schedule_impact_days: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     cost_impact: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
-    affected_tasks_json: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
-    ai_analysis_json: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
-    summary: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    affected_tasks_json: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    ai_analysis_json: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    summary: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     change_request: Mapped["ChangeRequest"] = relationship("ChangeRequest", back_populates="impact_report")
 

@@ -1,4 +1,4 @@
-# Kiểm tra bảo mật tĩnh và quét lỗ hổng phụ thuộc (dependencies).
+# Kiểm tra bảo mật tĩnh, quét lỗ hổng phụ thuộc, và các cổng chất lượng.
 #
 # Được bổ sung sau đợt rà soát phát hiện hai thư viện ghim phiên bản có lỗ hổng
 # tồn tại trong dự án mà không được chú ý (python-jose 3.3.0, next 15.0.0 — bản thân npm
@@ -44,9 +44,11 @@ jobs:
       - name: Audit dependencies for known CVEs
         run: pip-audit --requirement requirements.txt --strict
 
+      # Trước đây bước này là continue-on-error vì có 909 vi phạm tồn đọng. Chúng
+      # đã được dọn (1000 lỗi sửa tự động, phần còn lại là forward-reference của
+      # SQLAlchemy nay được ignore theo phạm vi file), nên nó là cổng chặn thật.
       - name: Lint
         run: ruff check app tests
-        continue-on-error: true # nợ kỹ thuật về định dạng mã nguồn có từ trước; hiện chưa dùng làm cổng chặn (gate)
 
   node:
     name: Node dependencies
@@ -87,3 +89,31 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt -r requirements-dev.txt
       - run: python -m pytest tests -q
+
+  frontend:
+    # Trước đây CI hoàn toàn không chạm tới frontend: không typecheck, không lint,
+    # không build, không test. Một thay đổi làm vỡ biên dịch vẫn merge được sạch sẽ.
+    name: Frontend checks
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - name: Type check
+        run: npm run type-check
+      - name: Lint
+        run: npm run lint
+      - name: Unit tests
+        run: npm test
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000/api/v1
+          NEXT_PUBLIC_WS_URL: ws://localhost:8000

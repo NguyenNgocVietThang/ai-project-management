@@ -46,14 +46,17 @@ export interface Milestone {
   completed_at: string | null
 }
 
-export interface SprintNode extends Sprint { tasks: Task[] }
-export interface PhaseNode extends Phase { sprints: SprintNode[]; tasks: Task[] }
+export interface SprintNode extends Sprint { tasks: Task[]; task_count: number }
+export interface PhaseNode extends Phase { sprints: SprintNode[]; tasks: Task[]; task_count: number }
 
 export interface WBSTree {
   project_id: number
   phases: PhaseNode[]
   unphased_sprints: SprintNode[]
   unphased_tasks: Task[]
+  unphased_task_count: number
+  /** false khi cây được lấy về mà không kèm task (mặc định) — xem wbs.service.ts */
+  includes_tasks: boolean
   epics: Epic[]
   milestones: Milestone[]
 }

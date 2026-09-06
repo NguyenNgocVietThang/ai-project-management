@@ -10,7 +10,7 @@ import type {
   ProjectMemberCreate,
   ProjectUpdate,
   RoleSummary,
-  UserSummary,
+  UserSearchResult,
 } from '@/types/project.types'
 
 export const projectService = {
@@ -59,8 +59,8 @@ export const projectService = {
     return data
   },
 
-  async searchUsers(query: string): Promise<UserSummary[]> {
-    const { data } = await api.get<UserSummary[]>('/users/search', { params: { q: query } })
+  async searchUsers(query: string): Promise<UserSearchResult[]> {
+    const { data } = await api.get<UserSearchResult[]>('/users/search', { params: { q: query } })
     return data
   },
 

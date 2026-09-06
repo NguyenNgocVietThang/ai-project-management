@@ -2,7 +2,7 @@ import hashlib
 import logging
 import math
 import secrets
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Annotated
 from urllib.parse import urlencode
 
@@ -17,6 +17,15 @@ from app.core.exceptions import (
     ServiceUnavailableException,
     TooManyRequestsException,
     UnauthorizedException,
+)
+from app.core.login_throttle import (
+    clear as clear_login_failures,
+)
+from app.core.login_throttle import (
+    record_failure as record_login_failure,
+)
+from app.core.login_throttle import (
+    seconds_until_unlocked,
 )
 from app.core.security import (
     create_access_token,
@@ -102,8 +111,21 @@ class AuthService:
         )
 
     async def authenticate(self, email: str, password: str) -> User:
+        # Kiểm tra khoá tài khoản trước cả khi tra cứu user: nếu không, mỗi lần thử
+        # trong lúc đang bị khoá vẫn tốn một lần so khớp bcrypt, biến chính cơ chế
+        # bảo vệ thành một kênh khuếch đại tải.
+        locked_for = await seconds_until_unlocked(email)
+        if locked_for:
+            raise UnauthorizedException(
+                "Too many failed sign-in attempts. Please try again later."
+            )
+
         user = await self.users.get_by_email(email)
         if not user:
+            # Vẫn tính là một lần thất bại. Nếu chỉ đếm khi tài khoản tồn tại thì
+            # tốc độ phản hồi khác nhau giữa email có thật và không có thật sẽ tự nó
+            # là một kênh liệt kê tài khoản.
+            await record_login_failure(email)
             # Không ghi audit: không có tài khoản nào để quy trách nhiệm, và việc ghi lại
             # địa chỉ được thử sẽ tạo ra một danh bạ các phỏng đoán.
             raise UnauthorizedException("Incorrect email or password")
@@ -122,6 +144,7 @@ class AuthService:
             # điều tra brute-force cần. Bản ghi audit là thay đổi đang chờ duy nhất ở đây
             # (mọi thứ phía trên nó đều là thao tác đọc), nên commit riêng nó là an toàn.
             await self.db.commit()
+            await record_login_failure(email)
             raise UnauthorizedException("Incorrect email or password")
         if not user.is_active:
             self._audit(
@@ -132,9 +155,10 @@ class AuthService:
             await self.db.commit()  # xem nhánh LOGIN_FAILED phía trên
             raise ForbiddenException("Inactive user")
 
-        user.last_login = datetime.now(timezone.utc)
+        user.last_login = datetime.now(UTC)
         self._audit("LOGIN_SUCCESS", user_id=user.id, description="Password sign-in")
         await self.db.flush()
+        await clear_login_failures(email)
         return user
 
     async def request_password_reset(self, email: str) -> None:
@@ -145,7 +169,7 @@ class AuthService:
 
         raw_token = secrets.token_urlsafe(32)
         user.password_reset_token_hash = self._hash_reset_token(raw_token)
-        user.password_reset_expires_at = datetime.now(timezone.utc) + timedelta(
+        user.password_reset_expires_at = datetime.now(UTC) + timedelta(
             hours=PASSWORD_RESET_EXPIRES_HOURS
         )
         await self.db.flush()
@@ -168,8 +192,8 @@ class AuthService:
 
         expires_at = user.password_reset_expires_at
         if expires_at.tzinfo is None:
-            expires_at = expires_at.replace(tzinfo=timezone.utc)
-        if expires_at <= datetime.now(timezone.utc):
+            expires_at = expires_at.replace(tzinfo=UTC)
+        if expires_at <= datetime.now(UTC):
             raise BadRequestException(INVALID_RESET_TOKEN_MESSAGE)
 
         user.hashed_password = hash_password(data.new_password)
@@ -182,6 +206,9 @@ class AuthService:
             description="Password reset via emailed token; all sessions revoked",
         )
         await self.db.flush()
+        # Chủ tài khoản vừa chứng minh quyền kiểm soát email của họ; giữ nguyên
+        # trạng thái khoá sẽ phạt chính nạn nhân của cuộc tấn công brute-force.
+        await clear_login_failures(user.email)
 
     async def verify_email(self, token: str | None) -> None:
         if not token:
@@ -193,7 +220,7 @@ class AuthService:
             raise BadRequestException(INVALID_EMAIL_VERIFICATION_TOKEN_MESSAGE)
 
         expires_at = self._as_utc(user.email_verification_expires_at)
-        if expires_at <= datetime.now(timezone.utc):
+        if expires_at <= datetime.now(UTC):
             raise BadRequestException(INVALID_EMAIL_VERIFICATION_TOKEN_MESSAGE)
 
         user.email_verified = True
@@ -213,7 +240,7 @@ class AuthService:
         if user.email_verified:
             return False
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         if user.email_verification_expires_at is not None:
             expires_at = self._as_utc(user.email_verification_expires_at)
             issued_at = expires_at - timedelta(hours=EMAIL_VERIFICATION_EXPIRES_HOURS)
@@ -253,7 +280,7 @@ class AuthService:
     ) -> str:
         raw_token = secrets.token_urlsafe(32)
         user.email_verification_token_hash = self._hash_email_verification_token(raw_token)
-        user.email_verification_expires_at = (now or datetime.now(timezone.utc)) + timedelta(
+        user.email_verification_expires_at = (now or datetime.now(UTC)) + timedelta(
             hours=EMAIL_VERIFICATION_EXPIRES_HOURS
         )
         await self.db.flush()
@@ -267,8 +294,8 @@ class AuthService:
     @staticmethod
     def _as_utc(value: datetime) -> datetime:
         if value.tzinfo is None:
-            return value.replace(tzinfo=timezone.utc)
-        return value.astimezone(timezone.utc)
+            return value.replace(tzinfo=UTC)
+        return value.astimezone(UTC)
 
     @staticmethod
     def _hash_reset_token(token: str) -> str:
@@ -327,14 +354,23 @@ class AuthService:
         self._audit("TOKEN_REFRESH", user_id=user.id, description="Refresh token rotated")
         return self.issue_tokens(user)
 
-    async def logout(self, refresh_token: str | None) -> None:
+    async def logout(
+        self, refresh_token: str | None, access_token: str | None = None
+    ) -> None:
         """Đăng xuất phía server theo kiểu best-effort.
 
-        Thu hồi refresh token là điều khiến logout không chỉ là một hành động phía client;
-        access token được để tự hết hạn (30 phút) thay vì theo dõi từng token từng được
-        phát hành. Một token bị thiếu hoặc không parse được không phải là lỗi — dù sao thì
+        Thu hồi CẢ HAI token. Trước đây chỉ refresh token bị thu hồi, nên một access
+        token bị đánh cắp vẫn dùng được tới 30 phút sau khi nạn nhân đã bấm đăng xuất
+        — đúng khoảng thời gian mà việc đăng xuất lẽ ra phải chấm dứt. `jti` vốn đã
+        có sẵn trên access token cho đúng mục đích này.
+
+        Một token bị thiếu hoặc không parse được không phải là lỗi — dù sao thì
         người gọi cũng đang đăng xuất.
         """
+        if access_token:
+            access_payload = decode_token(access_token)
+            if access_payload and access_payload.get("type") == "access":
+                await revoke(access_payload.get("jti"), access_payload.get("exp"))
         if not refresh_token:
             return
         payload = decode_token(refresh_token)

@@ -1,7 +1,6 @@
 from datetime import date, datetime
-from typing import Optional
 
-from sqlalchemy import case, delete, exists, func, insert, or_, select
+from sqlalchemy import case, delete, exists, func, insert, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -74,12 +73,12 @@ class ProjectRepository(BaseRepository[Project]):
         is_admin: bool,
         skip: int,
         limit: int,
-        portfolio_id: Optional[int] = None,
-        status: Optional[ProjectStatus] = None,
-        methodology: Optional[ProjectMethodology] = None,
-        search: Optional[str] = None,
-        start_date_from: Optional[date] = None,
-        end_date_to: Optional[date] = None,
+        portfolio_id: int | None = None,
+        status: ProjectStatus | None = None,
+        methodology: ProjectMethodology | None = None,
+        search: str | None = None,
+        start_date_from: date | None = None,
+        end_date_to: date | None = None,
     ):
         access_filter = self._access_filter(user_id, is_admin)
         filters = [Project.deleted_at.is_(None), access_filter]
@@ -131,7 +130,7 @@ class ProjectRepository(BaseRepository[Project]):
         )
         return (await self.db.execute(stmt)).one_or_none()
 
-    async def get_active(self, project_id: int) -> Optional[Project]:
+    async def get_active(self, project_id: int) -> Project | None:
         result = await self.db.execute(
             select(Project).where(Project.id == project_id, Project.deleted_at.is_(None))
         )
@@ -151,7 +150,7 @@ class ProjectRepository(BaseRepository[Project]):
         ).one()
         return int(row[0]), int(row[1])
 
-    async def get_member_role(self, project_id: int, user_id: int) -> Optional[Role]:
+    async def get_member_role(self, project_id: int, user_id: int) -> Role | None:
         result = await self.db.execute(
             select(Role)
             .join(project_members, project_members.c.role_id == Role.id)
@@ -188,15 +187,26 @@ class ProjectRepository(BaseRepository[Project]):
             )
         ).one_or_none()
 
-    async def get_role(self, role_id: int) -> Optional[Role]:
+    async def get_role(self, role_id: int) -> Role | None:
         return (
             await self.db.execute(select(Role).where(Role.id == role_id))
         ).scalar_one_or_none()
 
-    async def get_role_by_name(self, name: str) -> Optional[Role]:
+    async def get_role_by_name(self, name: str) -> Role | None:
         return (
             await self.db.execute(select(Role).where(Role.name == name))
         ).scalar_one_or_none()
+
+    async def set_member_role(self, project_id: int, user_id: int, role_id: int) -> None:
+        """Doi vai tro ma giu nguyen dong thanh vien - va giu nguyen `joined_at`."""
+        await self.db.execute(
+            update(project_members)
+            .where(
+                project_members.c.project_id == project_id,
+                project_members.c.user_id == user_id,
+            )
+            .values(role_id=role_id)
+        )
 
     async def add_member(self, project_id: int, user_id: int, role_id: int) -> None:
         await self.db.execute(

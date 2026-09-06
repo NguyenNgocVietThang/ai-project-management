@@ -6,13 +6,12 @@ Cung cấp:
   • get_portfolio_health()   – Portfolio health card (3.1)
   • get_project_stats()      – Project Dashboard charts (3.2)
 """
-from datetime import date, datetime, timedelta, timezone
-from typing import Annotated, List, Optional, Tuple
+from datetime import date, timedelta
+from typing import Annotated
 
 from fastapi import Depends
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
 from app.core.exceptions import ForbiddenException, NotFoundException
 from app.db.session import get_db
@@ -21,8 +20,7 @@ from app.models.associations import project_members
 from app.models.audit_log import AuditLog
 from app.models.portfolio import Portfolio
 from app.models.project import Project, ProjectStatus
-from app.models.role import Role
-from app.models.task import Task, TaskPriority, TaskStatus
+from app.models.task import Task, TaskStatus
 from app.models.user import User
 from app.models.worklog import Worklog
 from app.schemas.dashboard import (
@@ -39,6 +37,7 @@ from app.schemas.dashboard import (
     UserDashboardStats,
     UserDashboardSummary,
 )
+from app.services.phase2_common import get_project_context
 from app.services.phase2_common import is_admin as _is_admin
 
 # ── gợi ý màu cho biểu đồ donut trạng thái task ──────────────────────────────────
@@ -50,7 +49,7 @@ STATUS_COLORS: dict[str, str] = {
     TaskStatus.BLOCKED.value: "#ef4444",
 }
 
-def _iso_week_bounds(today: date) -> Tuple[date, date]:
+def _iso_week_bounds(today: date) -> tuple[date, date]:
     """Trả về (thứ hai, chủ nhật) của tuần ISO chứa *today*."""
     monday = today - timedelta(days=today.weekday())
     return monday, monday + timedelta(days=6)
@@ -142,7 +141,7 @@ class DashboardService:
                 Project.deleted_at.is_(None),
             )
         )
-        projects: List[Project] = list(proj_result.scalars().all())
+        projects: list[Project] = list(proj_result.scalars().all())
         today = date.today()
         project_ids = [p.id for p in projects]
 
@@ -192,21 +191,11 @@ class DashboardService:
     async def get_project_stats(
         self, project_id: int, user: User
     ) -> ProjectDashboardStats:
-        admin = _is_admin(user)
-
-        # Nạp dự án kèm toàn bộ quan hệ
-        project: Optional[Project] = await self.db.scalar(
-            select(Project)
-            .where(Project.id == project_id, Project.deleted_at.is_(None))
-            .options(selectinload(Project.members))
-        )
-        if project is None:
-            raise NotFoundException("Project not found")
-
-        # Kiểm tra quyền truy cập
-        is_member = any(m.id == user.id for m in project.members)
-        if not admin and project.pm_id != user.id and not is_member:
-            raise ForbiddenException("Access denied")
+        # Dùng chung một nguồn phân quyền cấp dự án với phần còn lại của Phase 2.
+        # Trước đây hàm này tự viết lại kiểm tra thành viên, và chính việc
+        # dashboard_service đứng ngoài phase2_common là lý do lỗi rò rỉ audit log
+        # lọt lưới. get_project_context cũng xử lý dự án đã xoá mềm.
+        project = (await get_project_context(self.db, project_id, user)).project
 
         today = date.today()
 
@@ -288,7 +277,7 @@ class DashboardService:
     #  Hàm hỗ trợ nội bộ
     # ─────────────────────────────────────────────────────────────────────────
 
-    async def _visible_project_ids(self, user_id: int, admin: bool) -> List[int]:
+    async def _visible_project_ids(self, user_id: int, admin: bool) -> list[int]:
         """Trả về danh sách ID dự án mà người dùng này nhìn thấy được."""
         if admin:
             result = await self.db.execute(
@@ -311,7 +300,7 @@ class DashboardService:
             )
         return list(result.scalars().all())
 
-    async def _project_task_counts(self, project_ids: List[int], today: date):
+    async def _project_task_counts(self, project_ids: list[int], today: date):
         if not project_ids:
             return []
         result = await self.db.execute(
@@ -334,8 +323,8 @@ class DashboardService:
         return result.all()
 
     async def _active_projects(
-        self, project_ids: List[int], task_map: dict, today: date
-    ) -> List[ActiveProjectSummary]:
+        self, project_ids: list[int], task_map: dict, today: date
+    ) -> list[ActiveProjectSummary]:
         if not project_ids:
             return []
         result = await self.db.execute(
@@ -373,8 +362,8 @@ class DashboardService:
         return summaries
 
     async def _my_tasks(
-        self, user_id: int, project_ids: List[int], today: date
-    ) -> List[MyTaskItem]:
+        self, user_id: int, project_ids: list[int], today: date
+    ) -> list[MyTaskItem]:
         if not project_ids:
             return []
         result = await self.db.execute(
@@ -418,14 +407,18 @@ class DashboardService:
         return items
 
     async def _recent_activity(
-        self, project_ids: List[int], limit: int = 15
-    ) -> List[RecentActivityItem]:
+        self, project_ids: list[int], limit: int = 15
+    ) -> list[RecentActivityItem]:
         if not project_ids:
             return []
         result = await self.db.execute(
             select(AuditLog, User.full_name.label("actor_name"))
             .outerjoin(User, User.id == AuditLog.user_id)
             .where(
+                # Không có mệnh đề này thì feed trả về các thay đổi mới nhất của TOÀN
+                # HỆ THỐNG cho bất kỳ ai đã đăng nhập — kèm mô tả và tên người thực hiện
+                # của những dự án mà người xem không thuộc về.
+                AuditLog.project_id.in_(project_ids),
                 AuditLog.entity_type.in_(["Task", "Project", "Phase", "Sprint", "Milestone"]),
             )
             .order_by(AuditLog.created_at.desc())
@@ -447,7 +440,7 @@ class DashboardService:
 
     async def _team_utilization(
         self, project_id: int, pm_id: int
-    ) -> List[TeamMemberUtilization]:
+    ) -> list[TeamMemberUtilization]:
         # Lấy id thành viên từ project_members + PM
         members_result = await self.db.execute(
             select(
@@ -460,75 +453,124 @@ class DashboardService:
         )
         members = list(members_result.all())
 
-        utilization = []
-        for m in members:
-            # Số task được giao cho thành viên này
-            task_count = await self.db.scalar(
-                select(func.count(Task.id)).where(
-                    Task.project_id == project_id,
-                    or_(
-                        Task.assignee_id == m.id,
-                        select(1)
-                        .where(
-                            Assignment.task_id == Task.id,
-                            Assignment.user_id == m.id,
-                        )
-                        .exists(),
-                    ),
-                )
-            ) or 0
-            # Số giờ đã ghi nhận trên dự án này
-            logged = await self.db.scalar(
-                select(func.coalesce(func.sum(Worklog.hours), 0.0))
-                .join(Task, Task.id == Worklog.task_id)
-                .where(
-                    Task.project_id == project_id,
-                    Worklog.user_id == m.id,
-                )
-            ) or 0.0
-            # Số giờ ước lượng (từ các assignment trên dự án này)
-            estimated = await self.db.scalar(
-                select(func.coalesce(func.sum(Assignment.allocated_hours), 0.0))
-                .join(Task, Task.id == Assignment.task_id)
-                .where(
-                    Task.project_id == project_id,
-                    Assignment.user_id == m.id,
-                )
-            ) or 0.0
+        if not members:
+            return []
+        member_ids = [m.id for m in members]
 
-            utilization.append(
-                TeamMemberUtilization(
-                    user_id=m.id,
-                    full_name=m.full_name,
-                    avatar_url=m.avatar_url,
-                    estimated_hours=round(float(estimated), 1),
-                    logged_hours=round(float(logged), 1),
-                    task_count=int(task_count),
+        # Ba truy vấn gộp thay vì ba truy vấn CHO MỖI thành viên. Dự án 30 người
+        # trước đây tốn 91 round-trip mỗi lần mở dashboard, tất cả tuần tự.
+        task_counts = dict(
+            (
+                await self.db.execute(
+                    select(Assignment.user_id, func.count(func.distinct(Task.id)))
+                    .join(Task, Task.id == Assignment.task_id)
+                    .where(
+                        Task.project_id == project_id,
+                        Assignment.user_id.in_(member_ids),
+                    )
+                    .group_by(Assignment.user_id)
                 )
+            ).all()
+        )
+        # Task chỉ có assignee_id mà chưa có dòng Assignment vẫn phải được tính.
+        for user_id, count in (
+            await self.db.execute(
+                select(Task.assignee_id, func.count())
+                .where(
+                    Task.project_id == project_id,
+                    Task.assignee_id.in_(member_ids),
+                    ~select(1)
+                    .where(
+                        Assignment.task_id == Task.id,
+                        Assignment.user_id == Task.assignee_id,
+                    )
+                    .exists(),
+                )
+                .group_by(Task.assignee_id)
             )
-        return utilization
+        ).all():
+            task_counts[user_id] = task_counts.get(user_id, 0) + count
+
+        logged_hours = dict(
+            (
+                await self.db.execute(
+                    select(Worklog.user_id, func.coalesce(func.sum(Worklog.hours), 0.0))
+                    .join(Task, Task.id == Worklog.task_id)
+                    .where(
+                        Task.project_id == project_id,
+                        Worklog.user_id.in_(member_ids),
+                    )
+                    .group_by(Worklog.user_id)
+                )
+            ).all()
+        )
+        estimated_hours = dict(
+            (
+                await self.db.execute(
+                    select(
+                        Assignment.user_id,
+                        func.coalesce(func.sum(Assignment.allocated_hours), 0.0),
+                    )
+                    .join(Task, Task.id == Assignment.task_id)
+                    .where(
+                        Task.project_id == project_id,
+                        Assignment.user_id.in_(member_ids),
+                    )
+                    .group_by(Assignment.user_id)
+                )
+            ).all()
+        )
+
+        return [
+            TeamMemberUtilization(
+                user_id=m.id,
+                full_name=m.full_name,
+                avatar_url=m.avatar_url,
+                estimated_hours=round(float(estimated_hours.get(m.id, 0.0)), 1),
+                logged_hours=round(float(logged_hours.get(m.id, 0.0)), 1),
+                task_count=int(task_counts.get(m.id, 0)),
+            )
+            for m in members
+        ]
 
     async def _burndown(
         self, project_id: int, total_tasks: int, today: date
-    ) -> List[BurndownPoint]:
+    ) -> list[BurndownPoint]:
         """Burndown 14 ngày đơn giản: còn lại = tổng - số task đã hoàn thành cộng dồn."""
         days = 14
         start = today - timedelta(days=days - 1)
+
+        # Một truy vấn gộp theo ngày hoàn thành, rồi cộng dồn trong Python. Trước
+        # đây là 14 lần COUNT tuần tự, mỗi lần một round-trip.
+        completions = dict(
+            (
+                await self.db.execute(
+                    select(Task.actual_end, func.count())
+                    .where(
+                        Task.project_id == project_id,
+                        Task.status == TaskStatus.DONE,
+                        Task.actual_end.is_not(None),
+                        Task.actual_end <= today,
+                    )
+                    .group_by(Task.actual_end)
+                )
+            ).all()
+        )
+        # Task hoàn thành TRƯỚC cửa sổ vẫn nằm trong tổng cộng dồn.
+        done_before_window = sum(
+            count for day, count in completions.items() if day < start
+        )
+
         points = []
+        cumulative = float(done_before_window)
         for i in range(days):
             day = start + timedelta(days=i)
-            done_by_day = await self.db.scalar(
-                select(func.count()).where(
-                    Task.project_id == project_id,
-                    Task.status == TaskStatus.DONE,
-                    Task.actual_end <= day,
-                )
-            ) or 0
+            cumulative += float(completions.get(day, 0))
             ideal = max(0.0, total_tasks - total_tasks * (i + 1) / days)
             points.append(
                 BurndownPoint(
                     date=day.isoformat(),
-                    remaining=max(0.0, total_tasks - float(done_by_day)),
+                    remaining=max(0.0, total_tasks - cumulative),
                     ideal=round(ideal, 1),
                 )
             )

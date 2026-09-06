@@ -1,6 +1,6 @@
 import hashlib
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 from urllib.parse import parse_qs, urlparse
@@ -11,12 +11,9 @@ from pydantic import ValidationError
 
 import app.db.base  # noqa: F401
 from app.api.v1.endpoints.auth import FORGOT_PASSWORD_MESSAGE, forgot_password
-from app.core.rate_limit import limiter
 from app.core.security import hash_password, verify_password
 from app.schemas.auth import ForgotPasswordRequest, RegisterRequest, ResetPasswordRequest
 from app.services.auth_service import AuthService
-
-limiter.enabled = False
 
 
 def build_service(user=None) -> tuple[AuthService, AsyncMock]:
@@ -80,7 +77,7 @@ async def test_reset_request_stores_only_hash_and_expires_in_one_hour():
         password_reset_expires_at=None,
     )
     service, db = build_service(user)
-    started_at = datetime.now(timezone.utc)
+    started_at = datetime.now(UTC)
 
     with patch("app.services.auth_service.send_password_reset_email_task.delay") as enqueue:
         await service.request_password_reset(user.email)
@@ -151,9 +148,10 @@ async def test_valid_token_changes_password_and_cannot_be_replayed():
     token = "valid-token"
     user = SimpleNamespace(
         id=11,
+        email="reset@example.com",
         hashed_password=hash_password("OldPassword1"),
         password_reset_token_hash=hashlib.sha256(token.encode()).hexdigest(),
-        password_reset_expires_at=datetime.now(timezone.utc) + timedelta(minutes=30),
+        password_reset_expires_at=datetime.now(UTC) + timedelta(minutes=30),
         auth_provider="local",
         google_id=None,
         facebook_id=None,
@@ -181,9 +179,10 @@ async def test_social_only_user_can_add_password_without_losing_provider_link():
     token = "social-token"
     user = SimpleNamespace(
         id=12,
+        email="social@example.com",
         hashed_password=None,
         password_reset_token_hash=hashlib.sha256(token.encode()).hexdigest(),
-        password_reset_expires_at=datetime.now(timezone.utc) + timedelta(minutes=30),
+        password_reset_expires_at=datetime.now(UTC) + timedelta(minutes=30),
         auth_provider="google",
         google_id="google-123",
         facebook_id=None,
@@ -202,7 +201,7 @@ async def test_expired_token_uses_same_error_as_unknown_token():
     token = "expired-token"
     user = SimpleNamespace(
         password_reset_token_hash=hashlib.sha256(token.encode()).hexdigest(),
-        password_reset_expires_at=datetime.now(timezone.utc) - timedelta(seconds=1),
+        password_reset_expires_at=datetime.now(UTC) - timedelta(seconds=1),
     )
     service, _ = build_service(user)
 

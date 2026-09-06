@@ -1,9 +1,9 @@
 'use client'
 
-import { useParams } from 'next/navigation'
+import { useNumericParam } from '@/hooks/useNumericParam'
 import { ChatPanel } from '@/features/chat/components/ChatPanel'
 
 export default function ProjectChatPage() {
-  const id = Number(useParams<{ id: string }>().id)
+  const id = useNumericParam()
   return <ChatPanel projectId={id} />
 }

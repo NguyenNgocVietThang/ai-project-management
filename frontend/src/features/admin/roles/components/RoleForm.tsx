@@ -78,7 +78,7 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading, error }: RoleFor
           hasError={Boolean(errors.name)}
           {...register('name')}
         />
-        {errors.name && <p className="mt-1 text-sm text-destructive">{errors.name.message}</p>}
+        {errors.name && <p id="role-name-error" role="alert" className="mt-1 text-sm text-destructive">{errors.name.message}</p>}
       </div>
       <div>
         <Label htmlFor="role-description">Description</Label>

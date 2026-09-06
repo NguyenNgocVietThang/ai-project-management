@@ -1,4 +1,4 @@
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock, patch
 
@@ -14,7 +14,7 @@ from app.schemas.project import ProjectCreate, ProjectMemberCreate, ProjectUpdat
 from app.services.portfolio_service import PortfolioService
 from app.services.project_service import ProjectService
 
-NOW = datetime(2026, 8, 13, tzinfo=timezone.utc)
+NOW = datetime(2026, 8, 13, tzinfo=UTC)
 
 
 def user(user_id=1, *, roles=("PM",), is_superuser=False, active=True):

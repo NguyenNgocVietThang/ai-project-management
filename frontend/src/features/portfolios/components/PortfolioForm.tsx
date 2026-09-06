@@ -58,7 +58,7 @@ export function PortfolioForm({ portfolio, onSubmit, onCancel, isLoading, error 
       <div>
         <Label htmlFor="portfolio-name">Name</Label>
         <Input id="portfolio-name" hasError={Boolean(errors.name)} {...register('name')} />
-        {errors.name && <p className="mt-1 text-sm text-destructive">{errors.name.message}</p>}
+        {errors.name && <p id="portfolio-name-error" role="alert" className="mt-1 text-sm text-destructive">{errors.name.message}</p>}
       </div>
       <div>
         <Label htmlFor="portfolio-description">Description</Label>
@@ -68,7 +68,7 @@ export function PortfolioForm({ portfolio, onSubmit, onCancel, isLoading, error 
           className="w-full rounded-md border border-input bg-background px-3 py-2 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           {...register('description')}
         />
-        {errors.description && <p className="mt-1 text-sm text-destructive">{errors.description.message}</p>}
+        {errors.description && <p id="portfolio-description-error" role="alert" className="mt-1 text-sm text-destructive">{errors.description.message}</p>}
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
@@ -78,14 +78,14 @@ export function PortfolioForm({ portfolio, onSubmit, onCancel, isLoading, error 
         <div>
           <Label htmlFor="portfolio-end">End date</Label>
           <Input id="portfolio-end" type="date" hasError={Boolean(errors.end_date)} {...register('end_date')} />
-          {errors.end_date && <p className="mt-1 text-sm text-destructive">{errors.end_date.message}</p>}
+          {errors.end_date && <p id="portfolio-start-error" role="alert" className="mt-1 text-sm text-destructive">{errors.end_date.message}</p>}
         </div>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <Label htmlFor="portfolio-budget">Budget</Label>
           <Input id="portfolio-budget" inputMode="decimal" hasError={Boolean(errors.budget)} {...register('budget')} />
-          {errors.budget && <p className="mt-1 text-sm text-destructive">{errors.budget.message}</p>}
+          {errors.budget && <p id="portfolio-budget-error" role="alert" className="mt-1 text-sm text-destructive">{errors.budget.message}</p>}
         </div>
         <div>
           <Label htmlFor="portfolio-currency">Currency</Label>

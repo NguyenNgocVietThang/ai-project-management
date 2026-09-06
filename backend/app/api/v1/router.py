@@ -1,10 +1,12 @@
 from fastapi import APIRouter
 
 from app.api.v1.endpoints import (
+    ai,
     assignments,
     audit_timeline,
     auth,
     chat,
+    cpm,
     dashboards,
     dependencies,
     epics,
@@ -59,12 +61,15 @@ api_router.include_router(chat.router, tags=["Chat"])
 #     tags=["Change Requests"],
 # )
 # api_router.include_router(gantt.router, prefix="/gantt", tags=["Gantt"])
-# api_router.include_router(cpm.router, prefix="/cpm", tags=["CPM"])
+# CPM la ngoai le duy nhat trong danh sach bi comment o tren: engine da hoan chinh
+# va chay noi bo tu Phase 2, chi thieu duong doc ket qua. Endpoint nay chi doc va
+# co get_project_context, khong phai stub CRUD khong auth nhu cac file con lai.
+api_router.include_router(cpm.router, tags=["CPM"])
 api_router.include_router(resource_leveling.router, tags=["Resource Leveling"])
 api_router.include_router(dashboards.router, prefix="/dashboards", tags=["Dashboards"])
 # api_router.include_router(reports.router, prefix="/reports", tags=["Reports"])
 api_router.include_router(notifications.router, prefix="/notifications", tags=["Notifications"])
 api_router.include_router(audit_timeline.router, prefix="/audit", tags=["Audit"])
 # api_router.include_router(project_versions.router, prefix="/versions", tags=["Project Versions"])
-# api_router.include_router(ai.router, prefix="/ai", tags=["AI"])
+api_router.include_router(ai.router, prefix="/ai", tags=["AI"])
 # api_router.include_router(system.router, prefix="/system", tags=["System"])

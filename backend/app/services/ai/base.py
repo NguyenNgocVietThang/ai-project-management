@@ -1,5 +1,5 @@
 ﻿from abc import ABC, abstractmethod
-from typing import Any, Dict
+from typing import Any
 
 
 class BaseAIProvider(ABC):
@@ -10,5 +10,5 @@ class BaseAIProvider(ABC):
         pass
 
     @abstractmethod
-    async def generate_json(self, prompt: str, system_prompt: str = "") -> Dict[str, Any]:
+    async def generate_json(self, prompt: str, system_prompt: str = "") -> dict[str, Any]:
         pass

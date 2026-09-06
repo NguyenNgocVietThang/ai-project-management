@@ -1,8 +1,10 @@
 ﻿import enum
 from datetime import datetime
 from typing import Optional
-from sqlalchemy import DateTime, Enum, ForeignKey, Index, Integer, JSON, String, Text
+
+from sqlalchemy import JSON, DateTime, Enum, ForeignKey, Index, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.models.base import Base
 
 
@@ -28,14 +30,14 @@ class AIRequest(Base):
         Index("ix_ai_requests_project_type", "project_id", "request_type", "status"),
     )
 
-    project_id: Mapped[Optional[int]] = mapped_column(ForeignKey("projects.id", ondelete="SET NULL"), nullable=True)
+    project_id: Mapped[int | None] = mapped_column(ForeignKey("projects.id", ondelete="SET NULL"), nullable=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     request_type: Mapped[AIRequestType] = mapped_column(Enum(AIRequestType), nullable=False)
     status: Mapped[AIRequestStatus] = mapped_column(Enum(AIRequestStatus), default=AIRequestStatus.PENDING)
-    input_data_json: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
-    celery_task_id: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)  # ID của Celery task
-    error_message: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    input_data_json: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    celery_task_id: Mapped[str | None] = mapped_column(String(255), nullable=True)  # ID của Celery task
+    error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     project: Mapped[Optional["Project"]] = relationship("Project")
     user: Mapped["User"] = relationship("User")

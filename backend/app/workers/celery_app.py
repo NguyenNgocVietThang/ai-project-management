@@ -12,6 +12,7 @@ celery_app = Celery(
         "app.workers.report_tasks",
         "app.workers.email_tasks",
         "app.workers.notification_tasks",
+        "app.workers.scheduling_tasks",
     ],
 )
 
@@ -19,7 +20,9 @@ celery_app.conf.update(
     task_serializer="json",
     accept_content=["json"],
     result_serializer="json",
-    timezone="Asia/Ho_Chi_Minh",
+    # Lay tu cung mot nguon voi phan con lai cua ung dung. Hai chuoi mui gio
+    # viet tay o hai file la mot cach rat de tao ra lech gio.
+    timezone=settings.APP_TIMEZONE,
     enable_utc=True,
     task_track_started=True,
     task_acks_late=True,
@@ -43,6 +46,6 @@ celery_app.conf.update(
 celery_app.conf.beat_schedule = {
     "sweep-task-dates-daily": {
         "task": "notifications.sweep_task_dates",
-        "schedule": crontab(hour=8, minute=0),  # 08:00 giờ Asia/Ho_Chi_Minh
+        "schedule": crontab(hour=8, minute=0),  # 08:00 theo APP_TIMEZONE
     },
 }

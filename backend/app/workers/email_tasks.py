@@ -11,18 +11,11 @@ from app.workers.celery_app import celery_app
 logger = logging.getLogger(__name__)
 
 
-@celery_app.task(name="emails.send_notification")
-def send_notification_email_task(to_email: str, subject: str, body: str):
-    """Gửi email thông báo."""
-    # TODO: Cài đặt phần gửi email bằng smtplib hoặc FastMail
-    return {"status": "sent"}
-
-
-@celery_app.task(name="emails.send_welcome")
-def send_welcome_email_task(to_email: str, username: str):
-    """Gửi email chào mừng cho người dùng mới."""
-    # TODO: Cài đặt email chào mừng
-    return {"status": "sent"}
+# Hai task truoc day o day - emails.send_notification va emails.send_welcome - la
+# stub tra ve {"status": "sent"} ma khong gui gi ca. Khong noi nao goi chung, nen
+# chung chi la bay: bat ky ai noi day vao mot luong deu nhan mot xac nhan gia.
+# Chung da duoc go bo. Thong bao trong ung dung di qua NotificationService; email
+# giao dich thi dung cac task ben duoi, deu la that va deu co retry.
 
 
 @celery_app.task(

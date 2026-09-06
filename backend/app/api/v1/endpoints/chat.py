@@ -1,8 +1,9 @@
-from typing import Annotated, Optional
+from typing import Annotated
 
-from fastapi import APIRouter, Body, Query, status
+from fastapi import APIRouter, Body, Query, Request, status
 
 from app.core.dependencies import CurrentUser, CurrentVerifiedUser
+from app.core.rate_limit import CHAT_POST_LIMIT, limiter
 from app.schemas.chat import (
     ChatHistoryResponse,
     ChatMessageCreate,
@@ -19,7 +20,7 @@ async def get_chat_history(
     project_id: int,
     service: ChatServiceDep,
     current_user: CurrentUser,
-    before_id: Optional[int] = Query(default=None),
+    before_id: int | None = Query(default=None),
     limit: Annotated[int, Query(ge=1, le=100)] = 50,
 ):
     return await service.history(project_id, current_user, before_id=before_id, limit=limit)
@@ -30,7 +31,9 @@ async def get_chat_history(
     response_model=ChatMessageResponse,
     status_code=status.HTTP_201_CREATED,
 )
+@limiter.limit(CHAT_POST_LIMIT)
 async def post_chat_message(
+    request: Request,
     project_id: int,
     body: ChatMessageCreate,
     service: ChatServiceDep,
@@ -54,7 +57,7 @@ async def get_chat_unread_count(
 async def mark_chat_read(
     project_id: int,
     service: ChatServiceDep,
-    current_user: CurrentUser,
-    message_id: Optional[int] = Body(default=None, embed=True),
+    current_user: CurrentVerifiedUser,
+    message_id: int | None = Body(default=None, embed=True),
 ):
     return await service.mark_read(project_id, current_user, message_id)

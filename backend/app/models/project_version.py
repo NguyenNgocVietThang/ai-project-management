@@ -1,6 +1,8 @@
 ﻿from typing import Optional
-from sqlalchemy import Boolean, ForeignKey, Index, Integer, JSON, String, Text, UniqueConstraint
+
+from sqlalchemy import JSON, Boolean, ForeignKey, Index, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.models.base import Base
 
 
@@ -14,10 +16,10 @@ class ProjectVersion(Base):
     project_id: Mapped[int] = mapped_column(ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
     version_number: Mapped[int] = mapped_column(Integer, nullable=False)
     label: Mapped[str] = mapped_column(String(100), nullable=False)     # VD: "v1.0 - Baseline"
-    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
     is_baseline: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)  # PM tạo baseline thủ công
     snapshot: Mapped[dict] = mapped_column(JSON, nullable=False)        # Toàn bộ project data dạng JSON
-    change_request_id: Mapped[Optional[int]] = mapped_column(
+    change_request_id: Mapped[int | None] = mapped_column(
         ForeignKey("change_requests.id", ondelete="SET NULL"), nullable=True
     )
     created_by_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)

@@ -1,24 +1,36 @@
 import asyncio
+import logging
+import uuid
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.responses import JSONResponse
 from slowapi.errors import RateLimitExceeded
 
 import app.db.base  # noqa: F401 - đăng ký tất cả models và các bảng liên kết
 from app.api.v1.router import api_router
 from app.api.ws.router import ws_router
 from app.core.config import settings
+from app.core.logging_config import (
+    REQUEST_ID_HEADER,
+    configure_logging,
+    set_request_id,
+)
 from app.core.rate_limit import limiter, rate_limit_exceeded_handler
+from app.core.redis_client import close_redis
 from app.core.request_context import resolve_client_ip, set_client_ip
 from app.core.ws_manager import redis_listener
+
+configure_logging(json_output=settings.APP_ENV != "development")
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Khởi động
-    print(f"Starting {settings.APP_NAME} v{settings.APP_VERSION}")
+    logger.info("Starting %s v%s", settings.APP_NAME, settings.APP_VERSION)
     listener_task = asyncio.create_task(redis_listener())
     yield
     # Tắt ứng dụng
@@ -27,7 +39,10 @@ async def lifespan(app: FastAPI):
         await listener_task
     except asyncio.CancelledError:
         pass
-    print("Shutting down...")
+    # close_redis() vốn được định nghĩa nhưng chưa từng được gọi ở đâu, nên
+    # connection pool bị bỏ lại khi tắt ứng dụng.
+    await close_redis()
+    logger.info("Shutdown complete")
 
 
 # Trang tài liệu tương tác liệt kê mọi route, schema và giá trị enum — hữu ích khi
@@ -43,6 +58,21 @@ app = FastAPI(
     openapi_url="/openapi.json" if _DOCS_ENABLED else None,
     lifespan=lifespan,
 )
+
+@app.middleware("http")
+async def attach_request_id(request: Request, call_next):
+    """Gắn một id cho mỗi request và trả nó lại trong response.
+
+    Nếu không có nó, không thể nối một dòng log với request sinh ra nó, và một
+    báo cáo lỗi từ người dùng ("nó hỏng lúc 14:32") không tra ngược ra được gì.
+    Tôn trọng id do reverse proxy đặt sẵn để một chuỗi lời gọi giữ chung một id.
+    """
+    request_id = request.headers.get(REQUEST_ID_HEADER) or uuid.uuid4().hex
+    set_request_id(request_id)
+    response = await call_next(request)
+    response.headers[REQUEST_ID_HEADER] = request_id
+    return response
+
 
 @app.middleware("http")
 async def capture_client_ip(request: Request, call_next):
@@ -102,4 +132,38 @@ app.include_router(ws_router, prefix="/ws")
 
 @app.get("/health", tags=["Health"])
 async def health_check():
-    return {"status": "ok", "version": settings.APP_VERSION}
+    """Tình trạng sẵn sàng, bao gồm cả các phụ thuộc.
+
+    Kiểm tra thật sự chạm tới Postgres và Redis. Một endpoint chỉ trả "ok" mà
+    không kiểm tra gì sẽ báo khoẻ trong khi DB đã sập — nghĩa là load balancer
+    vẫn tiếp tục đẩy traffic vào một instance không phục vụ được request nào.
+    """
+    from sqlalchemy import text
+
+    from app.core.redis_client import get_redis
+    from app.db.session import AsyncSessionLocal
+
+    checks: dict[str, str] = {}
+
+    try:
+        async with AsyncSessionLocal() as db:
+            await db.execute(text("SELECT 1"))
+        checks["database"] = "ok"
+    except Exception:
+        logger.exception("health check: database unreachable")
+        checks["database"] = "unavailable"
+
+    try:
+        await get_redis().ping()
+        checks["redis"] = "ok"
+    except Exception:
+        logger.warning("health check: redis unreachable", exc_info=True)
+        # Redis là soft-fail ở mọi nơi khác trong ứng dụng (thu hồi token, khoá
+        # đăng nhập, vé WS, pub/sub), nên nó suy giảm chứ không làm hỏng.
+        checks["redis"] = "degraded"
+
+    healthy = checks["database"] == "ok"
+    return JSONResponse(
+        {"status": "ok" if healthy else "unhealthy", "version": settings.APP_VERSION, "checks": checks},
+        status_code=200 if healthy else 503,
+    )

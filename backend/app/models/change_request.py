@@ -1,8 +1,10 @@
 ﻿import enum
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
+
 from sqlalchemy import DateTime, Enum, ForeignKey, Index, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.models.base import Base
 
 
@@ -24,12 +26,12 @@ class ChangeRequest(Base):
 
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
-    reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    impact_description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    impact_description: Mapped[str | None] = mapped_column(Text, nullable=True)
     status: Mapped[CRStatus] = mapped_column(Enum(CRStatus), default=CRStatus.DRAFT, nullable=False)
 
-    applied_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
-    applied_by_id: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id"), nullable=True)
+    applied_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    applied_by_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
 
     project_id: Mapped[int] = mapped_column(ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
     requested_by_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
@@ -37,7 +39,7 @@ class ChangeRequest(Base):
     project: Mapped["Project"] = relationship("Project", back_populates="change_requests")
     requested_by: Mapped["User"] = relationship("User", foreign_keys=[requested_by_id])
     applied_by: Mapped[Optional["User"]] = relationship("User", foreign_keys=[applied_by_id])
-    approvals: Mapped[List["Approval"]] = relationship("Approval", back_populates="change_request", cascade="all, delete-orphan")
+    approvals: Mapped[list["Approval"]] = relationship("Approval", back_populates="change_request", cascade="all, delete-orphan")
     impact_report: Mapped[Optional["ImpactReport"]] = relationship("ImpactReport", back_populates="change_request", uselist=False)
 
     def __repr__(self) -> str:

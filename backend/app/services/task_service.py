@@ -1,16 +1,21 @@
 from datetime import date
-from typing import Annotated, Optional
+from typing import Annotated
 
 from fastapi import Depends
-from sqlalchemy import func, or_, select
+from sqlalchemy import func, inspect, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+from sqlalchemy.orm.base import NO_VALUE
 
-from app.core.exceptions import BadRequestException, ConflictException, ForbiddenException, NotFoundException
+from app.core.exceptions import (
+    BadRequestException,
+    ConflictException,
+    ForbiddenException,
+    NotFoundException,
+)
 from app.db.session import get_db
 from app.models.assignment import Assignment
 from app.models.associations import project_members
-from app.models.comment import Comment
 from app.models.dependency import Dependency, DependencyType
 from app.models.epic import Epic
 from app.models.notification import NotificationType
@@ -45,7 +50,6 @@ from app.services.phase2_common import (
 from app.services.scheduling_service import recalculate_project
 from app.utils.cpm import CPMEdge, build_graph, topological_sort
 
-
 STATUS_TRANSITIONS = {
     TaskStatus.TODO: {TaskStatus.IN_PROGRESS, TaskStatus.BLOCKED},
     TaskStatus.IN_PROGRESS: {TaskStatus.TODO, TaskStatus.IN_REVIEW, TaskStatus.BLOCKED},
@@ -59,13 +63,61 @@ STATUS_TRANSITIONS = {
 SIGNIFICANT_TASK_FIELDS = {"status", "start_date", "due_date", "priority", "assignee_id"}
 
 
+# Vai trò được đọc dữ liệu công việc của một dự án. Customer bị loại: họ nhìn thấy
+# dự án, nhưng không thấy phần phân rã công việc bên trong nó.
+TASK_READER_ROLES = {"PM", "BA", "PO", "Member"}
+
+
+def _require_task_reader(context) -> None:
+    if not context.is_admin and context.role not in TASK_READER_ROLES:
+        raise ForbiddenException("Task access is not allowed for this project role")
+
+
+def _apply_status_side_effects(task, target) -> None:
+    """Ghi lai thoi diem cong viec that su bat dau va ket thuc.
+
+    `actual_start` va `actual_end` truoc day KHONG BAO GIO duoc ghi o bat cu dau -
+    chi duoc doc. He qua: bieu do burndown (dashboard_service._burndown loc theo
+    actual_end) luon la mot duong thang nam ngang bang tong so task, tren MOI du an.
+    Tinh nang trong nhu da xong, nhung so lieu la gia.
+
+    `actual_start` chi duoc dat mot lan: no la ngay bat dau that, khong phai lan
+    cuoi ai do chuyen task ve IN_PROGRESS. `actual_end` bi xoa khi task roi khoi
+    DONE, vi luc do no khong con ket thuc nua.
+    """
+    from datetime import date as _date
+
+    today = _date.today()
+    if target == TaskStatus.DONE:
+        task.actual_end = task.actual_end or today
+        if task.actual_start is None:
+            # Task hoan thanh ma chua tung o IN_PROGRESS van co ngay bat dau.
+            task.actual_start = today
+        task.progress = 100.0
+    else:
+        task.actual_end = None
+        if target == TaskStatus.IN_PROGRESS and task.actual_start is None:
+            task.actual_start = today
+        task.progress = min(task.progress, 99.0)
+
+
 class TaskService:
     def __init__(self, db: AsyncSession):
         self.db = db
 
     async def _assigned(self, task: Task, user_id: int) -> bool:
+        """Người dùng có được giao task này không.
+
+        Ưu tiên collection `assignments` đã nạp sẵn khi có. `list()` đã
+        selectinload nó, nhưng hàm này vẫn truy vấn DB cho TỪNG task — một trang
+        200 task tốn 200 truy vấn thừa mà dữ liệu thì đã nằm sẵn trong bộ nhớ.
+        Chỉ chạm DB khi collection thực sự chưa được nạp.
+        """
         if task.assignee_id == user_id:
             return True
+        loaded = inspect(task).attrs.assignments.loaded_value
+        if loaded is not NO_VALUE:
+            return any(assignment.user_id == user_id for assignment in loaded)
         return bool(
             await self.db.scalar(
                 select(Assignment.id).where(
@@ -114,20 +166,34 @@ class TaskService:
                 raise BadRequestException("Epic must belong to the task project")
         primary_id = values.pop("primary_assignee_id", None) if "primary_assignee_id" in values else ...
         if primary_id is not ...:
-            if primary_id is not None:
-                member = await self.db.scalar(
-                    select(project_members.c.user_id).where(
-                        project_members.c.project_id == project_id,
-                        project_members.c.user_id == primary_id,
-                    )
-                )
-                if member is None:
-                    raise BadRequestException("Primary assignee must be a project member")
+            await self._require_project_member(
+                project_id, primary_id, label="Primary assignee"
+            )
             values["assignee_id"] = primary_id
         return values
 
+    async def _require_project_member(
+        self, project_id: int, user_id: int | None, *, label: str = "Assignee"
+    ) -> None:
+        """Người được giao việc phải thuộc dự án.
+
+        Task đã kiểm tra điều này từ trước; subtask thì không, nên trước đây gán
+        được subtask cho user id bất kỳ ngoài dự án — kể cả người không nhìn thấy
+        dự án đó.
+        """
+        if user_id is None:
+            return
+        member = await self.db.scalar(
+            select(project_members.c.user_id).where(
+                project_members.c.project_id == project_id,
+                project_members.c.user_id == user_id,
+            )
+        )
+        if member is None:
+            raise BadRequestException(f"{label} must be a project member")
+
     @staticmethod
-    def _validate_dates(values: dict, task: Optional[Task] = None) -> None:
+    def _validate_dates(values: dict, task: Task | None = None) -> None:
         start = values.get("start_date", task.start_date if task else None)
         due = values.get("due_date", task.due_date if task else None)
         if start and due and due < start:
@@ -140,20 +206,19 @@ class TaskService:
         *,
         page: int = 1,
         page_size: int = 50,
-        search: Optional[str] = None,
-        phase_id: Optional[int] = None,
-        sprint_id: Optional[int] = None,
-        epic_id: Optional[int] = None,
-        assignee_id: Optional[int] = None,
-        status: Optional[str] = None,
-        priority: Optional[str] = None,
-        labels: Optional[list[str]] = None,
-        due_date_from: Optional[date] = None,
-        due_date_to: Optional[date] = None,
+        search: str | None = None,
+        phase_id: int | None = None,
+        sprint_id: int | None = None,
+        epic_id: int | None = None,
+        assignee_id: int | None = None,
+        status: str | None = None,
+        priority: str | None = None,
+        labels: list[str] | None = None,
+        due_date_from: date | None = None,
+        due_date_to: date | None = None,
     ):
         context = await get_project_context(self.db, project_id, user)
-        if not context.is_admin and context.role not in {"PM", "BA", "PO", "Member"}:
-            raise ForbiddenException("Task access is not allowed for this project role")
+        _require_task_reader(context)
         filters = [Task.project_id == project_id]
         if search:
             pattern = f"%{search.strip()}%"
@@ -291,7 +356,19 @@ class TaskService:
         task = await self._loaded_task(task.id)
         return await self._response(task, user, context.role, context.is_admin)
 
-    async def update(self, task_id: int, data: TaskUpdate, user: User) -> TaskResponse:
+    async def update(
+        self,
+        task_id: int,
+        data: TaskUpdate,
+        user: User,
+        *,
+        defer_recalculation: bool = False,
+    ) -> TaskResponse:
+        """Cập nhật một task.
+
+        `defer_recalculation` để bên gọi sửa hàng loạt tự tính lại lịch trình một
+        lần sau khi đã áp dụng hết — xem bulk_update.
+        """
         task, context = await get_task_context(self.db, task_id, user)
         if not context.is_admin and context.role not in {"PM", "BA"}:
             raise ForbiddenException("Only PM or BA can update task details")
@@ -369,7 +446,8 @@ class TaskService:
                 entity_id=task.id,
             )
         add_audit(self.db, user.id, "UPDATE", "Task", task.id, old_values=old, new_values=values)
-        await recalculate_project(self.db, task.project_id)
+        if not defer_recalculation:
+            await recalculate_project(self.db, task.project_id)
         loaded = await self._loaded_task(task.id)
         return await self._response(loaded, user, context.role, context.is_admin)
 
@@ -383,7 +461,7 @@ class TaskService:
             raise ConflictException(f"Cannot transition task from {task.status.value} to {target.value}")
         old = task.status
         task.status = target
-        task.progress = 100.0 if target == TaskStatus.DONE else min(task.progress, 99.0)
+        _apply_status_side_effects(task, target)
         await self.db.flush()
         if target != old:
             await notify_project_team(
@@ -438,7 +516,7 @@ class TaskService:
             for task in tasks_map.values():
                 old = task.status
                 task.status = target
-                task.progress = 100.0 if target == TaskStatus.DONE else min(task.progress, 99.0)
+                _apply_status_side_effects(task, target)
                 add_audit(
                     self.db, user.id, "STATUS", "Task", task.id,
                     old_values={"status": old}, new_values={"status": target},
@@ -451,8 +529,16 @@ class TaskService:
                 results.append(await self._response(loaded, user, context.role, context.is_admin))
         else:
             update_data = TaskUpdate(**data.model_dump(exclude={"task_ids", "status"}, exclude_none=True))
+            # `self.update()` tính lại CPM toàn dự án VÀ phát thông báo cho cả nhóm
+            # ở mỗi lần gọi. Chạy nó trong vòng lặp biến một lần sửa hàng loạt 50
+            # task thành 50 lần tính lại toàn dự án và 50 × số-thành-viên thông báo.
+            # Nhánh status ngay phía trên đã làm đúng: áp dụng tất cả, rồi tính lại
+            # một lần. Nhánh này giờ theo cùng cách.
             for task_id in data.task_ids:
-                results.append(await self.update(task_id, update_data, user))
+                results.append(
+                    await self.update(task_id, update_data, user, defer_recalculation=True)
+                )
+            await recalculate_project(self.db, project_id)
 
         return results
 
@@ -468,7 +554,11 @@ class TaskService:
         await recalculate_project(self.db, project_id)
 
     async def list_subtasks(self, task_id: int, user: User):
-        await get_task_context(self.db, task_id, user)
+        # Cùng allowlist với danh sách task. Trước đây hàm này chỉ kiểm tra tư cách
+        # thành viên, nên vai trò Customer — bị chặn khỏi danh sách task — vẫn đọc
+        # được subtask, tức là vẫn thấy chính những công việc đó.
+        _, context = await get_task_context(self.db, task_id, user)
+        _require_task_reader(context)
         return [SubtaskResponse.model_validate(item) for item in (await self.db.scalars(select(Subtask).where(Subtask.task_id == task_id).order_by(Subtask.id))).all()]
 
     async def create_subtask(self, task_id: int, data: SubtaskCreate, user: User):
@@ -479,6 +569,7 @@ class TaskService:
         values = data.model_dump()
         values["status"] = SubtaskStatus(values["status"])
         values["is_completed"] = values["status"] == SubtaskStatus.DONE
+        await self._require_project_member(task.project_id, values.get("assignee_id"))
         item = Subtask(task_id=task_id, **values)
         self.db.add(item)
         await self.db.flush()
@@ -498,6 +589,8 @@ class TaskService:
         if "status" in values:
             values["status"] = SubtaskStatus(values["status"])
             values["is_completed"] = values["status"] == SubtaskStatus.DONE
+        if "assignee_id" in values:
+            await self._require_project_member(task.project_id, values["assignee_id"])
         for key, value in values.items():
             setattr(item, key, value)
         await self.db.flush()
@@ -556,7 +649,9 @@ class TaskService:
         add_audit(self.db, user.id, "CREATE", "Dependency", item.id, new_values=serialize_model(item))
         await recalculate_project(self.db, task.project_id)
         return DependencyResponse(
-            **DependencyResponse.model_validate(item).model_dump(),
+            **DependencyResponse.model_validate(item).model_dump(
+                exclude={"predecessor_name", "successor_name"}
+            ),
             predecessor_name=predecessor.name,
             successor_name=task.name,
         )
@@ -576,7 +671,9 @@ class TaskService:
         await recalculate_project(self.db, successor.project_id)
 
     async def list_dependencies(self, project_id: int, user: User):
-        await get_project_context(self.db, project_id, user)
+        # Xem list_subtasks: đồ thị phụ thuộc mang theo tên task, nên nó là một
+        # cách khác để đọc danh sách công việc.
+        _require_task_reader(await get_project_context(self.db, project_id, user))
         tasks = list((await self.db.scalars(select(Task).where(Task.project_id == project_id))).all())
         task_map = {task.id: task for task in tasks}
         if not task_map:

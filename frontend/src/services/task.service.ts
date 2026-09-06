@@ -15,6 +15,7 @@ import type {
   TaskUpdate,
   Worklog,
   WorklogCreate,
+  WorklogProjectSummary,
 } from '@/types/task.types'
 
 export const taskService = {
@@ -50,5 +51,17 @@ export const taskService = {
   async removeWorklog(id: number) { await api.delete(`/worklogs/${id}`) },
   async startTimer(taskId: number) { return (await api.post<Worklog>(`/tasks/${taskId}/worklogs/start`)).data },
   async stopTimer(id: number) { return (await api.post<Worklog>(`/worklogs/${id}/stop`)).data },
+  /** Timesheet toan du an. Endpoint nay da ton tai o backend tu dau nhung chua
+   *  he duoc frontend goi - khong co man hinh nao xem duoc gio da ghi. */
+  async projectWorklogs(projectId: number, params?: { user_id?: number; start_date?: string; end_date?: string }) {
+    return (await api.get<WorklogProjectSummary>(`/projects/${projectId}/worklogs`, { params })).data
+  },
+  async myAssignments(params?: { limit?: number; offset?: number }) {
+    return (await api.get<Assignment[]>('/users/me/assignments', { params })).data
+  },
+  /** Canh bao qua tai nhan su. Cung vay: endpoint co san, chua co giao dien. */
+  async resourceLeveling(projectId: number, params?: { start_date?: string; end_date?: string }) {
+    return (await api.get<ResourceWarning[]>(`/resource-leveling/${projectId}`, { params })).data
+  },
   async activeTimer() { return (await api.get<Worklog | null>('/users/me/worklogs/active')).data },
 }
