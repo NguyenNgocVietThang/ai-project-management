@@ -1,7 +1,8 @@
 ﻿from datetime import date, datetime
-from typing import Optional
+
 from sqlalchemy import CheckConstraint, Date, DateTime, Float, ForeignKey, Index, Text, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.models.base import Base
 
 
@@ -27,9 +28,9 @@ class Worklog(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     hours: Mapped[float] = mapped_column(Float, nullable=False)
     log_date: Mapped[date] = mapped_column(Date, nullable=False)
-    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    start_time: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)  # Timestamp thực tế
-    end_time: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    start_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)  # Timestamp thực tế
+    end_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     task: Mapped["Task"] = relationship("Task", back_populates="worklogs")
     user: Mapped["User"] = relationship("User", back_populates="worklogs")

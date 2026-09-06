@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { connectWebSocket, type WSClient } from '@/lib/ws-client'
+import { authService } from '@/services/auth.service'
 import { WS_BASE_URL } from '@/services/api'
 import { useAuthStore } from '@/store/authStore'
 import type { ChatMessage } from '../types/chat.types'
@@ -14,17 +15,25 @@ export function useChatSocket(projectId: number, onMessage: (message: ChatMessag
   onMessageRef.current = onMessage
   const clientRef = useRef<WSClient | null>(null)
   const [isConnected, setIsConnected] = useState(false)
+  // Xem ghi chú ở useNotificationSocket: phiên có thể chưa được khôi phục lúc mount.
+  const accessToken = useAuthStore((state) => state.accessToken)
 
   useEffect(() => {
-    const token = useAuthStore.getState().accessToken
-    if (!token || !projectId) return
+    if (!projectId || !accessToken) return
 
-    const url = `${WS_BASE_URL}/ws/chat/${projectId}?token=${encodeURIComponent(token)}`
     const client = connectWebSocket({
-      url,
+      // Vé mới cho mỗi lần kết nối. Trước đây URL được tính một lần với access
+      // token nhúng sẵn, nên sau khi token hết hạn socket quay vòng vô hạn với
+      // một credential đã chết.
+      buildUrl: async () => {
+        if (!useAuthStore.getState().accessToken) return null
+        const ticket = await authService.webSocketTicket()
+        return `${WS_BASE_URL}/ws/chat/${projectId}?ticket=${encodeURIComponent(ticket)}`
+      },
       onMessage: (data) => onMessageRef.current(data as ChatMessage),
       onOpen: () => setIsConnected(true),
       onClose: () => setIsConnected(false),
+      onGiveUp: () => setIsConnected(false),
     })
     clientRef.current = client
 
@@ -33,7 +42,7 @@ export function useChatSocket(projectId: number, onMessage: (message: ChatMessag
       clientRef.current = null
       setIsConnected(false)
     }
-  }, [projectId])
+  }, [projectId, accessToken])
 
   function sendMessage(content: string): boolean {
     if (!isConnected) return false

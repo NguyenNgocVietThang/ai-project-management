@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 
 from sqlalchemy import and_, func, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -36,8 +35,8 @@ class PortfolioRepository(BaseRepository[Portfolio]):
         is_admin: bool,
         skip: int,
         limit: int,
-        status: Optional[PortfolioStatus] = None,
-        search: Optional[str] = None,
+        status: PortfolioStatus | None = None,
+        search: str | None = None,
     ):
         stmt = self._metrics_statement()
         count_stmt = select(func.count()).select_from(Portfolio).where(
@@ -72,7 +71,7 @@ class PortfolioRepository(BaseRepository[Portfolio]):
             stmt = stmt.where(Portfolio.owner_id == user_id)
         return (await self.db.execute(stmt)).one_or_none()
 
-    async def get_active(self, portfolio_id: int) -> Optional[Portfolio]:
+    async def get_active(self, portfolio_id: int) -> Portfolio | None:
         result = await self.db.execute(
             select(Portfolio).where(
                 Portfolio.id == portfolio_id,

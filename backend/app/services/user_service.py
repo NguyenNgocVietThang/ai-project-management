@@ -2,7 +2,7 @@ import asyncio
 import logging
 import secrets
 from io import BytesIO
-from typing import Annotated, Optional, Tuple
+from typing import Annotated
 from uuid import uuid4
 
 from fastapi import Depends, UploadFile
@@ -23,7 +23,7 @@ from app.db.session import get_db
 from app.models.audit_log import AuditLog
 from app.models.user import User
 from app.repositories.user_repository import UserRepository
-from app.schemas.project import UserSummary
+from app.schemas.project import UserSearchResult
 from app.schemas.user import ChangePasswordRequest, DeleteAccountRequest, UserUpdate
 from app.services.storage_service import StorageService, StorageServiceDep
 
@@ -46,9 +46,9 @@ class UserService:
         user_id: int,
         action: str,
         *,
-        old_values: Optional[dict] = None,
-        new_values: Optional[dict] = None,
-        description: Optional[str] = None,
+        old_values: dict | None = None,
+        new_values: dict | None = None,
+        description: str | None = None,
     ) -> None:
         self.db.add(
             AuditLog(
@@ -86,9 +86,20 @@ class UserService:
         )
         return current_user
 
-    async def search_active_users(self, query: str, limit: int = 20) -> list[UserSummary]:
+    async def search_active_users(
+        self, query: str, limit: int = 20
+    ) -> list[UserSearchResult]:
         users = await self.users.search_active(query, limit)
-        return [UserSummary.model_validate(user) for user in users]
+        return [
+            UserSearchResult(
+                id=user.id,
+                full_name=user.full_name,
+                username=user.username,
+                email_hint=_mask_email(user.email),
+                avatar_url=user.avatar_url,
+            )
+            for user in users
+        ]
 
     async def change_password(self, current_user: User, data: ChangePasswordRequest) -> None:
         user = await self.users.get_by_id_for_update(current_user.id)
@@ -184,7 +195,7 @@ class UserService:
         )
         return current_user
 
-    async def get_avatar(self, user_id: int) -> Tuple[bytes, str, str]:
+    async def get_avatar(self, user_id: int) -> tuple[bytes, str, str]:
         user = await self.users.get_by_id(user_id)
         if user is None or not user.is_active or not user.avatar_storage_key:
             raise NotFoundException("Avatar not found")
@@ -295,3 +306,16 @@ async def get_user_service(
 
 
 UserServiceDep = Annotated[UserService, Depends(get_user_service)]
+
+
+def _mask_email(email: str) -> str:
+    """"nguyen.van.a@company.com" -> "ng***@company.com".
+
+    Giữ đủ để chủ tài khoản nhận ra chính mình và để phân biệt hai người trùng tên,
+    nhưng không đủ để gửi thư tới.
+    """
+    local, _, domain = (email or "").partition("@")
+    if not domain:
+        return "***"
+    visible = local[:2] if len(local) > 2 else local[:1]
+    return f"{visible}***@{domain}"

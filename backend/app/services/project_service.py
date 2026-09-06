@@ -1,7 +1,8 @@
 import asyncio
+import builtins
 import logging
-from datetime import date, datetime, timezone
-from typing import Annotated, Any, List, Optional, Tuple
+from datetime import UTC, date, datetime
+from typing import Annotated
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -35,7 +36,8 @@ from app.schemas.project import (
     RoleSummary,
     UserSummary,
 )
-from app.services.phase2_common import is_admin as _is_admin, json_value as _json_value
+from app.services.phase2_common import is_admin as _is_admin
+from app.services.phase2_common import json_value as _json_value
 from app.workers.email_tasks import send_project_invitation_email_task
 
 logger = logging.getLogger(__name__)
@@ -51,7 +53,7 @@ class ProjectService:
 
     @staticmethod
     def _capabilities(
-        project: Project, user: User, current_role: Optional[str]
+        project: Project, user: User, current_role: str | None
     ) -> ProjectCapabilities:
         can_manage = _is_admin(user) or project.pm_id == user.id or current_role == "PM"
         return ProjectCapabilities(
@@ -63,9 +65,9 @@ class ProjectService:
     def _summary(
         self,
         project: Project,
-        portfolio_name: Optional[str],
+        portfolio_name: str | None,
         member_count: int,
-        current_role: Optional[str],
+        current_role: str | None,
         user: User,
     ) -> ProjectSummaryResponse:
         return ProjectSummaryResponse(
@@ -96,9 +98,9 @@ class ProjectService:
         action: str,
         project: Project,
         *,
-        old_values: Optional[dict] = None,
-        new_values: Optional[dict] = None,
-        description: Optional[str] = None,
+        old_values: dict | None = None,
+        new_values: dict | None = None,
+        description: str | None = None,
     ) -> None:
         self.db.add(
             AuditLog(
@@ -106,6 +108,9 @@ class ProjectService:
                 action=action,
                 entity_type="Project",
                 entity_id=project.id,
+                # Đặt tường minh thay vì dựa vào request context: CREATE xảy ra
+                # trước khi có bất kỳ lời gọi get_project_context() nào.
+                project_id=project.id,
                 old_values=old_values,
                 new_values=new_values,
                 description=description or f"{action.title()} project {project.name}",
@@ -118,13 +123,13 @@ class ProjectService:
         *,
         skip: int = 0,
         limit: int = 100,
-        portfolio_id: Optional[int] = None,
-        status: Optional[ProjectStatus] = None,
-        methodology: Optional[ProjectMethodology] = None,
-        search: Optional[str] = None,
-        start_date_from: Optional[date] = None,
-        end_date_to: Optional[date] = None,
-    ) -> Tuple[List[ProjectSummaryResponse], int]:
+        portfolio_id: int | None = None,
+        status: ProjectStatus | None = None,
+        methodology: ProjectMethodology | None = None,
+        search: str | None = None,
+        start_date_from: date | None = None,
+        end_date_to: date | None = None,
+    ) -> tuple[list[ProjectSummaryResponse], int]:
         rows, total = await self.repo.list_visible(
             user_id=user.id,
             is_admin=_is_admin(user),
@@ -252,7 +257,7 @@ class ProjectService:
 
     async def delete(self, project_id: int, user: User) -> None:
         project, _, _, _ = await self._require_manager(project_id, user)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         await self.repo.soft_delete(project, now)
         self._audit(
             user.id,
@@ -262,7 +267,7 @@ class ProjectService:
             new_values={"deleted_at": now.isoformat()},
         )
 
-    async def list_members(self, project_id: int, user: User) -> List[ProjectMemberResponse]:
+    async def list_members(self, project_id: int, user: User) -> builtins.list[ProjectMemberResponse]:
         project, _, _, _ = await self._visible_row(project_id, user)
         rows = await self.repo.list_members(project_id)
         return [
@@ -314,7 +319,7 @@ class ProjectService:
                 ),
                 timeout=2.0,
             )
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.warning(
                 "Timed out enqueueing project invitation for project_id=%s user_id=%s",
                 project.id,
@@ -332,6 +337,49 @@ class ProjectService:
             role=RoleSummary.model_validate(row[1]),
             joined_at=row[2],
             is_owner=member.id == project.pm_id,
+        )
+
+    async def change_member_role(
+        self, project_id: int, user_id: int, role_id: int, actor: User
+    ) -> ProjectMemberResponse:
+        """Doi vai tro cua mot thanh vien tai cho.
+
+        Truoc day khong co duong nao lam viec nay: doi BA thanh PM phai xoa roi
+        them lai, lam mat `joined_at` va de lai mot cap ADD/REMOVE gia trong audit
+        trail nhu the nguoi do da roi du an.
+        """
+        project, _, _, _ = await self._require_manager(project_id, actor)
+        member_row = await self.repo.get_member(project_id, user_id)
+        if member_row is None:
+            raise NotFoundException("Project member not found")
+        member, old_role, joined_at = member_row
+
+        role = await self.repo.get_role(role_id)
+        if role is None or role.name not in PROJECT_ROLES:
+            raise BadRequestException("Role is not assignable to a project")
+        if user_id == project.pm_id and role.name != "PM":
+            # `pm_id` va `project_members` phai noi cung mot dieu - xem
+            # phase2_common.get_project_context, noi ca hai duoc doc.
+            raise BadRequestException(
+                "Transfer project ownership before changing the owner's role"
+            )
+
+        if old_role.id != role.id:
+            await self.repo.set_member_role(project_id, user_id, role.id)
+            self._audit(
+                actor.id,
+                "CHANGE_MEMBER_ROLE",
+                project,
+                old_values={"user_id": user_id, "role": old_role.name},
+                new_values={"user_id": user_id, "role": role.name},
+                description=f"Changed {member.full_name} from {old_role.name} to {role.name}",
+            )
+
+        return ProjectMemberResponse(
+            user=UserSummary.model_validate(member),
+            role=RoleSummary.model_validate(role),
+            joined_at=joined_at,
+            is_owner=user_id == project.pm_id,
         )
 
     async def remove_member(self, project_id: int, user_id: int, actor: User) -> None:
@@ -353,7 +401,7 @@ class ProjectService:
 
     async def activity(
         self, project_id: int, user: User, limit: int = 10
-    ) -> List[AuditEventResponse]:
+    ) -> builtins.list[AuditEventResponse]:
         await self._visible_row(project_id, user)
         rows = await self.repo.list_activity(project_id, limit)
         return [

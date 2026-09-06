@@ -1,6 +1,7 @@
 'use client'
 
-import { useParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
+import { useNumericParam } from '@/hooks/useNumericParam'
 import { useState } from 'react'
 import { Alert } from '@/components/common/Alert'
 import { Button } from '@/components/common/Button'
@@ -13,7 +14,7 @@ import { getApiErrorMessage } from '@/types/api.types'
 import type { ProjectUpdate } from '@/types/project.types'
 
 export default function ProjectSettingsPage() {
-  const id = Number(useParams<{ id: string }>().id)
+  const id = useNumericParam()
   const router = useRouter()
   const [confirmDelete, setConfirmDelete] = useState(false)
   const project = useProjectDetail(id)

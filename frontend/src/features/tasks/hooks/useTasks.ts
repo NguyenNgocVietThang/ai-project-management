@@ -7,9 +7,13 @@ import { projectKeys } from '@/features/projects/hooks/useProjects'
 
 export const taskKeys = {
   all: ['tasks'] as const,
-  list: (projectId: number, params: TaskListParams) => [...taskKeys.all, 'list', projectId, params] as const,
+  /** Mọi thứ thuộc về một dự án. Khoá invalidation nên dừng ở đây chứ không phải
+   *  ở `all`: invalidate `all` sẽ refetch danh sách task của MỌI dự án với MỌI bộ
+   *  lọc, nên một lần tick subtask cũng kéo theo refetch toàn bộ. */
+  project: (projectId: number) => [...taskKeys.all, 'project', projectId] as const,
+  list: (projectId: number, params: TaskListParams) => [...taskKeys.project(projectId), 'list', params] as const,
   detail: (id: number) => [...taskKeys.all, 'detail', id] as const,
-  dependencies: (projectId: number) => [...taskKeys.all, 'dependencies', projectId] as const,
+  dependencies: (projectId: number) => [...taskKeys.project(projectId), 'dependencies'] as const,
   worklogs: (id: number) => [...taskKeys.detail(id), 'worklogs'] as const,
   activeTimer: ['worklogs', 'active'] as const,
 }
@@ -27,13 +31,19 @@ export function useWorklogs(taskId: number | null) {
   return useQuery({ queryKey: taskKeys.worklogs(taskId || 0), queryFn: () => taskService.worklogs(taskId!), enabled: taskId !== null })
 }
 export function useActiveTimer() {
-  return useQuery({ queryKey: taskKeys.activeTimer, queryFn: taskService.activeTimer, refetchInterval: 60_000 })
+  return useQuery({
+    queryKey: taskKeys.activeTimer,
+    queryFn: taskService.activeTimer,
+    // Chỉ poll khi thực sự có timer đang chạy. Poll vô điều kiện mỗi 60 giây là
+    // một request nền cho mọi người dùng đang mở trang, hầu hết chẳng có timer nào.
+    refetchInterval: (query) => (query.state.data ? 60_000 : false),
+  })
 }
 
 function useInvalidate() {
   const client = useQueryClient()
   return (projectId: number, taskId?: number) => {
-    client.invalidateQueries({ queryKey: taskKeys.all })
+    client.invalidateQueries({ queryKey: taskKeys.project(projectId) })
     client.invalidateQueries({ queryKey: projectKeys.detail(projectId) })
     if (taskId) client.invalidateQueries({ queryKey: taskKeys.detail(taskId) })
   }
@@ -47,9 +57,9 @@ export function useTaskActions(projectId: number) {
   const changeStatus = useMutation({
     mutationFn: ({ id, status }: { id: number; status: TaskStatus }) => taskService.changeStatus(id, status),
     onMutate: async ({ id, status }) => {
-      await client.cancelQueries({ queryKey: taskKeys.all })
-      const snapshots = client.getQueriesData({ queryKey: taskKeys.all })
-      client.setQueriesData<{ items: Task[] }>({ queryKey: taskKeys.all }, current => current ? { ...current, items: current.items?.map(item => item.id === id ? { ...item, status } : item) } : current)
+      await client.cancelQueries({ queryKey: taskKeys.project(projectId) })
+      const snapshots = client.getQueriesData({ queryKey: taskKeys.project(projectId) })
+      client.setQueriesData<{ items: Task[] }>({ queryKey: taskKeys.project(projectId) }, current => current ? { ...current, items: current.items?.map(item => item.id === id ? { ...item, status } : item) } : current)
       return { snapshots }
     },
     onError: (_error, _variables, context) => context?.snapshots.forEach(([key, value]) => client.setQueryData(key, value)),

@@ -165,3 +165,9 @@ export interface WorklogCreate {
   start_time?: string
   end_time?: string
 }
+
+export interface WorklogProjectSummary {
+  items: Worklog[]
+  total_hours: number
+  by_user: Record<number, number>
+}

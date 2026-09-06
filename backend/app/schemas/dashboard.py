@@ -1,8 +1,6 @@
 from datetime import date, datetime
-from typing import List, Optional
 
 from pydantic import BaseModel
-
 
 # ─── Các khối dùng chung ───────────────────────────────────────────────────────
 
@@ -14,7 +12,7 @@ class MyTaskItem(BaseModel):
     project_name: str
     status: str
     priority: str
-    due_date: Optional[date]
+    due_date: date | None
     is_critical: bool
     is_overdue: bool
 
@@ -28,20 +26,20 @@ class ActiveProjectSummary(BaseModel):
     progress_percent: float
     task_count: int
     completed_task_count: int
-    budget: Optional[float]
+    budget: float | None
     budget_spent: float
     currency: str
-    end_date: Optional[date]
-    days_remaining: Optional[int]
+    end_date: date | None
+    days_remaining: int | None
 
 
 class RecentActivityItem(BaseModel):
     id: int
     action: str
-    description: Optional[str]
+    description: str | None
     entity_type: str
-    entity_id: Optional[int]
-    actor_name: Optional[str]
+    entity_id: int | None
+    actor_name: str | None
     created_at: datetime
 
 
@@ -55,11 +53,11 @@ class UserDashboardStats(BaseModel):
 
 
 class UserDashboardSummary(BaseModel):
-    """Dữ liệu phản hồi cho GET /dashboard/summary"""
+    """Dữ liệu phản hồi cho GET /dashboards/summary"""
     stats: UserDashboardStats
-    active_projects: List[ActiveProjectSummary]
-    my_tasks: List[MyTaskItem]
-    recent_activity: List[RecentActivityItem]
+    active_projects: list[ActiveProjectSummary]
+    my_tasks: list[MyTaskItem]
+    recent_activity: list[RecentActivityItem]
 
 
 # ─── 3.1  Tình trạng Portfolio ─────────────────────────────────────────────────
@@ -70,18 +68,18 @@ class PortfolioProjectHealth(BaseModel):
     progress_percent: float
     status: str
     overdue_tasks: int
-    budget_utilization_pct: Optional[float]   # actual_cost / budget * 100
+    budget_utilization_pct: float | None   # actual_cost / budget * 100
 
 
 class PortfolioHealthResponse(BaseModel):
-    """Dữ liệu phản hồi cho GET /dashboard/portfolios/{portfolio_id}/health"""
+    """Dữ liệu phản hồi cho GET /dashboards/portfolios/{portfolio_id}/health"""
     portfolio_id: int
     portfolio_name: str
     total_projects: int
     active_projects: int
     completed_projects: int
     overall_progress: float
-    projects: List[PortfolioProjectHealth]
+    projects: list[PortfolioProjectHealth]
 
 
 # ─── 3.2  Dashboard dự án ──────────────────────────────────────────────────────
@@ -95,32 +93,32 @@ class TaskStatusCount(BaseModel):
 class TeamMemberUtilization(BaseModel):
     user_id: int
     full_name: str
-    avatar_url: Optional[str]
+    avatar_url: str | None
     estimated_hours: float
     logged_hours: float
     task_count: int
 
 
 class BudgetSummary(BaseModel):
-    budget: Optional[float]
+    budget: float | None
     spent: float
-    remaining: Optional[float]
-    utilization_pct: Optional[float]
+    remaining: float | None
+    utilization_pct: float | None
     currency: str
 
 
 class ProjectDashboardStats(BaseModel):
-    """Dữ liệu phản hồi cho GET /dashboard/projects/{project_id}/stats"""
+    """Dữ liệu phản hồi cho GET /dashboards/projects/{project_id}/stats"""
     project_id: int
     project_name: str
     # Phân bố task cho biểu đồ Donut / Stacked-bar
-    task_distribution: List[TaskStatusCount]
+    task_distribution: list[TaskStatusCount]
     # Ngân sách cho biểu đồ Donut
     budget: BudgetSummary
     # Mức sử dụng nhân sự của nhóm cho biểu đồ Bar
-    team_utilization: List[TeamMemberUtilization]
+    team_utilization: list[TeamMemberUtilization]
     # Burndown / tiến độ theo thời gian
-    burndown: List["BurndownPoint"]
+    burndown: list["BurndownPoint"]
     total_tasks: int
     completed_tasks: int
     overdue_tasks: int
@@ -147,4 +145,4 @@ class BurndownPoint(BaseModel):
 
 class DashboardResponse(BaseModel):
     stats: ProjectStats
-    burndown: List[BurndownPoint]
+    burndown: list[BurndownPoint]

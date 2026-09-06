@@ -1,5 +1,5 @@
-from datetime import datetime, timezone
-from typing import Annotated, Optional
+from datetime import UTC, datetime
+from typing import Annotated
 
 from fastapi import Depends
 from sqlalchemy import func, select
@@ -18,6 +18,7 @@ from app.schemas.chat import (
     ChatUnreadResponse,
 )
 from app.services.phase2_common import get_project_context
+from app.utils.sanitize import sanitize_message
 
 
 class ChatService:
@@ -41,7 +42,7 @@ class ChatService:
         project_id: int,
         user: User,
         *,
-        before_id: Optional[int] = None,
+        before_id: int | None = None,
         limit: int = 50,
     ) -> ChatHistoryResponse:
         # Bắt buộc phải là thành viên dự án (hoặc admin) — nếu không sẽ raise Forbidden/NotFound.
@@ -70,7 +71,11 @@ class ChatService:
     ) -> ChatMessageResponse:
         await get_project_context(self.db, project_id, user)
 
-        message = ChatMessage(project_id=project_id, user_id=user.id, content=data.content.strip())
+        message = ChatMessage(
+            project_id=project_id,
+            user_id=user.id,
+            content=sanitize_message(data.content),
+        )
         self.db.add(message)
         await self.db.flush()
         message.user = user  # tránh một vòng truy vấn; ta đã có sẵn actor được nạp
@@ -97,7 +102,7 @@ class ChatService:
         return ChatUnreadResponse(unread_count=count, last_read_message_id=last_read_id)
 
     async def mark_read(
-        self, project_id: int, user: User, message_id: Optional[int] = None
+        self, project_id: int, user: User, message_id: int | None = None
     ) -> ChatUnreadResponse:
         await get_project_context(self.db, project_id, user)
 
@@ -111,7 +116,7 @@ class ChatService:
                 ChatReadState.project_id == project_id, ChatReadState.user_id == user.id
             )
         )
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         if state is None:
             state = ChatReadState(
                 project_id=project_id,

@@ -1,6 +1,6 @@
 import enum
 from datetime import date, datetime
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Date, DateTime, Enum, Float, ForeignKey, Index, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -26,19 +26,19 @@ class Portfolio(Base):
     )
 
     name: Mapped[str] = mapped_column(String(255), nullable=False)
-    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
     status: Mapped[PortfolioStatus] = mapped_column(
         Enum(PortfolioStatus), default=PortfolioStatus.PLANNING, nullable=False
     )
-    start_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
-    end_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
-    budget: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    start_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    end_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    budget: Mapped[float | None] = mapped_column(Float, nullable=True)
     currency: Mapped[str] = mapped_column(String(10), default="VND", nullable=False)
     owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
-    deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     owner: Mapped["User"] = relationship("User", back_populates="portfolios")
-    projects: Mapped[List["Project"]] = relationship("Project", back_populates="portfolio")
+    projects: Mapped[list["Project"]] = relationship("Project", back_populates="portfolio")
 
     def __repr__(self) -> str:
         return f"<Portfolio id={self.id} name={self.name}>"

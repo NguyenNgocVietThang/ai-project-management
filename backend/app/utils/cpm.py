@@ -24,9 +24,10 @@ Cách dùng (trực tiếp từ các bản ghi ORM):
     for task_id, node in result.nodes.items():
         ...  # node.early_start, node.late_finish, node.is_critical, ...
 """
+from collections import deque
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import date, timedelta
-from typing import Dict, Iterable, List, Optional, Tuple
 
 # Các hằng số loại dependency (giữ dạng chuỗi thuần để module này không phụ
 # thuộc cứng vào ORM / các lớp enum và vẫn dễ dàng viết test).
@@ -42,9 +43,9 @@ VALID_DEPENDENCY_TYPES = {FS, SS, FF, SF}
 class CPMNode:
     id: int
     duration: float  # tính bằng ngày, phải >= 0
-    name: Optional[str] = None
-    successors: List[int] = field(default_factory=list)
-    predecessors: List[int] = field(default_factory=list)
+    name: str | None = None
+    successors: list[int] = field(default_factory=list)
+    predecessors: list[int] = field(default_factory=list)
 
     early_start: float = 0.0
     early_finish: float = 0.0
@@ -64,9 +65,9 @@ class CPMEdge:
 
 @dataclass
 class CPMResult:
-    nodes: Dict[int, CPMNode]
-    order: List[int]
-    critical_path: List[int]
+    nodes: dict[int, CPMNode]
+    order: list[int]
+    critical_path: list[int]
     project_duration: float
 
 
@@ -81,14 +82,14 @@ def _normalize_type(dependency_type: str) -> str:
 
 
 def build_graph(
-    tasks: Iterable[Tuple[int, float]],
+    tasks: Iterable[tuple[int, float]],
     edges: Iterable[CPMEdge],
-) -> Dict[int, CPMNode]:
+) -> dict[int, CPMNode]:
     """
     Dựng đồ thị node từ các cặp (task_id, duration) và một danh sách edge.
     Ném ValueError nếu một edge tham chiếu đến task id không tồn tại.
     """
-    nodes: Dict[int, CPMNode] = {tid: CPMNode(id=tid, duration=max(0.0, dur)) for tid, dur in tasks}
+    nodes: dict[int, CPMNode] = {tid: CPMNode(id=tid, duration=max(0.0, dur)) for tid, dur in tasks}
 
     for edge in edges:
         if edge.predecessor_id not in nodes:
@@ -105,18 +106,25 @@ def build_graph(
     return nodes
 
 
-def topological_sort(nodes: Dict[int, CPMNode]) -> List[int]:
-    """Thuật toán Kahn cho topological sort. Ném ValueError nếu có chu trình."""
-    in_degree: Dict[int, int] = {nid: 0 for nid in nodes}
+def topological_sort(nodes: dict[int, CPMNode]) -> list[int]:
+    """Thuật toán Kahn cho topological sort. Ném ValueError nếu có chu trình.
+
+    Dùng deque chứ không phải list: `list.pop(0)` phải dịch chuyển toàn bộ phần
+    còn lại, biến vòng lặp này thành O(n²). Với dự án vài nghìn task — đúng nhóm
+    mà việc tính lại lịch trình vốn đã tốn kém — chi phí đó là thừa.
+    """
+    in_degree: dict[int, int] = {nid: 0 for nid in nodes}
     for node in nodes.values():
         for succ_id in node.successors:
             in_degree[succ_id] += 1
 
-    queue: List[int] = sorted(nid for nid, deg in in_degree.items() if deg == 0)
-    order: List[int] = []
+    # Sắp xếp một lần để thứ tự đầu ra ổn định; các lần chèn sau giữ nguyên tính
+    # xác định vì successors được duyệt theo thứ tự.
+    queue: deque[int] = deque(sorted(nid for nid, deg in in_degree.items() if deg == 0))
+    order: list[int] = []
 
     while queue:
-        nid = queue.pop(0)
+        nid = queue.popleft()
         order.append(nid)
         for succ_id in sorted(nodes[nid].successors):
             in_degree[succ_id] -= 1
@@ -129,21 +137,21 @@ def topological_sort(nodes: Dict[int, CPMNode]) -> List[int]:
     return order
 
 
-def _edges_by_successor(edges: List[CPMEdge]) -> Dict[int, List[CPMEdge]]:
-    by_succ: Dict[int, List[CPMEdge]] = {}
+def _edges_by_successor(edges: list[CPMEdge]) -> dict[int, list[CPMEdge]]:
+    by_succ: dict[int, list[CPMEdge]] = {}
     for edge in edges:
         by_succ.setdefault(edge.successor_id, []).append(edge)
     return by_succ
 
 
-def _edges_by_predecessor(edges: List[CPMEdge]) -> Dict[int, List[CPMEdge]]:
-    by_pred: Dict[int, List[CPMEdge]] = {}
+def _edges_by_predecessor(edges: list[CPMEdge]) -> dict[int, list[CPMEdge]]:
+    by_pred: dict[int, list[CPMEdge]] = {}
     for edge in edges:
         by_pred.setdefault(edge.predecessor_id, []).append(edge)
     return by_pred
 
 
-def forward_pass(nodes: Dict[int, CPMNode], order: List[int], edges: List[CPMEdge]) -> None:
+def forward_pass(nodes: dict[int, CPMNode], order: list[int], edges: list[CPMEdge]) -> None:
     """
     Tính Early Start (ES) và Early Finish (EF) cho từng node,
     tôn trọng loại dependency và lag/lead time của mỗi edge đi vào.
@@ -157,7 +165,7 @@ def forward_pass(nodes: Dict[int, CPMNode], order: List[int], edges: List[CPMEdg
         if not node_edges:
             node.early_start = 0.0
         else:
-            candidates: List[float] = []
+            candidates: list[float] = []
             for edge in node_edges:
                 pred = nodes[edge.predecessor_id]
                 dep_type = _normalize_type(edge.dependency_type)
@@ -176,7 +184,7 @@ def forward_pass(nodes: Dict[int, CPMNode], order: List[int], edges: List[CPMEdg
         node.early_finish = node.early_start + node.duration
 
 
-def backward_pass(nodes: Dict[int, CPMNode], order: List[int], edges: List[CPMEdge]) -> None:
+def backward_pass(nodes: dict[int, CPMNode], order: list[int], edges: list[CPMEdge]) -> None:
     """
     Tính Late Start (LS), Late Finish (LF) và Total Float cho từng node,
     tôn trọng loại dependency và lag/lead time của mỗi edge đi ra.
@@ -192,7 +200,7 @@ def backward_pass(nodes: Dict[int, CPMNode], order: List[int], edges: List[CPMEd
         if not node_edges:
             node.late_finish = project_duration
         else:
-            candidates: List[float] = []
+            candidates: list[float] = []
             for edge in node_edges:
                 succ = nodes[edge.successor_id]
                 dep_type = _normalize_type(edge.dependency_type)
@@ -213,7 +221,7 @@ def backward_pass(nodes: Dict[int, CPMNode], order: List[int], edges: List[CPMEd
         node.is_critical = abs(node.float_days) < FLOAT_EPSILON
 
 
-def run_cpm(nodes: Dict[int, CPMNode], edges: List[CPMEdge]) -> CPMResult:
+def run_cpm(nodes: dict[int, CPMNode], edges: list[CPMEdge]) -> CPMResult:
     """
     Chạy toàn bộ phân tích CPM (topological sort + forward pass + backward
     pass) trên đồ thị node và danh sách edge đã dựng sẵn.
@@ -228,7 +236,7 @@ def run_cpm(nodes: Dict[int, CPMNode], edges: List[CPMEdge]) -> CPMResult:
     return CPMResult(nodes=nodes, order=order, critical_path=critical_path, project_duration=project_duration)
 
 
-def compute_cpm(nodes: Dict[int, CPMNode]) -> Tuple[Dict[int, CPMNode], List[int]]:
+def compute_cpm(nodes: dict[int, CPMNode]) -> tuple[dict[int, CPMNode], list[int]]:
     """
     Điểm vào tương thích ngược: chạy CPM chỉ dùng các quan hệ FS
     (Finish-to-Start, lag bằng 0) đã được mã hóa sẵn trong
@@ -246,9 +254,9 @@ def compute_cpm(nodes: Dict[int, CPMNode]) -> Tuple[Dict[int, CPMNode], List[int
 
 
 def task_duration_days(
-    estimated_hours: Optional[float] = None,
-    start_date: Optional[date] = None,
-    due_date: Optional[date] = None,
+    estimated_hours: float | None = None,
+    start_date: date | None = None,
+    due_date: date | None = None,
     hours_per_day: float = 8.0,
     default_days: float = 1.0,
 ) -> float:
@@ -311,14 +319,14 @@ def compute_cpm_for_project(
     return run_cpm(nodes, edges)
 
 
-def offsets_to_dates(result: CPMResult, project_start: date) -> Dict[int, Dict[str, date]]:
+def offsets_to_dates(result: CPMResult, project_start: date) -> dict[int, dict[str, date]]:
     """
     Chuyển kết quả CPM dạng offset theo ngày thành ngày lịch, lấy mốc tại
     `project_start` (ngày 0). Trả về, theo từng task id:
     {early_start, early_finish, late_start, late_finish} dưới dạng object `date`,
     sẵn sàng để lưu vào `Task.early_start` / `.early_finish` / v.v.
     """
-    dates: Dict[int, Dict[str, date]] = {}
+    dates: dict[int, dict[str, date]] = {}
     for nid, node in result.nodes.items():
         dates[nid] = {
             "early_start": project_start + timedelta(days=node.early_start),

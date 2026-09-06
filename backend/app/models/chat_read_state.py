@@ -1,8 +1,8 @@
 from datetime import datetime
-from typing import Optional
 
 from sqlalchemy import DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.models.base import Base
 
 
@@ -17,10 +17,10 @@ class ChatReadState(Base):
 
     project_id: Mapped[int] = mapped_column(ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    last_read_message_id: Mapped[Optional[int]] = mapped_column(
+    last_read_message_id: Mapped[int | None] = mapped_column(
         ForeignKey("chat_messages.id", ondelete="SET NULL"), nullable=True
     )
-    last_read_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_read_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     project: Mapped["Project"] = relationship("Project")
     user: Mapped["User"] = relationship("User")

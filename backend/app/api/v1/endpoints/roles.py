@@ -5,10 +5,17 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies import CurrentUser, require_roles
+from app.core.exceptions import ForbiddenException
 from app.db.session import get_db
 from app.models.role import Role
 from app.models.user import User
-from app.schemas.admin import RoleCreate, RoleDetailResponse, RoleUpdate
+from app.schemas.admin import (
+    RoleCreate,
+    RoleDetailResponse,
+    RoleOptionResponse,
+    RoleUpdate,
+)
+from app.services.phase2_common import is_admin
 from app.services.role_service import RoleServiceDep
 
 router = APIRouter()
@@ -17,18 +24,30 @@ PROJECT_ROLES = ("PM", "BA", "PO", "Member", "Customer")
 RequireAdmin = Annotated[User, Depends(require_roles("Admin"))]
 
 
-@router.get("/", response_model=list[RoleDetailResponse])
+@router.get("/", response_model=list[RoleDetailResponse] | list[RoleOptionResponse])
 async def list_roles(
     current_user: CurrentUser,
     db: Annotated[AsyncSession, Depends(get_db)],
     role_service: RoleServiceDep,
     project_assignable: Annotated[bool, Query()] = False,
 ):
+    """Liệt kê vai trò.
+
+    Hai đối tượng dùng khác nhau, nên hai mức phân quyền khác nhau. Bộ chọn vai trò
+    trong hộp thoại mời thành viên cần tên các vai trò dự án và mọi PM đều phải gọi
+    được — nó nhận về shape gọn. Danh sách quản trị đầy đủ kèm permission và số
+    lượng người dùng thì chỉ Admin, giống hệt mọi route roles khác; trước đây riêng
+    route này chỉ cần đăng nhập, tức là bất kỳ ai cũng đọc được toàn bộ ma trận
+    role -> permission của hệ thống.
+    """
     if project_assignable:
         result = await db.execute(
             select(Role).where(Role.name.in_(PROJECT_ROLES)).order_by(Role.name)
         )
-        return [RoleDetailResponse.model_validate(role) for role in result.scalars().all()]
+        return [RoleOptionResponse.model_validate(role) for role in result.scalars().all()]
+
+    if not is_admin(current_user):
+        raise ForbiddenException("Required roles: ['Admin']")
     rows = await role_service.list_roles()
     responses = []
     for role, user_count in rows:

@@ -4,7 +4,7 @@ import type {
   LoginCredentials,
   RegisterCredentials,
   ResetPasswordRequest,
-  TokenResponse,
+  AccessTokenResponse,
   User,
 } from '@/types/auth.types'
 
@@ -19,12 +19,12 @@ export const authService = {
    * application/x-www-form-urlencoded với trường `username` (là email) và `password`,
    * không phải JSON.
    */
-  async login({ email, password }: LoginCredentials): Promise<TokenResponse> {
+  async login({ email, password }: LoginCredentials): Promise<AccessTokenResponse> {
     const body = new URLSearchParams()
     body.set('username', email)
     body.set('password', password)
 
-    const { data } = await api.post<TokenResponse>('/auth/login', body, {
+    const { data } = await api.post<AccessTokenResponse>('/auth/login', body, {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     })
     return data
@@ -32,16 +32,22 @@ export const authService = {
 
   /** Đổi lấy mã dùng một lần mà OAuth redirect mang về. Backend không còn đặt
    * token trong URL callback nữa — xem backend app/core/oauth_exchange.py. */
-  async exchangeOAuthCode(code: string): Promise<TokenResponse> {
-    const { data } = await api.post<TokenResponse>('/auth/oauth/exchange', { code })
+  async exchangeOAuthCode(code: string): Promise<AccessTokenResponse> {
+    const { data } = await api.post<AccessTokenResponse>('/auth/oauth/exchange', { code })
     return data
   },
 
-  async refresh(refreshToken: string): Promise<TokenResponse> {
-    const { data } = await api.post<TokenResponse>('/auth/refresh', {
-      refresh_token: refreshToken,
-    })
+  /** Refresh token tới từ cookie httpOnly, nên lời gọi này không có body. */
+  async refresh(): Promise<AccessTokenResponse> {
+    const { data } = await api.post<AccessTokenResponse>('/auth/refresh')
     return data
+  },
+
+  /** Credential dùng một lần cho WebSocket handshake. Xin lại trước mỗi lần kết
+   * nối, kể cả khi kết nối lại — vé chỉ sống 60 giây và dùng được một lần. */
+  async webSocketTicket(): Promise<string> {
+    const { data } = await api.post<{ ticket: string }>('/auth/ws-ticket')
+    return data.ticket
   },
 
   async me(): Promise<User> {
@@ -49,11 +55,11 @@ export const authService = {
     return data
   },
 
-  /** Gửi refresh token để server có thể thu hồi nó — nếu không có bước này,
-   * logout chỉ là việc bỏ token phía client và một refresh token bị đánh cắp vẫn
-   * hoạt động trong suốt vòng đời 7 ngày của nó. */
-  async logout(refreshToken: string | null): Promise<void> {
-    await api.post('/auth/logout', { refresh_token: refreshToken })
+  /** Server đọc refresh token từ cookie httpOnly và thu hồi cả nó lẫn access
+   * token đi kèm, rồi xoá cookie phiên. Nếu không có bước này, logout chỉ là việc
+   * quên token phía client và một token bị đánh cắp vẫn dùng được tới khi hết hạn. */
+  async logout(): Promise<void> {
+    await api.post('/auth/logout')
   },
 
   async forgotPassword(email: string): Promise<AuthMessageResponse> {

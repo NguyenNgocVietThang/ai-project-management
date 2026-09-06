@@ -72,7 +72,9 @@ export function NotificationItem({ notification, onMarkRead, onDelete }: Props) 
           <p className={`text-sm leading-snug ${notification.is_read ? '' : 'font-semibold'}`}>
             {notification.title}
           </p>
-          <div className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+          {/* focus-within cùng với group-hover: nếu chỉ ẩn theo hover thì người
+              dùng bàn phím không bao giờ nhìn thấy các nút này, dù vẫn tab tới được. */}
+          <div className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100 group-focus-within:opacity-100">
             {!notification.is_read && onMarkRead && (
               <button
                 id={`notif-mark-read-${notification.id}`}

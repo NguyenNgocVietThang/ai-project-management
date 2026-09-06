@@ -1,6 +1,6 @@
 import asyncio
 from io import BytesIO
-from typing import Annotated, Optional, Tuple
+from typing import Annotated
 
 import urllib3
 from fastapi import Depends
@@ -14,7 +14,7 @@ from app.core.config import settings
 class StorageService:
     """Lớp bọc async nhỏ quanh client MinIO đồng bộ."""
 
-    def __init__(self, client: Optional[Minio] = None):
+    def __init__(self, client: Minio | None = None):
         self.client = client or Minio(
             settings.MINIO_ENDPOINT,
             access_key=settings.MINIO_ACCESS_KEY,
@@ -48,8 +48,8 @@ class StorageService:
 
         await asyncio.to_thread(_put)
 
-    async def get_bytes(self, key: str) -> Tuple[bytes, str]:
-        def _get() -> Tuple[bytes, str]:
+    async def get_bytes(self, key: str) -> tuple[bytes, str]:
+        def _get() -> tuple[bytes, str]:
             response = self.client.get_object(self.bucket, key)
             try:
                 content_type = response.headers.get(

@@ -1,9 +1,5 @@
-import hashlib
-import hmac
-import secrets
-import time
 from dataclasses import dataclass
-from typing import Annotated, Any, Dict, Optional, Tuple
+from typing import Annotated, Any
 from urllib.parse import urlencode
 
 import httpx
@@ -15,6 +11,16 @@ from app.core.exceptions import (
     BadRequestException,
     ConflictException,
     UnauthorizedException,
+)
+from app.core.oauth_state_store import (
+    code_challenge_for,
+    new_code_verifier,
+)
+from app.core.oauth_state_store import (
+    consume as consume_state,
+)
+from app.core.oauth_state_store import (
+    issue as issue_state,
 )
 from app.core.security import create_access_token, create_refresh_token
 from app.db.session import get_db
@@ -31,7 +37,7 @@ STATE_MAX_AGE_SECONDS = 15 * 60
 class OAuthState:
     provider: str
     mode: str
-    user_id: Optional[int]
+    user_id: int | None
 
 
 class OAuthService:
@@ -39,107 +45,119 @@ class OAuthService:
         self.db = db
         self.users = UserRepository(db)
 
-    def generate_state(
+    async def start_flow(
         self,
         provider: str,
         *,
         mode: str = "login",
-        user_id: Optional[int] = None,
-    ) -> str:
+        user_id: int | None = None,
+    ) -> tuple[str, str, str | None]:
+        """Bắt đầu một luồng OAuth.
+
+        Trả về `(state, browser_secret, code_challenge)`. `state` đi trên URL tới
+        provider; `browser_secret` phải được đặt vào cookie httpOnly và được trình
+        ra ở callback; `code_challenge` là phần PKCE (chỉ Google, provider kia
+        không hỗ trợ).
+        """
         if provider not in SUPPORTED_PROVIDERS or mode not in {"login", "link"}:
             raise BadRequestException("Unsupported OAuth request")
         if mode == "link" and user_id is None:
             raise BadRequestException("A user is required to link an OAuth account")
 
-        timestamp = str(int(time.time()))
-        nonce = secrets.token_hex(8)
-        encoded_user_id = str(user_id) if user_id is not None else ""
-        raw = f"{provider}:{mode}:{encoded_user_id}:{timestamp}:{nonce}"
-        signature = hmac.new(
-            settings.SECRET_KEY.encode(),
-            raw.encode(),
-            hashlib.sha256,
-        ).hexdigest()
-        return f"{raw}:{signature}"
+        verifier = new_code_verifier() if provider == "google" else None
+        try:
+            state, browser_secret = await issue_state(
+                {
+                    "provider": provider,
+                    "mode": mode,
+                    "user_id": user_id,
+                    "code_verifier": verifier,
+                }
+            )
+        except Exception as exc:
+            # Fail closed: không có store thì không có chống CSRF, và một luồng
+            # đăng nhập không được bảo vệ còn tệ hơn là không đăng nhập được.
+            raise BadRequestException(
+                "Sign-in is temporarily unavailable. Please try again."
+            ) from exc
+        return state, browser_secret, code_challenge_for(verifier) if verifier else None
 
-    def parse_state(self, state: str, expected_provider: str) -> OAuthState:
-        parts = state.split(":")
-        if len(parts) != 6:
+    async def consume_flow(
+        self, state: str, browser_secret: str | None, expected_provider: str
+    ) -> tuple[OAuthState, str | None]:
+        """Đổi `state` lấy luồng mà nó đại diện, đúng một lần.
+
+        Trả về `(OAuthState, code_verifier)`. Ném lỗi khi state không xác định, đã
+        hết hạn, đã được dùng, thuộc provider khác, hoặc quay lại từ một trình duyệt
+        không phải nơi đã khởi tạo luồng.
+        """
+        try:
+            payload = await consume_state(state, browser_secret)
+        except Exception as exc:
+            raise BadRequestException(
+                "Sign-in is temporarily unavailable. Please try again."
+            ) from exc
+        if payload is None:
             raise BadRequestException("Invalid or expired OAuth state parameter")
-        provider, mode, encoded_user_id, timestamp_text, nonce, signature = parts
+
+        provider = payload.get("provider")
+        mode = payload.get("mode")
+        user_id = payload.get("user_id")
         if provider != expected_provider or provider not in SUPPORTED_PROVIDERS:
             raise BadRequestException("Invalid or expired OAuth state parameter")
         if mode not in {"login", "link"}:
             raise BadRequestException("Invalid or expired OAuth state parameter")
-
-        try:
-            timestamp = int(timestamp_text)
-        except ValueError as exc:
-            raise BadRequestException("Invalid or expired OAuth state parameter") from exc
-        now = time.time()
-        if timestamp > now + 30 or now - timestamp > STATE_MAX_AGE_SECONDS:
-            raise BadRequestException("Invalid or expired OAuth state parameter")
-
-        raw = f"{provider}:{mode}:{encoded_user_id}:{timestamp_text}:{nonce}"
-        expected_signature = hmac.new(
-            settings.SECRET_KEY.encode(),
-            raw.encode(),
-            hashlib.sha256,
-        ).hexdigest()
-        if not hmac.compare_digest(signature, expected_signature):
-            raise BadRequestException("Invalid or expired OAuth state parameter")
-
-        user_id: Optional[int] = None
-        if encoded_user_id:
-            try:
-                user_id = int(encoded_user_id)
-            except ValueError as exc:
-                raise BadRequestException("Invalid or expired OAuth state parameter") from exc
         if mode == "link" and user_id is None:
             raise BadRequestException("Invalid or expired OAuth state parameter")
-        return OAuthState(provider=provider, mode=mode, user_id=user_id)
+        return (
+            OAuthState(provider=provider, mode=mode, user_id=user_id),
+            payload.get("code_verifier"),
+        )
 
-    def verify_state(self, state: str, expected_provider: str) -> bool:
-        try:
-            self.parse_state(state, expected_provider)
-            return True
-        except BadRequestException:
-            return False
-
-    def get_authorization_url(self, provider: str, state: str) -> str:
+    def get_authorization_url(
+        self, provider: str, state: str, code_challenge: str | None = None
+    ) -> str:
         if provider == "google":
-            return self.get_google_auth_url(state)
+            return self.get_google_auth_url(state, code_challenge)
         if provider == "facebook":
             return self.get_facebook_auth_url(state)
         raise BadRequestException("Unsupported OAuth provider")
 
-    def get_google_auth_url(self, state: str) -> str:
+    def get_google_auth_url(self, state: str, code_challenge: str | None = None) -> str:
         if not settings.GOOGLE_CLIENT_ID:
             raise BadRequestException("Google OAuth Client ID is not configured on the server")
-        query = urlencode(
-            {
-                "client_id": settings.GOOGLE_CLIENT_ID,
-                "redirect_uri": settings.GOOGLE_REDIRECT_URI,
-                "response_type": "code",
-                "scope": "openid email profile",
-                "state": state,
-                "access_type": "offline",
-                "prompt": "select_account",
-            }
-        )
-        return f"https://accounts.google.com/o/oauth2/v2/auth?{query}"
+        parameters = {
+            "client_id": settings.GOOGLE_CLIENT_ID,
+            "redirect_uri": settings.GOOGLE_REDIRECT_URI,
+            "response_type": "code",
+            "scope": "openid email profile",
+            "state": state,
+            "access_type": "offline",
+            "prompt": "select_account",
+        }
+        if code_challenge:
+            # PKCE: authorization code bị chặn lại sẽ vô dụng nếu không có verifier,
+            # thứ không bao giờ rời khỏi server.
+            parameters["code_challenge"] = code_challenge
+            parameters["code_challenge_method"] = "S256"
+        return f"https://accounts.google.com/o/oauth2/v2/auth?{urlencode(parameters)}"
 
-    async def fetch_google_user(self, code: str) -> Dict[str, Any]:
+    async def fetch_google_user(
+        self, code: str, code_verifier: str | None = None
+    ) -> dict[str, Any]:
+        payload = {
+            "code": code,
+            "client_id": settings.GOOGLE_CLIENT_ID,
+            "client_secret": settings.GOOGLE_CLIENT_SECRET,
+            "redirect_uri": settings.GOOGLE_REDIRECT_URI,
+            "grant_type": "authorization_code",
+        }
+        if code_verifier:
+            payload["code_verifier"] = code_verifier
         async with httpx.AsyncClient(timeout=10.0) as client:
             token_response = await client.post(
                 "https://oauth2.googleapis.com/token",
-                data={
-                    "code": code,
-                    "client_id": settings.GOOGLE_CLIENT_ID,
-                    "client_secret": settings.GOOGLE_CLIENT_SECRET,
-                    "redirect_uri": settings.GOOGLE_REDIRECT_URI,
-                    "grant_type": "authorization_code",
-                },
+                data=payload,
             )
             if token_response.status_code != 200:
                 raise UnauthorizedException("Failed to exchange authorization code with Google")
@@ -162,6 +180,10 @@ class OAuthService:
             return {
                 "id": provider_id,
                 "email": profile.get("email"),
+                # Google trả về cờ này trong mọi response của userinfo. Nếu không đọc
+                # nó thì một identity mang email của người khác vẫn được gộp thẳng vào
+                # tài khoản local đang tồn tại — xem _get_or_create_social_user.
+                "email_verified": bool(profile.get("verified_email")),
                 "full_name": profile.get("name") or profile.get("email", "").split("@")[0],
                 "avatar_url": profile.get("picture"),
             }
@@ -179,7 +201,7 @@ class OAuthService:
         )
         return f"https://www.facebook.com/v19.0/dialog/oauth?{query}"
 
-    async def fetch_facebook_user(self, code: str) -> Dict[str, Any]:
+    async def fetch_facebook_user(self, code: str) -> dict[str, Any]:
         async with httpx.AsyncClient(timeout=10.0) as client:
             token_response = await client.get(
                 "https://graph.facebook.com/v19.0/oauth/access_token",
@@ -215,25 +237,42 @@ class OAuthService:
             return {
                 "id": provider_id,
                 "email": profile.get("email"),
+                # Graph API không công bố trạng thái xác minh email dưới bất kỳ hình
+                # thức nào, nên ở đây không có gì để khẳng định. Không suy đoán: người
+                # dùng vẫn đăng nhập được, chỉ là không tự động gộp vào một tài khoản
+                # local có sẵn (họ có thể liên kết từ trang hồ sơ, nơi danh tính đã
+                # được chứng minh bằng phiên đăng nhập).
+                "email_verified": False,
                 "full_name": profile.get("name") or "Facebook User",
                 "avatar_url": picture,
             }
 
-    async def fetch_provider_user(self, provider: str, code: str) -> Dict[str, Any]:
+    async def fetch_provider_user(
+        self, provider: str, code: str, code_verifier: str | None = None
+    ) -> dict[str, Any]:
         if provider == "google":
-            return await self.fetch_google_user(code)
+            return await self.fetch_google_user(code, code_verifier)
         if provider == "facebook":
             return await self.fetch_facebook_user(code)
         raise BadRequestException("Unsupported OAuth provider")
 
     async def _get_or_create_social_user(
         self,
-        email: Optional[str],
+        email: str | None,
         full_name: str,
-        avatar_url: Optional[str],
+        avatar_url: str | None,
         provider: str,
         provider_id: str,
+        email_provider_verified: bool,
     ) -> User:
+        """Phân giải identity của provider thành một User.
+
+        `email_provider_verified` là khẳng định của provider rằng họ đã kiểm chứng
+        quyền sở hữu địa chỉ email này. Nó quyết định việc có được phép gộp identity
+        vào một tài khoản local có sẵn hay không: nếu chỉ tin vào chuỗi email, bất kỳ
+        ai tạo được một identity mang email của nạn nhân đều chiếm được tài khoản đó
+        (kể cả tài khoản Admin) ngay ở lần đăng nhập đầu tiên.
+        """
         user = (
             await self.users.get_by_google_id(provider_id)
             if provider == "google"
@@ -244,9 +283,12 @@ class OAuthService:
                 raise UnauthorizedException("Account is inactive")
             if avatar_url and not user.avatar_url:
                 user.avatar_url = avatar_url
-            user.email_verified = True
-            user.email_verification_token_hash = None
-            user.email_verification_expires_at = None
+            # Chỉ nâng cờ đã-xác-minh khi provider thực sự khẳng định điều đó, và
+            # khẳng định ấy nói về địa chỉ mà tài khoản đang giữ.
+            if email_provider_verified and email and email == user.email:
+                user.email_verified = True
+                user.email_verification_token_hash = None
+                user.email_verification_expires_at = None
             await self.db.flush()
             return user
 
@@ -255,6 +297,14 @@ class OAuthService:
             if user:
                 if user.is_active is False:
                     raise UnauthorizedException("Account is inactive")
+                if not email_provider_verified:
+                    # Vẫn còn một đường an toàn để đi: đăng nhập bằng mật khẩu rồi
+                    # liên kết tài khoản mạng xã hội từ trang hồ sơ, ở đó quyền sở hữu
+                    # tài khoản đã được chứng minh bằng phiên đăng nhập.
+                    raise ConflictException(
+                        "An account with this email already exists. Sign in with your "
+                        "password and link this provider from your profile settings."
+                    )
                 if provider == "google":
                     user.google_id = provider_id
                 else:
@@ -280,7 +330,10 @@ class OAuthService:
             username = f"{base_username[: 50 - len(suffix)]}{suffix}"
             counter += 1
 
-        effective_email = email or f"{provider}_{provider_id}@social.user"
+        # users.email là NOT NULL + UNIQUE, nên identity không có email vẫn cần một giá
+        # trị. Nó được đánh dấu rõ ràng là chưa xác minh (khác với trước đây) để không
+        # có logic nào phía sau tưởng rằng đã kiểm chứng được địa chỉ này.
+        effective_email = email or f"{provider}_{provider_id}@social.invalid"
         return await self.users.create(
             User(
                 email=effective_email,
@@ -292,14 +345,14 @@ class OAuthService:
                 google_id=provider_id if provider == "google" else None,
                 facebook_id=provider_id if provider == "facebook" else None,
                 is_active=True,
-                email_verified=True,
+                email_verified=bool(email) and email_provider_verified,
             )
         )
 
     async def link_social_account(
         self,
         state: OAuthState,
-        user_info: Dict[str, Any],
+        user_info: dict[str, Any],
     ) -> User:
         if state.mode != "link" or state.user_id is None:
             raise BadRequestException("Invalid OAuth account-link request")
@@ -322,7 +375,7 @@ class OAuthService:
             user.facebook_id = provider_id
         if user_info.get("avatar_url") and not user.avatar_url:
             user.avatar_url = user_info["avatar_url"]
-        if user_info.get("email") == user.email:
+        if user_info.get("email") == user.email and user_info.get("email_verified"):
             user.email_verified = True
             user.email_verification_token_hash = None
             user.email_verification_expires_at = None
@@ -351,8 +404,9 @@ class OAuthService:
         provider: str,
         code: str,
         state: OAuthState,
-    ) -> Tuple[User, Optional[TokenResponse]]:
-        user_info = await self.fetch_provider_user(provider, code)
+        code_verifier: str | None = None,
+    ) -> tuple[User, TokenResponse | None]:
+        user_info = await self.fetch_provider_user(provider, code, code_verifier)
         if state.mode == "link":
             return await self.link_social_account(state, user_info), None
 
@@ -362,6 +416,7 @@ class OAuthService:
             avatar_url=user_info.get("avatar_url"),
             provider=provider,
             provider_id=user_info["id"],
+            email_provider_verified=bool(user_info.get("email_verified")),
         )
         return user, self.issue_tokens(user)
 
@@ -370,11 +425,12 @@ class OAuthService:
         provider: str,
         code: str,
         state: str,
-    ) -> Tuple[User, TokenResponse]:
-        parsed_state = self.parse_state(state, provider)
+        browser_secret: str | None = None,
+    ) -> tuple[User, TokenResponse]:
+        parsed_state, verifier = await self.consume_flow(state, browser_secret, provider)
         if parsed_state.mode != "login":
             raise BadRequestException("Invalid OAuth login request")
-        user, tokens = await self.complete_oauth(provider, code, parsed_state)
+        user, tokens = await self.complete_oauth(provider, code, parsed_state, verifier)
         if tokens is None:
             raise BadRequestException("Invalid OAuth login request")
         return user, tokens

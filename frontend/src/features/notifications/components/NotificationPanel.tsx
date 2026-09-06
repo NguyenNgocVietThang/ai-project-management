@@ -1,4 +1,7 @@
 'use client'
+import { useTranslations } from 'next-intl'
+
+import Link from 'next/link'
 
 import { Bell, CheckCheck, Loader2 } from 'lucide-react'
 import { useState } from 'react'
@@ -11,13 +14,14 @@ interface Props {
 
 export function NotificationPanel({ onClose: _onClose }: Props) {
   const [unreadOnly, setUnreadOnly] = useState(false)
+  const t = useTranslations('notifications')
   const { data, isLoading } = useNotifications({ unread_only: unreadOnly, page_size: 30 })
   const markRead = useMarkRead()
   const markAllRead = useMarkAllRead()
   const deleteNotif = useDeleteNotification()
 
   return (
-    <div className="flex flex-col" style={{ width: 380, maxHeight: 540 }}>
+    <div className="flex w-full flex-col" style={{ maxHeight: 540 }}>
       {/* Phần đầu */}
       <div className="flex items-center justify-between border-b px-4 py-3">
         <div className="flex items-center gap-2">
@@ -81,13 +85,18 @@ export function NotificationPanel({ onClose: _onClose }: Props) {
       </div>
 
       {/* Chân trang */}
-      {data && data.total > data.items.length && (
-        <div className="border-t px-4 py-2.5 text-center">
-          <span className="text-xs text-muted-foreground">
-            Showing {data.items.length} of {data.total} notifications
-          </span>
-        </div>
-      )}
+      {/* Dropdown chỉ giữ được vài mục gần nhất; đường dẫn tới lịch sử đầy đủ. */}
+      <div className="border-t px-4 py-2.5 text-center">
+        <Link
+          href="/notifications"
+          onClick={_onClose}
+          className="text-xs font-medium text-primary hover:underline"
+        >
+          {data && data.total > data.items.length
+            ? t('viewAllCount', { total: data.total })
+            : t('viewAll')}
+        </Link>
+      </div>
     </div>
   )
 }

@@ -1,4 +1,4 @@
-from typing import Annotated, Optional
+from typing import Annotated
 
 from fastapi import Depends
 from sqlalchemy import exists, func, or_, select
@@ -26,7 +26,7 @@ class AdminUserService:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def _count_active_admins(self, *, exclude_user_id: Optional[int] = None) -> int:
+    async def _count_active_admins(self, *, exclude_user_id: int | None = None) -> int:
         admin_role_id = await self.db.scalar(select(Role.id).where(Role.name == "Admin"))
         conditions = [User.is_active.is_(True)]
         if admin_role_id is not None:
@@ -58,9 +58,9 @@ class AdminUserService:
     async def list_users(
         self,
         *,
-        q: Optional[str] = None,
-        role_id: Optional[int] = None,
-        is_active: Optional[bool] = None,
+        q: str | None = None,
+        role_id: int | None = None,
+        is_active: bool | None = None,
         page: int = 1,
         page_size: int = 20,
     ) -> PaginatedResponse[AdminUserResponse]:
@@ -198,7 +198,7 @@ class AdminUserService:
             ):
                 raise ConflictException("Username already taken")
 
-        new_roles: Optional[list[Role]] = None
+        new_roles: list[Role] | None = None
         if data.role_ids is not None:
             new_roles = await self._resolve_roles(data.role_ids)
 

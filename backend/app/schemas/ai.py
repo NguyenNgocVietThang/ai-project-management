@@ -1,10 +1,11 @@
-﻿from typing import Any, Dict, List, Optional
+﻿from typing import Any
+
 from pydantic import BaseModel
 
 
 class AIGenerateProjectRequest(BaseModel):
     prompt: str
-    ai_provider: Optional[str] = None  # Ghi đè provider mặc định
+    ai_provider: str | None = None  # Ghi đè provider mặc định
 
 
 class AIImpactAnalysisRequest(BaseModel):
@@ -13,7 +14,7 @@ class AIImpactAnalysisRequest(BaseModel):
 
 class AIScheduleOptimizeRequest(BaseModel):
     project_id: int
-    constraints: Optional[Dict[str, Any]] = None
+    constraints: dict[str, Any] | None = None
 
 
 class AIRiskAnalysisRequest(BaseModel):
@@ -29,5 +30,5 @@ class AIJobResponse(BaseModel):
 class AIResultResponse(BaseModel):
     job_id: str
     status: str
-    result: Optional[Dict[str, Any]] = None
-    error: Optional[str] = None
+    result: dict[str, Any] | None = None
+    error: str | None = None

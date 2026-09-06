@@ -1,15 +1,25 @@
 # Findings
 
 ## Backend Architecture (Verified & Tested)
-- **Layered Structure**: `api/v1/endpoints/*.py` (21 REST routers mounted + 11 `TODO: Implement` stubs commented out in `router.py`) + `api/ws/*.py` (2 WebSocket routes) → `services/*.py` (business logic, each with `XxxServiceDep` dependency) → `repositories/*.py` → `models/*.py` (SQLAlchemy 2.0 async with `Mapped`/`mapped_column`).
-- **Not implemented yet (stub routers, not mounted)**: `/leaves`, `/skills`, `/documents`, `/approvals`, `/change-requests`, `/gantt`, `/cpm`, `/reports`, `/versions`, `/ai`, `/system`. `workers/ai_tasks.py` and `workers/report_tasks.py` are also stubs; only `email_tasks.py` + `notification_tasks.py` are real. CPM logic itself is real and runs internally via `app/utils/cpm.py` + `services/scheduling_service.py`.
+- **Layered Structure**: `api/v1/endpoints/*.py` (22 REST routers mounted + 10 `TODO: Implement` stubs commented out in `router.py`) + `api/ws/*.py` (2 WebSocket routes) → `services/*.py` (business logic, each with `XxxServiceDep` dependency) → `repositories/*.py` → `models/*.py` (SQLAlchemy 2.0 async with `Mapped`/`mapped_column`).
+- **Not implemented yet (stub routers, not mounted)**: `/leaves`, `/skills`, `/documents`, `/approvals`, `/change-requests`, `/gantt`, `/reports`, `/versions`, `/ai`, `/system`. `/cpm` is now mounted read-only (`GET /projects/{id}/cpm`). `workers/ai_tasks.py` and `workers/report_tasks.py` are also stubs; only `email_tasks.py` + `notification_tasks.py` are real. CPM logic itself is real and runs internally via `app/utils/cpm.py` + `services/scheduling_service.py`.
 - **Auth**: JWT via `python-jose`, `core/dependencies.py` has `CurrentUser`, `require_roles(*names)`, `require_permissions(*"resource:action")`.
 - **Project-scoped Auth**: Helpers in `services/phase2_common.py`: `get_project_context`, `require_project_roles`, `notify_project_team`, `add_audit`.
-- **Database & Migrations**: PostgreSQL 16 + `asyncpg`, Alembic migrations in `backend/alembic/versions/`. Current single head: `20260821_chat_tables` (Chain: 13e3544bef02 → 20260810 → 20260812(x2) → 20260813(x2) → 20260814_phase2_task_wbs → 20260821_task_notify_columns → 20260821_chat_tables).
+- **Database & Migrations**: PostgreSQL 16 + `asyncpg`, Alembic migrations in `backend/alembic/versions/`. Current single head: `20260904_perf_indexes` (Chain: 13e3544bef02 → 20260810 → 20260812(x2) → 20260813(x2) → 20260814_phase2_task_wbs → 20260821_task_notify_columns → 20260821_chat_tables).
 - **8 Domains & 34 Database Tables**: 4 junction tables (`user_roles`, `role_permissions`, `user_skills`, `project_members`) + 30 entity tables (including `chat_messages`, `chat_read_states`, `tasks` with `last_start_notified_at` / `last_due_soon_notified_at`).
 - **Real-Time WebSocket & Redis Pub/Sub**: `app/core/ws_manager.py` (`ConnectionManager`, `publish()`, `redis_listener()`), `app/core/redis_client.py` (lazy async Redis singleton). Handshake via `app/api/ws/deps.py::authenticate_ws` (query param `?token=...`).
 - **Celery Worker & Celery Beat**: `workers/celery_app.py` has `beat_schedule` for `sweep-task-dates-daily` (`crontab(hour=8, minute=0)`, Asia/Ho_Chi_Minh) executing `sweep_task_dates_task` in `workers/notification_tasks.py`.
-- **Test Suite**: `backend/tests/unit/` has 123/123 automated unit tests passing (verified 2026-09-03).
+- **Test Suite**: 246 tests passing (verified 2026-09-06) — `tests/unit/` plus a new
+  `tests/integration/` suite backed by `tests/conftest.py` (in-memory SQLite + ASGI
+  client) that exercises the real authorization matrix at HTTP level. Frontend has
+  22 Vitest tests (`npm test`).
+- **Background scheduling**: `workers/scheduling_tasks.py` recalculates the critical
+  path off the request path, debounced per project, for projects above
+  `CPM_SYNC_TASK_THRESHOLD` (default 300 tasks).
+- **Session credentials**: refresh token lives in an httpOnly cookie
+  (`core/auth_cookies.py`); the access token is memory-only on the client.
+  WebSocket handshakes use single-use tickets (`core/ws_tickets.py`), not JWTs on
+  the query string.
 
 ## Key Models
 - `Task` (`models/task.py`): Status enum, CPM fields (`es, ef, ls, lf, float_time, is_critical`), `start_date`, `due_date`, `last_start_notified_at`, `last_due_soon_notified_at`, `assignee_id`, `project_id`.
@@ -40,4 +50,10 @@
 - **Server State**: TanStack Query v5 with custom key factories.
 - **Client Auth**: Zustand store (`authStore.ts`) persisted & mirrored into `auth-token` cookie for Next.js Edge Middleware.
 - **Environment**: `NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1`, `NEXT_PUBLIC_WS_URL=ws://localhost:8000` (bare origin, frontend code appends `/ws/...`).
-- **Build Quality**: `next build` generates 23 routes cleanly; `tsc --noEmit` and `next lint` pass with 0 errors across the entire codebase.
+- **Build Quality**: `next build`, `tsc --noEmit`, `next lint` and `npm test` all pass
+  with 0 errors. `npm audit --audit-level=high` reports 0 vulnerabilities.
+- **i18n**: `next-intl` with `vi` as the default locale and `en` as the alternative;
+  the locale is stored in a cookie, so routes keep their existing shape (no
+  `[locale]` segment).
+- **Theming**: class-based dark mode with an explicit light/dark/system toggle;
+  an inline script applies the theme before first paint.

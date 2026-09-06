@@ -1,4 +1,3 @@
-from typing import List, Optional
 
 from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,25 +10,25 @@ class UserRepository(BaseRepository[User]):
     def __init__(self, db: AsyncSession):
         super().__init__(User, db)
 
-    async def get_by_email(self, email: str) -> Optional[User]:
+    async def get_by_email(self, email: str) -> User | None:
         result = await self.db.execute(select(User).where(User.email == email))
         return result.scalar_one_or_none()
 
-    async def get_by_username(self, username: str) -> Optional[User]:
+    async def get_by_username(self, username: str) -> User | None:
         result = await self.db.execute(select(User).where(User.username == username))
         return result.scalar_one_or_none()
 
-    async def get_by_google_id(self, google_id: str) -> Optional[User]:
+    async def get_by_google_id(self, google_id: str) -> User | None:
         result = await self.db.execute(select(User).where(User.google_id == google_id))
         return result.scalar_one_or_none()
 
-    async def get_by_facebook_id(self, facebook_id: str) -> Optional[User]:
+    async def get_by_facebook_id(self, facebook_id: str) -> User | None:
         result = await self.db.execute(select(User).where(User.facebook_id == facebook_id))
         return result.scalar_one_or_none()
 
     async def get_by_password_reset_token_hash_for_update(
         self, token_hash: str
-    ) -> Optional[User]:
+    ) -> User | None:
         result = await self.db.execute(
             select(User)
             .where(User.password_reset_token_hash == token_hash)
@@ -39,7 +38,7 @@ class UserRepository(BaseRepository[User]):
 
     async def get_by_email_verification_token_hash_for_update(
         self, token_hash: str
-    ) -> Optional[User]:
+    ) -> User | None:
         result = await self.db.execute(
             select(User)
             .where(User.email_verification_token_hash == token_hash)
@@ -47,7 +46,7 @@ class UserRepository(BaseRepository[User]):
         )
         return result.scalar_one_or_none()
 
-    async def get_by_id_for_update(self, user_id: int) -> Optional[User]:
+    async def get_by_id_for_update(self, user_id: int) -> User | None:
         result = await self.db.execute(
             select(User)
             .where(User.id == user_id)
@@ -56,7 +55,7 @@ class UserRepository(BaseRepository[User]):
         )
         return result.scalar_one_or_none()
 
-    async def search_active(self, query: str, limit: int = 20) -> List[User]:
+    async def search_active(self, query: str, limit: int = 20) -> list[User]:
         pattern = f"%{query.strip()}%"
         result = await self.db.execute(
             select(User)

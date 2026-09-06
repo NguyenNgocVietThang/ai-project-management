@@ -1,3 +1,4 @@
+from datetime import UTC
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock, patch
 
@@ -15,9 +16,9 @@ async def test_push_persists_and_broadcasts_over_websocket():
     async def fake_flush():
         notification = added["notification"]
         notification.id = 42
-        from datetime import datetime, timezone
+        from datetime import datetime
 
-        notification.created_at = datetime(2026, 8, 21, tzinfo=timezone.utc)
+        notification.created_at = datetime(2026, 8, 21, tzinfo=UTC)
 
     db = SimpleNamespace(
         add=Mock(side_effect=lambda obj: added.__setitem__("notification", obj)),
@@ -62,9 +63,9 @@ async def test_push_does_not_shield_callers_from_a_broadcast_exception():
     async def fake_flush():
         notification = added["notification"]
         notification.id = 1
-        from datetime import datetime, timezone
+        from datetime import datetime
 
-        notification.created_at = datetime(2026, 8, 21, tzinfo=timezone.utc)
+        notification.created_at = datetime(2026, 8, 21, tzinfo=UTC)
 
     db = SimpleNamespace(
         add=Mock(side_effect=lambda obj: added.__setitem__("notification", obj)),

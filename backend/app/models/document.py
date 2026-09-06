@@ -1,8 +1,9 @@
 ﻿import enum
 from datetime import datetime
-from typing import Optional
+
 from sqlalchemy import DateTime, Enum, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.models.base import Base
 
 
@@ -28,13 +29,13 @@ class Document(Base):
     minio_key: Mapped[str] = mapped_column(Text, nullable=False)          # Đường dẫn trong bucket
     file_url: Mapped[str] = mapped_column(Text, nullable=False)           # Cache của presigned URL
 
-    file_size: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)  # tính bằng byte
-    mime_type: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    file_size: Mapped[int | None] = mapped_column(Integer, nullable=True)  # tính bằng byte
+    mime_type: Mapped[str | None] = mapped_column(String(100), nullable=True)
 
     # Phân tích bằng AI
     ai_parsed: Mapped[bool] = mapped_column(default=False, nullable=False)
-    ai_summary: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    ai_parsed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    ai_summary: Mapped[str | None] = mapped_column(Text, nullable=True)
+    ai_parsed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     project_id: Mapped[int] = mapped_column(ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
     uploaded_by_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)

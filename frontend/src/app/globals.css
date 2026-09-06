@@ -35,9 +35,14 @@
     --radius: 0.5rem;
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background: 222.2 84% 4.9%;
+  /* Ba khoi dark duoi day co chu dich:
+     - `:root.dark` de nut chuyen theme thang duoc trong ca hai chieu
+     - `:root:not(.light)` trong media query de mac dinh van theo he dieu hanh
+       khi nguoi dung chua chon gi, nhung mot lua chon "sang" tuong minh thi thang
+     Chi dinh nghia mau trong media query se khien nut chuyen theme khong the bat
+     dark khi he thong dang o che do sang. */
+  :root.dark {
+    --background: 222.2 84% 4.9%;
       --foreground: 210 40% 98%;
 
       --card: 222.2 84% 4.9%;
@@ -61,6 +66,29 @@
       --destructive: 0 62.8% 30.6%;
       --destructive-foreground: 210 40% 98%;
 
+      --border: 217.2 32.6% 17.5%;
+      --input: 217.2 32.6% 17.5%;
+      --ring: 234 89% 74%;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not(.light) {
+      --background: 222.2 84% 4.9%;
+      --foreground: 210 40% 98%;
+      --card: 222.2 84% 4.9%;
+      --card-foreground: 210 40% 98%;
+      --popover: 222.2 84% 4.9%;
+      --popover-foreground: 210 40% 98%;
+      --primary: 234 89% 74%;
+      --primary-foreground: 222.2 47.4% 11.2%;
+      --secondary: 217.2 32.6% 17.5%;
+      --secondary-foreground: 210 40% 98%;
+      --muted: 217.2 32.6% 17.5%;
+      --muted-foreground: 215 20.2% 65.1%;
+      --accent: 217.2 32.6% 17.5%;
+      --accent-foreground: 210 40% 98%;
+      --destructive: 0 62.8% 30.6%;
+      --destructive-foreground: 210 40% 98%;
       --border: 217.2 32.6% 17.5%;
       --input: 217.2 32.6% 17.5%;
       --ring: 234 89% 74%;

@@ -101,24 +101,24 @@ function CreateUserForm({
       <div>
         <Label htmlFor="user-email">Email</Label>
         <Input id="user-email" type="email" hasError={Boolean(errors.email)} {...register('email')} />
-        {errors.email && <p className="mt-1 text-sm text-destructive">{errors.email.message}</p>}
+        {errors.email && <p id="user-email-error" role="alert" className="mt-1 text-sm text-destructive">{errors.email.message}</p>}
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <Label htmlFor="user-username">Username</Label>
           <Input id="user-username" hasError={Boolean(errors.username)} {...register('username')} />
-          {errors.username && <p className="mt-1 text-sm text-destructive">{errors.username.message}</p>}
+          {errors.username && <p id="user-username-error" role="alert" className="mt-1 text-sm text-destructive">{errors.username.message}</p>}
         </div>
         <div>
           <Label htmlFor="user-full-name">Full name</Label>
           <Input id="user-full-name" hasError={Boolean(errors.full_name)} {...register('full_name')} />
-          {errors.full_name && <p className="mt-1 text-sm text-destructive">{errors.full_name.message}</p>}
+          {errors.full_name && <p id="user-full-name-error" role="alert" className="mt-1 text-sm text-destructive">{errors.full_name.message}</p>}
         </div>
       </div>
       <div>
         <Label htmlFor="user-password">Temporary password</Label>
         <Input id="user-password" type="password" hasError={Boolean(errors.password)} {...register('password')} />
-        {errors.password && <p className="mt-1 text-sm text-destructive">{errors.password.message}</p>}
+        {errors.password && <p id="user-password-error" role="alert" className="mt-1 text-sm text-destructive">{errors.password.message}</p>}
       </div>
       <RoleCheckboxes
         roles={roles}
@@ -198,12 +198,12 @@ function EditUserForm({
         <div>
           <Label htmlFor="user-username">Username</Label>
           <Input id="user-username" hasError={Boolean(errors.username)} {...register('username')} />
-          {errors.username && <p className="mt-1 text-sm text-destructive">{errors.username.message}</p>}
+          {errors.username && <p id="user-username-error" role="alert" className="mt-1 text-sm text-destructive">{errors.username.message}</p>}
         </div>
         <div>
           <Label htmlFor="user-full-name">Full name</Label>
           <Input id="user-full-name" hasError={Boolean(errors.full_name)} {...register('full_name')} />
-          {errors.full_name && <p className="mt-1 text-sm text-destructive">{errors.full_name.message}</p>}
+          {errors.full_name && <p id="user-full-name-error" role="alert" className="mt-1 text-sm text-destructive">{errors.full_name.message}</p>}
         </div>
       </div>
       <div className="grid gap-4 sm:grid-cols-3">

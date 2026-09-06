@@ -7,10 +7,19 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className, hasError = false, ...props }, ref) => {
+    // Thong bao loi duoc render canh input duoi dang <p id={`${id}-error`}> (xem
+    // FieldError). Neu khong noi hai thu do lai voi nhau, screen reader thong bao
+    // "khong hop le" ma khong bao gio doc len ly do.
+    const describedBy =
+      [props['aria-describedby'], hasError && props.id ? `${props.id}-error` : null]
+        .filter(Boolean)
+        .join(' ') || undefined
+
     return (
       <input
         ref={ref}
         aria-invalid={hasError || undefined}
+        aria-describedby={describedBy}
         className={cn(
           'flex h-11 w-full rounded-md border bg-background px-3 py-2 text-base',
           'placeholder:text-muted-foreground',

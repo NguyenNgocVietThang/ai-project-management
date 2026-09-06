@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Annotated, Optional
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query, Response, status
 
@@ -13,6 +13,7 @@ from app.schemas.project import (
     ProjectDetailResponse,
     ProjectMemberCreate,
     ProjectMemberResponse,
+    ProjectMemberRoleUpdate,
     ProjectResponse,
     ProjectSummaryResponse,
     ProjectUpdate,
@@ -28,12 +29,12 @@ async def list_projects(
     current_user: CurrentUser,
     page: Annotated[int, Query(ge=1)] = 1,
     page_size: Annotated[int, Query(ge=1, le=200)] = 20,
-    portfolio_id: Optional[int] = None,
-    status_: Optional[ProjectStatus] = Query(default=None, alias="status"),
-    methodology: Optional[ProjectMethodology] = None,
-    search: Optional[str] = Query(default=None, max_length=200),
-    start_date_from: Optional[date] = None,
-    end_date_to: Optional[date] = None,
+    portfolio_id: int | None = None,
+    status_: ProjectStatus | None = Query(default=None, alias="status"),
+    methodology: ProjectMethodology | None = None,
+    search: str | None = Query(default=None, max_length=200),
+    start_date_from: date | None = None,
+    end_date_to: date | None = None,
 ):
     items, total = await service.list(
         current_user,
@@ -88,6 +89,21 @@ async def add_project_member(
     return await service.add_member(project_id, body, current_user)
 
 
+@router.patch(
+    "/{project_id}/members/{user_id}",
+    response_model=ProjectMemberResponse,
+)
+async def change_project_member_role(
+    project_id: int,
+    user_id: int,
+    body: ProjectMemberRoleUpdate,
+    service: ProjectServiceDep,
+    current_user: CurrentVerifiedUser,
+):
+    """Doi vai tro cua mot thanh vien du an ma khong lam mat lich su tham gia."""
+    return await service.change_member_role(project_id, user_id, body.role_id, current_user)
+
+
 @router.delete(
     "/{project_id}/members/{user_id}",
     status_code=status.HTTP_204_NO_CONTENT,
@@ -96,7 +112,7 @@ async def remove_project_member(
     project_id: int,
     user_id: int,
     service: ProjectServiceDep,
-    current_user: CurrentUser,
+    current_user: CurrentVerifiedUser,
 ):
     await service.remove_member(project_id, user_id, current_user)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
@@ -127,7 +143,7 @@ async def update_project(
     project_id: int,
     body: ProjectUpdate,
     service: ProjectServiceDep,
-    current_user: CurrentUser,
+    current_user: CurrentVerifiedUser,
 ):
     return await service.update(project_id, body, current_user)
 
@@ -136,7 +152,7 @@ async def update_project(
 async def delete_project(
     project_id: int,
     service: ProjectServiceDep,
-    current_user: CurrentUser,
+    current_user: CurrentVerifiedUser,
 ):
     await service.delete(project_id, current_user)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

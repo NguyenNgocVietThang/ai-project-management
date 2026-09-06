@@ -1,6 +1,7 @@
 'use client'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import { projectService } from '@/services/project.service'
 import type { ProjectMember, ProjectMemberCreate } from '@/types/project.types'
 import { projectKeys } from '@/features/projects/hooks/useProjects'
@@ -17,10 +18,14 @@ export function useAssignableRoles() {
 }
 
 export function useUserSearch(query: string) {
+  // Debounce ở đây chứ không ở từng nơi gọi: `query` đi thẳng vào query key, nên
+  // nếu không có bước này thì mỗi ký tự gõ vào là một request mới.
+  const debounced = useDebouncedValue(query.trim())
   return useQuery({
-    queryKey: ['user-search', query],
-    queryFn: () => projectService.searchUsers(query),
-    enabled: query.trim().length > 0,
+    queryKey: ['user-search', debounced],
+    queryFn: () => projectService.searchUsers(debounced),
+    // Backend yêu cầu tối thiểu 3 ký tự; gọi với ít hơn chỉ nhận về 422.
+    enabled: debounced.length >= 3,
   })
 }
 

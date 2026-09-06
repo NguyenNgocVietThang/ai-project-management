@@ -62,10 +62,18 @@ if (!isDev) {
   })
 }
 
+const withNextIntl = require("next-intl/plugin")("./src/i18n/request.ts")
+
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['localhost'],
+    // remotePatterns chu khong phai domains: `domains` da deprecated o Next 15, va
+    // no khong the gioi han theo duong dan - `remotePatterns` thi co the.
+    remotePatterns: [
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
+      { protocol: 'https', hostname: 'platform-lookaside.fbsbx.com' },
+      { protocol: 'https', hostname: '*.fbcdn.net' },
+    ],
   },
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
@@ -76,4 +84,4 @@ const nextConfig = {
   },
 }
 
-module.exports = nextConfig
+module.exports = withNextIntl(nextConfig)

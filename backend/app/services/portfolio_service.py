@@ -1,5 +1,5 @@
-from datetime import datetime, timezone
-from typing import Annotated, List, Optional, Tuple
+from datetime import UTC, datetime
+from typing import Annotated
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -18,8 +18,8 @@ from app.schemas.portfolio import (
     PortfolioResponse,
     PortfolioUpdate,
 )
-from app.services.phase2_common import is_admin as _is_admin, json_value as _json_value
-
+from app.services.phase2_common import is_admin as _is_admin
+from app.services.phase2_common import json_value as _json_value
 
 
 class PortfolioService:
@@ -66,8 +66,8 @@ class PortfolioService:
         action: str,
         portfolio: Portfolio,
         *,
-        old_values: Optional[dict] = None,
-        new_values: Optional[dict] = None,
+        old_values: dict | None = None,
+        new_values: dict | None = None,
     ) -> None:
         self.db.add(
             AuditLog(
@@ -87,9 +87,9 @@ class PortfolioService:
         *,
         skip: int = 0,
         limit: int = 100,
-        status: Optional[PortfolioStatus] = None,
-        search: Optional[str] = None,
-    ) -> Tuple[List[PortfolioResponse], int]:
+        status: PortfolioStatus | None = None,
+        search: str | None = None,
+    ) -> tuple[list[PortfolioResponse], int]:
         rows, total = await self.repo.list_visible(
             user_id=user.id,
             is_admin=_is_admin(user),
@@ -187,7 +187,7 @@ class PortfolioService:
 
     async def delete(self, portfolio_id: int, user: User) -> None:
         portfolio, _, _ = await self._get_owned(portfolio_id, user)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         await self.repo.soft_delete(portfolio, now)
         self._audit(
             user.id,

@@ -1,13 +1,14 @@
-from typing import Annotated, Optional
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, File, Query, Request, Response, UploadFile, status
 
 from app.core.dependencies import CurrentMediaUser, CurrentUser, require_permissions
+from app.core.oauth_state_store import STATE_COOKIE_NAME, state_cookie_kwargs
 from app.core.rate_limit import AVATAR_UPLOAD_LIMIT, USER_SEARCH_LIMIT, limiter
 from app.models.user import User
 from app.schemas.admin import AdminUserCreate, AdminUserResponse, AdminUserUpdate
 from app.schemas.common import MessageResponse, PaginatedResponse
-from app.schemas.project import UserSummary
+from app.schemas.project import UserSearchResult
 from app.schemas.user import (
     ChangePasswordRequest,
     DeleteAccountRequest,
@@ -35,9 +36,9 @@ router = APIRouter()
 async def list_users(
     admin_service: AdminUserServiceDep,
     current_user: Annotated[User, Depends(require_permissions("user:read"))],
-    q: Optional[str] = Query(default=None, max_length=200),
-    role_id: Optional[int] = Query(default=None),
-    is_active: Optional[bool] = Query(default=None),
+    q: str | None = Query(default=None, max_length=200),
+    role_id: int | None = Query(default=None),
+    is_active: bool | None = Query(default=None),
     page: Annotated[int, Query(ge=1)] = 1,
     page_size: Annotated[int, Query(ge=1, le=200)] = 20,
 ):
@@ -55,7 +56,7 @@ async def create_user(
     return await admin_service.create_user(body, current_user)
 
 
-@router.get("/search", response_model=list[UserSummary])
+@router.get("/search", response_model=list[UserSearchResult])
 @limiter.limit(USER_SEARCH_LIMIT)
 async def search_users(
     request: Request,
@@ -160,14 +161,19 @@ async def connect_social_account(
     provider: OAuthProvider,
     current_user: CurrentUser,
     oauth_service: OAuthServiceDep,
+    response: Response,
 ):
-    state = oauth_service.generate_state(
+    state, browser_secret, challenge = await oauth_service.start_flow(
         provider,
         mode="link",
         user_id=current_user.id,
     )
+    # Cookie phải được đặt ở đây chứ không phải lúc redirect: SPA nhận URL rồi tự
+    # điều hướng, nên đây là response cuối cùng mà ta còn chạm được tới trình duyệt
+    # trước khi nó rời sang tên miền của provider.
+    response.set_cookie(STATE_COOKIE_NAME, browser_secret, **state_cookie_kwargs())
     return OAuthConnectResponse(
-        authorization_url=oauth_service.get_authorization_url(provider, state)
+        authorization_url=oauth_service.get_authorization_url(provider, state, challenge)
     )
 
 

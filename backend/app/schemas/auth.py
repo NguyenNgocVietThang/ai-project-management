@@ -35,8 +35,20 @@ class ResetPasswordRequest(BaseModel):
 
 
 class TokenResponse(BaseModel):
+    """Cặp token nội bộ. KHÔNG dùng làm response model cho route trình duyệt —
+    xem AccessTokenResponse."""
     access_token: str
     refresh_token: str
+    token_type: str = "bearer"
+
+
+class AccessTokenResponse(BaseModel):
+    """Những gì trình duyệt thực sự nhận được.
+
+    Refresh token cố tình vắng mặt: nó đi trong một cookie httpOnly để XSS không
+    đọc được. Access token thì ngắn hạn và sống trong bộ nhớ của SPA.
+    """
+    access_token: str
     token_type: str = "bearer"
 
 
@@ -57,3 +69,8 @@ class LogoutRequest(BaseModel):
 class TokenPayload(BaseModel):
     sub: str
     type: str
+
+
+class WebSocketTicketResponse(BaseModel):
+    """Credential dùng một lần cho WebSocket handshake — xem app/core/ws_tickets.py."""
+    ticket: str

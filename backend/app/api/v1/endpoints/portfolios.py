@@ -1,8 +1,12 @@
-from typing import Annotated, Optional
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query, Response, status
 
-from app.core.dependencies import CurrentUser, require_permissions
+from app.core.dependencies import (
+    CurrentUser,
+    CurrentVerifiedUser,
+    require_permissions,
+)
 from app.models.portfolio import PortfolioStatus
 from app.models.user import User
 from app.schemas.common import PaginatedResponse
@@ -23,8 +27,8 @@ async def list_portfolios(
     current_user: CurrentUser,
     page: Annotated[int, Query(ge=1)] = 1,
     page_size: Annotated[int, Query(ge=1, le=200)] = 20,
-    status_: Optional[PortfolioStatus] = Query(default=None, alias="status"),
-    search: Optional[str] = Query(default=None, max_length=200),
+    status_: PortfolioStatus | None = Query(default=None, alias="status"),
+    search: str | None = Query(default=None, max_length=200),
 ):
     items, total = await service.list(
         current_user,
@@ -47,6 +51,7 @@ async def create_portfolio(
     body: PortfolioCreate,
     service: PortfolioServiceDep,
     current_user: Annotated[User, Depends(require_permissions("portfolio:create"))],
+    _verified: CurrentVerifiedUser,
 ):
     return await service.create(body, owner=current_user)
 
@@ -67,6 +72,7 @@ async def update_portfolio(
     body: PortfolioUpdate,
     service: PortfolioServiceDep,
     current_user: Annotated[User, Depends(require_permissions("portfolio:update"))],
+    _verified: CurrentVerifiedUser,
 ):
     return await service.update(portfolio_id, body, current_user)
 
@@ -76,6 +82,7 @@ async def delete_portfolio(
     portfolio_id: int,
     service: PortfolioServiceDep,
     current_user: Annotated[User, Depends(require_permissions("portfolio:delete"))],
+    _verified: CurrentVerifiedUser,
 ):
     await service.delete(portfolio_id, current_user)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

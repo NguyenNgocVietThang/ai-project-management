@@ -1,86 +1,55 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
 import Cookies from 'js-cookie'
-import type { TokenResponse, User } from '@/types/auth.types'
+import type { AccessTokenResponse, User } from '@/types/auth.types'
 
 interface AuthState {
+  /** Chỉ nằm trong bộ nhớ. Xem ghi chú về lưu trữ bên dưới. */
   accessToken: string | null
-  refreshToken: string | null
   user: User | null
-  /** True khi state đã lưu được đọc từ localStorage ở phía client. */
+  /** True khi lần bootstrap phiên lúc khởi động đã chạy xong (thành hay bại). */
   hasHydrated: boolean
   isAuthenticated: () => boolean
-  setTokens: (tokens: TokenResponse) => void
+  setTokens: (tokens: AccessTokenResponse) => void
   setUser: (user: User) => void
   clear: () => void
   setHasHydrated: (value: boolean) => void
 }
 
-const AUTH_COOKIE_KEY = 'auth-token'
-
-/** Các thuộc tính cookie dùng chung cho mọi lần ghi cookie auth.
- *
- * `secure` được suy ra từ scheme hiện tại thay vì hardcode để cookie vẫn được
- * set qua http://localhost thuần trong lúc phát triển, nhưng không bao giờ rời
- * trình duyệt ở dạng cleartext khi ứng dụng chạy qua HTTPS. Nó cố ý vẫn đọc được
- * bằng JS — Next.js Edge Middleware đọc nó cho route guard và các request
- * <img src> tới endpoint avatar phụ thuộc vào nó. */
-function authCookieOptions() {
-  return {
-    expires: 7,
-    path: '/',
-    sameSite: 'lax' as const,
-    secure: typeof window !== 'undefined' && window.location.protocol === 'https:',
-  }
-}
+/** Cờ do server đặt, KHÔNG chứa bí mật — chỉ cho biết có phiên hay không.
+ *  Next.js Edge Middleware đọc nó để quyết định hiển thị trang đăng nhập. */
+const SESSION_FLAG_COOKIE = 'has-session'
 
 /**
  * Auth store toàn cục. Được expose như một vanilla store (qua `authStore.getState()`) để
  * Axios interceptor trong `services/api.ts` có thể đọc/ghi token bên ngoài React.
+ *
+ * Lưu trữ: KHÔNG có gì được ghi xuống đĩa. Trước đây cả access lẫn refresh token
+ * đều nằm trong `localStorage` (qua zustand `persist`) và access token còn được sao
+ * vào một cookie mà JavaScript đọc được — nghĩa là bất kỳ lỗ hổng XSS nào cũng lấy
+ * được một credential dùng được nhiều ngày. Giờ refresh token nằm trong cookie
+ * httpOnly do backend đặt (app/core/auth_cookies.py) và access token chỉ sống trong
+ * bộ nhớ; sau khi tải lại trang, `bootstrapSession()` đổi cookie đó lấy một access
+ * token mới.
  */
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set, get) => ({
-      accessToken: null,
-      refreshToken: null,
-      user: null,
-      hasHydrated: false,
-      isAuthenticated: () => Boolean(get().accessToken),
-      setTokens: (tokens) => {
-        if (tokens?.access_token) {
-          Cookies.set(AUTH_COOKIE_KEY, tokens.access_token, authCookieOptions())
-        }
-        set({
-          accessToken: tokens?.access_token ?? null,
-          refreshToken: tokens?.refresh_token ?? null,
-        })
-      },
-      setUser: (user) => set({ user }),
-      clear: () => {
-        Cookies.remove(AUTH_COOKIE_KEY, { path: '/' })
-        Cookies.remove(AUTH_COOKIE_KEY)
-        set({ accessToken: null, refreshToken: null, user: null })
-      },
-      setHasHydrated: (value) => set({ hasHydrated: value }),
-    }),
-    {
-      name: 'auth-storage',
-      partialize: (state) => ({
-        accessToken: state.accessToken,
-        refreshToken: state.refreshToken,
-        user: state.user,
-      }),
-      onRehydrateStorage: () => (state) => {
-        if (state?.accessToken) {
-          Cookies.set(AUTH_COOKIE_KEY, state.accessToken, authCookieOptions())
-        } else {
-          Cookies.remove(AUTH_COOKIE_KEY, { path: '/' })
-          Cookies.remove(AUTH_COOKIE_KEY)
-        }
-        useAuthStore.setState({ hasHydrated: true })
-      },
-    }
-  )
-)
+export const useAuthStore = create<AuthState>()((set, get) => ({
+  accessToken: null,
+  user: null,
+  hasHydrated: false,
+  isAuthenticated: () => Boolean(get().accessToken),
+  setTokens: (tokens) => set({ accessToken: tokens?.access_token ?? null }),
+  setUser: (user) => set({ user }),
+  clear: () => {
+    // Cookie thật là httpOnly và chỉ server xoá được (qua /auth/logout). Cờ này
+    // thì không, nên dọn nó ở đây để middleware không giữ người dùng ở trạng thái
+    // "đã đăng nhập" sau một lần đăng xuất mà request tới server bị lỗi.
+    Cookies.remove(SESSION_FLAG_COOKIE, { path: '/' })
+    set({ accessToken: null, user: null })
+  },
+  setHasHydrated: (value) => set({ hasHydrated: value }),
+}))
 
 export const authStore = useAuthStore
+
+export function hasSessionCookie(): boolean {
+  return Cookies.get(SESSION_FLAG_COOKIE) === '1'
+}

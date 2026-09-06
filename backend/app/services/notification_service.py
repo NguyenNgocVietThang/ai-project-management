@@ -12,8 +12,9 @@ Cách dùng (từ task_service hoặc các service khác):
         entity_id=task.id,
     )
 """
-from datetime import datetime, timezone
-from typing import Annotated, List, Optional, Tuple
+from collections.abc import Sequence
+from datetime import UTC, datetime
+from typing import Annotated
 
 from fastapi import Depends
 from sqlalchemy import func, select, update
@@ -34,6 +35,71 @@ class NotificationService:
 
     def __init__(self, db: AsyncSession):
         self.db = db
+
+    @staticmethod
+    async def push_many(
+        db: AsyncSession,
+        user_ids: Sequence[int],
+        *,
+        title: str,
+        message: str,
+        ntype: NotificationType,
+        link: str | None = None,
+        entity_type: str | None = None,
+        entity_id: int | None = None,
+    ) -> list[Notification]:
+        """Cùng nội dung, nhiều người nhận — một lần INSERT, một lần publish.
+
+        Gọi `push()` trong vòng lặp tốn một `flush()` và một round-trip Redis cho
+        MỖI thành viên, tất cả nằm trong request đang chờ. Với một dự án 50 người,
+        mỗi lần đổi trạng thái task phải trả giá đó. Ở đây tất cả các dòng được
+        flush cùng nhau và các payload WS đi trong một pipeline.
+        """
+        if not user_ids:
+            return []
+
+        notifications = [
+            Notification(
+                user_id=user_id,
+                title=title,
+                message=message,
+                notification_type=ntype,
+                link=link,
+                related_entity_type=entity_type,
+                related_entity_id=entity_id,
+            )
+            for user_id in user_ids
+        ]
+        db.add_all(notifications)
+        # Một lần flush cho cả lô: cần id và created_at do server sinh ra để dựng
+        # payload WS, giống như push() đơn lẻ.
+        await db.flush()
+
+        from app.core.ws_manager import publish_many
+
+        await publish_many(
+            [
+                (
+                    f"notif:user:{notification.user_id}",
+                    {
+                        "id": notification.id,
+                        "title": title,
+                        "message": message,
+                        "notification_type": ntype.value,
+                        "link": link,
+                        "related_entity_type": entity_type,
+                        "related_entity_id": entity_id,
+                        "created_at": (
+                            notification.created_at.isoformat()
+                            if notification.created_at
+                            else None
+                        ),
+                    },
+                )
+                for notification in notifications
+            ]
+        )
+        return notifications
 
     # ─────────────────────────────────────────────────────────────────────────
     #  Danh sách
@@ -108,7 +174,7 @@ class NotificationService:
 
         if not notification.is_read:
             notification.is_read = True
-            notification.read_at = datetime.now(timezone.utc)
+            notification.read_at = datetime.now(UTC)
             await self.db.flush()
 
         return self._to_response(notification)
@@ -118,7 +184,7 @@ class NotificationService:
     # ─────────────────────────────────────────────────────────────────────────
 
     async def mark_all_read(self, user_id: int) -> MarkReadResponse:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         result = await self.db.execute(
             update(Notification)
             .where(
@@ -157,9 +223,9 @@ class NotificationService:
         title: str,
         message: str,
         ntype: NotificationType,
-        link: Optional[str] = None,
-        entity_type: Optional[str] = None,
-        entity_id: Optional[int] = None,
+        link: str | None = None,
+        entity_type: str | None = None,
+        entity_id: int | None = None,
     ) -> Notification:
         """Tạo, lưu và phát real-time một notification.
 
@@ -180,7 +246,9 @@ class NotificationService:
         db.add(notification)
         await db.flush()
 
-        from app.core.ws_manager import publish  # import cục bộ: tránh nạp hạ tầng ws mỗi lần load service
+        from app.core.ws_manager import (
+            publish,  # import cục bộ: tránh nạp hạ tầng ws mỗi lần load service
+        )
 
         await publish(
             f"notif:user:{user_id}",

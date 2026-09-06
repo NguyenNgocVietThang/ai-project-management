@@ -1,7 +1,7 @@
 # Roadmap: Portfolio & Project Core Module (Phase 2)
 
-> **Phiên bản:** 1.1 | **Cập nhật:** 2026-08-22  
-> **Trạng thái:** ✅ Đã hoàn thành (100%) | **Ngày hoàn thành:** 2026-08-22  
+> **Phiên bản:** 1.2 | **Cập nhật:** 2026-09-06  
+> **Trạng thái:** ✅ Hoàn thành, đã qua rà soát | **Ngày hoàn thành:** 2026-08-22 (rà soát & gia cố: 2026-09-06)  
 > **Mức độ ưu tiên:** Critical – Module nghiệp vụ cốt lõi quản lý danh mục, dự án, WBS, CPM Engine & Real-time Chat  
 > **Điều kiện tiên quyết:** [x] Phase 1 (Auth & User Onboarding) đã hoàn thành
 
@@ -27,11 +27,11 @@ Module **Portfolio & Project Core (Phase 2)** xây dựng toàn bộ lớp quả
 | Tính năng | Mã SOP | Độ ưu tiên | Trạng thái | Backend Task | Frontend Component |
 |---|---|---|---|---|---|
 | Portfolio Management | SOP-PM-001 | Critical | ✅ Hoàn thành | `PortfolioService` + Endpoints | `PortfolioList`, `PortfolioCard`, `PortfolioForm` |
-| Project Management & Member RBAC | SOP-PM-002 | Critical | ✅ Hoàn thành | `ProjectService` + Endpoints | `ProjectList`, `ProjectWizardForm`, `ProjectMembersTable` |
-| WBS, Phases, Sprints & Milestones | SOP-PM-003 | High | ✅ Hoàn thành | `WBSService` + Endpoints | `WBSTreeView`, `PhaseManager`, `MilestoneTimeline` |
-| Task CRUD & Dependencies Graph | SOP-PM-003 | Critical | ✅ Hoàn thành | `TaskService` + `scheduling_service.py` + `utils/cpm.py` | `KanbanBoard`, `TaskDrawer` |
-| Assignments & WorkLogs Tracking | SOP-RM-001 | High | ✅ Hoàn thành | `AssignmentService` + `WorklogService` | `AssigneeSelector`, `WorkLogModal`, `TimesheetTable` |
-| Project & Portfolio Dashboard | Reporting | High | ✅ Hoàn thành | `DashboardService` + `NotificationService` | `PortfolioDashboard`, `ProjectDashboard`, `NotificationBell` |
+| Project Management & Member RBAC | SOP-PM-002 | Critical | ✅ Hoàn thành | `ProjectService` + Endpoints | `ProjectCard`, `ProjectWizard`, `ProjectMembersTable` |
+| WBS, Phases, Sprints & Milestones | SOP-PM-003 | High | ✅ Hoàn thành | `WBSService` + Endpoints | `projects/[id]/wbs/page.tsx` (cây, trình sửa và hộp thoại xoá đều nội tuyến trong trang) |
+| Task CRUD & Dependencies Graph | SOP-PM-003 | Critical | ✅ Hoàn thành | `TaskService` + `scheduling_service.py` + `utils/cpm.py` | `projects/[id]/tasks/page.tsx` (bảng Kanban nội tuyến), `TaskDrawer` |
+| Assignments & WorkLogs Tracking | SOP-RM-001 | High | ✅ Hoàn thành | `ResourceService` | `TaskDrawer` (gán việc & ghi giờ), `projects/[id]/timesheet/page.tsx` |
+| Project & Portfolio Dashboard | Reporting | High | ✅ Hoàn thành | `DashboardService` + `NotificationService` | `StatsRow`, `ActiveProjectsGrid`, `MyTasksList`, `RecentActivityFeed`, `ProjectOverviewCharts`, `NotificationBell` |
 | Real-time Project Chat | SOP-CHAT-001 | High | ✅ Hoàn thành | `ChatService` + `/ws/chat/{id}` | `ChatPanel`, `ChatMessageItem`, `useChatSocket` |
 | Notification Triggers & Beat Sweep | SOP-NOTI-001 | High | ✅ Hoàn thành | `notify_project_team` + Celery Beat | `NotificationBell`, `useNotificationSocket` |
 
@@ -84,4 +84,64 @@ Module **Portfolio & Project Core (Phase 2)** xây dựng toàn bộ lớp quả
 
 ---
 
-*Cập nhật lần cuối: 2026-09-03 — Phase 2 hoàn thành (lưu ý: endpoint `/cpm`, `/gantt`, `/leaves`, `/skills` vẫn là stub chưa mount; CPM chạy nội bộ).*
+## Rà soát 2026-09-06
+
+### Lỗi chặn đã sửa
+- **Toàn bộ Dashboard trả 404.** Frontend gọi `/dashboard/…`, backend mount
+  `/dashboards/…`. Trang chủ đã hỏng kể từ commit `0e3e498`.
+
+### Bảo mật
+- **Rò rỉ audit log xuyên dự án.** `DashboardService._recent_activity` nhận
+  `project_ids` nhưng mệnh đề `WHERE` không hề dùng nó, nên bất kỳ ai đã đăng nhập
+  cũng nhận 15 dòng audit mới nhất của toàn hệ thống. Đã thêm cột
+  `audit_logs.project_id` (có backfill) và bắt `dashboard_service` dùng chung
+  `get_project_context`.
+- **WebSocket chat không kiểm tra lại tư cách thành viên**, nên người bị xoá khỏi
+  dự án vẫn nhận tin nhắn. Watchdog nay kiểm tra định kỳ.
+- **JWT truyền trên query string của WebSocket** → vé dùng một lần
+  (`core/ws_tickets.py`).
+- Vai trò `Customer` đọc được subtask và đồ thị phụ thuộc dù bị chặn khỏi danh
+  sách task; `assignee_id` của subtask không được kiểm tra là thành viên dự án.
+  Cả hai đã siết.
+- Toàn bộ Phase 2 trước đây không có route nào rate-limit; nội dung chat được lưu
+  nguyên trạng. Đã bổ sung.
+
+### Hiệu năng
+- **Mỗi WebSocket giữ một connection DB suốt vòng đời socket** (`Depends(get_db)`)
+  — khoảng 30 socket đồng thời là cạn pool và mọi request HTTP đứng chờ.
+- **CPM chạy đồng bộ toàn dự án ở 11 điểm gọi.** Nay đẩy sang Celery có gộp trùng
+  khi vượt `CPM_SYNC_TASK_THRESHOLD` (mặc định 300 task); `bulk_update` chỉ tính
+  lại một lần thay vì N lần.
+- `notify_project_team` fan-out N `flush()` + N round-trip Redis → gộp thành một
+  `bulk_insert` + một Redis pipeline.
+- `_team_utilization` 3 truy vấn/thành viên và `_burndown` 14 truy vấn tuần tự →
+  gộp thành `GROUP BY`.
+- **Không có index FK** trên `phases`/`sprints`/`epics`/`milestones`/`subtasks`.
+- `/projects/{id}/wbs` trả mọi task của dự án; nay mặc định chỉ trả cấu trúc +
+  số đếm (`include_tasks=true` khi thực sự cần).
+- Frontend: thu hẹp invalidation theo dự án, debounce ô tìm kiếm, `recharts` nạp
+  động (route overview: 114 kB → 5,9 kB).
+
+### Tính năng "trông như xong" nhưng luôn trả 0
+`Project.actual_cost`, `Task.actual_start`, `Task.actual_end`, `Task.progress` và
+`Epic.story_points` **chỉ được đọc, không nơi nào ghi** — nên theo dõi ngân sách
+luôn báo 0% và biểu đồ burndown là đường thẳng ngang trên mọi dự án. Nay đều được
+tính thật (`actual_cost` cộng dồn từ worklog × `User.hourly_rate`).
+Bộ lọc `?labels=` cũng không hoạt động: model khai `JSON` trong khi DB là `JSONB`,
+nên `.contains()` rơi về so khớp chuỗi.
+
+### Giao diện
+Bổ sung trang **Timesheet** và **Notifications** (backend đã phục vụ các endpoint
+tương ứng từ đầu Phase 2 nhưng chưa có màn hình nào gọi tới), hệ thống toast,
+`error.tsx`/`not-found.tsx`, focus trap cho Modal, điều hướng mobile, chuyển theme
+sáng/tối, và i18n `vi`/`en` với tiếng Việt làm mặc định.
+
+### Còn nợ
+- [x] Endpoint `/cpm` công khai — đã mount, chỉ đọc (`GET /projects/{id}/cpm`).
+- [ ] Endpoint `/gantt` + UI Gantt — thuộc Phase 4.
+- [ ] `/leaves`, `/skills` — model đã có, endpoint vẫn là stub. Nhánh cảnh báo
+      `on_leave` trong `resource_service` vì thế vẫn là code chết.
+
+---
+
+*Cập nhật lần cuối: 2026-09-06 — Phase 2 hoàn thành và đã qua rà soát.*

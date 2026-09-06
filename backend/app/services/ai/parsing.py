@@ -18,7 +18,7 @@ Hai vấn đề mà lớp này không được đẩy xuống phía sau:
    hoặc hiển thị cho người dùng khác.
 """
 import json
-from typing import Any, Dict, Optional
+from typing import Any
 
 # Response của model ở đây là các kế hoạch có cấu trúc, không phải văn xuôi. Bất cứ
 # thứ gì vượt xa mức này là generation chạy loạn hoặc một nỗ lực làm cạn kiệt bộ nhớ.
@@ -50,7 +50,7 @@ def wrap_user_input(user_text: str) -> str:
     )
 
 
-def _extract_balanced_object(text: str) -> Optional[str]:
+def _extract_balanced_object(text: str) -> str | None:
     """Trả về `{...}` hoàn chỉnh đầu tiên trong `text`, có theo dõi lồng nhau và chuỗi.
 
     Việc đếm ngoặc nhọn phải bỏ qua các ngoặc nằm trong string literal, nếu không
@@ -84,7 +84,7 @@ def _extract_balanced_object(text: str) -> Optional[str]:
     return None  # chưa được đóng
 
 
-def parse_json_object(text: str) -> Dict[str, Any]:
+def parse_json_object(text: str) -> dict[str, Any]:
     """Parse một response của model mà lẽ ra phải là một JSON object duy nhất.
 
     Chấp nhận các lớp bọc mà model hay thêm vào — một rào ```json, hoặc một câu

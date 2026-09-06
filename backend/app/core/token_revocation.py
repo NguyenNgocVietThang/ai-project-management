@@ -15,7 +15,6 @@ vẫn có sẵn như một kill switch ngoài luồng không phụ thuộc Redis
 """
 import logging
 import time
-from typing import Optional
 
 from app.core.redis_client import get_redis
 
@@ -28,7 +27,7 @@ def _key(jti: str) -> str:
     return f"{REVOKED_KEY_PREFIX}{jti}"
 
 
-def _ttl_seconds(expires_at: Optional[int]) -> int:
+def _ttl_seconds(expires_at: int | None) -> int:
     """Số giây mà tombstone phải tồn tại lâu hơn, suy ra từ chính `exp` của token.
 
     Quay lại dùng một ngày khi `exp` thiếu hoặc đã qua, để một token sai định dạng
@@ -40,7 +39,7 @@ def _ttl_seconds(expires_at: Optional[int]) -> int:
     return remaining if remaining > 0 else 86_400
 
 
-async def revoke(jti: str, expires_at: Optional[int] = None) -> bool:
+async def revoke(jti: str, expires_at: int | None = None) -> bool:
     """Đánh dấu `jti` không dùng được nữa. Trả về False nếu không kết nối được tới store."""
     if not jti:
         return False
@@ -52,7 +51,7 @@ async def revoke(jti: str, expires_at: Optional[int] = None) -> bool:
         return False
 
 
-async def is_revoked(jti: Optional[str]) -> bool:
+async def is_revoked(jti: str | None) -> bool:
     """`jti` đã bị thu hồi hay chưa. False khi không kết nối được tới store — xem
     ghi chú fail-open trong docstring của module."""
     if not jti:

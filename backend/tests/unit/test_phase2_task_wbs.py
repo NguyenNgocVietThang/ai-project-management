@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock, patch
 
@@ -40,8 +40,8 @@ def test_phase2_schema_date_and_time_validation():
         WorklogCreate(hours=0, log_date=date(2026, 8, 14))
     timed = WorklogCreate(
         log_date=date(2026, 8, 14),
-        start_time=datetime(2026, 8, 14, 1, tzinfo=timezone.utc),
-        end_time=datetime(2026, 8, 14, 2, tzinfo=timezone.utc),
+        start_time=datetime(2026, 8, 14, 1, tzinfo=UTC),
+        end_time=datetime(2026, 8, 14, 2, tzinfo=UTC),
     )
     assert timed.hours is None
 
@@ -93,7 +93,7 @@ async def test_invalid_task_status_transition_is_rejected():
 async def test_stop_timer_calculates_hours_and_updates_task_total():
     db = SimpleNamespace(flush=AsyncMock(), add=Mock())
     service = ResourceService(db)
-    started = datetime.now(timezone.utc) - timedelta(hours=1)
+    started = datetime.now(UTC) - timedelta(hours=1)
     item = SimpleNamespace(
         id=8,
         task_id=3,

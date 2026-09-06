@@ -1,8 +1,9 @@
 ﻿import enum
 from datetime import datetime
-from typing import Optional
+
 from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.models.base import Base
 
 
@@ -34,12 +35,12 @@ class Notification(Base):
     message: Mapped[str] = mapped_column(Text, nullable=False)
     notification_type: Mapped[NotificationType] = mapped_column(Enum(NotificationType), nullable=False)
     is_read: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
-    read_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
-    link: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # Route frontend VD: "/projects/5"
+    read_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    link: Mapped[str | None] = mapped_column(Text, nullable=True)  # Route frontend VD: "/projects/5"
 
     # Liên kết đến entity gây ra notification
-    related_entity_type: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)  # VD: "Task", "ChangeRequest"
-    related_entity_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    related_entity_type: Mapped[str | None] = mapped_column(String(100), nullable=True)  # VD: "Task", "ChangeRequest"
+    related_entity_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
     user: Mapped["User"] = relationship("User", back_populates="notifications")
 

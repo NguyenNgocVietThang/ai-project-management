@@ -2,7 +2,13 @@ import { api } from '@/services/api'
 import type { Epic, EpicInput, Milestone, MilestoneInput, Phase, PhaseDeleteImpact, PhaseInput, Sprint, SprintInput, WBSTree } from '@/types/wbs.types'
 
 export const wbsService = {
-  async tree(projectId: number) { return (await api.get<WBSTree>(`/projects/${projectId}/wbs`)).data },
+  /** Cấu trúc WBS. Mặc định KHÔNG kèm task: cây đầy đủ mang theo mọi task của dự
+   *  án đã serialize, và cả trang Tasks lẫn trang WBS đều chỉ cần cấu trúc + số đếm. */
+  async tree(projectId: number, includeTasks = false) {
+    return (await api.get<WBSTree>(`/projects/${projectId}/wbs`, {
+      params: includeTasks ? { include_tasks: true } : undefined,
+    })).data
+  },
   async createPhase(projectId: number, body: PhaseInput) { return (await api.post<Phase>(`/projects/${projectId}/phases`, body)).data },
   async updatePhase(id: number, body: Partial<PhaseInput>) { return (await api.patch<Phase>(`/phases/${id}`, body)).data },
   async phaseImpact(id: number) { return (await api.get<PhaseDeleteImpact>(`/phases/${id}/delete-impact`)).data },

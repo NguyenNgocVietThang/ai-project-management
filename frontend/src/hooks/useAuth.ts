@@ -18,8 +18,7 @@ import type {
 export function useAuth() {
   const router = useRouter()
   const queryClient = useQueryClient()
-  const { accessToken, refreshToken, user, setTokens, setUser, clear, isAuthenticated } =
-    useAuthStore()
+  const { accessToken, user, setTokens, setUser, clear, isAuthenticated } = useAuthStore()
 
   const meQuery = useQuery({
     queryKey: ['auth', 'me'],
@@ -76,7 +75,8 @@ export function useAuth() {
 
   const logout = async () => {
     try {
-      await authService.logout(refreshToken)
+      // Không truyền token: server đọc cookie httpOnly và thu hồi cả hai đầu.
+      await authService.logout()
     } catch {
       // Cố gắng hết sức — việc xóa token phía client bên dưới mới là điều thực sự quan trọng.
     } finally {

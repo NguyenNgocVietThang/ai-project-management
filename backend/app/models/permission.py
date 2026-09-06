@@ -1,6 +1,7 @@
-﻿from typing import List
+﻿
 from sqlalchemy import String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.models.base import Base
 
 
@@ -14,7 +15,7 @@ class Permission(Base):
     action: Mapped[str] = mapped_column(String(50), nullable=False)     # VD: "create", "read"
     description: Mapped[str] = mapped_column(Text, nullable=True)
 
-    roles: Mapped[List["Role"]] = relationship(
+    roles: Mapped[list["Role"]] = relationship(
         "Role", secondary="role_permissions", back_populates="permissions"
     )
 

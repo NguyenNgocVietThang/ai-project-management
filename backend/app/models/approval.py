@@ -1,8 +1,9 @@
 ﻿import enum
 from datetime import datetime
-from typing import Optional
+
 from sqlalchemy import DateTime, Enum, ForeignKey, Index, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.models.base import Base
 
 
@@ -25,8 +26,8 @@ class Approval(Base):
     approver_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     step_order: Mapped[int] = mapped_column(Integer, default=1, nullable=False)  # Thứ tự bước duyệt: 1=BA, 2=PO, 3=PM
     status: Mapped[ApprovalStatus] = mapped_column(Enum(ApprovalStatus), default=ApprovalStatus.PENDING)
-    comment: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    approved_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    comment: Mapped[str | None] = mapped_column(Text, nullable=True)
+    approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     change_request: Mapped["ChangeRequest"] = relationship("ChangeRequest", back_populates="approvals")
     approver: Mapped["User"] = relationship("User")

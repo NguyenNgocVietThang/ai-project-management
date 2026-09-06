@@ -17,7 +17,6 @@ trao ra những mã có thể sử dụng.
 import hashlib
 import json
 import secrets
-from typing import Optional, Tuple
 
 from app.core.redis_client import get_redis
 
@@ -46,7 +45,7 @@ async def issue(access_token: str, refresh_token: str) -> str:
     return code
 
 
-async def redeem(code: str) -> Optional[Tuple[str, str]]:
+async def redeem(code: str) -> tuple[str, str] | None:
     """Trả về (access_token, refresh_token) cho `code`, hoặc None nếu mã không xác định,
     đã hết hạn, hoặc đã được dùng. Việc xóa và đọc là một bước atomic nên hai
     lần đổi mã đồng thời không thể cùng thành công."""

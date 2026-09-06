@@ -1,7 +1,7 @@
 # Roadmap: Auth & User Onboarding Module (Phase 1)
 
-> **Phiên bản:** 1.1 | **Cập nhật:** 2026-08-22  
-> **Trạng thái:** ✅ Đã hoàn thành (100%) | **Ngày hoàn thành:** 2026-08-22  
+> **Phiên bản:** 1.2 | **Cập nhật:** 2026-09-06  
+> **Trạng thái:** ✅ Hoàn thành, đã qua rà soát bảo mật | **Ngày hoàn thành:** 2026-08-22 (rà soát & gia cố: 2026-09-06)  
 > **Mức độ ưu tiên:** Critical – Lớp xác thực, phân quyền RBAC, bảo mật tài khoản & Quản trị Admin  
 > **Điều kiện tiên quyết:** [x] Database PostgreSQL, Redis Broker, MinIO Storage, FastAPI Backend & Next.js Frontend đã cấu hình
 
@@ -85,4 +85,28 @@ Module **Auth & User Onboarding (Phase 1)** chịu trách nhiệm thiết lập 
 
 ---
 
-*Cập nhật lần cuối: 2026-09-03 — Phase 1 hoàn thành 100% (đối soát với mã nguồn: auth/oauth/users/roles/permissions/audit đều mount & có unit test).*
+## Rà soát bảo mật 2026-09-06
+
+Đợt rà soát đối soát từng route với mã nguồn thật và phát hiện các lỗ hổng sau —
+tất cả đều đã được vá và có test hồi quy:
+
+| Vấn đề | Mức độ | Cách xử lý |
+|---|---|---|
+| OAuth gộp tài khoản theo email mà không đọc `verified_email` của provider — bất kỳ ai tạo được identity mang email của nạn nhân đều chiếm được tài khoản đó | Critical | `oauth_service.py` nay bắt buộc provider khẳng định đã xác minh; Facebook không công bố cờ này nên không bao giờ tự gộp |
+| OAuth `state` chỉ ký HMAC, không ràng buộc phiên, dùng lại được trong 15 phút | High | Store Redis dùng một lần (`core/oauth_state_store.py`), ràng buộc bằng cookie httpOnly, thêm PKCE cho Google |
+| Không có khoá tài khoản khi brute-force (rate limit chỉ theo IP) | High | `core/login_throttle.py` — đếm theo email, backoff tăng dần |
+| `is_revoked()` chỉ được tra ở `/auth/refresh`, nên access token bị đánh cắp vẫn sống 30 phút sau khi đăng xuất | High | Tra ở mọi request (`core/dependencies.py`); logout thu hồi cả hai token |
+| Access + refresh token nằm trong `localStorage` và một cookie JS đọc được | High | Refresh token → cookie httpOnly (`core/auth_cookies.py`); access token chỉ trong bộ nhớ |
+| `GET /roles/` chỉ cần đăng nhập, trả toàn bộ ma trận role→permission | Medium | Danh sách đầy đủ yêu cầu Admin; bộ chọn vai trò dự án nhận shape rút gọn |
+| `GET /users/search` cho phép quét email theo tên miền | Medium | Email được che (`ng***@company.com`) |
+| `CurrentVerifiedUser` chỉ dùng ở 2/40+ route | Medium | Áp cho mọi route ghi |
+| `_reject_insecure_defaults` bỏ qua `ALLOWED_HOSTS`, `CORS_ORIGINS`, `FRONTEND_URL` | Medium | Cả ba nay chặn khởi động ở production |
+
+**Kiểm thử:** bổ sung `tests/conftest.py` cùng bộ integration test HTTP-level
+(`tests/integration/`) — trước đó không có test nào chứng minh một route thực sự
+trả 403. `limiter.enabled = False` ở cấp module (rò rỉ ra cả phiên pytest, khiến
+mọi test rate-limit sau đó pass giả) đã được thay bằng fixture có phạm vi.
+
+---
+
+*Cập nhật lần cuối: 2026-09-06 — Phase 1 hoàn thành và đã qua rà soát bảo mật.*

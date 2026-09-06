@@ -1,19 +1,25 @@
 from collections import defaultdict
-from datetime import date, datetime, timedelta, timezone
-from typing import Annotated, Optional
+from datetime import UTC, date, datetime, timedelta
+from typing import Annotated
 from zoneinfo import ZoneInfo
 
 from fastapi import Depends
-from sqlalchemy import func, or_, select
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.core.config import settings
-from app.core.exceptions import BadRequestException, ConflictException, ForbiddenException, NotFoundException
+from app.core.exceptions import (
+    BadRequestException,
+    ConflictException,
+    ForbiddenException,
+    NotFoundException,
+)
 from app.db.session import get_db
 from app.models.assignment import Assignment
 from app.models.associations import project_members
 from app.models.leave import Leave, LeaveStatus
+from app.models.project import Project
 from app.models.task import Task
 from app.models.user import User
 from app.models.worklog import Worklog
@@ -27,7 +33,12 @@ from app.schemas.task import (
     WorklogResponse,
     WorklogUpdate,
 )
-from app.services.phase2_common import add_audit, get_project_context, get_task_context, serialize_model
+from app.services.phase2_common import (
+    add_audit,
+    get_project_context,
+    get_task_context,
+    serialize_model,
+)
 from app.services.scheduling_service import recalculate_task_hours
 
 
@@ -39,7 +50,7 @@ class ResourceService:
     def _local_today() -> date:
         return datetime.now(ZoneInfo(settings.APP_TIMEZONE)).date()
 
-    async def _assignment_response(self, item: Assignment, task: Optional[Task] = None):
+    async def _assignment_response(self, item: Assignment, task: Task | None = None):
         if getattr(item, "user", None) is None:
             await self.db.refresh(item, ["user"])
         task = task or await self.db.get(Task, item.task_id)
@@ -168,21 +179,34 @@ class ResourceService:
         await self.db.delete(item)
         add_audit(self.db, user.id, "DELETE", "Assignment", assignment_id, old_values=snapshot)
 
-    async def my_assignments(self, user: User):
+    async def my_assignments(self, user: User, *, limit: int = 100, offset: int = 0):
+        """Cac assignment cua nguoi dung hien tai, moi nhat truoc.
+
+        Co gioi han: danh sach nay tang theo toan bo lich su lam viec cua mot
+        nguoi, chu khong theo kich thuoc mot du an. Cung loc bo du an da xoa mem -
+        truoc day khong join sang Project nen assignment cua du an da xoa van hien.
+        """
         items = list(
             (
                 await self.db.scalars(
                     select(Assignment)
+                    .join(Task, Task.id == Assignment.task_id)
+                    .join(Project, Project.id == Task.project_id)
                     .options(selectinload(Assignment.user), selectinload(Assignment.task))
-                    .where(Assignment.user_id == user.id)
+                    .where(
+                        Assignment.user_id == user.id,
+                        Project.deleted_at.is_(None),
+                    )
                     .order_by(Assignment.id.desc())
+                    .offset(offset)
+                    .limit(limit)
                 )
             ).all()
         )
         return [await self._assignment_response(item, item.task) for item in items]
 
     async def resource_leveling(
-        self, project_id: int, user: User, start: Optional[date], end: Optional[date]
+        self, project_id: int, user: User, start: date | None, end: date | None
     ):
         context = await get_project_context(self.db, project_id, user)
         if not context.is_admin and context.role not in {"PM", "BA"}:
@@ -248,18 +272,30 @@ class ResourceService:
         await recalculate_task_hours(self.db, task.id)
         return await self._worklog_response(item)
 
-    async def list_task_worklogs(self, task_id: int, user: User):
+    async def list_task_worklogs(
+        self, task_id: int, user: User, *, limit: int = 200, offset: int = 0
+    ):
+        """Worklog cua mot task, moi nhat truoc. Co gioi han: mot task chay dai
+        tich luy worklog khong ngung."""
         task, context = await get_task_context(self.db, task_id, user)
         if not context.is_admin and context.role not in {"PM", "BA", "Member"}:
             raise ForbiddenException("You cannot view worklogs")
         stmt = select(Worklog).options(selectinload(Worklog.user)).where(Worklog.task_id == task.id)
         if context.role == "Member" and not context.is_admin:
             stmt = stmt.where(Worklog.user_id == user.id)
-        items = list((await self.db.scalars(stmt.order_by(Worklog.log_date.desc(), Worklog.id.desc()))).all())
+        items = list(
+            (
+                await self.db.scalars(
+                    stmt.order_by(Worklog.log_date.desc(), Worklog.id.desc())
+                    .offset(offset)
+                    .limit(limit)
+                )
+            ).all()
+        )
         return [await self._worklog_response(item) for item in items]
 
     async def project_worklogs(
-        self, project_id: int, user: User, user_id: Optional[int], start: Optional[date], end: Optional[date]
+        self, project_id: int, user: User, user_id: int | None, start: date | None, end: date | None
     ):
         context = await get_project_context(self.db, project_id, user)
         if not context.is_admin and context.role not in {"PM", "BA", "Member"}:
@@ -290,11 +326,19 @@ class ResourceService:
         )
 
     async def _owned_worklog(self, worklog_id: int, user: User):
+        """Worklog ma nguoi goi duoc phep sua.
+
+        Chu so huu, PM cua du an, hoac Admin. Truoc day CHI chu so huu va Admin
+        toan cuc - nghia la PM khong the sua mot dong worklog nhap sai cua thanh
+        vien, du duyet timesheet la viec cua ho. Buoc duy nhat con lai la nho mot
+        Admin he thong, dieu bien moi loi go nham thanh mot yeu cau ho tro.
+        """
         item = await self.db.get(Worklog, worklog_id)
         if item is None:
             raise NotFoundException("Worklog not found")
         task, context = await get_task_context(self.db, item.task_id, user)
-        if not context.is_admin and item.user_id != user.id:
+        is_project_manager = context.role == "PM"
+        if not context.is_admin and not is_project_manager and item.user_id != user.id:
             raise ForbiddenException("You can only modify your own worklogs")
         return item, task, context
 
@@ -343,7 +387,7 @@ class ResourceService:
         )
         if active:
             raise ConflictException("You already have a running timer")
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         item = Worklog(
             task_id=task.id,
             user_id=user.id,
@@ -360,7 +404,7 @@ class ResourceService:
         item, task, _ = await self._owned_worklog(worklog_id, user)
         if item.start_time is None or item.end_time is not None:
             raise ConflictException("Worklog is not a running timer")
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         item.end_time = now
         item.hours = round(max(0, (now - item.start_time).total_seconds()) / 3600, 4)
         await self.db.flush()
@@ -371,11 +415,16 @@ class ResourceService:
     async def active_timer(self, user: User):
         item = await self.db.scalar(
             select(Worklog)
+            .join(Task, Task.id == Worklog.task_id)
+            .join(Project, Project.id == Task.project_id)
             .options(selectinload(Worklog.user))
             .where(
                 Worklog.user_id == user.id,
                 Worklog.start_time.is_not(None),
                 Worklog.end_time.is_(None),
+                # Mot timer con chay tren du an da xoa mem se hien vinh vien tren
+                # thanh header, va khong con duong nao de dung no.
+                Project.deleted_at.is_(None),
             )
         )
         return await self._worklog_response(item) if item else None

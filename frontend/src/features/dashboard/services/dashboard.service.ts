@@ -7,15 +7,15 @@ import type {
 
 export const dashboardService = {
   getSummary: () =>
-    api.get<UserDashboardSummary>('/dashboard/summary').then((r) => r.data),
+    api.get<UserDashboardSummary>('/dashboards/summary').then((r) => r.data),
 
   getPortfolioHealth: (portfolioId: number) =>
     api
-      .get<PortfolioHealthResponse>(`/dashboard/portfolios/${portfolioId}/health`)
+      .get<PortfolioHealthResponse>(`/dashboards/portfolios/${portfolioId}/health`)
       .then((r) => r.data),
 
   getProjectStats: (projectId: number) =>
     api
-      .get<ProjectDashboardStats>(`/dashboard/projects/${projectId}/stats`)
+      .get<ProjectDashboardStats>(`/dashboards/projects/${projectId}/stats`)
       .then((r) => r.data),
 }

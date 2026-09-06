@@ -1,6 +1,6 @@
 from io import BytesIO
 from types import SimpleNamespace
-from unittest.mock import AsyncMock, Mock
+from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 from fastapi import HTTPException
@@ -10,7 +10,7 @@ import app.db.base  # noqa: F401 - đăng ký các quan hệ SQLAlchemy
 from app.core.security import create_refresh_token, verify_password
 from app.schemas.user import ChangePasswordRequest, DeleteAccountRequest, UserUpdate
 from app.services.auth_service import AuthService
-from app.services.oauth_service import OAuthService
+from app.services.oauth_service import OAuthService, OAuthState
 from app.services.user_service import MAX_AVATAR_BYTES, UserService
 
 
@@ -249,16 +249,58 @@ async def test_deactivate_anonymizes_profile_but_preserves_identity_and_relation
     assert user.auth_version == 1
 
 
-def test_signed_oauth_link_state_binds_provider_mode_and_user():
+@pytest.mark.asyncio
+async def test_oauth_link_state_binds_provider_mode_user_and_browser():
+    """State phải dùng được đúng một lần, và chỉ từ trình duyệt đã tạo ra nó."""
     service = OAuthService(build_db())
-    state = service.generate_state("google", mode="link", user_id=7)
-    parsed = service.parse_state(state, "google")
+    store: dict[str, str] = {}
 
-    assert parsed.provider == "google"
-    assert parsed.mode == "link"
-    assert parsed.user_id == 7
-    assert not service.verify_state(state, "facebook")
-    assert not service.verify_state(f"{state}tampered", "google")
+    class FakeRedis:
+        async def set(self, key, value, ex=None):
+            store[key] = value
+
+        async def getdel(self, key):
+            return store.pop(key, None)
+
+    with patch("app.core.oauth_state_store.get_redis", return_value=FakeRedis()):
+        state, secret, challenge = await service.start_flow(
+            "google", mode="link", user_id=7
+        )
+        assert challenge, "Google phải dùng PKCE"
+
+        # Quay lại từ một trình duyệt khác (không có/sai cookie) thì bị từ chối.
+        with pytest.raises(HTTPException):
+            await service.consume_flow(state, "wrong-secret", "google")
+        with pytest.raises(HTTPException):
+            await service.consume_flow(state, None, "google")
+
+        parsed, verifier = await service.consume_flow(state, secret, "google")
+        assert parsed.provider == "google"
+        assert parsed.mode == "link"
+        assert parsed.user_id == 7
+        assert verifier, "code_verifier của PKCE phải ở lại phía server"
+
+        # Đã dùng rồi thì không dùng lại được nữa.
+        with pytest.raises(HTTPException):
+            await service.consume_flow(state, secret, "google")
+
+
+@pytest.mark.asyncio
+async def test_oauth_state_is_rejected_for_a_different_provider():
+    service = OAuthService(build_db())
+    store: dict[str, str] = {}
+
+    class FakeRedis:
+        async def set(self, key, value, ex=None):
+            store[key] = value
+
+        async def getdel(self, key):
+            return store.pop(key, None)
+
+    with patch("app.core.oauth_state_store.get_redis", return_value=FakeRedis()):
+        state, secret, _ = await service.start_flow("google", mode="link", user_id=7)
+        with pytest.raises(HTTPException):
+            await service.consume_flow(state, secret, "facebook")
 
 
 @pytest.mark.asyncio
@@ -270,10 +312,7 @@ async def test_oauth_link_rejects_provider_account_owned_by_another_user():
         get_by_id_for_update=AsyncMock(return_value=user),
         get_by_google_id=AsyncMock(return_value=other),
     )
-    state = service.parse_state(
-        service.generate_state("google", mode="link", user_id=user.id),
-        "google",
-    )
+    state = OAuthState(provider="google", mode="link", user_id=user.id)
 
     with pytest.raises(HTTPException) as error:
         await service.link_social_account(
@@ -291,16 +330,14 @@ async def test_oauth_link_connects_provider_without_issuing_tokens():
         get_by_id_for_update=AsyncMock(return_value=user),
         get_by_google_id=AsyncMock(return_value=None),
     )
-    state = service.parse_state(
-        service.generate_state("google", mode="link", user_id=user.id),
-        "google",
-    )
+    state = OAuthState(provider="google", mode="link", user_id=user.id)
 
     linked = await service.link_social_account(
         state,
         {
             "id": "new-google-id",
             "email": user.email,
+            "email_verified": True,
             "avatar_url": "https://example.com/avatar.png",
         },
     )

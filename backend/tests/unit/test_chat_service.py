@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock, patch
 
@@ -9,7 +9,7 @@ from app.core.exceptions import ForbiddenException
 from app.schemas.chat import ChatMessageCreate
 from app.services.chat_service import ChatService
 
-NOW = datetime(2026, 8, 21, tzinfo=timezone.utc)
+NOW = datetime(2026, 8, 21, tzinfo=UTC)
 
 
 def build_message(**overrides):

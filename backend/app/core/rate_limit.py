@@ -29,6 +29,20 @@ REFRESH_LIMIT = "20/minute"
 EMAIL_VERIFY_LIMIT = "10/hour"
 USER_SEARCH_LIMIT = "30/minute"
 AVATAR_UPLOAD_LIMIT = "5/hour"
+# Bắt đầu luồng OAuth thì rẻ, nhưng callback thực hiện hai lời gọi HTTP ra ngoài
+# tới provider, nên nó là một cách để bên chưa xác thực tiêu tài nguyên của ta.
+OAUTH_START_LIMIT = "10/minute"
+OAUTH_CALLBACK_LIMIT = "10/minute"
+# Vé WebSocket rẻ nhưng được xin lại ở mỗi lần kết nối lại; hạn mức này đủ rộng
+# cho việc chuyển tab và mạng chập chờn, đủ chặt để một vòng lặp kết nối lại bị lộ.
+WS_TICKET_LIMIT = "60/minute"
+# Chat qua WebSocket đã có budget riêng theo từng socket (10 tin/10 giây, xem
+# app/api/ws/chat.py). Đường REST dự phòng thì không có gì, nên client chỉ cần đổi
+# sang nó là spam thoải mái — hạn mức này khớp với budget của socket.
+CHAT_POST_LIMIT = "60/minute"
+# Ghi hàng loạt: mỗi lần gọi có thể chạm tới hàng trăm task và kéo theo một lần
+# tính lại lịch trình toàn dự án.
+BULK_WRITE_LIMIT = "20/minute"
 
 
 def client_key(request: Request) -> str:

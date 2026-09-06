@@ -1,6 +1,6 @@
 import enum
 from datetime import date, datetime
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import Date, DateTime, Enum, Float, ForeignKey, Index, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -43,7 +43,7 @@ class Project(Base):
     )
 
     name: Mapped[str] = mapped_column(String(255), nullable=False)
-    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
     status: Mapped[ProjectStatus] = mapped_column(
         Enum(ProjectStatus), default=ProjectStatus.PLANNING, nullable=False
     )
@@ -55,47 +55,47 @@ class Project(Base):
         default=ProjectMethodology.AGILE,
         nullable=False,
     )
-    start_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
-    end_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    start_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    end_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     progress: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
 
-    budget: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    budget: Mapped[float | None] = mapped_column(Float, nullable=True)
     actual_cost: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
     currency: Mapped[str] = mapped_column(String(10), default="VND", nullable=False)
 
-    portfolio_id: Mapped[Optional[int]] = mapped_column(
+    portfolio_id: Mapped[int | None] = mapped_column(
         ForeignKey("portfolios.id", ondelete="SET NULL"), nullable=True
     )
     pm_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
-    deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     portfolio: Mapped[Optional["Portfolio"]] = relationship("Portfolio", back_populates="projects")
     pm: Mapped["User"] = relationship(
         "User", foreign_keys=[pm_id], back_populates="projects_managed"
     )
-    members: Mapped[List["User"]] = relationship(
+    members: Mapped[list["User"]] = relationship(
         "User", secondary="project_members", back_populates="projects_member"
     )
-    phases: Mapped[List["Phase"]] = relationship(
+    phases: Mapped[list["Phase"]] = relationship(
         "Phase", back_populates="project", cascade="all, delete-orphan"
     )
-    sprints: Mapped[List["Sprint"]] = relationship(
+    sprints: Mapped[list["Sprint"]] = relationship(
         "Sprint", back_populates="project", cascade="all, delete-orphan"
     )
-    epics: Mapped[List["Epic"]] = relationship(
+    epics: Mapped[list["Epic"]] = relationship(
         "Epic", back_populates="project", cascade="all, delete-orphan"
     )
-    milestones: Mapped[List["Milestone"]] = relationship(
+    milestones: Mapped[list["Milestone"]] = relationship(
         "Milestone", back_populates="project", cascade="all, delete-orphan"
     )
-    tasks: Mapped[List["Task"]] = relationship(
+    tasks: Mapped[list["Task"]] = relationship(
         "Task", back_populates="project", cascade="all, delete-orphan"
     )
-    documents: Mapped[List["Document"]] = relationship("Document", back_populates="project")
-    change_requests: Mapped[List["ChangeRequest"]] = relationship(
+    documents: Mapped[list["Document"]] = relationship("Document", back_populates="project")
+    change_requests: Mapped[list["ChangeRequest"]] = relationship(
         "ChangeRequest", back_populates="project"
     )
-    versions: Mapped[List["ProjectVersion"]] = relationship(
+    versions: Mapped[list["ProjectVersion"]] = relationship(
         "ProjectVersion", back_populates="project"
     )
 

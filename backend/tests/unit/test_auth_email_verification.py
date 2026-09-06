@@ -1,6 +1,6 @@
 import hashlib
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 from urllib.parse import parse_qs, urlparse
@@ -10,8 +10,8 @@ import pytest
 from fastapi import HTTPException
 
 import app.db.base  # noqa: F401 - đăng ký tất cả quan hệ SQLAlchemy để dựng User
-from app.models.user import User
 from app.main import app
+from app.models.user import User
 from app.schemas.auth import RegisterRequest
 from app.services.auth_service import AuthService
 from app.services.oauth_service import OAuthService
@@ -51,7 +51,7 @@ async def test_registration_stores_hashed_token_and_survives_queue_failure(caplo
         full_name="Sensitive User",
         password="Password1Secure",
     )
-    started_at = datetime.now(timezone.utc)
+    started_at = datetime.now(UTC)
 
     with (
         patch("app.services.auth_service.secrets.token_urlsafe", return_value="secret-token"),
@@ -78,7 +78,7 @@ async def test_valid_verification_token_is_one_time_and_handles_database_timezon
     naive_expiry,
 ):
     token = "valid-token"
-    expires_at = datetime.now(timezone.utc) + timedelta(minutes=30)
+    expires_at = datetime.now(UTC) + timedelta(minutes=30)
     if naive_expiry:
         expires_at = expires_at.replace(tzinfo=None)
     user = SimpleNamespace(
@@ -106,7 +106,7 @@ async def test_valid_verification_token_is_one_time_and_handles_database_timezon
 async def test_missing_expired_and_unknown_tokens_share_one_error():
     expired_user = SimpleNamespace(
         email_verified=False,
-        email_verification_expires_at=datetime.now(timezone.utc) - timedelta(seconds=1),
+        email_verification_expires_at=datetime.now(UTC) - timedelta(seconds=1),
     )
     service, _ = build_service(expired_user)
 
@@ -134,7 +134,7 @@ async def test_resend_replaces_old_token_and_queues_new_link():
         email="person@example.com",
         email_verified=False,
         email_verification_token_hash=old_hash,
-        email_verification_expires_at=datetime.now(timezone.utc) + timedelta(hours=20),
+        email_verification_expires_at=datetime.now(UTC) + timedelta(hours=20),
     )
     service, db = build_service(user)
 
@@ -158,7 +158,7 @@ async def test_resend_enforces_sixty_second_cooldown():
         email="person@example.com",
         email_verified=False,
         email_verification_token_hash="hash",
-        email_verification_expires_at=datetime.now(timezone.utc) + timedelta(
+        email_verification_expires_at=datetime.now(UTC) + timedelta(
             hours=24, seconds=-10
         ),
     )
@@ -248,13 +248,14 @@ async def test_oauth_account_is_marked_verified():
         avatar_url=None,
         provider="google",
         provider_id="google-31",
+        email_provider_verified=True,
     )
 
     assert user.email_verified is True
 
 
 @pytest.mark.asyncio
-async def test_oauth_link_marks_existing_local_account_verified():
+async def test_oauth_merges_into_local_account_when_provider_verified_the_email():
     existing_user = User(
         email="existing@example.com",
         username="existing_user",
@@ -262,7 +263,7 @@ async def test_oauth_link_marks_existing_local_account_verified():
         hashed_password="not-used",
         email_verified=False,
         email_verification_token_hash="old-hash",
-        email_verification_expires_at=datetime.now(timezone.utc) + timedelta(hours=1),
+        email_verification_expires_at=datetime.now(UTC) + timedelta(hours=1),
     )
     db = AsyncMock()
     service = OAuthService(db)
@@ -277,6 +278,7 @@ async def test_oauth_link_marks_existing_local_account_verified():
         avatar_url=None,
         provider="google",
         provider_id="google-existing",
+        email_provider_verified=True,
     )
 
     assert user is existing_user

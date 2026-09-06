@@ -66,6 +66,31 @@ async def publish(channel: str, payload: dict[str, Any]) -> None:
         logger.warning("ws publish failed for channel %s (redis unavailable?)", channel, exc_info=True)
 
 
+async def publish_many(messages: list[tuple[str, dict[str, Any]]]) -> None:
+    """Publish nhiều message trong một vòng round-trip Redis.
+
+    `publish()` một lần cho mỗi người nhận nghĩa là một lần phát tán tới nhóm 50
+    người tốn 50 round-trip, tất cả nằm trong request đang chờ. Pipeline gộp chúng
+    lại thành một. Soft-fail giống publish(): thông báo real-time là tiện ích, còn
+    bản ghi trong DB mới là nguồn sự thật.
+    """
+    if not messages:
+        return
+    try:
+        pipeline = get_redis().pipeline()
+        for channel, payload in messages:
+            pipeline.publish(
+                f"{REDIS_CHANNEL_PREFIX}{channel}", json.dumps(payload, default=str)
+            )
+        await pipeline.execute()
+    except Exception:
+        logger.warning(
+            "ws batch publish failed for %d channels (redis unavailable?)",
+            len(messages),
+            exc_info=True,
+        )
+
+
 async def redis_listener() -> None:
     """Task nền chạy dài (được khởi động trong lifespan của FastAPI): subscribe
     mọi channel ws:* và re-broadcast từng message tới các kết nối cục bộ của

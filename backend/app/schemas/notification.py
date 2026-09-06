@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -12,17 +11,17 @@ class NotificationResponse(BaseModel):
     message: str
     notification_type: NotificationType
     is_read: bool
-    read_at: Optional[datetime]
-    link: Optional[str]
-    related_entity_type: Optional[str]
-    related_entity_id: Optional[int]
+    read_at: datetime | None
+    link: str | None
+    related_entity_type: str | None
+    related_entity_id: int | None
     created_at: datetime
 
     model_config = {"from_attributes": True}
 
 
 class NotificationListResponse(BaseModel):
-    items: List[NotificationResponse]
+    items: list[NotificationResponse]
     total: int
     unread_count: int
     page: int

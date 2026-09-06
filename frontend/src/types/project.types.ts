@@ -1,6 +1,16 @@
 export type ProjectStatus = 'PLANNING' | 'ACTIVE' | 'ON_HOLD' | 'COMPLETED' | 'CANCELLED'
 export type ProjectMethodology = 'agile' | 'waterfall' | 'hybrid'
 
+/** Kết quả từ /users/search. Email được che ở server — địa chỉ đầy đủ biến bộ
+ *  chọn thành viên thành công cụ thu thập danh bạ nhân sự. */
+export interface UserSearchResult {
+  id: number
+  full_name: string
+  username: string
+  email_hint: string
+  avatar_url: string | null
+}
+
 export interface UserSummary {
   id: number
   full_name: string
