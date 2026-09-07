@@ -52,17 +52,17 @@ Xây dựng một **web application quản lý dự án và danh mục đầu t�
 
 | Nhóm chức năng | Trạng thái | Ghi chú |
 |---|---|---|
-| Auth, RBAC, Admin Portal, OAuth, Profile | ✅ Chạy thật + test | Phase 1 hoàn thành |
-| Portfolio / Project / WBS / Task / Dependency / Assignment / WorkLog | ✅ Chạy thật + test | Phase 2 hoàn thành |
-| CPM Engine | ✅ Chạy thật + test | `app/utils/cpm.py` + `scheduling_service.py`; endpoint `GET /projects/{id}/cpm` đã mount (chỉ đọc). `/gantt` vẫn là stub (Phase 4) |
-| Real-time Chat + Notification Push + Celery Beat daily sweep | ✅ Chạy thật + test | Phase 2/5 hoàn thành |
-| Dashboard KPI / EVA / Burndown | ✅ Chạy thật | endpoint `/dashboards` đã mount |
-| AI (Generator, Impact, Optimize, Risk, Resource) | 🟡 Chỉ hạ tầng | Có `BaseAIProvider` + `OpenAIProvider` + `GeminiProvider` + `project_generator.py` và models; **chưa mount** endpoint `/ai`, Celery `ai_tasks` vẫn là stub |
-| Change Request / Approvals / Project Versioning / Rollback | 🟡 Chỉ model DB | Endpoint là stub `TODO`, **chưa mount**, chưa có UI |
-| Reports DOCX/XLSX | 🟡 Chỉ scaffold | `report_tasks.py` là stub trả về rỗng, endpoint `/reports` chưa mount |
-| Documents / AI Document Parser | 🟡 Chỉ model DB | endpoint `/documents` là stub, chưa mount |
-| Leaves / Skills catalog | 🟡 Chỉ model DB | endpoint là stub, chưa mount |
-| Investor Read-only Dashboard, Mobile polish | ❌ Chưa làm | — |
+| Auth, RBAC, Admin Portal, OAuth, Profile | Chạy thật + test | Phase 1 hoàn thành |
+| Portfolio / Project / WBS / Task / Dependency / Assignment / WorkLog | Chạy thật + test | Phase 2 hoàn thành |
+| CPM Engine | Chạy thật + test | `app/utils/cpm.py` + `scheduling_service.py`; endpoint `GET /projects/{id}/cpm` đã mount (chỉ đọc). `/gantt` vẫn là stub (Phase 4) |
+| Real-time Chat + Notification Push + Celery Beat daily sweep | Chạy thật + test | Phase 2/5 hoàn thành |
+| Dashboard KPI / EVA / Burndown | Chạy thật | endpoint `/dashboards` đã mount |
+| AI (Generator, Impact, Optimize, Risk, Resource) | Chỉ hạ tầng | Có `BaseAIProvider` + `OpenAIProvider` + `GeminiProvider` + `project_generator.py` và models; **chưa mount** endpoint `/ai`, Celery `ai_tasks` vẫn là stub |
+| Change Request / Approvals / Project Versioning / Rollback | Chỉ model DB | Endpoint là stub `TODO`, **chưa mount**, chưa có UI |
+| Reports DOCX/XLSX | Chỉ scaffold | `report_tasks.py` là stub trả về rỗng, endpoint `/reports` chưa mount |
+| Documents / AI Document Parser | Chỉ model DB | endpoint `/documents` là stub, chưa mount |
+| Leaves / Skills catalog | Chỉ model DB | endpoint là stub, chưa mount |
+| Investor Read-only Dashboard, Mobile polish | Chưa làm | — |
 
 > **API thực tế đang phục vụ:** 22 REST router (`/api/v1/...`) + 2 WebSocket router (`/ws/...`). 10 router còn lại (`leaves, skills, documents, approvals, change_requests, gantt, reports, project_versions, ai, system`) vẫn là stub `TODO: Implement`, bị comment trong [`router.py`](./backend/app/api/v1/router.py) và **không** được mount.
 

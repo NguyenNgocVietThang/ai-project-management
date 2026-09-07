@@ -45,4 +45,6 @@ venv/
 # Misc
 *.tsbuildinfo
 .turbo
+celerybeat-schedule*
+*.sqlite3
 
