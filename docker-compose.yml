@@ -140,10 +140,18 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      # Dừng ở stage development: KHÔNG đặt NODE_ENV=production (stage production có),
+      # nếu không `next dev` chạy với NODE_ENV=production sẽ vỡ edge middleware
+      # (EvalError: Code generation from strings disallowed).
+      target: development
     container_name: ai-project-frontend
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
-      - NEXT_PUBLIC_WS_URL=ws://localhost:8000
+      - NODE_ENV=development
+      # Dùng 127.0.0.1 thay vì localhost: trên máy Windows này `localhost` phân giải
+      # sang IPv6 ::1 mà Docker Desktop không forward, nên trình duyệt gọi API/WS
+      # qua localhost sẽ hỏng. Truy cập UI tại http://127.0.0.1:3000
+      - NEXT_PUBLIC_API_URL=http://127.0.0.1:8000/api/v1
+      - NEXT_PUBLIC_WS_URL=ws://127.0.0.1:8000
     ports:
       - '3000:3000'
     depends_on:

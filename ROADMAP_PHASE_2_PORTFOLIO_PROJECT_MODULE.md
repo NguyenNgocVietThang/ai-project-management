@@ -1,7 +1,7 @@
 # Roadmap: Portfolio & Project Core Module (Phase 2)
 
 > **Phiên bản:** 1.2 | **Cập nhật:** 2026-09-06  
-> **Trạng thái:** ✅ Hoàn thành, đã qua rà soát | **Ngày hoàn thành:** 2026-08-22 (rà soát & gia cố: 2026-09-06)  
+> **Trạng thái:** Hoàn thành, đã qua rà soát | **Ngày hoàn thành:** 2026-08-22 (rà soát & gia cố: 2026-09-06) 
 > **Mức độ ưu tiên:** Critical – Module nghiệp vụ cốt lõi quản lý danh mục, dự án, WBS, CPM Engine & Real-time Chat  
 > **Điều kiện tiên quyết:** [x] Phase 1 (Auth & User Onboarding) đã hoàn thành
 
@@ -26,14 +26,14 @@ Module **Portfolio & Project Core (Phase 2)** xây dựng toàn bộ lớp quả
 
 | Tính năng | Mã SOP | Độ ưu tiên | Trạng thái | Backend Task | Frontend Component |
 |---|---|---|---|---|---|
-| Portfolio Management | SOP-PM-001 | Critical | ✅ Hoàn thành | `PortfolioService` + Endpoints | `PortfolioList`, `PortfolioCard`, `PortfolioForm` |
-| Project Management & Member RBAC | SOP-PM-002 | Critical | ✅ Hoàn thành | `ProjectService` + Endpoints | `ProjectCard`, `ProjectWizard`, `ProjectMembersTable` |
-| WBS, Phases, Sprints & Milestones | SOP-PM-003 | High | ✅ Hoàn thành | `WBSService` + Endpoints | `projects/[id]/wbs/page.tsx` (cây, trình sửa và hộp thoại xoá đều nội tuyến trong trang) |
-| Task CRUD & Dependencies Graph | SOP-PM-003 | Critical | ✅ Hoàn thành | `TaskService` + `scheduling_service.py` + `utils/cpm.py` | `projects/[id]/tasks/page.tsx` (bảng Kanban nội tuyến), `TaskDrawer` |
-| Assignments & WorkLogs Tracking | SOP-RM-001 | High | ✅ Hoàn thành | `ResourceService` | `TaskDrawer` (gán việc & ghi giờ), `projects/[id]/timesheet/page.tsx` |
-| Project & Portfolio Dashboard | Reporting | High | ✅ Hoàn thành | `DashboardService` + `NotificationService` | `StatsRow`, `ActiveProjectsGrid`, `MyTasksList`, `RecentActivityFeed`, `ProjectOverviewCharts`, `NotificationBell` |
-| Real-time Project Chat | SOP-CHAT-001 | High | ✅ Hoàn thành | `ChatService` + `/ws/chat/{id}` | `ChatPanel`, `ChatMessageItem`, `useChatSocket` |
-| Notification Triggers & Beat Sweep | SOP-NOTI-001 | High | ✅ Hoàn thành | `notify_project_team` + Celery Beat | `NotificationBell`, `useNotificationSocket` |
+| Portfolio Management | SOP-PM-001 | Critical | Hoàn thành | `PortfolioService` + Endpoints | `PortfolioList`, `PortfolioCard`, `PortfolioForm` |
+| Project Management & Member RBAC | SOP-PM-002 | Critical | Hoàn thành | `ProjectService` + Endpoints | `ProjectCard`, `ProjectWizard`, `ProjectMembersTable` |
+| WBS, Phases, Sprints & Milestones | SOP-PM-003 | High | Hoàn thành | `WBSService` + Endpoints | `projects/[id]/wbs/page.tsx` (cây, trình sửa và hộp thoại xoá đều nội tuyến trong trang) |
+| Task CRUD & Dependencies Graph | SOP-PM-003 | Critical | Hoàn thành | `TaskService` + `scheduling_service.py` + `utils/cpm.py` | `projects/[id]/tasks/page.tsx` (bảng Kanban nội tuyến), `TaskDrawer` |
+| Assignments & WorkLogs Tracking | SOP-RM-001 | High | Hoàn thành | `ResourceService` | `TaskDrawer` (gán việc & ghi giờ), `projects/[id]/timesheet/page.tsx` |
+| Project & Portfolio Dashboard | Reporting | High | Hoàn thành | `DashboardService` + `NotificationService` | `StatsRow`, `ActiveProjectsGrid`, `MyTasksList`, `RecentActivityFeed`, `ProjectOverviewCharts`, `NotificationBell` |
+| Real-time Project Chat | SOP-CHAT-001 | High | Hoàn thành | `ChatService` + `/ws/chat/{id}` | `ChatPanel`, `ChatMessageItem`, `useChatSocket` |
+| Notification Triggers & Beat Sweep | SOP-NOTI-001 | High | Hoàn thành | `notify_project_team` + Celery Beat | `NotificationBell`, `useNotificationSocket` |
 
 ---
 

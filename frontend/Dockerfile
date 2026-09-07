@@ -1,8 +1,12 @@
 # Giai đoạn cơ sở (Base stage)
-FROM node:18-alpine AS base
+# Node 20 LTS: các devDependencies (vite 8, vitest 5) yêu cầu Node >= 20.
+FROM node:20-alpine AS base
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+# --legacy-peer-deps: npm 10 (kèm Node 20) siết peerOptional chặt hơn npm 11+ trên máy host;
+# xung đột chỉ nằm ở devDependencies phục vụ test (vitest 5 muốn @types/node >= 22),
+# không ảnh hưởng runtime của Next.js.
+RUN npm ci --legacy-peer-deps
 
 # Giai đoạn phát triển (Development stage)
 FROM base AS development
@@ -15,7 +19,7 @@ COPY . .
 RUN npm run build
 
 # Giai đoạn vận hành (Production stage)
-FROM node:18-alpine AS production
+FROM node:20-alpine AS production
 WORKDIR /app
 ENV NODE_ENV=production
 

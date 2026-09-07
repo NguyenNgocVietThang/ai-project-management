@@ -1,7 +1,7 @@
 # Roadmap: Auth & User Onboarding Module (Phase 1)
 
 > **Phiên bản:** 1.2 | **Cập nhật:** 2026-09-06  
-> **Trạng thái:** ✅ Hoàn thành, đã qua rà soát bảo mật | **Ngày hoàn thành:** 2026-08-22 (rà soát & gia cố: 2026-09-06)  
+> **Trạng thái:** Hoàn thành, đã qua rà soát bảo mật | **Ngày hoàn thành:** 2026-08-22 (rà soát & gia cố: 2026-09-06) 
 > **Mức độ ưu tiên:** Critical – Lớp xác thực, phân quyền RBAC, bảo mật tài khoản & Quản trị Admin  
 > **Điều kiện tiên quyết:** [x] Database PostgreSQL, Redis Broker, MinIO Storage, FastAPI Backend & Next.js Frontend đã cấu hình
 
@@ -40,13 +40,13 @@ Module **Auth & User Onboarding (Phase 1)** chịu trách nhiệm thiết lập 
 
 | Tính năng | Mã SOP | Độ ưu tiên | Trạng thái | Backend Task | Frontend Component |
 |---|---|---|---|---|---|
-| Core Registration & Route Protection | SOP-AUTH-001 | Critical | ✅ Hoàn thành | `AuthService.register` + Middleware | `RegisterForm`, `middleware.ts` |
-| Social Login (Google & Facebook OAuth 2.0) | SOP-AUTH-002 | High | ✅ Hoàn thành | `OAuthService` + Endpoints | `SocialLoginButtons`, `OAuthCallbackPage` |
-| Password Recovery Flow | SOP-AUTH-003 | High | ✅ Hoàn thành | `AuthService.reset_password` + Email | `ForgotPasswordForm`, `ResetPasswordForm` |
-| Email Verification & Security Guard | SOP-AUTH-004 | High | ✅ Hoàn thành | `AuthService.verify_email` + RateLimit | `EmailVerificationBanner`, `VerifyEmailPage` |
-| User Profile & Account Settings | SOP-AUTH-005 | Medium | ✅ Hoàn thành | `UserService` + MinIO Avatar | `ProfilePage`, `ChangePasswordForm` |
-| Admin User & Role Management | SOP-ADM-001 | High | ✅ Hoàn thành | `AdminService`, `RoleService` | `AdminUserList`, `RoleForm` |
-| System Audit Timeline Inspection | SOP-AUD-001 | Medium | ✅ Hoàn thành | `AuditService` (Cursor pagination) | `AuditTimelineView` |
+| Core Registration & Route Protection | SOP-AUTH-001 | Critical | Hoàn thành | `AuthService.register` + Middleware | `RegisterForm`, `middleware.ts` |
+| Social Login (Google & Facebook OAuth 2.0) | SOP-AUTH-002 | High | Hoàn thành | `OAuthService` + Endpoints | `SocialLoginButtons`, `OAuthCallbackPage` |
+| Password Recovery Flow | SOP-AUTH-003 | High | Hoàn thành | `AuthService.reset_password` + Email | `ForgotPasswordForm`, `ResetPasswordForm` |
+| Email Verification & Security Guard | SOP-AUTH-004 | High | Hoàn thành | `AuthService.verify_email` + RateLimit | `EmailVerificationBanner`, `VerifyEmailPage` |
+| User Profile & Account Settings | SOP-AUTH-005 | Medium | Hoàn thành | `UserService` + MinIO Avatar | `ProfilePage`, `ChangePasswordForm` |
+| Admin User & Role Management | SOP-ADM-001 | High | Hoàn thành | `AdminService`, `RoleService` | `AdminUserList`, `RoleForm` |
+| System Audit Timeline Inspection | SOP-AUD-001 | Medium | Hoàn thành | `AuditService` (Cursor pagination) | `AuditTimelineView` |
 
 ---
 
