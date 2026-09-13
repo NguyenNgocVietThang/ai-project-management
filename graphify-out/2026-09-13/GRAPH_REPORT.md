@@ -1,11 +1,11 @@
 # Graph Report - AI Project Planning & Portfolio Management system  (2026-09-13)
 
 ## Corpus Check
-- 391 files · ~134,447 words
+- 391 files · ~134,642 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3120 nodes · 8491 edges · 159 communities (119 shown, 11 thin omitted)
+- 3120 nodes · 8492 edges · 153 communities (115 shown, 9 thin omitted)
 - Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 653 edges (avg confidence: 0.94)
 - Token cost: 0 input · 0 output
 
@@ -15,8 +15,8 @@
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- audit/page.tsx
-- Button.tsx
+- wbs/page.tsx
+- react
 - db/base.py
 - endpoints/auth.py
 - profile/page.tsx
@@ -25,56 +25,56 @@
 - users/page.tsx
 - TaskStatus
 - test_cpm_scheduling.py
-- resource_service.py
+- update_subtask
 - main.py
 - ForbiddenException
-- projects/page.tsx
+- ValueError
 - portfolios/[id]/page.tsx
 - User
 - wbs_service.py
 - useTasks.ts
-- react
+- useNotifications.ts
 - users.py
 - NotificationService
 - tasks/page.tsx
-- test_schema_and_query_shape.py
+- Task
 - test_login_lockout.py
-- dashboard.types.ts
-- PaginatedResponse
+- formatDate
+- UserService
 - AITaskType
 - compilerOptions
-- BaseAIProvider
+- milestones.py
 - AdminUserService
 - auth_service.py
-- user_service.py
+- schemas/user.py
 - task_service.py
 - test_ws_hardening.py
 - as_user
 - package.json
 - dashboard_service.py
 - tasks.py
-- Task
-- RoleService
+- Settings
+- roles.py
 - AuthService
 - ProjectService
 - OAuthService
 - test_auth_cookies.py
 - timedelta
 - ProjectRepository
-- epics.py
-- AIGeneratorModal.tsx
+- Permission
+- useAIGenerator.ts
 - test_auth_password_recovery.py
 - parse_json_object
 - ChatPanel.tsx
-- oauth_service.py
+- _MessageBudget
 - email_tasks.py
 - test_user_profile_settings.py
 - dependencies
 - devDependencies
-- token_revocation.py
+- get_wbs_service
 - get_critical_path
 - ConnectionManager
-- test_admin_roles.py
+- RoleService
 - create_dependency
 - scheduling_service.py
 - Chi tiết các Giai đoạn đã hoàn thành
@@ -83,24 +83,22 @@
 - AIService
 - logging_config.py
 - worklogs.py
-- oauth.py
+- oauth_service.py
 - ai_tasks.py
-- test_route_exposure.py
-- project_service.py
+- user_service.py
+- models/user.py
 - System Architecture Design
 - .__init__
 - AuditLog
 - test_resource_warnings.py
-- TeamBarChart.tsx
-- BurndownChart.tsx
-- test_oauth_account_takeover.py
-- test_token_revocation.py
+- dashboard.types.ts
+- .__init__
+- .list_users
 - FakeSocket
 - my_assignments
 - Software Requirements Specification (SRS)
 - approvals.py
 - change_requests.py
-- LeaveType
 - documents.py
 - endpoints/gantt.py
 - leaves.py
@@ -116,8 +114,8 @@
 - test_rate_limit.py
 - next.config.js
 - 3. Yêu cầu chức năng (Functional Requirements)
-- rate_limit.py
-- celery_app.py
+- rate_limit_exceeded_handler
+- report_tasks.py
 - scripts
 - Chi tiết kế hoạch triển khai
 - middleware.ts
@@ -139,11 +137,7 @@
 - 12. Cấu hình & Biến môi trường
 - 1. Tổng quan dự án
 - 9. Thuật toán cốt lõi & Hạ tầng Real-time
-- ApprovalStatus
-- CRStatus
-- EmailStatus
-- RiskLevel
-- RiskLevel
+- document.py
 - CLAUDE.md
 
 ## God Nodes (most connected - your core abstractions)
@@ -161,51 +155,51 @@
 ## Surprising Connections (you probably didn't know these)
 - `test_status_graph_supports_normal_block_and_reopen_flows()` --uses--> `TaskStatus`  [INFERRED]
   backend/tests/unit/test_phase2_task_wbs.py → backend/app/models/task.py
-- `test_labels_column_type_matches_the_database()` --uses--> `Task`  [INFERRED]
-  backend/tests/unit/test_schema_and_query_shape.py → backend/app/models/task.py
 - `generate_project()` --uses--> `User`  [INFERRED]
   backend/app/api/v1/endpoints/ai.py → backend/app/models/user.py
 - `create_assignment()` --uses--> `AssignmentCreate`  [INFERRED]
   backend/app/api/v1/endpoints/assignments.py → backend/app/schemas/task.py
 - `list_audit_logs()` --uses--> `User`  [INFERRED]
   backend/app/api/v1/endpoints/audit_timeline.py → backend/app/models/user.py
+- `refresh_token()` --uses--> `UnauthorizedException`  [INFERRED]
+  backend/app/api/v1/endpoints/auth.py → backend/app/core/exceptions.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (159 total, 11 thin omitted)
+## Communities (153 total, 9 thin omitted)
 
-### Community 0 - "audit/page.tsx"
-Cohesion: 0.20
-Nodes (12): AdminAuditPage(), EmptyState(), AuditLogFilters(), ACTION_CLASSES, actionBadgeClass(), AuditLogTable(), formatTimestamp(), auditLogKeys (+4 more)
+### Community 0 - "wbs/page.tsx"
+Cohesion: 0.13
+Nodes (11): DeletePhaseDialog(), Editor, EntityEditor(), statusOptions(), ConfirmDialog(), ConfirmDialogProps, Modal(), ModalProps (+3 more)
 
-### Community 1 - "Button.tsx"
-Cohesion: 0.06
-Nodes (55): metadata, LoginPageProps, metadata, metadata, Alert(), AlertProps, VARIANT_CLASSES, Button (+47 more)
+### Community 1 - "react"
+Cohesion: 0.05
+Nodes (60): metadata, LoginPageProps, metadata, metadata, Alert(), AlertProps, VARIANT_CLASSES, Button (+52 more)
 
 ### Community 2 - "db/base.py"
-Cohesion: 0.08
-Nodes (23): AIOutput, AIRequest, Approval, Base, Base class cho tất cả SQLAlchemy models. Tự động thêm: id (PK), created_at,…, ChangeRequest, ChatReadState, Theo dõi, theo từng (project, user), tin nhắn chat cuối cùng mà user đã đọc —… (+15 more)
+Cohesion: 0.05
+Nodes (35): AIOutput, AIRequest, Approval, ApprovalStatus, str, Base, Base class cho tất cả SQLAlchemy models. Tự động thêm: id (PK), created_at,…, ChangeRequest (+27 more)
 
 ### Community 3 - "endpoints/auth.py"
 Cohesion: 0.11
-Nodes (44): AuthServiceDep, create_websocket_ticket(), exchange_oauth_code(), forgot_password(), get_me(), login(), logout(), CurrentUser (+36 more)
+Nodes (43): AuthServiceDep, create_websocket_ticket(), exchange_oauth_code(), forgot_password(), get_me(), login(), logout(), CurrentUser (+35 more)
 
 ### Community 4 - "profile/page.tsx"
 Cohesion: 0.06
-Nodes (56): AuthLayout(), OAuthCallbackContent(), AdminLayout(), TABS, DashboardLayout(), ProfilePageContent(), FullPageSpinner(), EmailVerificationBanner() (+48 more)
+Nodes (49): AuthLayout(), OAuthCallbackContent(), VerificationState, VerifyEmailContent(), verify(), AdminLayout(), TABS, DashboardLayout() (+41 more)
 
 ### Community 5 - "FastAPI"
-Cohesion: 0.12
-Nodes (20): list_permissions(), AsyncSession, Depends, get, Liệt kê chỉ đọc danh mục quyền cố định đã được seed (resource:action). Người…, get_current_user(), get_current_user_media(), AsyncSession (+12 more)
+Cohesion: 0.06
+Nodes (41): AuditServiceDep, list_audit_logs(), datetime, Depends, ge, get, le, Query (+33 more)
 
 ### Community 6 - "portfolio_service.py"
-Cohesion: 0.08
-Nodes (36): create_portfolio(), delete_portfolio(), get_portfolio(), list_portfolios(), CurrentUser, CurrentVerifiedUser, delete, Depends (+28 more)
+Cohesion: 0.07
+Nodes (38): create_portfolio(), delete_portfolio(), get_portfolio(), list_portfolios(), CurrentUser, CurrentVerifiedUser, delete, Depends (+30 more)
 
 ### Community 7 - "users/page.tsx"
-Cohesion: 0.08
-Nodes (43): AdminRolesPage(), AdminUsersPage(), DeleteRoleDialog(), RoleForm(), RoleFormProps, RoleTable(), adminRoleKeys, permissionKeys (+35 more)
+Cohesion: 0.06
+Nodes (57): AdminAuditPage(), AdminRolesPage(), AdminUsersPage(), DeleteRoleDialog(), RoleForm(), RoleFormProps, RoleTable(), adminRoleKeys (+49 more)
 
 ### Community 8 - "TaskStatus"
 Cohesion: 0.16
@@ -215,101 +209,101 @@ Nodes (21): str, TaskStatus, _apply_status_side_effects(), Ghi lai thoi diem con
 Cohesion: 0.09
 Nodes (47): backward_pass(), build_graph(), compute_cpm(), compute_cpm_for_project(), CPMEdge, CPMNode, CPMResult, _edges_by_predecessor() (+39 more)
 
-### Community 10 - "resource_service.py"
-Cohesion: 0.11
-Nodes (38): delete_subtask(), CurrentVerifiedUser, delete, patch, TaskServiceDep, update_subtask(), LeaveStatus, AssignmentCreate (+30 more)
+### Community 10 - "update_subtask"
+Cohesion: 0.40
+Nodes (6): delete_subtask(), CurrentVerifiedUser, delete, patch, TaskServiceDep, update_subtask()
 
 ### Community 11 - "main.py"
 Cohesion: 0.14
 Nodes (19): set_request_id(), close_redis(), Redis client async, khởi tạo lazy, dùng chung toàn tiến trình — được chia sẻ…, Request, Địa chỉ của caller, chỉ tôn trọng X-Forwarded-For khi chạy sau một proxy đáng…, resolve_client_ip(), set_client_ip(), Registry kết nối WebSocket dùng chung + cầu nối pub/sub Redis, được dùng bởi cả… (+11 more)
 
 ### Community 12 - "ForbiddenException"
-Cohesion: 0.07
+Cohesion: 0.08
 Nodes (33): AIResultResponse, Assignment, _is_still_a_member(), Người dùng còn quyền truy cập dự án này không. Được watchdog gọi định kỳ. Nếu…, get_current_verified_user(), Dependency factory: Yêu cầu user có một trong các role được chỉ định. Superuser…, Yêu cầu địa chỉ email đã được xác nhận. Việc đăng ký gửi một link xác minh,…, require_roles() (+25 more)
 
-### Community 13 - "projects/page.tsx"
-Cohesion: 0.13
-Nodes (27): ProjectSettingsPage(), ProjectsPage(), portfolioKeys, usePortfolios(), ProjectForm(), useCreateProject(), useDeleteProject(), useProjects() (+19 more)
+### Community 13 - "ValueError"
+Cohesion: 0.15
+Nodes (7): Kiểm tra chính sách mật khẩu dùng chung giữa đăng ký và đặt lại mật khẩu., validate_password_policy(), field_validator, field_validator, model_validator, model_validator, ValueError
 
 ### Community 14 - "portfolios/[id]/page.tsx"
-Cohesion: 0.14
-Nodes (25): PortfolioDetailPage(), PortfoliosPage(), usePortfolioHealth(), DeletePortfolioDialog(), PortfolioCard(), PortfolioCardProps, PortfolioForm(), PortfolioFormProps (+17 more)
+Cohesion: 0.13
+Nodes (26): PortfolioDetailPage(), PortfoliosPage(), DASHBOARD_KEYS, usePortfolioHealth(), DeletePortfolioDialog(), PortfolioCard(), PortfolioCardProps, PortfolioForm() (+18 more)
 
 ### Community 15 - "User"
 Cohesion: 0.07
-Nodes (21): EpicStatus, str, MilestoneStatus, str, PhaseStatus, str, str, SprintStatus (+13 more)
+Nodes (24): EpicStatus, str, MilestoneStatus, str, PhaseStatus, str, str, SprintStatus (+16 more)
 
 ### Community 16 - "wbs_service.py"
 Cohesion: 0.07
-Nodes (62): complete_milestone(), create_milestone(), delete_milestone(), get_milestone(), list_milestones(), CurrentUser, CurrentVerifiedUser, delete (+54 more)
+Nodes (61): create_epic(), delete_epic(), get_epic(), list_epics(), CurrentUser, CurrentVerifiedUser, delete, get (+53 more)
 
 ### Community 17 - "useTasks.ts"
 Cohesion: 0.11
 Nodes (34): taskKeys, useInvalidate(), wbsKeys, taskService, wbsService, UserSummary, Assignment, AssignmentCreate (+26 more)
 
-### Community 18 - "react"
-Cohesion: 0.13
-Nodes (22): NotificationsPage(), NotificationBell(), NotificationItem(), Props, TYPE_META, NotificationPanel(), Props, NOTIFICATION_KEYS (+14 more)
+### Community 18 - "useNotifications.ts"
+Cohesion: 0.12
+Nodes (25): NotificationsPage(), NotificationBell(), NotificationItem(), Props, TYPE_META, NotificationPanel(), Props, NOTIFICATION_KEYS (+17 more)
 
 ### Community 19 - "users.py"
 Cohesion: 0.11
-Nodes (38): AdminUserServiceDep, change_password(), connect_social_account(), create_user(), deactivate_account(), deactivate_user(), disconnect_social_account(), get_avatar() (+30 more)
+Nodes (39): AdminUserServiceDep, change_password(), connect_social_account(), create_user(), deactivate_account(), deactivate_user(), disconnect_social_account(), get_avatar() (+31 more)
 
 ### Community 20 - "NotificationService"
 Cohesion: 0.07
 Nodes (46): delete_notification(), get_unread_count(), list_notifications(), mark_all_notifications_read(), mark_notification_read(), CurrentUser, delete, ge (+38 more)
 
 ### Community 21 - "tasks/page.tsx"
-Cohesion: 0.05
-Nodes (63): VerificationState, VerifyEmailContent(), verify(), ProjectChatPage(), ProjectLayout(), ProjectMembersPage(), ProjectOverviewCharts, ProjectOverviewPage() (+55 more)
+Cohesion: 0.06
+Nodes (64): ProjectLayout(), ProjectMembersPage(), ProjectOverviewPage(), ProjectSettingsPage(), STATUSES, TasksPage(), ViewMode, TimesheetPage() (+56 more)
 
-### Community 22 - "test_schema_and_query_shape.py"
+### Community 22 - "Task"
 Cohesion: 0.11
-Nodes (20): ChatMessage, Một tin nhắn trong kênh chat nhóm theo phạm vi project. Mỗi Project có một…, Epic, Milestone, Phase, Sprint, _index_names(), Hình dạng schema và truy vấn — những thứ hỏng âm thầm, không gây lỗi. Không lỗi… (+12 more)
+Nodes (19): Milestone, Sprint, Task, AsyncSession, TaskRepository, _index_names(), Hình dạng schema và truy vấn — những thứ hỏng âm thầm, không gây lỗi. Không lỗi…, Với JSON generic, `.contains()` rơi về so khớp chuỗi LIKE — nên bộ lọc… (+11 more)
 
 ### Community 23 - "test_login_lockout.py"
 Cohesion: 0.10
 Nodes (24): clear(), _identity_key(), _lock_seconds(), Bộ đếm đăng nhập thất bại theo TỪNG TÀI KHOẢN, tách khỏi rate limit theo IP.…, Băm email: một bản dump key Redis không nên trở thành danh sách người dùng., Số giây còn phải chờ, hoặc None nếu tài khoản không bị khoá., Đếm một lần đăng nhập sai và khoá tài khoản khi vượt ngưỡng., Xoá lịch sử thất bại sau khi đăng nhập thành công hoặc đặt lại mật khẩu. (+16 more)
 
-### Community 24 - "dashboard.types.ts"
+### Community 24 - "formatDate"
 Cohesion: 0.07
-Nodes (33): DashboardPage(), greeting(), ActiveProjectsGrid(), ActiveProjectsGridProps, STATUS_BADGE, MyTasksList(), MyTasksListProps, PRIORITY_COLOR (+25 more)
+Nodes (41): DashboardPage(), greeting(), ProjectOverviewCharts, KanbanColumn(), SprintView(), TaskCard(), TaskTable(), MiniProgressBar() (+33 more)
 
-### Community 25 - "PaginatedResponse"
-Cohesion: 0.12
-Nodes (23): AuditServiceDep, list_audit_logs(), datetime, Depends, ge, get, le, Query (+15 more)
+### Community 25 - "UserService"
+Cohesion: 0.18
+Nodes (9): ServiceUnavailableException, DeleteAccountRequest, get_user_service(), AsyncSession, Depends, UploadFile, UserService, test_avatar_normalization_outputs_square_webp_and_rejects_corrupt_data() (+1 more)
 
 ### Community 26 - "AITaskType"
-Cohesion: 0.15
-Nodes (17): AITaskType, model_routing_table(), str, Định tuyến model xKiro theo từng loại tác vụ AI. xKiro cho phép gọi hàng trăm…, Các loại tác vụ AI trong hệ thống, tương ứng các SOP trong roadmap AI., Trả về tên model xKiro (dạng "vendor/model") được cấu hình cho một loại tác vụ., Trả về toàn bộ bảng định tuyến task -> model hiện hành, dùng để log/kiểm tra., resolve_model() (+9 more)
+Cohesion: 0.11
+Nodes (21): ABC, BaseAIProvider, Any, Lớp cơ sở trừu tượng cho các AI provider., AITaskType, model_routing_table(), str, Định tuyến model xKiro theo từng loại tác vụ AI. xKiro cho phép gọi hàng trăm… (+13 more)
 
 ### Community 27 - "compilerOptions"
 Cohesion: 0.06
 Nodes (30): compilerOptions, allowImportingTsExtensions, allowJs, esModuleInterop, incremental, isolatedModules, jsx, lib (+22 more)
 
-### Community 28 - "BaseAIProvider"
-Cohesion: 0.33
-Nodes (4): ABC, BaseAIProvider, Any, Lớp cơ sở trừu tượng cho các AI provider.
+### Community 28 - "milestones.py"
+Cohesion: 0.24
+Nodes (15): complete_milestone(), create_milestone(), delete_milestone(), get_milestone(), list_milestones(), CurrentUser, CurrentVerifiedUser, delete (+7 more)
 
 ### Community 29 - "AdminUserService"
-Cohesion: 0.07
-Nodes (47): model_validator, Từ chối khởi động ngoài môi trường development nếu vẫn dùng các secret…, Settings, Kiểm tra chính sách mật khẩu dùng chung giữa đăng ký và đặt lại mật khẩu., validate_password_policy(), AdminUserCreate, AdminUserUpdate, field_validator (+39 more)
+Cohesion: 0.31
+Nodes (24): AdminUserCreate, AdminUserUpdate, AdminUserService, Quản lý người dùng chỉ dành cho Admin: list/create/update/deactivate bất kỳ tài…, build_db(), build_user(), asyncio, Một chủ thể có "user:update" PATCH tài khoản của chính mình thành… (+16 more)
 
 ### Community 30 - "auth_service.py"
-Cohesion: 0.18
-Nodes (20): Phân giải và xác thực một bearer token thành một User đang tồn tại và active., _user_from_token(), create_access_token(), create_refresh_token(), decode_token(), Any, datetime, Decode và xác thực một JWT. Trả về None với bất kỳ token nào không hợp lệ/hết… (+12 more)
+Cohesion: 0.14
+Nodes (30): Phân giải và xác thực một bearer token thành một User đang tồn tại và active., _user_from_token(), create_access_token(), create_refresh_token(), decode_token(), Any, datetime, Decode và xác thực một JWT. Trả về None với bất kỳ token nào không hợp lệ/hết… (+22 more)
 
-### Community 31 - "user_service.py"
-Cohesion: 0.15
-Nodes (15): ServiceUnavailableException, UnauthorizedException, hash_password(), AdminUserResponse, ChangePasswordRequest, DeleteAccountRequest, OAuthConnectResponse, BaseModel (+7 more)
+### Community 31 - "schemas/user.py"
+Cohesion: 0.24
+Nodes (9): AdminUserResponse, ChangePasswordRequest, OAuthConnectResponse, BaseModel, field_validator, UserBase, UserCreate, UserResponse (+1 more)
 
 ### Community 32 - "task_service.py"
-Cohesion: 0.10
-Nodes (28): BadRequestException, Assignment, DependencyType, str, str, SubtaskStatus, TaskPriority, DependencyCreate (+20 more)
+Cohesion: 0.07
+Nodes (54): Assignment, DependencyType, str, str, SubtaskStatus, TaskPriority, AssignmentCreate, AssignmentMutationResponse (+46 more)
 
 ### Community 33 - "test_ws_hardening.py"
-Cohesion: 0.07
-Nodes (41): chat_ws(), _MessageBudget, Query, websocket, Bộ đếm cửa sổ trượt cho một socket., authenticate_ws(), _close_unauthorized(), enforce_connection_validity() (+33 more)
+Cohesion: 0.08
+Nodes (39): chat_ws(), Query, websocket, authenticate_ws(), _close_unauthorized(), enforce_connection_validity(), Xác thực và giám sát vòng đời cho các WebSocket endpoint. Handshake trình ra…, Ném ra khi một kết nối WebSocket không qua được kiểm tra hợp lệ. Bên gọi nên… (+31 more)
 
 ### Community 34 - "as_user"
 Cohesion: 0.14
@@ -327,25 +321,25 @@ Nodes (61): ActiveProjectSummary, get_dashboard_summary(), get_portfolio_health(
 Cohesion: 0.17
 Nodes (22): bulk_update_tasks(), change_task_status(), create_subtask(), create_task(), delete_task(), get_task(), list_subtasks(), list_tasks() (+14 more)
 
-### Community 38 - "Task"
-Cohesion: 0.13
-Nodes (8): Task, BaseRepository, Any, AsyncSession, datetime, AsyncSession, TaskRepository, ModelType
+### Community 38 - "Settings"
+Cohesion: 0.19
+Nodes (12): model_validator, Từ chối khởi động ngoài môi trường development nếu vẫn dùng các secret…, Settings, parametrize, Cấu hình không an toàn phải chặn khởi động, không phải chỉ được ghi chú trong…, Một bản clone mới phải chạy được ngay mà không cần cấu hình gì., Sửa từng lỗi một qua nhiều lần khởi động lại là một cách rất chậm để triển khai., test_a_fully_configured_production_environment_starts() (+4 more)
 
-### Community 39 - "RoleService"
-Cohesion: 0.08
-Nodes (35): create_role(), delete_role(), get_role(), list_roles(), AsyncSession, CurrentUser, delete, Depends (+27 more)
+### Community 39 - "roles.py"
+Cohesion: 0.12
+Nodes (28): create_role(), delete_role(), get_role(), list_roles(), AsyncSession, CurrentUser, delete, Depends (+20 more)
 
 ### Community 40 - "AuthService"
-Cohesion: 0.16
-Nodes (8): AuthService, AsyncSession, datetime, User, Tạo token dùng một lần và đưa email vào hàng đợi mà không tiết lộ trạng thái…, Đưa một token mới vào hàng đợi, áp dụng cooldown dưới một row lock. Trả về…, Đăng xuất phía server theo kiểu best-effort. Thu hồi CẢ HAI token. Trước đây…, Ghi lại một sự kiện xác thực. ip_address được điền tự động từ ngữ cảnh request…
+Cohesion: 0.08
+Nodes (22): TooManyRequestsException, is_revoked(), _key(), Danh sách thu hồi refresh-token, được hỗ trợ bởi Redis. JWT là tự chứa: một khi…, Số giây mà tombstone phải tồn tại lâu hơn, suy ra từ chính `exp` của token.…, Đánh dấu `jti` không dùng được nữa. Trả về False nếu không kết nối được tới…, `jti` đã bị thu hồi hay chưa. False khi không kết nối được tới store — xem ghi…, revoke() (+14 more)
 
 ### Community 41 - "ProjectService"
-Cohesion: 0.07
-Nodes (59): add_project_member(), change_project_member_role(), create_project(), delete_project(), get_project(), get_project_activity(), list_project_members(), list_projects() (+51 more)
+Cohesion: 0.06
+Nodes (64): add_project_member(), change_project_member_role(), create_project(), delete_project(), get_project(), get_project_activity(), list_project_members(), list_projects() (+56 more)
 
 ### Community 42 - "OAuthService"
-Cohesion: 0.15
-Nodes (10): Cặp token nội bộ. KHÔNG dùng làm response model cho route trình duyệt — xem…, TokenResponse, OAuthService, OAuthState, Any, AsyncSession, User, Phân giải identity của provider thành một User. `email_provider_verified` là… (+2 more)
+Cohesion: 0.11
+Nodes (22): UnauthorizedException, get_oauth_service(), OAuthService, OAuthState, Any, AsyncSession, Depends, User (+14 more)
 
 ### Community 43 - "test_auth_cookies.py"
 Cohesion: 0.13
@@ -356,16 +350,16 @@ Cohesion: 0.17
 Nodes (22): add_working_days(), date_range(), date, Đếm số ngày làm việc giữa hai ngày., Tạo danh sách các ngày từ start đến end (bao gồm cả hai đầu)., Cộng thêm N ngày làm việc (bỏ qua cuối tuần) vào một ngày., working_days_between(), build_service() (+14 more)
 
 ### Community 45 - "ProjectRepository"
-Cohesion: 0.10
-Nodes (7): Role, ProjectRepository, AsyncSession, Doi vai tro ma giu nguyen dong thanh vien - va giu nguyen `joined_at`., get_project_service(), AsyncSession, Depends
+Cohesion: 0.09
+Nodes (9): Role, BaseRepository, Any, AsyncSession, ProjectRepository, AsyncSession, date, Doi vai tro ma giu nguyen dong thanh vien - va giu nguyen `joined_at`. (+1 more)
 
-### Community 46 - "epics.py"
-Cohesion: 0.24
-Nodes (14): create_epic(), delete_epic(), get_epic(), list_epics(), CurrentUser, CurrentVerifiedUser, delete, get (+6 more)
+### Community 46 - "Permission"
+Cohesion: 0.28
+Nodes (5): main(), Script seed cơ sở dữ liệu. Khởi tạo dữ liệu mặc định: 7 Roles, Permissions, và…, seed(), Permission, Role
 
-### Community 47 - "AIGeneratorModal.tsx"
-Cohesion: 0.21
-Nodes (12): AIGeneratorModal(), STATUS_LABEL, aiJobKeys, IN_PROGRESS, useAIJob(), useGenerateProject(), projectKeys, aiService (+4 more)
+### Community 47 - "useAIGenerator.ts"
+Cohesion: 0.26
+Nodes (9): AIGeneratorModal(), aiJobKeys, IN_PROGRESS, useAIJob(), useGenerateProject(), aiService, AIJobResponse, AIJobStatus (+1 more)
 
 ### Community 48 - "test_auth_password_recovery.py"
 Cohesion: 0.23
@@ -376,12 +370,8 @@ Cohesion: 0.17
 Nodes (19): AIResponseError, _extract_balanced_object(), parse_json_object(), Any, Xử lý phòng vệ, dùng chung cho output của model và các prompt do người dùng…, Model trả về thứ mà ta sẽ không hành động theo., Rào văn bản người dùng không tin cậy và gán nhãn nó là dữ liệu. Dấu rào được…, Trả về `{...}` hoàn chỉnh đầu tiên trong `text`, có theo dõi lồng nhau và… (+11 more)
 
 ### Community 50 - "ChatPanel.tsx"
-Cohesion: 0.10
-Nodes (28): MiniProgressBar(), MiniProgressBarProps, Avatar(), AvatarProps, Spinner(), LINKS, MainNav(), MobileNav() (+20 more)
-
-### Community 51 - "oauth_service.py"
 Cohesion: 0.18
-Nodes (14): code_challenge_for(), consume(), issue(), _key(), new_code_verifier(), Any, Store phía server cho tham số `state` của OAuth, kèm ràng buộc theo trình duyệt…, Key Redis cho một luồng, dẫn xuất từ CẢ state lẫn bí mật trong cookie. Ràng… (+6 more)
+Nodes (17): ProjectChatPage(), ChatMessageItem(), Props, ChatPanel(), handleSend(), Props, chatKeys, useChatHistory() (+9 more)
 
 ### Community 52 - "email_tasks.py"
 Cohesion: 0.19
@@ -389,7 +379,7 @@ Nodes (14): _mail_config(), send_email_verification_email(), send_password_reset
 
 ### Community 53 - "test_user_profile_settings.py"
 Cohesion: 0.28
-Nodes (20): verify_password(), avatar_bytes(), build_db(), build_service(), build_user(), asyncio, State phải dùng được đúng một lần, và chỉ từ trình duyệt đã tạo ra nó., test_avatar_normalization_outputs_square_webp_and_rejects_corrupt_data() (+12 more)
+Nodes (20): hash_password(), verify_password(), avatar_bytes(), build_db(), build_service(), build_user(), asyncio, State phải dùng được đúng một lần, và chỉ từ trình duyệt đã tạo ra nó. (+12 more)
 
 ### Community 54 - "dependencies"
 Cohesion: 0.10
@@ -399,9 +389,9 @@ Nodes (20): dependencies, axios, clsx, date-fns, @dnd-kit/core, @dnd-kit/sortabl
 Cohesion: 0.10
 Nodes (20): devDependencies, autoprefixer, eslint, eslint-config-next, jsdom, postcss, tailwindcss, @testing-library/dom (+12 more)
 
-### Community 56 - "token_revocation.py"
-Cohesion: 0.25
-Nodes (9): is_revoked(), _key(), Danh sách thu hồi refresh-token, được hỗ trợ bởi Redis. JWT là tự chứa: một khi…, Số giây mà tombstone phải tồn tại lâu hơn, suy ra từ chính `exp` của token.…, Đánh dấu `jti` không dùng được nữa. Trả về False nếu không kết nối được tới…, `jti` đã bị thu hồi hay chưa. False khi không kết nối được tới store — xem ghi…, revoke(), _ttl_seconds() (+1 more)
+### Community 56 - "get_wbs_service"
+Cohesion: 0.50
+Nodes (3): get_wbs_service(), AsyncSession, Depends
 
 ### Community 57 - "get_critical_path"
 Cohesion: 0.40
@@ -411,17 +401,17 @@ Nodes (5): get_critical_path(), CurrentUser, get, Phân tích đường găng c�
 Cohesion: 0.20
 Nodes (13): ConnectionManager, WebSocket, Registry theo từng tiến trình của các kết nối WebSocket đang hoạt động, nhóm…, Gửi `payload` tới mọi kết nối trên `channel` CHỈ trong tiến trình NÀY., fake_ws(), FakeWebSocket, asyncio, Vật thay thế cho một Starlette WebSocket. Cố ý KHÔNG dùng SimpleNamespace:… (+5 more)
 
-### Community 59 - "test_admin_roles.py"
-Cohesion: 0.58
-Nodes (10): build_actor(), build_db(), build_role(), asyncio, test_create_role_rejects_duplicate_name(), test_delete_role_blocks_deleting_admin_role(), test_delete_role_blocks_when_users_still_assigned(), test_delete_role_succeeds_when_unused() (+2 more)
+### Community 59 - "RoleService"
+Cohesion: 0.33
+Nodes (13): AsyncSession, Quản lý role và role-permission chỉ dành cho Admin. Bản thân các permission là…, RoleService, build_actor(), build_db(), build_role(), asyncio, test_create_role_rejects_duplicate_name() (+5 more)
 
 ### Community 60 - "create_dependency"
 Cohesion: 0.25
 Nodes (9): create_dependency(), delete_dependency(), list_dependencies(), CurrentUser, CurrentVerifiedUser, delete, get, post (+1 more)
 
 ### Community 61 - "scheduling_service.py"
-Cohesion: 0.29
-Nodes (8): CPMResponse, CPMTask, BaseModel, Schema cho phân tích đường găng. Engine CPM (app/utils/cpm.py) đã hoàn chỉnh từ…, get_scheduling_service(), Depends, Truy vấn chỉ đọc trên lịch trình đã được tính ra. Bản thân việc tính toán chạy…, SchedulingService
+Cohesion: 0.18
+Nodes (10): Dependency, Epic, CPMResponse, CPMTask, BaseModel, Schema cho phân tích đường găng. Engine CPM (app/utils/cpm.py) đã hoàn chỉnh từ…, get_scheduling_service(), Depends (+2 more)
 
 ### Community 62 - "Chi tiết các Giai đoạn đã hoàn thành"
 Cohesion: 0.10
@@ -447,21 +437,21 @@ Nodes (12): do_run_migrations(), run_async_migrations(), run_migrations_online()
 Cohesion: 0.19
 Nodes (19): active_timer(), create_worklog(), delete_worklog(), list_task_worklogs(), project_worklogs(), CurrentUser, CurrentVerifiedUser, date (+11 more)
 
-### Community 68 - "oauth.py"
-Cohesion: 0.32
-Nodes (15): facebook_callback(), facebook_login(), _finish(), get_oauth_providers(), google_callback(), google_login(), _handle_callback(), get (+7 more)
+### Community 68 - "oauth_service.py"
+Cohesion: 0.12
+Nodes (29): facebook_callback(), facebook_login(), _finish(), get_oauth_providers(), google_callback(), google_login(), _handle_callback(), get (+21 more)
 
 ### Community 69 - "ai_tasks.py"
 Cohesion: 0.12
 Nodes (18): generate_project_task(), _generate_with_own_session(), impact_analysis_task(), optimize_schedule_task(), parse_document_task(), Các tác vụ AI chạy nền qua Celery — xem app/workers/scheduling_tasks.py cho…, SOP-AI-001: Tạo kế hoạch dự án (Project + Phase + Task + Dependency) từ prompt…, SOP-AI-002: Phân tích tác động của một change request. (+10 more)
 
-### Community 70 - "test_route_exposure.py"
+### Community 70 - "user_service.py"
 Cohesion: 0.14
 Nodes (16): Kết quả tìm kiếm cho bộ chọn thành viên. `email` được che bớt. Địa chỉ đầy đủ…, UserSearchResult, _mask_email(), nguyen.van.a@company.com" -> "ng***@company.com". Giữ đủ để chủ tài khoản nhận…, asyncio, parametrize, Các route rò rỉ thông tin cho bất kỳ tài khoản đã đăng nhập nào., Bộ chọn vai trò mở cho mọi PM; RoleDetailResponse mang toàn bộ ma trận role ->… (+8 more)
 
-### Community 71 - "project_service.py"
-Cohesion: 0.10
-Nodes (21): Portfolio, Project, ProjectMethodology, ProjectStatus, str, PortfolioRepository, AsyncSession, date (+13 more)
+### Community 71 - "models/user.py"
+Cohesion: 0.13
+Nodes (20): Portfolio, Project, ProjectMethodology, ProjectStatus, str, datetime, datetime, json_value() (+12 more)
 
 ### Community 72 - "System Architecture Design"
 Cohesion: 0.13
@@ -475,21 +465,9 @@ Nodes (17): get_client_ip(), get_current_project_id(), Context theo từng reque
 Cohesion: 0.32
 Nodes (14): _assignment(), asyncio, Canh bao qua tai nhan su - 388 dong truoc day chi co dung mot bai test., 40 gio trai deu tren 10 ngay la 4 gio moi ngay, khong phai qua tai., Moi assignment rieng le deu on; van de nam o cho chung chong len nhau., Mot ngay chi sinh mot canh bao; 'dang nghi phep' la ly do co ich hon., _service(), test_a_reasonable_workload_raises_nothing() (+6 more)
 
-### Community 76 - "TeamBarChart.tsx"
-Cohesion: 0.25
-Nodes (5): DonutChartProps, DonutSlice, TeamBarChartProps, TeamMemberUtilization, recharts
-
-### Community 77 - "BurndownChart.tsx"
-Cohesion: 0.60
-Nodes (4): BurndownChart(), BurndownChartProps, formatDate(), BurndownPoint
-
-### Community 78 - "test_oauth_account_takeover.py"
-Cohesion: 0.28
-Nodes (12): asyncio, User, Gộp tài khoản qua OAuth phải dựa vào khẳng định của provider, không phải chuỗi…, Cờ này bị bỏ qua trước đây; kiểm tra nó thực sự được đọc từ userinfo., Graph API không công bố trạng thái xác minh, nên luồng Facebook không bao giờ…, _service_with_existing(), test_facebook_never_asserts_verification_so_it_cannot_merge(), test_google_profile_carries_the_verified_flag_through() (+4 more)
-
-### Community 79 - "test_token_revocation.py"
-Cohesion: 0.35
-Nodes (12): build_db(), build_service(), build_user(), asyncio, Xoay vòng refresh token, phát hiện tái sử dụng, và thu hồi khi logout (Phase…, Hai bên cùng giữ một token nghĩa là nó đã bị lộ — hủy tất cả session, không chỉ…, Một access token gửi tới /logout không được coi là refresh token., test_logout_ignores_a_token_of_the_wrong_type() (+4 more)
+### Community 76 - "dashboard.types.ts"
+Cohesion: 0.08
+Nodes (26): BurndownChart(), BurndownChartProps, formatDate(), DonutChartProps, DonutSlice, TeamBarChartProps, ActiveProjectsGridProps, MyTasksListProps (+18 more)
 
 ### Community 81 - "my_assignments"
 Cohesion: 0.18
@@ -552,8 +530,8 @@ Cohesion: 0.15
 Nodes (9): 1.1 Mục đích (Purpose), 1.2 Mục tiêu kinh doanh (Business Objectives), 1. Tổng quan dự án (Project Overview), 2.1 Các tính năng trong phạm vi (In-Scope), 2.2 Ngoài phạm vi (Out-of-Scope), 2. Phạm vi dự án (Project Scope), 3. Các bên liên quan và Vai trò (Stakeholders & Roles), AI Project Planning & Portfolio Management System (+1 more)
 
 ### Community 97 - "StorageService"
-Cohesion: 0.15
-Nodes (8): get_storage_service(), Lớp bọc async nhỏ quanh client MinIO đồng bộ., StorageService, get_user_service(), AsyncSession, Depends, Minio, StorageServiceDep
+Cohesion: 0.24
+Nodes (4): get_storage_service(), Lớp bọc async nhỏ quanh client MinIO đồng bộ., StorageService, Minio
 
 ### Community 98 - "test_rate_limit.py"
 Cohesion: 0.22
@@ -567,12 +545,12 @@ Nodes (7): apiOrigin, avatarOrigins, csp, nextConfig, securityHeaders, withNextI
 Cohesion: 0.15
 Nodes (13): 3.10 Change Request & Multi-Level Approvals (SRS-CR), 3.11 Project Versioning & Rollback (SRS-VER), 3.12 Document & Reporting (SRS-RPT), 3.1 Authentication & Authorization (SRS-AUTH), 3.2 Quản trị Admin & Audit Timeline (SRS-ADMIN), 3.3 Quản lý Phân cấp Dự án & Thành viên (SRS-PM), 3.4 Task Dependency & Scheduling (SRS-DEP), 3.5 Thuật toán Đường găng — Critical Path Method (SRS-CPM) (+5 more)
 
-### Community 102 - "rate_limit.py"
-Cohesion: 0.25
-Nodes (10): client_key(), Request, Response, rate_limit_exceeded_handler(), Rate limiter dùng chung cho các endpoint dễ bị lạm dụng (auth, search, upload).…, Key cho rate-limit: là user đã xác thực khi có thể xác định rẻ, nếu không thì…, Số giây cho tới khi cửa sổ của caller được reset. Ưu tiên số liệu cửa sổ trực…, 429 theo cùng hình dạng `{"detail": ...}` như mọi lỗi khác trong API này. Cố… (+2 more)
+### Community 102 - "rate_limit_exceeded_handler"
+Cohesion: 0.28
+Nodes (9): client_key(), Request, Response, rate_limit_exceeded_handler(), Key cho rate-limit: là user đã xác thực khi có thể xác định rẻ, nếu không thì…, Số giây cho tới khi cửa sổ của caller được reset. Ưu tiên số liệu cửa sổ trực…, 429 theo cùng hình dạng `{"detail": ...}` như mọi lỗi khác trong API này. Cố…, _retry_after_seconds() (+1 more)
 
-### Community 103 - "celery_app.py"
-Cohesion: 0.25
+### Community 103 - "report_tasks.py"
+Cohesion: 0.29
 Nodes (6): generate_docx_task(), generate_xlsx_task(), Tạo báo cáo XLSX cho một dự án., # TODO: Cài đặt phần tạo XLSX bằng openpyxl, Tạo báo cáo DOCX cho một dự án., # TODO: Cài đặt phần tạo DOCX bằng python-docx
 
 ### Community 104 - "scripts"
@@ -647,23 +625,23 @@ Nodes (3): 1. Tổng quan dự án, Mục tiêu cốt lõi (tầm nhìn sản ph
 Cohesion: 0.67
 Nodes (3): 9. Thuật toán cốt lõi & Hạ tầng Real-time, Thuật toán Critical Path Method (Pure Python in `app/utils/cpm.py`), WebSocket ConnectionManager & Redis Pub/Sub Bus (`app/core/ws_manager.py`)
 
-### Community 156 - "ApprovalStatus"
-Cohesion: 0.33
-Nodes (4): ApprovalStatus, str, DocumentType, str
+### Community 156 - "document.py"
+Cohesion: 0.40
+Nodes (3): Document, DocumentType, str
 
 ## Knowledge Gaps
 - **323 isolated node(s):** `npx`, `@executeautomation/playwright-mcp-server`, `extends`, `next/core-web-vitals`, `apiOrigin` (+318 more)
   These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1058 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **11 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `User` connect `User` to `db/base.py`, `FastAPI`, `portfolio_service.py`, `resource_service.py`, `ForbiddenException`, `wbs_service.py`, `users.py`, `get_current_active_superuser`, `PaginatedResponse`, `AdminUserService`, `auth_service.py`, `user_service.py`, `task_service.py`, `test_ws_hardening.py`, `as_user`, `dashboard_service.py`, `Task`, `RoleService`, `AuthService`, `ProjectService`, `OAuthService`, `timedelta`, `ProjectRepository`, `oauth_service.py`, `scheduling_service.py`, `AIService`, `ai_tasks.py`, `project_service.py`, `test_oauth_account_takeover.py`, `make_user`, `chat_service.py`?**
+- **Why does `User` connect `User` to `db/base.py`, `FastAPI`, `portfolio_service.py`, `ForbiddenException`, `wbs_service.py`, `users.py`, `get_current_active_superuser`, `UserService`, `AdminUserService`, `auth_service.py`, `task_service.py`, `test_ws_hardening.py`, `as_user`, `dashboard_service.py`, `roles.py`, `AuthService`, `ProjectService`, `OAuthService`, `timedelta`, `ProjectRepository`, `Permission`, `RoleService`, `scheduling_service.py`, `AIService`, `oauth_service.py`, `ai_tasks.py`, `user_service.py`, `models/user.py`, `make_user`, `chat_service.py`?**
   _High betweenness centrality (0.105) - this node is a cross-community bridge._
-- **Why does `ProjectRepository` connect `ProjectRepository` to `Task`, `project_service.py`, `TaskStatus`, `ProjectService`, `AuditLog`, `User`?**
+- **Why does `ProjectRepository` connect `ProjectRepository` to `models/user.py`, `TaskStatus`, `ProjectService`, `AuditLog`, `User`, `Task`?**
   _High betweenness centrality (0.018) - this node is a cross-community bridge._
-- **Why does `ForbiddenException` connect `ForbiddenException` to `db/base.py`, `FastAPI`, `portfolio_service.py`, `resource_service.py`, `User`, `users.py`, `NotificationService`, `get_current_active_superuser`, `AdminUserService`, `auth_service.py`, `task_service.py`, `test_ws_hardening.py`, `dashboard_service.py`, `RoleService`, `AuthService`, `ProjectService`, `AIService`, `test_route_exposure.py`, `project_service.py`, `.__init__`, `chat_service.py`?**
+- **Why does `ForbiddenException` connect `ForbiddenException` to `db/base.py`, `FastAPI`, `portfolio_service.py`, `User`, `users.py`, `NotificationService`, `get_current_active_superuser`, `AdminUserService`, `auth_service.py`, `task_service.py`, `test_ws_hardening.py`, `dashboard_service.py`, `roles.py`, `AuthService`, `ProjectService`, `RoleService`, `AIService`, `user_service.py`, `models/user.py`, `.__init__`, `chat_service.py`?**
   _High betweenness centrality (0.015) - this node is a cross-community bridge._
 - **Are the 48 inferred relationships involving `User` (e.g. with `generate_project()` and `list_audit_logs()`) actually correct?**
   _`User` has 48 INFERRED edges - model-reasoned connections that need verification._
