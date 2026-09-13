@@ -828,9 +828,9 @@
     "semantic_hash": "7bd53ebbcf1ac100fd6551c4f7b73298"
   },
   "backend/app/services/ai/project_generator.py": {
-    "mtime": 1789284047.1510012,
-    "seen": 1789284259.3330212,
-    "ast_hash": "2d96f76083cc73ef1924d457d38e85cc",
+    "mtime": 1789300583.954488,
+    "seen": 1789300826.8088624,
+    "ast_hash": "a12ab3059a0462c656032bec3cbe4907",
     "semantic_hash": ""
   },
   "backend/app/services/ai/xkiro_provider.py": {
@@ -984,16 +984,16 @@
     "semantic_hash": "3bab25a3e651a9e4a00473d2257b99f9"
   },
   "backend/app/workers/ai_tasks.py": {
-    "mtime": 1789284056.4047787,
-    "seen": 1789284259.352797,
-    "ast_hash": "c1b1307879ab84639dadca6362486b13",
+    "mtime": 1789300601.7705417,
+    "seen": 1789300826.8222497,
+    "ast_hash": "04e9fe7c9617525aa1d1288a806b450d",
     "semantic_hash": ""
   },
   "backend/app/workers/celery_app.py": {
-    "mtime": 1788538236.5928247,
-    "seen": 1788794858.8697488,
-    "ast_hash": "4c44a2005c2bb8ec8c4298c227ac385c",
-    "semantic_hash": "4c44a2005c2bb8ec8c4298c227ac385c"
+    "mtime": 1789299186.4827209,
+    "seen": 1789300826.8222497,
+    "ast_hash": "4ca29268d795c5c0225cf31ed8df1c75",
+    "semantic_hash": ""
   },
   "backend/app/workers/email_tasks.py": {
     "mtime": 1788665484.359273,
