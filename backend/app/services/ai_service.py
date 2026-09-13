@@ -68,6 +68,7 @@ class AIService:
             status=ai_request.status.value,
             result=result,
             error=ai_request.error_message,
+            project_id=ai_request.project_id,
         )
 
 
