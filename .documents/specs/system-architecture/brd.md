@@ -12,7 +12,7 @@
 Xây dựng một hệ thống quản lý danh mục và kế hoạch dự án thông minh (AI Project Planning & Portfolio Management). Hệ thống có các tính năng cốt lõi tương đương Microsoft Project nhưng được tăng cường sức mạnh bởi Trí tuệ Nhân tạo (AI) để tự động hóa việc lên kế hoạch, phân bổ nguồn lực, phân tích rủi ro và đánh giá tác động của các thay đổi (Change Requests), đồng thời hỗ trợ cộng tác thời gian thực (Real-time Project Chat & WebSocket Notifications).
 
 ### 1.2 Mục tiêu kinh doanh (Business Objectives)
-- **Tự động hóa lập kế hoạch:** Giảm 80% thời gian tạo cấu trúc WBS và lên lịch dự án nhờ AI (OpenAI/Gemini).
+- **Tự động hóa lập kế hoạch:** Giảm 80% thời gian tạo cấu trúc WBS và lên lịch dự án nhờ AI (xKiro).
 - **Tối ưu hóa nguồn lực:** Tự động phát hiện cảnh báo quá tải (Resource Leveling) và gợi ý nhân sự phù hợp cho công việc.
 - **Kiểm soát rủi ro và thay đổi:** Chuẩn hóa quy trình Change Request (CR) nhiều bước, có AI phân tích tác động trước khi áp dụng.
 - **Cộng tác & Giao tiếp tức thời:** Kênh Chat nhóm trực tiếp theo từng dự án và hệ thống thông báo đẩy thời gian thực giảm độ trễ trao đổi thông tin.

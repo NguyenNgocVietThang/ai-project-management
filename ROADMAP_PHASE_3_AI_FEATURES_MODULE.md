@@ -1,7 +1,7 @@
 # Roadmap: AI Features Module (Phase 3)
 
-> **Phiên bản:** 1.2 | **Cập nhật:** 2026-09-03  
-> **Trạng thái:** ~15% — MỚI CÓ Provider abstraction layer + `project_generator.py` (chưa nối vào endpoint/worker nào). Endpoint `/ai` và toàn bộ Celery `ai_tasks` vẫn là stub `TODO`. Chưa có UI AI nào. 
+> **Phiên bản:** 1.3 | **Cập nhật:** 2026-09-13  
+> **Trạng thái:** AI Project Generator (SOP-AI-001) đã chạy thật end-to-end (endpoint `/ai` đã mount, Celery `ai_tasks.generate_project_task` ghi Project/Phase/Task/Dependency thật). 4 SOP còn lại (Impact Analysis, Schedule Optimization, Resource Recommendation, Risk Analysis) vẫn là stub `TODO`. Chưa có UI AI nào.  
 > **Mức độ ưu tiên:** Critical – Lớp trí tuệ nhân tạo cốt lõi của hệ thống  
 > **Điều kiện tiên quyết:** [x] Phase 1 (Auth & RBAC) & Phase 2 (Portfolio, Project Core, CPM & Real-time Chat) đã hoàn thành
 
@@ -9,7 +9,7 @@
 
 ## Tổng quan Module
 
-Module **AI Features (Phase 3)** tích hợp trí tuệ nhân tạo (OpenAI GPT-4o & Google Gemini Pro) vào toàn bộ quy trình quản lý dự án nhằm tự động hóa việc lập kế hoạch, phân tích rủi ro, cân bằng nguồn lực và đánh giá tác động thay đổi theo chuẩn SOP.
+Module **AI Features (Phase 3)** tích hợp trí tuệ nhân tạo (xKiro — cổng AI tương thích OpenAI, gộp nhiều model miễn phí như DeepSeek, Qwen, Mistral sau 1 API key) vào toàn bộ quy trình quản lý dự án nhằm tự động hóa việc lập kế hoạch, phân tích rủi ro, cân bằng nguồn lực và đánh giá tác động thay đổi theo chuẩn SOP.
 
 ### 5 Trụ cột AI chính:
 1. **AI Project Generator (SOP-AI-001):** Sinh WBS (Phases, Tasks, Estimated Hours, Dependencies) tự động từ prompt ngôn ngữ tự nhiên hoặc prompt templates.
@@ -18,6 +18,8 @@ Module **AI Features (Phase 3)** tích hợp trí tuệ nhân tạo (OpenAI GPT-
 4. **AI Resource Recommendation (SOP-RM-001 / SOP-AI-004):** Đề xuất phân bổ nhân sự thông minh theo kỹ năng (`user_skills`), chi phí (`hourly_rate`), khối lượng công việc hiện tại và dữ liệu lịch sử.
 5. **AI Risk Analysis (SOP-AI-005):** Phân tích & nhận diện rủi ro định kỳ, phân loại ma trận rủi ro 5x5, gợi ý chiến lược giảm thiểu rủi ro.
 
+Mỗi trụ cột dùng một model xKiro riêng theo mức độ phức tạp của việc (xem `backend/app/services/ai/model_router.py`), thay vì một model cố định cho tất cả.
+
 ---
 
 ## Hiện trạng & Hạ tầng sẵn có
@@ -25,14 +27,15 @@ Module **AI Features (Phase 3)** tích hợp trí tuệ nhân tạo (OpenAI GPT-
 | Thành phần | Trạng thái | Ghi chú |
 |---|---|---|
 | AI Provider Abstraction (`BaseAIProvider`) | Đã có | `backend/app/services/ai/base.py` |
-| OpenAI Provider (`OpenAIProvider` GPT-4o) | Đã có | `backend/app/services/ai/openai_provider.py` |
-| Google Gemini Provider (`GeminiProvider`) | Đã có | `backend/app/services/ai/gemini_provider.py` |
-| AI Project Generator Engine (`generate_project_from_prompt`) | Đã có | `backend/app/services/ai/project_generator.py` |
+| xKiro Provider (`XkiroProvider`) | Đã có | `backend/app/services/ai/xkiro_provider.py` — provider AI duy nhất |
+| AI Model Router (`resolve_model`, `AITaskType`) | Đã có | `backend/app/services/ai/model_router.py` |
+| AI Project Generator Engine (`generate_project_from_prompt`) | Đã có, chạy thật | `backend/app/services/ai/project_generator.py` |
+| Endpoint `/ai/generate-project`, `/ai/jobs/{id}` | Đã mount | `backend/app/api/v1/endpoints/ai.py` |
 | Celery Worker + Redis Broker | Đã có | `backend/app/workers/celery_app.py` & `ai_tasks.py` |
 | Database Models: `ai_requests`, `ai_outputs`, `risk_reports` | Đã migrate | Sẵn sàng lưu trữ lịch sử và kết quả AI |
 | CPM Engine (Topological Sort + Forward/Backward Pass) | Đã có | `app/utils/cpm.py` + `app/services/scheduling_service.py` (không có `cpm_service.py`) |
 | User Skills & Leaves Schema | Đã migrate | `user_skills`, `skills`, `leaves` |
-| AI API Keys cấu hình trong `.env` | Đã có | `OPENAI_API_KEY`, `GEMINI_API_KEY`, `ACTIVE_AI_PROVIDER` |
+| AI API Key cấu hình trong `.env` | Đã có | `XKIRO_API_KEY`, `XKIRO_BASE_URL`, `XKIRO_MODEL_*` |
 
 ---
 
@@ -40,27 +43,27 @@ Module **AI Features (Phase 3)** tích hợp trí tuệ nhân tạo (OpenAI GPT-
 
 | Tính năng | Mã SOP | Độ ưu tiên | Trạng thái | Backend Task | Frontend Component |
 |---|---|---|---|---|---|
-| AI Provider Abstraction Layer | Core | Critical | Hoàn thành | `BaseAIProvider`, `OpenAIProvider`, `GeminiProvider` | — (chưa có Provider Switcher UI) |
-| AI Project Generator Engine | SOP-AI-001 | Critical | Chỉ có service function | `project_generator.py` tồn tại nhưng KHÔNG được gọi; Celery task `generate_project_task` là stub `TODO`; endpoint `/ai` chưa mount | Chưa có |
+| AI Provider Abstraction Layer | Core | Critical | Hoàn thành | `BaseAIProvider`, `XkiroProvider`, `model_router.py` | — (chỉ 1 provider, không cần Switcher UI) |
+| AI Project Generator Engine | SOP-AI-001 | Critical | Hoàn thành, chạy thật | `project_generator.py` gọi qua endpoint `/ai/generate-project`; Celery `generate_project_task` ghi Project/Phase/Task/Dependency thật | Chưa có (gọi trực tiếp qua API) |
 | AI Impact Analysis | SOP-AI-002 | High | Chưa bắt đầu | Service chưa tồn tại; `impact_analysis_task` là stub | Chưa có |
-| AI Schedule Optimization | SOP-AI-003 | High | Chưa bắt đầu | Service chưa tồn tại | Chưa có |
+| AI Schedule Optimization | SOP-AI-003 | High | Chưa bắt đầu | Service chưa tồn tại; `optimize_schedule_task` là stub | Chưa có |
 | AI Resource Recommendation | SOP-AI-004 | High | Chưa bắt đầu | Service chưa tồn tại | Chưa có |
-| AI Risk Analysis & Periodic Scan | SOP-AI-005 | Medium | Chưa bắt đầu | Service chưa tồn tại; không có Celery Beat entry | Chưa có |
+| AI Risk Analysis & Periodic Scan | SOP-AI-005 | Medium | Chưa bắt đầu | Service chưa tồn tại; `risk_analysis_task` là stub, không có Celery Beat entry | Chưa có |
 
 ---
 
 ## Chi tiết kế hoạch triển khai
 
 ### GIAI ĐOẠN 3.1 – AI Provider Abstraction Layer & Base Infrastructure
-> **Trạng thái:** Đã hoàn thành 
+> **Trạng thái:** Đã hoàn thành
 - `BaseAIProvider` (`backend/app/services/ai/base.py`): Abstract base class với `generate_text` và `generate_json`.
-- `OpenAIProvider` (`backend/app/services/ai/openai_provider.py`): Tích hợp OpenAI GPT-4o JSON mode.
-- `GeminiProvider` (`backend/app/services/ai/gemini_provider.py`): Tích hợp Google Gemini Pro SDK và xử lý Markdown code-block cleaner.
-- `ProjectGeneratorService` (`backend/app/services/ai/project_generator.py`): Hàm `generate_project_from_prompt(prompt)` gọi Provider tương ứng.
+- `XkiroProvider` (`backend/app/services/ai/xkiro_provider.py`): Tích hợp xKiro qua SDK `openai` (base URL riêng), chọn model theo `AITaskType` từ `model_router.py`.
+- `project_generator.py`: Hàm `generate_project_from_prompt(prompt)` gọi `XkiroProvider.generate_json()`.
 
 ### GIAI ĐOẠN 3.2 – AI Project Generator Endpoint & Frontend UI (SOP-AI-001)
-> **Trạng thái:** Chưa bắt đầu (chỉ có `project_generator.py` chưa được nối)
-- Cần làm: mount router `/ai`, hiện thực `generate_project_task` (đang là stub), ghi `ai_requests`/`ai_outputs`, dựng `AIGeneratorModal.tsx`.
+> **Trạng thái:** Backend hoàn thành, Frontend chưa bắt đầu
+- Đã làm: mount router `/ai` (`generate-project`, `jobs/{id}`), `generate_project_task` sinh Project/Phase/Task/Dependency thật và ghi `ai_requests`/`ai_outputs`.
+- Còn thiếu: `AIGeneratorModal.tsx` (UI nhập prompt + theo dõi job) phía frontend.
 
 ### GIAI ĐOẠN 3.3 – AI Impact Analysis (SOP-AI-002)
 > **Trạng thái:** Kế hoạch tiếp theo
@@ -81,4 +84,4 @@ Module **AI Features (Phase 3)** tích hợp trí tuệ nhân tạo (OpenAI GPT-
 
 ---
 
-*Cập nhật lần cuối: 2026-09-03 — Phase 3 (AI Features) — đối soát với mã nguồn: chỉ Provider layer + `project_generator.py` tồn tại, phần còn lại chưa triển khai.*
+*Cập nhật lần cuối: 2026-09-13 — Phase 3 (AI Features) — đối soát với mã nguồn: chuyển hẳn sang xKiro (bỏ OpenAI/Gemini provider), SOP-AI-001 chạy thật end-to-end; 4 SOP còn lại vẫn chưa triển khai.*

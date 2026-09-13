@@ -8,7 +8,7 @@
 [![Redis](https://img.shields.io/badge/Cache%20%26%20PubSub-Redis_7-DC382D?logo=redis)](https://redis.io)
 [![Celery](https://img.shields.io/badge/Queue%20%26%20Beat-Celery_%2B_Redis-37814A?logo=celery)](https://docs.celeryq.dev)
 [![WebSocket](https://img.shields.io/badge/Real--time-WebSocket_%2B_Redis_PubSub-010101)](https://fastapi.tiangolo.com/advanced/websockets/)
-[![OpenAI & Gemini](https://img.shields.io/badge/AI-OpenAI_GPT--4o_%7C_Gemini_Pro-412991)](https://openai.com)
+[![xKiro AI](https://img.shields.io/badge/AI-xKiro_(DeepSeek_%7C_Qwen_%7C_Mistral)-412991)](https://api.xkiro.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
@@ -40,7 +40,7 @@ Xây dựng một **web application quản lý dự án và danh mục đầu t�
 
 ### Mục tiêu cốt lõi (tầm nhìn sản phẩm — không phải toàn bộ đã hoàn thành, xem [§14 Roadmap](#14-roadmap-phát-triển)):
 - **Quản lý danh mục & dự án (Portfolio & Project Management)** theo chuẩn kết hợp Waterfall & Agile.
-- **Sinh kế hoạch dự án tự động (AI Project Generator)** từ mô tả ngôn ngữ tự nhiên (Prompt) thông qua OpenAI / Google Gemini.
+- **Sinh kế hoạch dự án tự động (AI Project Generator)** từ mô tả ngôn ngữ tự nhiên (Prompt) thông qua xKiro (DeepSeek, Qwen, Mistral, ...).
 - **Tính toán đường găng (Critical Path Method - CPM)**, sắp xếp tô-pô (Topological Sort) và cân bằng tải nhân sự (Resource Leveling).
 - **Giao tiếp thời gian thực (Real-time Collaboration)**: Kênh Chat nội bộ theo từng dự án (`/ws/chat/{project_id}`) và đẩy thông báo tức thời (`/ws/notifications`) qua WebSocket kết hợp Redis Pub/Sub đa tiến trình.
 - **Hệ thống Quản trị & Audit Timeline**: Quản lý người dùng, vai trò, 34 quyền hạn (permissions) chi tiết và truy vết toàn bộ thay đổi hệ thống.
@@ -57,7 +57,8 @@ Xây dựng một **web application quản lý dự án và danh mục đầu t�
 | CPM Engine | Chạy thật + test | `app/utils/cpm.py` + `scheduling_service.py`; endpoint `GET /projects/{id}/cpm` đã mount (chỉ đọc). `/gantt` vẫn là stub (Phase 4) |
 | Real-time Chat + Notification Push + Celery Beat daily sweep | Chạy thật + test | Phase 2/5 hoàn thành |
 | Dashboard KPI / EVA / Burndown | Chạy thật | endpoint `/dashboards` đã mount |
-| AI (Generator, Impact, Optimize, Risk, Resource) | Chỉ hạ tầng | Có `BaseAIProvider` + `OpenAIProvider` + `GeminiProvider` + `project_generator.py` và models; **chưa mount** endpoint `/ai`, Celery `ai_tasks` vẫn là stub |
+| AI Project Generator | Chạy thật | `BaseAIProvider` + `XkiroProvider` + `project_generator.py`, endpoint `/ai` đã mount, Celery `ai_tasks` sinh Project/Phase/Task/Dependency thật |
+| AI (Impact, Optimize, Risk, Resource, Document Parsing) | Chỉ hạ tầng | Model router đã có model cho từng task; Celery `ai_tasks` các SOP còn lại vẫn là stub |
 | Change Request / Approvals / Project Versioning / Rollback | Chỉ model DB | Endpoint là stub `TODO`, **chưa mount**, chưa có UI |
 | Reports DOCX/XLSX | Chỉ scaffold | `report_tasks.py` là stub trả về rỗng, endpoint `/reports` chưa mount |
 | Documents / AI Document Parser | Chỉ model DB | endpoint `/documents` là stub, chưa mount |
@@ -95,8 +96,8 @@ Xây dựng một **web application quản lý dự án và danh mục đầu t�
                            │
               ┌────────────▼────────────┐
               │    AI Provider Layer    │
-              │  ├─ OpenAI (GPT-4o)     │
-              │  └─ Google Gemini Pro   │
+              │  └─ xKiro (DeepSeek,    │
+              │     Qwen, Mistral, ...) │
               └─────────────────────────┘
 ```
 
@@ -135,7 +136,7 @@ FastAPI WS Endpoint (authenticate_ws verifies JWT & checks project membership)
 | **Queue & Worker** | **Celery** | `5.4.0` | Background tasks & AI processing queue |
 | **Scheduler** | **Celery Beat** | `5.4.0` | Cron scheduler (quét task start/due-soon hàng ngày) |
 | **Caching** | Redis (`redis.asyncio`) | `5.1.1` | In-memory caching & session store |
-| **AI Providers** | `openai`, `google-generativeai` | — | OpenAI GPT-4o & Google Gemini Pro APIs |
+| **AI Provider** | `openai` (SDK) | — | xKiro — cổng AI tương thích OpenAI, nhiều model miễn phí (DeepSeek, Qwen, Mistral, ...) |
 | **File Storage** | `minio` / `boto3` | `7.2.9` | S3-compatible storage (BRD/SRS, Avatar, Reports) |
 | **Email Service** | `fastapi-mail` + Jinja2 | `1.4.1` | Template email async dispatch |
 | **Reporting** | `python-docx`, `openpyxl` | — | Xuất báo cáo dự án định dạng DOCX & XLSX |
@@ -248,7 +249,7 @@ AI Project Planning & Portfolio Management system/
 │   │   │   ├── phase2_common.py              # get_project_context, notify_project_team, add_audit
 │   │   │   ├── portfolio_service.py, project_service.py, task_service.py, wbs_service.py
 │   │   │   ├── resource_service.py, role_service.py, user_service.py, storage_service.py
-│   │   │   └── ai/                           # AI Provider implementations (OpenAI, Gemini)
+│   │   │   └── ai/                           # AI Provider implementation (xKiro)
 │   │   ├── templates/email/                  # Jinja2 HTML email templates
 │   │   ├── utils/                            # Helper utilities (cpm.py, email.py, pagination.py)
 │   │   └── workers/                          # Celery Background Workers & Scheduler
@@ -628,12 +629,9 @@ MINIO_SECRET_KEY=minioadmin
 MINIO_BUCKET=ai-project-files
 MINIO_USE_SSL=false
 
-# AI Providers
-ACTIVE_AI_PROVIDER=openai
-OPENAI_API_KEY=sk-proj-...
-OPENAI_MODEL=gpt-4o
-GEMINI_API_KEY=AIzaSy...
-GEMINI_MODEL=gemini-pro
+# AI Provider (xKiro)
+XKIRO_API_KEY=sk-xt-...
+XKIRO_BASE_URL=https://api.xkiro.com/v1
 
 # Email Service
 SMTP_HOST=smtp.gmail.com
@@ -697,11 +695,11 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
   - [x] Endpoint `/cpm` công khai (`GET /projects/{id}/cpm`, chỉ đọc).
   - [ ] Endpoint `/gantt` + UI Gantt (thuộc Phase 4).
 
-- [ ] **Phase 3 — AI Features Module** *(~15% — mới có Provider layer)*
-  - [x] Tầng trừu tượng hóa AI Provider (`BaseAIProvider`, `OpenAIProvider`, `GeminiProvider`).
-  - [x] `project_generator.py` — hàm `generate_project_from_prompt()` (chưa được gọi từ endpoint/worker nào).
+- [~] **Phase 3 — AI Features Module** *(AI Project Generator hoàn thành, các SOP còn lại vẫn là stub)*
+  - [x] Tầng trừu tượng hóa AI Provider (`BaseAIProvider`, `XkiroProvider`).
+  - [x] `project_generator.py` — hàm `generate_project_from_prompt()`, gọi thật qua endpoint `/ai/generate-project` + Celery `ai_tasks.generate_project_task`.
   - [x] Models logging (`ai_requests`, `ai_outputs`, `risk_reports`) đã migrate.
-  - [ ] Endpoint `/ai` (đang là stub, chưa mount) + Celery `ai_tasks` (đang là stub).
+  - [ ] Impact Analysis / Schedule Optimize / Risk Analysis / Document Parsing (đang là stub trong `ai_tasks.py`).
   - [ ] AI Project Generator UI, Impact Analysis, Schedule Optimization, Resource Recommendation, Risk Analysis.
 
 - [ ] **Phase 4 — Workflow & Reporting Module** *(~30%)*

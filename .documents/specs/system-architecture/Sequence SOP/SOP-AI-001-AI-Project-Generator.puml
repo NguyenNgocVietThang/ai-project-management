@@ -11,7 +11,7 @@ skinparam sequence {
 actor "PM" as PM
 participant "Frontend UI" as UI
 participant "Backend API" as API
-participant "AI Engine\n(OpenAI/Gemini)" as AI
+participant "AI Engine\n(xKiro)" as AI
 participant "CPM Engine" as CPM
 database "PostgreSQL" as DB
 

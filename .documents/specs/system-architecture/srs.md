@@ -38,7 +38,7 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 | **Storage** | MinIO (S3-compatible) — BRD/SRS, avatar, báo cáo xuất ra | latest |
 | **Real-time Bus** | Redis Pub/Sub + ConnectionManager (hỗ trợ scale đa tiến trình) | Redis 7 |
 | **Queue & Scheduler** | Celery + Celery Beat + Redis Broker — xử lý AI, Email, Sweeps | Celery 5.4 |
-| **AI** | OpenAI GPT-4o hoặc Google Gemini Pro (cấu hình per Admin) | openai 1.51, google-generativeai 0.8 |
+| **AI** | xKiro — cổng AI tương thích OpenAI, nhiều model miễn phí (DeepSeek, Qwen, Mistral) theo từng loại việc | openai 1.51 (SDK) |
 | **Auth** | JWT (Access Token 30m + Refresh Token 7d) + RBAC (34 permissions) | python-jose, passlib/bcrypt |
 | **Email** | fastapi-mail (SMTP) + Jinja2 templates | fastapi-mail 1.4 |
 | **Export** | python-docx (DOCX), openpyxl (XLSX) — server-side async generation | — |
@@ -69,8 +69,8 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
                  │
       ┌──────────▼──────────┐
       │   AI Provider Layer  │
-      │  ├─ OpenAI (GPT-4o) │
-      │  └─ Gemini Pro       │
+      │  └─ xKiro (DeepSeek, │
+      │     Qwen, Mistral)   │
       └─────────────────────┘
 ```
 
@@ -279,7 +279,8 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 - [x] **Hạ tầng Real-time WebSocket & Redis Pub/Sub**: Hoàn thành 100% (`ConnectionManager`, `redis_listener`).
 - [x] **Real-time Project Chat**: Hoàn thành 100% (Backend endpoints + WS + Frontend UI & unread badge).
 - [x] **Thông báo Real-time & Celery Beat Daily Sweep**: Hoàn thành 100% (WS Push + Beat 08:00 AM sweep).
-- [~] **AI Provider Layer**: Mới có `BaseAIProvider`, `OpenAIProvider`, `GeminiProvider`, `project_generator.py`. Endpoint `/ai` và Celery `ai_tasks` **vẫn là stub** — chưa có tính năng AI nào chạy được.
+- [x] **AI Project Generator (SOP-AI-001)**: `BaseAIProvider` + `XkiroProvider` + `project_generator.py`, endpoint `/ai/generate-project` đã mount, Celery `ai_tasks.generate_project_task` sinh Project/Phase/Task/Dependency thật.
+- [~] **AI Impact/Schedule/Resource/Risk (SOP-AI-002 → 005)**: Celery `ai_tasks` cho 4 SOP còn lại **vẫn là stub** — chưa có tính năng nào chạy được.
 - [~] **Change Request, Approvals & Versioning**: **Chỉ có model DB**. Endpoint `change_requests`/`approvals`/`project_versions` là stub `TODO`, chưa mount, chưa có service/UI.
 - [ ] **Reports DOCX/XLSX**: `report_tasks.py` là stub trả về rỗng; endpoint `/reports` chưa mount.
 - [ ] **Document AI Parser** (`/documents`), **Investor Read-only Dashboard**, **Mobile polish**: chưa bắt đầu.

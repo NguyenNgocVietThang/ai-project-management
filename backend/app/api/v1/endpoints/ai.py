@@ -23,7 +23,7 @@ async def generate_project(
     Trả về ngay một `job_id` — việc gọi AI và ghi dữ liệu chạy nền trong Celery.
     Theo dõi kết quả bằng GET /ai/jobs/{job_id}.
     """
-    return await service.request_project_generation(body.prompt, body.ai_provider, current_user)
+    return await service.request_project_generation(body.prompt, current_user)
 
 
 @router.get("/jobs/{job_id}", response_model=AIResultResponse)
