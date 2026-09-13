@@ -70,12 +70,6 @@ class Settings(BaseSettings):
     MINIO_BUCKET: str = "ai-project-files"
     MINIO_USE_SSL: bool = False
 
-    # Các nhà cung cấp AI
-    OPENAI_API_KEY: str = ""
-    OPENAI_MODEL: str = "gpt-4o"
-    GEMINI_API_KEY: str = ""
-    GEMINI_MODEL: str = "gemini-pro"
-
     # xKiro — cổng AI tương thích OpenAI, gộp nhiều model miễn phí qua 1 API key.
     # Mỗi task AI dùng một model riêng (xem app/services/ai/model_router.py) để
     # cân bằng chất lượng/độ trễ theo từng loại việc, thay vì 1 model cho tất cả.
@@ -88,8 +82,6 @@ class Settings(BaseSettings):
     XKIRO_MODEL_RESOURCE_RECOMMENDATION: str = "mistralai/mistral-medium-3.5"
     XKIRO_MODEL_RISK_ANALYSIS: str = "mistralai/mistral-large-2512"
     XKIRO_MODEL_CHAT_QUICK: str = "deepseek/deepseek-chat-v3.1"
-
-    ACTIVE_AI_PROVIDER: str = "xkiro"  # "xkiro" | "openai" | "gemini"
 
     # Email
     SMTP_HOST: str = "smtp.gmail.com"

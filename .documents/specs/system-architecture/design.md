@@ -36,8 +36,7 @@ Hệ thống **AI Project Planning & Portfolio Management** được thiết k�
 | Task Queue | Celery[redis] | 5.4.0 |
 | Scheduler | Celery Beat | 5.4.0 |
 | Message Broker / Cache | Redis | 5.1.1 |
-| AI — OpenAI | openai | 1.51.0 |
-| AI — Gemini | google-generativeai | 0.8.0 |
+| AI — xKiro | openai (SDK) | 1.51.0 |
 | File Storage | minio / boto3 | 7.2.9 / 1.35.0 |
 | Email | fastapi-mail + Jinja2 | 1.4.1 / 3.1.4 |
 | Export DOCX | python-docx | 1.1.2 |
@@ -167,7 +166,7 @@ backend/
 │   │   ├── scheduling_service.py (CPM), dashboard_service.py, notification_service.py, oauth_service.py
 │   │   ├── phase2_common.py, portfolio_service.py, project_service.py, resource_service.py
 │   │   ├── role_service.py, task_service.py, user_service.py, wbs_service.py, storage_service.py
-│   │   └── ai/                 # base.py, openai_provider.py, gemini_provider.py, project_generator.py (chưa nối endpoint)
+│   │   └── ai/                 # base.py, xkiro_provider.py, model_router.py, project_generator.py (đã nối endpoint /ai)
 │   ├── db/
 │   │   ├── session.py          # AsyncEngine + async_sessionmaker + get_db()
 │   │   ├── base.py             # Import tất cả models cho Alembic

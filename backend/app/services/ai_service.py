@@ -26,16 +26,14 @@ class AIService:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def request_project_generation(
-        self, prompt: str, ai_provider: str | None, user: User
-    ) -> AIJobResponse:
+    async def request_project_generation(self, prompt: str, user: User) -> AIJobResponse:
         from app.workers.ai_tasks import generate_project_task
 
         ai_request = AIRequest(
             user_id=user.id,
             request_type=AIRequestType.PROJECT_GENERATE,
             status=AIRequestStatus.PENDING,
-            input_data_json={"prompt": prompt, "ai_provider": ai_provider},
+            input_data_json={"prompt": prompt},
         )
         self.db.add(ai_request)
         await self.db.commit()

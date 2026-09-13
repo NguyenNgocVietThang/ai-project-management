@@ -5,7 +5,6 @@ from pydantic import BaseModel
 
 class AIGenerateProjectRequest(BaseModel):
     prompt: str
-    ai_provider: str | None = None  # Ghi đè provider mặc định
 
 
 class AIImpactAnalysisRequest(BaseModel):

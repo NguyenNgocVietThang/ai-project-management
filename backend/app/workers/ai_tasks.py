@@ -39,7 +39,6 @@ async def _generate_with_own_session(ai_request_id: int) -> dict:
 
         input_data = ai_request.input_data_json or {}
         prompt = input_data.get("prompt", "")
-        ai_provider = input_data.get("ai_provider")
 
         try:
             from app.models.user import User
@@ -48,7 +47,7 @@ async def _generate_with_own_session(ai_request_id: int) -> dict:
             if user is None:
                 raise ValueError("Requesting user no longer exists")
 
-            project_id = await _run_generation(db, ai_request.id, prompt, ai_provider, user)
+            project_id = await _run_generation(db, ai_request.id, prompt, user)
 
             ai_request.project_id = project_id
             ai_request.status = AIRequestStatus.COMPLETED
@@ -66,23 +65,19 @@ async def _generate_with_own_session(ai_request_id: int) -> dict:
             raise
 
 
-async def _run_generation(db, ai_request_id: int, prompt: str, ai_provider, user) -> int:
+async def _run_generation(db, ai_request_id: int, prompt: str, user) -> int:
     """Gọi AI, ghi Project/Phase/Task/Dependency thật rồi lưu AIOutput. Trả về project_id."""
-    from app.core.config import settings
     from app.models.ai_output import AIOutput
     from app.services.ai.model_router import AITaskType, resolve_model
     from app.services.ai.project_generator import generate_project_from_prompt
 
     started_at = datetime.now(UTC)
-    plan = await generate_project_from_prompt(prompt, ai_provider)
+    plan = await generate_project_from_prompt(prompt)
     elapsed_ms = int((datetime.now(UTC) - started_at).total_seconds() * 1000)
 
     project = await _persist_plan(db, plan, user)
 
-    active_provider = ai_provider or settings.ACTIVE_AI_PROVIDER
-    model_name = (
-        resolve_model(AITaskType.PROJECT_GENERATION) if active_provider == "xkiro" else active_provider
-    )
+    model_name = resolve_model(AITaskType.PROJECT_GENERATION)
     db.add(
         AIOutput(
             ai_request_id=ai_request_id,
