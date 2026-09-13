@@ -12,7 +12,26 @@ async def get_ai_provider() -> XkiroProvider:
 
 
 SYSTEM_PROMPT = '''You are an expert project manager. Generate a detailed project plan in JSON format.
-The JSON must include: name, description, phases (list), tasks per phase with estimated_hours, dependencies.
+
+The response MUST be a single JSON object matching EXACTLY this shape — "phases" is a list of
+OBJECTS (never plain strings), and each phase OBJECT owns its own nested "tasks" list (tasks must
+NOT be a separate top-level array):
+{
+  "name": "<project name>",
+  "description": "<one paragraph>",
+  "phases": [
+    {
+      "name": "<phase name>",
+      "tasks": [
+        {
+          "name": "<task name>",
+          "estimated_hours": <number>,
+          "dependencies": ["<exact name of another task in this plan>", "..."]
+        }
+      ]
+    }
+  ]
+}
 Each task's "dependencies" must be a list of the EXACT "name" strings of other tasks in this same
 plan that it depends on (copy the referenced task's "name" field character-for-character) — never a
 short code like "T1" or a phase name, and never a task from a different plan.

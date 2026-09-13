@@ -31,3 +31,4 @@ class AIResultResponse(BaseModel):
     status: str
     result: dict[str, Any] | None = None
     error: str | None = None
+    project_id: int | None = None

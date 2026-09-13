@@ -109,6 +109,20 @@ async def _persist_plan(db, plan: dict, user) -> "object":
     if not isinstance(phases_data, list) or not phases_data:
         raise BadRequestException("AI response has no phases")
 
+    # Một model đôi khi trả "phases" dạng list chuỗi tên phase kèm "tasks" là một
+    # mảng phẳng riêng ở cấp cao nhất, thay vì phases[].tasks[] lồng nhau như đã
+    # yêu cầu trong SYSTEM_PROMPT. Nếu không chặn ở đây, vòng lặp bên dưới âm thầm
+    # bỏ qua mọi phần tử không phải dict và tạo ra một Project rỗng (0 phase, 0
+    # task) nhưng vẫn báo COMPLETED — người dùng tưởng AI đã sinh xong kế hoạch.
+    has_any_task = any(
+        isinstance(phase, dict) and any(isinstance(task, dict) for task in (phase.get("tasks") or []))
+        for phase in phases_data
+    )
+    if not has_any_task:
+        raise BadRequestException(
+            "AI response did not match the expected phases[].tasks[] shape"
+        )
+
     total_hours = 0.0
     for phase in phases_data:
         if not isinstance(phase, dict):

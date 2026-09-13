@@ -1,6 +1,7 @@
 ﻿from celery import Celery
 from celery.schedules import crontab
 
+import app.db.base  # noqa: F401 - đăng ký tất cả models trước khi task nào chạm tới ORM
 from app.core.config import settings
 
 celery_app = Celery(

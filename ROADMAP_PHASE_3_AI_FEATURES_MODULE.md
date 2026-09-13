@@ -1,7 +1,7 @@
 # Roadmap: AI Features Module (Phase 3)
 
-> **Phiên bản:** 1.3 | **Cập nhật:** 2026-09-13  
-> **Trạng thái:** AI Project Generator (SOP-AI-001) đã chạy thật end-to-end (endpoint `/ai` đã mount, Celery `ai_tasks.generate_project_task` ghi Project/Phase/Task/Dependency thật). 4 SOP còn lại (Impact Analysis, Schedule Optimization, Resource Recommendation, Risk Analysis) vẫn là stub `TODO`. Chưa có UI AI nào.  
+> **Phiên bản:** 1.4 | **Cập nhật:** 2026-09-13  
+> **Trạng thái:** AI Project Generator (SOP-AI-001) đã chạy thật end-to-end kèm UI hoàn chỉnh (endpoint `/ai` đã mount, Celery `ai_tasks.generate_project_task` ghi Project/Phase/Task/Dependency thật, `AIGeneratorModal.tsx` cho phép nhập prompt và theo dõi job từ trang Projects). 4 SOP còn lại (Impact Analysis, Schedule Optimization, Resource Recommendation, Risk Analysis) vẫn là stub `TODO`, chưa có UI.  
 > **Mức độ ưu tiên:** Critical – Lớp trí tuệ nhân tạo cốt lõi của hệ thống  
 > **Điều kiện tiên quyết:** [x] Phase 1 (Auth & RBAC) & Phase 2 (Portfolio, Project Core, CPM & Real-time Chat) đã hoàn thành
 
@@ -44,7 +44,7 @@ Mỗi trụ cột dùng một model xKiro riêng theo mức độ phức tạp c
 | Tính năng | Mã SOP | Độ ưu tiên | Trạng thái | Backend Task | Frontend Component |
 |---|---|---|---|---|---|
 | AI Provider Abstraction Layer | Core | Critical | Hoàn thành | `BaseAIProvider`, `XkiroProvider`, `model_router.py` | — (chỉ 1 provider, không cần Switcher UI) |
-| AI Project Generator Engine | SOP-AI-001 | Critical | Hoàn thành, chạy thật | `project_generator.py` gọi qua endpoint `/ai/generate-project`; Celery `generate_project_task` ghi Project/Phase/Task/Dependency thật | Chưa có (gọi trực tiếp qua API) |
+| AI Project Generator Engine | SOP-AI-001 | Critical | Hoàn thành, chạy thật | `project_generator.py` gọi qua endpoint `/ai/generate-project`; Celery `generate_project_task` ghi Project/Phase/Task/Dependency thật | `AIGeneratorModal.tsx` (trang Projects) |
 | AI Impact Analysis | SOP-AI-002 | High | Chưa bắt đầu | Service chưa tồn tại; `impact_analysis_task` là stub | Chưa có |
 | AI Schedule Optimization | SOP-AI-003 | High | Chưa bắt đầu | Service chưa tồn tại; `optimize_schedule_task` là stub | Chưa có |
 | AI Resource Recommendation | SOP-AI-004 | High | Chưa bắt đầu | Service chưa tồn tại | Chưa có |
@@ -61,9 +61,9 @@ Mỗi trụ cột dùng một model xKiro riêng theo mức độ phức tạp c
 - `project_generator.py`: Hàm `generate_project_from_prompt(prompt)` gọi `XkiroProvider.generate_json()`.
 
 ### GIAI ĐOẠN 3.2 – AI Project Generator Endpoint & Frontend UI (SOP-AI-001)
-> **Trạng thái:** Backend hoàn thành, Frontend chưa bắt đầu
-- Đã làm: mount router `/ai` (`generate-project`, `jobs/{id}`), `generate_project_task` sinh Project/Phase/Task/Dependency thật và ghi `ai_requests`/`ai_outputs`.
-- Còn thiếu: `AIGeneratorModal.tsx` (UI nhập prompt + theo dõi job) phía frontend.
+> **Trạng thái:** Đã hoàn thành
+- Backend: mount router `/ai` (`generate-project`, `jobs/{id}`), `generate_project_task` sinh Project/Phase/Task/Dependency thật và ghi `ai_requests`/`ai_outputs`; `AIResultResponse` trả thêm `project_id` để frontend điều hướng sau khi job xong.
+- Frontend: nút "Generate with AI" trên trang Projects mở `AIGeneratorModal.tsx` (`frontend/src/features/ai/`) — nhập prompt, poll trạng thái job qua React Query tới khi COMPLETED/FAILED, rồi điều hướng tới project vừa tạo.
 
 ### GIAI ĐOẠN 3.3 – AI Impact Analysis (SOP-AI-002)
 > **Trạng thái:** Kế hoạch tiếp theo
@@ -84,4 +84,4 @@ Mỗi trụ cột dùng một model xKiro riêng theo mức độ phức tạp c
 
 ---
 
-*Cập nhật lần cuối: 2026-09-13 — Phase 3 (AI Features) — đối soát với mã nguồn: chuyển hẳn sang xKiro (bỏ OpenAI/Gemini provider), SOP-AI-001 chạy thật end-to-end; 4 SOP còn lại vẫn chưa triển khai.*
+*Cập nhật lần cuối: 2026-09-13 — Phase 3 (AI Features) — Giai đoạn 3.2 hoàn thành: `AIGeneratorModal.tsx` + `AIResultResponse.project_id` để điều hướng sau khi AI tạo project xong. 4 SOP còn lại (3.3–3.6) vẫn chưa triển khai.*
