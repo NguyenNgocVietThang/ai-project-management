@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -19,12 +20,14 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>
 
 export function LoginForm() {
+  const t = useTranslations('login')
+  const translatedSchema = z.object({ email: z.string().min(1, t('emailRequired')).email(t('emailInvalid')), password: z.string().min(1, t('passwordRequired')) })
   const { login, isLoggingIn, loginError } = useAuth()
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormValues>({ resolver: zodResolver(loginSchema) })
+  } = useForm<LoginFormValues>({ resolver: zodResolver(translatedSchema) })
 
   const onSubmit = handleSubmit(async (values) => {
     try {
@@ -57,12 +60,12 @@ export function LoginForm() {
 
       <div>
         <div className="flex items-center justify-between gap-4">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">{t('password')}</Label>
           <Link
             href="/forgot-password"
             className="text-sm font-medium text-primary hover:underline"
           >
-            Forgot your password?
+            {t('forgot')}
           </Link>
         </div>
         <Input
@@ -81,15 +84,15 @@ export function LoginForm() {
       </div>
 
       <Button type="submit" isLoading={isLoggingIn}>
-        {isLoggingIn ? 'Signing in…' : 'Sign in'}
+        {isLoggingIn ? t('signingIn') : t('signIn')}
       </Button>
 
-      <SocialLoginButtons dividerText="Or sign in with" />
+      <SocialLoginButtons dividerText={t('social')} />
 
       <p className="text-center text-sm text-muted-foreground">
-        Don&apos;t have an account?{' '}
+        {t('noAccount')}{' '}
         <Link href="/register" className="font-medium text-primary hover:underline">
-          Sign up
+          {t('signUp')}
         </Link>
       </p>
     </form>

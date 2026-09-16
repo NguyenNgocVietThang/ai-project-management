@@ -45,7 +45,12 @@ function useInvalidate() {
   return (projectId: number, taskId?: number) => {
     client.invalidateQueries({ queryKey: taskKeys.project(projectId) })
     client.invalidateQueries({ queryKey: projectKeys.detail(projectId) })
+    client.invalidateQueries({ queryKey: ['dashboard'] })
+    client.invalidateQueries({ queryKey: ['timesheet', projectId] })
+    client.invalidateQueries({ queryKey: ['timesheet', 'mine'] })
+    client.invalidateQueries({ queryKey: ['resource-leveling', projectId] })
     if (taskId) client.invalidateQueries({ queryKey: taskKeys.detail(taskId) })
+    else client.invalidateQueries({ queryKey: [...taskKeys.all, 'detail'] })
   }
 }
 
@@ -57,9 +62,10 @@ export function useTaskActions(projectId: number) {
   const changeStatus = useMutation({
     mutationFn: ({ id, status }: { id: number; status: TaskStatus }) => taskService.changeStatus(id, status),
     onMutate: async ({ id, status }) => {
-      await client.cancelQueries({ queryKey: taskKeys.project(projectId) })
-      const snapshots = client.getQueriesData({ queryKey: taskKeys.project(projectId) })
-      client.setQueriesData<{ items: Task[] }>({ queryKey: taskKeys.project(projectId) }, current => current ? { ...current, items: current.items?.map(item => item.id === id ? { ...item, status } : item) } : current)
+      const queryKey = [...taskKeys.project(projectId), 'list']
+      await client.cancelQueries({ queryKey })
+      const snapshots = client.getQueriesData({ queryKey })
+      client.setQueriesData<{ items: Task[] }>({ queryKey }, current => current ? { ...current, items: current.items.map(item => item.id === id ? { ...item, status } : item) } : current)
       return { snapshots }
     },
     onError: (_error, _variables, context) => context?.snapshots.forEach(([key, value]) => client.setQueryData(key, value)),

@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { Modal } from './Modal'
+import { useState } from 'react'
 
 /**
  * Modal trước đây không bẫy focus, không khôi phục focus, và dùng ID cứng
@@ -9,6 +10,16 @@ import { Modal } from './Modal'
  * ID trùng và screen reader đọc sai tiêu đề.
  */
 describe('Modal', () => {
+  it('keeps input focus while a parent rerenders with an inline close callback', async () => {
+    function Form() {
+      const [value, setValue] = useState('')
+      return <Modal open onClose={() => {}} title="Edit"><input aria-label="Name" value={value} onChange={e => setValue(e.target.value)} /></Modal>
+    }
+    render(<Form />)
+    await userEvent.setup().type(screen.getByRole('textbox'), 'Project')
+    expect(screen.getByRole('textbox')).toHaveValue('Project')
+    expect(screen.getByRole('textbox')).toHaveFocus()
+  })
   it('đưa focus vào bên trong khi mở', async () => {
     render(
       <Modal open onClose={() => {}} title="Edit task">

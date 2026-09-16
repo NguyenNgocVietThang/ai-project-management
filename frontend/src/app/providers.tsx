@@ -3,8 +3,13 @@
 import { QueryClient, QueryClientProvider, MutationCache } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Toaster } from 'sonner'
-import { ThemeProvider } from '@/components/theme/ThemeProvider'
+import { ThemeProvider, useTheme } from '@/components/theme/ThemeProvider'
 import { notifyError } from '@/lib/notify'
+
+function ThemedToaster() {
+  const { resolved } = useTheme()
+  return <Toaster theme={resolved} position="top-right" richColors closeButton />
+}
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -34,7 +39,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         {children}
-        <Toaster position="top-right" richColors closeButton />
+        <ThemedToaster />
       </ThemeProvider>
     </QueryClientProvider>
   )

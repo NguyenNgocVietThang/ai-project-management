@@ -18,8 +18,8 @@ export function SocialLoginButtons({ dividerText = 'Or continue with' }: SocialL
   return (
     <div className="space-y-4">
       <div className="relative flex items-center justify-center">
-        <div className="w-full border-t border-border" />
-        <span className="bg-background px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+        <div className="absolute inset-x-0 border-t border-border" />
+        <span className="relative bg-card px-3 text-xs text-muted-foreground">
           {dividerText}
         </span>
       </div>

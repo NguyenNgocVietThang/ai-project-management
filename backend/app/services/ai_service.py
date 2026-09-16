@@ -7,9 +7,12 @@ HTTP request. Client theo dõi tiến độ bằng cách poll GET /ai/jobs/{id},
 trực tiếp cột `status` trên `AIRequest` — hệ thống này không dùng result
 backend của Celery (xem AsyncResult) nên trạng thái luôn lấy từ DB.
 """
+import asyncio
+import logging
+from datetime import UTC, datetime
 from typing import Annotated
 
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -20,6 +23,8 @@ from app.models.ai_request import AIRequest, AIRequestStatus, AIRequestType
 from app.models.user import User
 from app.schemas.ai import AIJobResponse, AIResultResponse
 from app.services.phase2_common import is_admin as _is_admin
+
+logger = logging.getLogger(__name__)
 
 
 class AIService:
@@ -39,7 +44,15 @@ class AIService:
         await self.db.commit()
         await self.db.refresh(ai_request)
 
-        task = generate_project_task.delay(ai_request.id)
+        try:
+            task = await asyncio.to_thread(generate_project_task.delay, ai_request.id)
+        except Exception as exc:
+            logger.exception("Could not queue AI request %s", ai_request.id)
+            ai_request.status = AIRequestStatus.FAILED
+            ai_request.error_message = "The AI queue is unavailable. Please try again later."
+            ai_request.completed_at = datetime.now(UTC)
+            await self.db.commit()
+            raise HTTPException(status_code=503, detail=ai_request.error_message) from exc
         ai_request.celery_task_id = task.id
         await self.db.commit()
 

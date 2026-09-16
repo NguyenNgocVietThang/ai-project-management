@@ -21,6 +21,6 @@ export function useAIJob(jobId: string | null) {
     enabled: jobId !== null,
     // Job AI chạy vài giây tới vài chục giây trong Celery — poll thay vì bắt
     // người dùng tự bấm refresh, nhưng dừng ngay khi có kết quả cuối cùng.
-    refetchInterval: (query) => (query.state.data && IN_PROGRESS.includes(query.state.data.status) ? 2_000 : false),
+    refetchInterval: (query) => (query.state.status === 'error' ? false : !query.state.data || IN_PROGRESS.includes(query.state.data.status) ? 2_000 : false),
   })
 }

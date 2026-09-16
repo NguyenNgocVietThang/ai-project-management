@@ -11,7 +11,7 @@ interface PortfolioCardProps {
 
 export function PortfolioCard({ portfolio, onEdit, onDelete }: PortfolioCardProps) {
   return (
-    <article className="group rounded-xl border bg-card p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+    <article className="group rounded-2xl border bg-card p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">

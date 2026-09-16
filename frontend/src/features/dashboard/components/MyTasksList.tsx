@@ -5,6 +5,7 @@
  * Hiển thị tối đa 20 task, kèm badge quá hạn và mức nghiêm trọng
  */
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { AlertTriangle, Flag } from 'lucide-react'
 import { formatDate, formatStatus } from '@/lib/format'
 import type { MyTaskItem } from '@/features/dashboard/types/dashboard.types'
@@ -31,7 +32,7 @@ function TaskRow({ task }: { task: MyTaskItem }) {
       className="group flex items-start gap-3 rounded-lg p-2.5 transition-colors hover:bg-accent"
     >
       <span
-        className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${STATUS_DOT[task.status] ?? 'bg-gray-400'}`}
+        className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${STATUS_DOT[task.status.toLowerCase()] ?? 'bg-gray-400'}`}
       />
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium text-foreground group-hover:text-primary">
@@ -41,7 +42,7 @@ function TaskRow({ task }: { task: MyTaskItem }) {
       </div>
       <div className="flex shrink-0 flex-col items-end gap-1">
         <span
-          className={`flex items-center gap-0.5 text-xs font-medium ${PRIORITY_COLOR[task.priority] ?? 'text-muted-foreground'}`}
+          className={`flex items-center gap-0.5 text-xs font-medium ${PRIORITY_COLOR[task.priority.toLowerCase()] ?? 'text-muted-foreground'}`}
         >
           <Flag className="h-3 w-3" />
           {formatStatus(task.priority)}
@@ -65,10 +66,11 @@ interface MyTasksListProps {
 }
 
 export function MyTasksList({ tasks }: MyTasksListProps) {
+  const t = useTranslations('home')
   return (
-    <section className="rounded-xl border bg-card">
+    <section className="overflow-hidden rounded-2xl border bg-card">
       <div className="flex items-center justify-between border-b px-5 py-3.5">
-        <h2 className="text-sm font-semibold">My Tasks</h2>
+        <h2 className="text-sm font-semibold">{t('myTasks')}</h2>
         <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
           {tasks.length}
         </span>
@@ -76,7 +78,7 @@ export function MyTasksList({ tasks }: MyTasksListProps) {
       <div className="divide-y">
         {tasks.length === 0 ? (
           <p className="p-8 text-center text-sm text-muted-foreground">
-            No pending tasks assigned to you 🎉
+            {t('noTasks')}
           </p>
         ) : (
           tasks.map((t) => (

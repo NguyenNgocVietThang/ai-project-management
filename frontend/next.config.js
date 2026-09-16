@@ -66,6 +66,7 @@ const withNextIntl = require("next-intl/plugin")("./src/i18n/request.ts")
 
 const nextConfig = {
   reactStrictMode: true,
+  outputFileTracingRoot: __dirname,
   images: {
     // remotePatterns chu khong phai domains: `domains` da deprecated o Next 15, va
     // no khong the gioi han theo duong dan - `remotePatterns` thi co the.

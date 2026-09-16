@@ -26,9 +26,19 @@ export function ThemeToggle() {
           type="button"
           role="radio"
           aria-checked={preference === value}
+          tabIndex={preference === value ? 0 : -1}
           aria-label={t(value)}
           title={t(value)}
           onClick={() => setPreference(value)}
+          onKeyDown={(event) => {
+            const direction = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : 0
+            if (!direction && event.key !== 'Home' && event.key !== 'End') return
+            event.preventDefault()
+            const index = event.key === 'Home' ? 0 : event.key === 'End' ? OPTIONS.length - 1 : (OPTIONS.findIndex(option => option.value === value) + direction + OPTIONS.length) % OPTIONS.length
+            setPreference(OPTIONS[index].value)
+            const buttons = event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('button')
+            buttons?.[index].focus()
+          }}
           className={`inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
             preference === value
               ? 'bg-accent text-accent-foreground'

@@ -16,6 +16,7 @@ class Worklog(Base):
             "user_id",
             unique=True,
             postgresql_where=text("start_time IS NOT NULL AND end_time IS NULL"),
+            sqlite_where=text("start_time IS NOT NULL AND end_time IS NULL"),
         ),
         CheckConstraint("hours >= 0", name="chk_worklog_hours_nonnegative"),
         CheckConstraint(

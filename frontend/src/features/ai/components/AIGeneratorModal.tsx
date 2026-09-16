@@ -48,8 +48,12 @@ export function AIGeneratorModal({ open, onClose }: { open: boolean; onClose: ()
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault()
-    const response = await generateMutation.mutateAsync(prompt.trim())
-    setJobId(response.job_id)
+    try {
+      const response = await generateMutation.mutateAsync(prompt.trim())
+      setJobId(response.job_id)
+    } catch {
+      // The mutation's error state is rendered below.
+    }
   }
 
   const viewProject = () => {
@@ -94,7 +98,14 @@ export function AIGeneratorModal({ open, onClose }: { open: boolean; onClose: ()
         </form>
       )}
 
-      {jobId && job.data?.status !== 'COMPLETED' && job.data?.status !== 'FAILED' && (
+      {jobId && job.isError && (
+        <div className="space-y-4">
+          <Alert>{getApiErrorMessage(job.error)}</Alert>
+          <Button type="button" variant="outline" onClick={() => void job.refetch()} isLoading={job.isFetching}>Retry status check</Button>
+        </div>
+      )}
+
+      {jobId && !job.isError && job.data?.status !== 'COMPLETED' && job.data?.status !== 'FAILED' && (
         <div className="flex flex-col items-center gap-3 py-8 text-center">
           <Spinner className="h-8 w-8 text-primary" />
           <p className="text-sm text-muted-foreground">
