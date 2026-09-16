@@ -45,7 +45,7 @@ from app.services.phase2_common import (
     require_project_roles,
     serialize_model,
 )
-from app.services.scheduling_service import recalculate_project
+from app.services.scheduling_service import recalculate_project, recalculate_project_cost
 
 ModelT = TypeVar("ModelT")
 
@@ -362,6 +362,7 @@ class WBSService:
             new_values={"strategy": strategy, "target_phase_id": target_phase_id},
             description=f"Deleted phase {snapshot['phase']['name']} using {strategy}",
         )
+        await recalculate_project_cost(self.db, phase.project_id)
         await recalculate_project(self.db, phase.project_id)
 
     async def tree(

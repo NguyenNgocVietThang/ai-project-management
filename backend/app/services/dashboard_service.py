@@ -10,7 +10,7 @@ from datetime import date, timedelta
 from typing import Annotated
 
 from fastapi import Depends
-from sqlalchemy import func, or_, select
+from sqlalchemy import case, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import ForbiddenException, NotFoundException
@@ -308,12 +308,12 @@ class DashboardService:
                 Task.project_id,
                 func.count().label("total"),
                 func.sum(
-                    func.cast(Task.status == TaskStatus.DONE, type_=None)
+                    case((Task.status == TaskStatus.DONE, 1), else_=0)
                 ).label("done"),
                 func.sum(
-                    func.cast(
-                        (Task.due_date < today) & (Task.status != TaskStatus.DONE),
-                        type_=None,
+                    case(
+                        ((Task.due_date < today) & (Task.status != TaskStatus.DONE), 1),
+                        else_=0,
                     )
                 ).label("overdue"),
             )
@@ -342,7 +342,7 @@ class DashboardService:
             dc = int(tr.done) if tr else 0
             days_remaining = None
             if proj.end_date:
-                days_remaining = max(0, (proj.end_date - today).days)
+                days_remaining = (proj.end_date - today).days
             summaries.append(
                 ActiveProjectSummary(
                     id=proj.id,

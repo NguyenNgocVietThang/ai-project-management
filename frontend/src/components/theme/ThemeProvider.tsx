@@ -20,15 +20,11 @@ const ThemeContext = createContext<ThemeContextValue | null>(null)
  *  một cú chớp trắng vào mặt người dùng ở chế độ tối, mỗi lần tải trang. */
 export const themeInitScript = `
 (function () {
-  try {
-    var stored = localStorage.getItem('${STORAGE_KEY}');
-    var dark = stored === 'dark' ||
-      ((!stored || stored === 'system') &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches);
-    document.documentElement.classList.add(dark ? 'dark' : 'light');
-  } catch (e) {
-    /* Chế độ riêng tư chặn localStorage — cứ để mặc định sáng. */
-  }
+  var stored;
+  try { stored = localStorage.getItem('${STORAGE_KEY}'); } catch (e) {}
+  var dark = stored === 'dark' || (stored !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  document.documentElement.classList.toggle('dark', dark);
+  document.documentElement.classList.toggle('light', !dark);
 })();
 `
 
@@ -58,6 +54,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
     setStored(initial)
     setResolved(apply(initial))
+  }, [])
+
+  useEffect(() => {
+    const sync = (event: StorageEvent) => {
+      if (event.key !== STORAGE_KEY && event.key !== null) return
+      const next = event.newValue === 'light' || event.newValue === 'dark' ? event.newValue : 'system'
+      setStored(next)
+      setResolved(apply(next))
+    }
+    window.addEventListener('storage', sync)
+    return () => window.removeEventListener('storage', sync)
   }, [])
 
   // Khi để "theo hệ điều hành", theme phải đổi cùng hệ điều hành mà không cần tải lại.

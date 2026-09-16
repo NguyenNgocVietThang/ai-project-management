@@ -102,7 +102,8 @@ async def test_stop_timer_calculates_hours_and_updates_task_total():
         end_time=None,
         hours=0.0,
     )
-    task = SimpleNamespace(id=3)
+    task = SimpleNamespace(id=3, project_id=7)
+    db.get = AsyncMock(side_effect=[item, task])
     service._owned_worklog = AsyncMock(return_value=(item, task, None))
     service._worklog_response = AsyncMock(return_value=item)
     with patch(
@@ -128,6 +129,7 @@ async def test_cascade_phase_delete_records_snapshot_and_recalculates():
     )
     with (
         patch("app.services.wbs_service.require_project_roles", AsyncMock()),
+        patch("app.services.wbs_service.recalculate_project_cost", new=AsyncMock()) as recalculate_cost,
         patch(
             "app.services.wbs_service.recalculate_project", new=AsyncMock()
         ) as recalculate,
@@ -137,3 +139,4 @@ async def test_cascade_phase_delete_records_snapshot_and_recalculates():
     db.delete.assert_awaited_once_with(phase)
     assert db.add.call_args.args[0].old_values["schema_version"] == 1
     recalculate.assert_awaited_once_with(db, phase.project_id)
+    recalculate_cost.assert_awaited_once_with(db, phase.project_id)

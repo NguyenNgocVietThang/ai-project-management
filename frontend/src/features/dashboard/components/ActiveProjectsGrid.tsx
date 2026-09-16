@@ -5,6 +5,7 @@
  * Hiển thị thanh tiến độ, đồng hồ ngân sách và badge số ngày còn lại
  */
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { CalendarClock, TrendingUp } from 'lucide-react'
 import { MiniProgressBar } from '@/components/charts/MiniProgressBar'
 import { formatMoney, formatStatus } from '@/lib/format'
@@ -19,15 +20,16 @@ const STATUS_BADGE: Record<string, string> = {
 }
 
 function ProjectCard({ project }: { project: ActiveProjectSummary }) {
+  const t = useTranslations('home')
   const budgetPct =
     project.budget && project.budget > 0
-      ? Math.min(100, (project.budget_spent / project.budget) * 100)
+      ? (project.budget_spent / project.budget) * 100
       : null
 
   return (
     <Link
       href={`/projects/${project.id}/overview`}
-      className="group flex flex-col gap-4 rounded-xl border bg-card p-5 transition-all hover:shadow-md hover:border-primary/40"
+      className="group flex flex-col gap-4 rounded-2xl border bg-card p-6 transition-colors hover:border-primary/50 hover:bg-card/80"
     >
       <div className="flex items-start justify-between gap-2">
         <h3 className="line-clamp-2 text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
@@ -45,7 +47,7 @@ function ProjectCard({ project }: { project: ActiveProjectSummary }) {
         <div className="mb-1.5 flex justify-between text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
             <TrendingUp className="h-3 w-3" />
-            Progress
+            {t('progress')}
           </span>
           <span className="font-medium text-foreground">
             {Math.round(project.progress_percent)}%
@@ -57,7 +59,7 @@ function ProjectCard({ project }: { project: ActiveProjectSummary }) {
       {/* Task */}
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>
-          Tasks:{' '}
+          {t('taskCount')}:{' '}
           <span className="font-medium text-foreground">
             {project.completed_task_count}/{project.task_count}
           </span>
@@ -68,7 +70,7 @@ function ProjectCard({ project }: { project: ActiveProjectSummary }) {
             <span
               className={project.days_remaining <= 7 ? 'font-medium text-red-500' : 'text-muted-foreground'}
             >
-              {project.days_remaining}d left
+              {project.days_remaining < 0 ? t('daysOverdue', { count: Math.abs(project.days_remaining) }) : t('daysLeft', { count: project.days_remaining })}
             </span>
           </span>
         )}
@@ -78,7 +80,7 @@ function ProjectCard({ project }: { project: ActiveProjectSummary }) {
       {project.budget !== null && (
         <div>
           <div className="mb-1.5 flex justify-between text-xs text-muted-foreground">
-            <span>Budget</span>
+            <span>{t('budget')}</span>
             <span>{budgetPct !== null ? `${Math.round(budgetPct)}%` : '—'}</span>
           </div>
           <MiniProgressBar
@@ -106,10 +108,14 @@ interface ActiveProjectsGridProps {
 }
 
 export function ActiveProjectsGrid({ projects }: ActiveProjectsGridProps) {
+  const t = useTranslations('home')
   if (projects.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed p-10 text-center text-sm text-muted-foreground">
-        No active projects. Create your first project to get started.
+      <div className="rounded-2xl border border-dashed bg-card px-6 py-14 text-center text-sm text-muted-foreground">
+        <TrendingUp className="mx-auto mb-4 h-8 w-8 text-primary" aria-hidden="true" />
+        <h3 className="text-base font-semibold text-foreground">{t('noProjects')}</h3>
+        <p className="mt-2">{t('noProjectsDescription')}</p>
+        <Link href="/projects" className="mt-5 inline-flex min-h-11 items-center rounded-xl bg-primary px-5 font-medium text-primary-foreground">{t('viewProjects')}</Link>
       </div>
     )
   }

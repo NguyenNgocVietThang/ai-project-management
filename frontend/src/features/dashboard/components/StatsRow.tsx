@@ -1,67 +1,22 @@
 'use client'
 
-/**
- * StatsRow – 4 thẻ KPI cho Home Dashboard
- * Dự án đang hoạt động / Tổng số task / Task quá hạn / Số giờ trong tuần này
- */
-import { AlertTriangle, Briefcase, CheckSquare, Clock } from 'lucide-react'
+import { AlertTriangle, Briefcase, CheckSquare, Clock, ArrowUpRight } from 'lucide-react'
+import { useFormatter, useTranslations } from 'next-intl'
 import type { UserDashboardStats } from '@/features/dashboard/types/dashboard.types'
 
-interface StatCardProps {
-  icon: React.ReactNode
-  label: string
-  value: number | string
-  accent?: 'default' | 'warning' | 'danger'
-}
-
-function StatCard({ icon, label, value, accent = 'default' }: StatCardProps) {
-  const accentColors = {
-    default: 'text-primary bg-primary/10',
-    warning: 'text-amber-500 bg-amber-500/10',
-    danger: 'text-red-500 bg-red-500/10',
-  }
-  return (
-    <div className="flex items-center gap-4 rounded-xl border bg-card p-5 transition-shadow hover:shadow-md">
-      <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ${accentColors[accent]}`}>
-        {icon}
-      </div>
-      <div>
-        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
-        <p className="mt-0.5 text-2xl font-bold tabular-nums text-foreground">{value}</p>
-      </div>
-    </div>
-  )
-}
-
-interface StatsRowProps {
-  stats: UserDashboardStats
-}
-
-export function StatsRow({ stats }: StatsRowProps) {
-  return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <StatCard
-        icon={<Briefcase className="h-5 w-5" />}
-        label="Active Projects"
-        value={stats.active_projects}
-      />
-      <StatCard
-        icon={<CheckSquare className="h-5 w-5" />}
-        label="Total Tasks"
-        value={stats.total_tasks}
-      />
-      <StatCard
-        icon={<AlertTriangle className="h-5 w-5" />}
-        label="Overdue Tasks"
-        value={stats.overdue_tasks}
-        accent={stats.overdue_tasks > 0 ? 'danger' : 'default'}
-      />
-      <StatCard
-        icon={<Clock className="h-5 w-5" />}
-        label="Hours This Week"
-        value={`${stats.hours_this_week}h`}
-        accent="warning"
-      />
-    </div>
-  )
+export function StatsRow({ stats }: { stats: UserDashboardStats }) {
+  const t = useTranslations('home')
+  const f = useFormatter()
+  const metrics = [
+    { label: t('projects'), value: stats.active_projects, Icon: Briefcase, suffix: '', danger: false },
+    { label: t('tasks'), value: stats.total_tasks, Icon: CheckSquare, suffix: '', danger: false },
+    { label: t('overdue'), value: stats.overdue_tasks, Icon: AlertTriangle, suffix: '', danger: stats.overdue_tasks > 0 },
+    { label: t('hours'), value: stats.hours_this_week, Icon: Clock, suffix: 'h', danger: false },
+  ]
+  return <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+    {metrics.map(({ label, value, Icon, suffix, danger }, i) => <div key={label} className={`relative overflow-hidden rounded-2xl border p-4 sm:p-6 ${i === 0 ? 'border-primary bg-primary text-primary-foreground' : 'bg-card'}`}>
+      <div className="flex items-center justify-between gap-2"><p className={`text-xs font-medium ${i === 0 ? 'text-primary-foreground/85' : 'text-muted-foreground'}`}>{label}</p><Icon className={`h-[18px] w-[18px] ${danger ? 'text-destructive' : i === 0 ? 'text-primary-foreground/80' : 'text-muted-foreground'}`} strokeWidth={1.6} aria-hidden="true" /></div>
+      <div className="mt-6 flex items-end justify-between"><p className={`text-4xl font-semibold tracking-tight tabular-nums ${danger ? 'text-destructive' : ''}`}>{f.number(value, { maximumFractionDigits: 1 })}<span className="ml-1 text-xl font-normal">{suffix}</span></p>{i === 0 && <ArrowUpRight className="h-5 w-5 opacity-70" aria-hidden="true" />}</div>
+    </div>)}
+  </div>
 }

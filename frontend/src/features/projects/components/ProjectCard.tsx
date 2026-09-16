@@ -6,7 +6,7 @@ import type { Project } from '@/types/project.types'
 
 export function ProjectCard({ project }: { project: Project }) {
   return (
-    <article className="rounded-xl border bg-card p-5 shadow-sm transition hover:shadow-md">
+    <article className="flex h-full flex-col rounded-2xl border bg-card p-6 transition-colors hover:border-primary/40">
       <div className="flex flex-wrap items-center gap-2">
         <ProjectStatusBadge status={project.status} />
         <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">{formatStatus(project.methodology)}</span>
@@ -21,7 +21,7 @@ export function ProjectCard({ project }: { project: Project }) {
         <div><p className="text-xs text-muted-foreground">Members</p><p className="mt-1 flex items-center gap-1.5 font-medium"><Users className="h-4 w-4" />{project.member_count}</p></div>
       </div>
       <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground"><CalendarDays className="h-4 w-4" />{formatDate(project.start_date)} – {formatDate(project.end_date)}</div>
-      <Link href={`/projects/${project.id}/overview`} className="mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-primary hover:underline">Open project <ArrowRight className="h-4 w-4" /></Link>
+      <Link href={`/projects/${project.id}/overview`} className="mt-auto inline-flex min-h-11 pt-5 items-center gap-2 text-sm font-medium text-primary hover:underline">Open project <ArrowRight className="h-4 w-4" /></Link>
     </article>
   )
 }

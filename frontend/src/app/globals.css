@@ -4,122 +4,91 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
+    color-scheme: light;
+    --background: 180 12% 96%;
+    --foreground: 190 25% 13%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
+    --card-foreground: 190 25% 13%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 243 75% 59%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 243 75% 59%;
-
-    --radius: 0.5rem;
+    --popover-foreground: 190 25% 13%;
+    --primary: 174 72% 27%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 180 15% 93%;
+    --secondary-foreground: 190 25% 22%;
+    --muted: 180 12% 93%;
+    --muted-foreground: 190 10% 43%;
+    --accent: 173 28% 91%;
+    --accent-foreground: 174 72% 23%;
+    --destructive: 0 68% 46%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 185 13% 87%;
+    --input: 185 13% 81%;
+    --ring: 174 72% 32%;
+    --radius: 0.75rem;
   }
-
-  /* Ba khoi dark duoi day co chu dich:
-     - `:root.dark` de nut chuyen theme thang duoc trong ca hai chieu
-     - `:root:not(.light)` trong media query de mac dinh van theo he dieu hanh
-       khi nguoi dung chua chon gi, nhung mot lua chon "sang" tuong minh thi thang
-     Chi dinh nghia mau trong media query se khien nut chuyen theme khong the bat
-     dark khi he thong dang o che do sang. */
   :root.dark {
-    --background: 222.2 84% 4.9%;
-      --foreground: 210 40% 98%;
-
-      --card: 222.2 84% 4.9%;
-      --card-foreground: 210 40% 98%;
-
-      --popover: 222.2 84% 4.9%;
-      --popover-foreground: 210 40% 98%;
-
-      --primary: 234 89% 74%;
-      --primary-foreground: 222.2 47.4% 11.2%;
-
-      --secondary: 217.2 32.6% 17.5%;
-      --secondary-foreground: 210 40% 98%;
-
-      --muted: 217.2 32.6% 17.5%;
-      --muted-foreground: 215 20.2% 65.1%;
-
-      --accent: 217.2 32.6% 17.5%;
-      --accent-foreground: 210 40% 98%;
-
-      --destructive: 0 62.8% 30.6%;
-      --destructive-foreground: 210 40% 98%;
-
-      --border: 217.2 32.6% 17.5%;
-      --input: 217.2 32.6% 17.5%;
-      --ring: 234 89% 74%;
+    color-scheme: dark;
+    --background: 192 23% 8%;
+    --foreground: 170 15% 93%;
+    --card: 192 20% 11%;
+    --card-foreground: 170 15% 93%;
+    --popover: 192 20% 13%;
+    --popover-foreground: 170 15% 93%;
+    --primary: 167 55% 62%;
+    --primary-foreground: 190 35% 10%;
+    --secondary: 190 16% 17%;
+    --secondary-foreground: 170 15% 90%;
+    --muted: 190 16% 16%;
+    --muted-foreground: 185 12% 64%;
+    --accent: 178 26% 19%;
+    --accent-foreground: 167 55% 72%;
+    --destructive: 0 68% 61%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 190 16% 22%;
+    --input: 190 15% 30%;
+    --ring: 167 55% 62%;
   }
-
-  @media (prefers-color-scheme: dark) {
-    :root:not(.light) {
-      --background: 222.2 84% 4.9%;
-      --foreground: 210 40% 98%;
-      --card: 222.2 84% 4.9%;
-      --card-foreground: 210 40% 98%;
-      --popover: 222.2 84% 4.9%;
-      --popover-foreground: 210 40% 98%;
-      --primary: 234 89% 74%;
-      --primary-foreground: 222.2 47.4% 11.2%;
-      --secondary: 217.2 32.6% 17.5%;
-      --secondary-foreground: 210 40% 98%;
-      --muted: 217.2 32.6% 17.5%;
-      --muted-foreground: 215 20.2% 65.1%;
-      --accent: 217.2 32.6% 17.5%;
-      --accent-foreground: 210 40% 98%;
-      --destructive: 0 62.8% 30.6%;
-      --destructive-foreground: 210 40% 98%;
-      --border: 217.2 32.6% 17.5%;
-      --input: 217.2 32.6% 17.5%;
-      --ring: 234 89% 74%;
-    }
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  html {
-    -webkit-text-size-adjust: 100%;
-  }
-
+  * { @apply border-border; }
+  html { -webkit-text-size-adjust: 100%; }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Segoe UI Variable', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;
     font-feature-settings: 'cv11', 'ss01';
     font-size: 16px;
     line-height: 1.5;
   }
+  h1, h2, h3 { text-wrap: balance; }
+  h1 { letter-spacing: -0.035em; }
+  button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+  :focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 3px; }
+  ::selection { background: hsl(var(--primary) / 0.2); }
+  input, select, textarea { accent-color: hsl(var(--primary)); }
+  th { font-weight: 600; letter-spacing: 0.035em; }
+  td { font-variant-numeric: tabular-nums; }
 }
-
+@layer components {
+  .surface { @apply rounded-2xl border bg-card text-card-foreground; }
+  .eyebrow { @apply text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground; }
+  .page-enter { animation: page-enter 280ms ease-out both; }
+  .skip-link { @apply fixed left-4 top-4 z-[60] -translate-y-24 rounded-lg bg-primary px-4 py-3 font-medium text-primary-foreground focus:translate-y-0; }
+  .auth-grid {
+    background-image: linear-gradient(hsl(var(--primary) / 0.07) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary) / 0.07) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+}
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+@media (max-height: 800px) and (min-width: 1024px) {
+  .sidebar-tip { display: none; }
 }

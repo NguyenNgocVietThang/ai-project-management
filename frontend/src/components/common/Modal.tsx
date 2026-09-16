@@ -19,6 +19,8 @@ const FOCUSABLE =
 
 export function Modal({ open, onClose, title, description, children, className }: ModalProps) {
   const panelRef = useRef<HTMLElement>(null)
+  const onCloseRef = useRef(onClose)
+  useEffect(() => { onCloseRef.current = onClose }, [onClose])
   // ID phải là duy nhất cho từng instance. Trước đây nó là chuỗi cứng
   // "modal-title", và trang Tasks render TaskCreateModal cùng TaskDrawer cùng
   // lúc — hai phần tử trùng id, DOM không hợp lệ, screen reader đọc sai tiêu đề.
@@ -41,7 +43,7 @@ export function Modal({ open, onClose, title, description, children, className }
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        onClose()
+        onCloseRef.current()
         return
       }
       if (event.key !== 'Tab') return
@@ -65,13 +67,14 @@ export function Modal({ open, onClose, title, description, children, className }
     }
 
     document.addEventListener('keydown', onKeyDown)
+    const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => {
       document.removeEventListener('keydown', onKeyDown)
-      document.body.style.overflow = ''
+      document.body.style.overflow = previousOverflow
       previouslyFocused?.focus?.()
     }
-  }, [focusables, onClose, open])
+  }, [focusables, open])
 
   if (!open) return null
 

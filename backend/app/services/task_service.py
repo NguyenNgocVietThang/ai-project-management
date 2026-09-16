@@ -47,7 +47,7 @@ from app.services.phase2_common import (
     notify_project_team,
     serialize_model,
 )
-from app.services.scheduling_service import recalculate_project
+from app.services.scheduling_service import recalculate_project, recalculate_project_cost
 from app.utils.cpm import CPMEdge, build_graph, topological_sort
 
 STATUS_TRANSITIONS = {
@@ -294,7 +294,7 @@ class TaskService:
         ]
         predecessors = [
             DependencyResponse(
-                **DependencyResponse.model_validate(dep).model_dump(),
+                **DependencyResponse.model_validate(dep).model_dump(exclude={"predecessor_name", "successor_name"}),
                 predecessor_name=dep.predecessor.name,
                 successor_name=task.name,
             )
@@ -302,7 +302,7 @@ class TaskService:
         ]
         successors = [
             DependencyResponse(
-                **DependencyResponse.model_validate(dep).model_dump(),
+                **DependencyResponse.model_validate(dep).model_dump(exclude={"predecessor_name", "successor_name"}),
                 predecessor_name=task.name,
                 successor_name=dep.successor.name,
             )
@@ -551,6 +551,7 @@ class TaskService:
         await self.db.delete(task)
         await self.db.flush()
         add_audit(self.db, user.id, "DELETE", "Task", task_id, old_values=snapshot)
+        await recalculate_project_cost(self.db, project_id)
         await recalculate_project(self.db, project_id)
 
     async def list_subtasks(self, task_id: int, user: User):
@@ -681,7 +682,7 @@ class TaskService:
         items = list((await self.db.scalars(select(Dependency).where(Dependency.predecessor_id.in_(task_map), Dependency.successor_id.in_(task_map)).order_by(Dependency.id))).all())
         return [
             DependencyResponse(
-                **DependencyResponse.model_validate(item).model_dump(),
+                **DependencyResponse.model_validate(item).model_dump(exclude={"predecessor_name", "successor_name"}),
                 predecessor_name=task_map[item.predecessor_id].name,
                 successor_name=task_map[item.successor_id].name,
             )

@@ -15,6 +15,7 @@ from app.core.exceptions import (
     ForbiddenException,
     NotFoundException,
 )
+from app.core.request_context import set_current_project_id
 from app.db.session import get_db
 from app.models.assignment import Assignment
 from app.models.associations import project_members
@@ -386,7 +387,16 @@ class ResourceService:
             )
         )
         if active:
-            raise ConflictException("You already have a running timer")
+            try:
+                old_task, old_context = await get_task_context(self.db, active.task_id, user)
+                can_continue = await self._can_log(old_task, user, old_context.role, old_context.is_admin)
+            except (ForbiddenException, NotFoundException):
+                can_continue = False
+            if can_continue:
+                raise ConflictException("You already have a running timer")
+            # A deleted project or revoked membership must not leave an invisible
+            # timer blocking all future work. Finalize only this user's timer.
+            await self.stop_timer(active.id, user)
         now = datetime.now(UTC)
         item = Worklog(
             task_id=task.id,
@@ -397,17 +407,34 @@ class ResourceService:
         )
         self.db.add(item)
         await self.db.flush()
+        set_current_project_id(task.project_id)
         add_audit(self.db, user.id, "START_TIMER", "Worklog", item.id, new_values=serialize_model(item))
         return await self._worklog_response(item)
 
     async def stop_timer(self, worklog_id: int, user: User):
-        item, task, _ = await self._owned_worklog(worklog_id, user)
+        item = await self.db.get(Worklog, worklog_id)
+        if item is None:
+            raise NotFoundException("Worklog not found")
+        if item.user_id == user.id:
+            # Owners can stop their own clock after losing project access, but
+            # all ordinary worklog reads/edits still require project access.
+            task = await self.db.get(Task, item.task_id)
+            if task is None:
+                raise NotFoundException("Task not found")
+        else:
+            item, task, _ = await self._owned_worklog(worklog_id, user)
         if item.start_time is None or item.end_time is not None:
             raise ConflictException("Worklog is not a running timer")
-        now = datetime.now(UTC)
+        start = item.start_time
+        if start.tzinfo is None:
+            start = start.replace(tzinfo=UTC)
+        # Very fast start/stop calls can share one OS clock tick. Preserve the
+        # database's strict end > start invariant, also if the clock moves back.
+        now = max(datetime.now(UTC), start + timedelta(microseconds=1))
         item.end_time = now
-        item.hours = round(max(0, (now - item.start_time).total_seconds()) / 3600, 4)
+        item.hours = round(max(0, (now - start).total_seconds()) / 3600, 4)
         await self.db.flush()
+        set_current_project_id(task.project_id)
         add_audit(self.db, user.id, "STOP_TIMER", "Worklog", item.id, new_values={"end_time": now, "hours": item.hours})
         await recalculate_task_hours(self.db, task.id)
         return await self._worklog_response(item)
