@@ -1,8 +1,8 @@
 # System Architecture Design
 ## AI Project Planning & Portfolio Management System
 
-**Version:** 2.2
-**Date:** 2026-08-22
+**Version:** 2.2.2
+**Date:** 2026-09-16
 
 ---
 
@@ -30,7 +30,7 @@ Hệ thống **AI Project Planning & Portfolio Management** được thiết k�
 | ORM | SQLAlchemy (Async Engine) | 2.0.35 |
 | DB Driver | asyncpg | 0.29.0 |
 | Database Migrations | Alembic | 1.13.3 |
-| Security (JWT) | python-jose[cryptography] | 3.3.0 |
+| Security (JWT) | PyJWT[crypto] (thay python-jose — CVE-2024-33663/33664) | 2.13.0 |
 | Security (Hash) | passlib[bcrypt] | 1.7.4 |
 | Real-time Bus | Redis Pub/Sub + ConnectionManager | 5.1.1 |
 | Task Queue | Celery[redis] | 5.4.0 |
@@ -49,7 +49,7 @@ Hệ thống **AI Project Planning & Portfolio Management** được thiết k�
 
 | Thành phần | Thư viện | Phiên bản |
 |---|---|---|
-| Framework | Next.js (App Router) | 15.0.0 |
+| Framework | Next.js (App Router) | ^15.5.25 |
 | UI Runtime | React | ^18.3.0 |
 | Language | TypeScript | ^5.2.2 |
 | Server State | TanStack Query v5 | ^5.0.0 |
@@ -58,8 +58,9 @@ Hệ thống **AI Project Planning & Portfolio Management** được thiết k�
 | Real-time Client | lib/ws-client.ts (Native WebSocket) | — |
 | Styling | Tailwind CSS v3 | ^3.3.0 |
 | Forms | React Hook Form + Zod + @hookform/resolvers | ^7.47.0 / ^3.22.0 |
-| Tables | TanStack Table v8 | — |
-| Charts | Recharts | ^2.8.0 |
+| i18n | next-intl (vi mặc định / en, locale lưu trong cookie, không dùng `[locale]` URL segment) | ^4.14.2 |
+| Theme | ThemeProvider tự viết (class-based dark mode: light/dark/system) | — |
+| Charts | Recharts | ^2.15.4 |
 | Drag & Drop | @dnd-kit/core + sortable | ^6.0.0 / ^8.0.0 |
 | Icons | Lucide React | ^0.290.0 |
 | Date | date-fns | ^2.30.0 |
@@ -91,9 +92,9 @@ HTTP / WS Request
      ▼
 ┌────────────────────────────────────────────────────────┐
 │ 1. ENDPOINTS & WS LAYER (app/api/v1/ & app/api/ws/)    │
-│    - 21 REST Routers mounted + 2 WebSocket Routers     │
+│    - 23 REST Routers mounted + 2 WebSocket Routers     │
 │    - Kiểm tra RBAC (require_roles, require_permissions)│
-│    - Xác thực WS handshake via JWT token query param  │
+│    - Xác thực WS handshake via vé một lần (ticket)     │
 │    - Trả về Pydantic DTO schemas                       │
 └──────────────────────────┬─────────────────────────────┘
                            │
@@ -129,15 +130,15 @@ backend/
 │   ├── main.py                 # FastAPI entrypoint + lifespan + CORS + WS Router mount
 │   ├── api/
 │   │   ├── v1/
-│   │   │   ├── router.py       # Mount 21 REST routers (+11 stub bị comment) → api_router
-│   │   │   └── endpoints/      # 32 file (21 hiện thực, 11 stub TODO)
+│   │   │   ├── router.py       # Mount 23 REST routers (+9 stub bị comment) → api_router
+│   │   │   └── endpoints/      # 32 file (23 hiện thực, 9 stub TODO)
 │   │   │       ├── auth.py, oauth.py, users.py, roles.py, permissions.py
 │   │   │       ├── portfolios.py, projects.py, phases.py, sprints.py, epics.py, milestones.py
 │   │   │       ├── tasks.py, subtasks.py, dependencies.py, assignments.py, worklogs.py
-│   │   │       ├── chat.py, leaves.py, skills.py, documents.py, approvals.py
-│   │   │       ├── change_requests.py, gantt.py, cpm.py, resource_leveling.py
-│   │   │       ├── dashboards.py, reports.py, notifications.py, audit_timeline.py
-│   │   │       ├── project_versions.py, ai.py, system.py
+│   │   │       ├── chat.py, cpm.py, resource_leveling.py, dashboards.py
+│   │   │       ├── notifications.py, audit_timeline.py, ai.py   (23 file trên — đã mount)
+│   │   │       ├── leaves.py, skills.py, documents.py, approvals.py, change_requests.py
+│   │   │       ├── gantt.py, reports.py, project_versions.py, system.py   (9 file trên — stub, chưa mount)
 │   │   └── ws/
 │   │       ├── deps.py         # authenticate_ws (JWT validation via query param)
 │   │       ├── router.py       # ws_router mounted at app root /ws
@@ -180,7 +181,7 @@ backend/
 │       ├── cpm.py              # Pure Python CPM Algorithm (topological_sort, calculate_cpm)
 │       ├── date_utils.py, pagination.py, email.py
 ├── alembic/                    # Database migrations (async PostgreSQL)
-└── tests/unit/                 # Automated unit test suite (123/123 passing)
+└── tests/unit/                 # Automated unit test suite (234/234 passing)
 ```
 
 ---
@@ -283,11 +284,11 @@ Domain 8: Real-Time Chat
 Hệ thống cung cấp 2 native FastAPI `WebSocket` endpoints được mount tại **app root** dưới `/ws` (không nằm dưới `/api/v1` — xem `app/main.py`), sử dụng Redis Pub/Sub làm message bus đa tiến trình (`app/core/ws_manager.py`):
 
 ```
-/ws/chat/{project_id}?token=<JWT>   ← Kênh chat theo từng dự án (dành cho project_members)
-/ws/notifications?token=<JWT>       ← Kênh đẩy thông báo cá nhân theo người dùng (notif:user:{id})
+/ws/chat/{project_id}?ticket=<ticket>   ← Kênh chat theo từng dự án (dành cho project_members)
+/ws/notifications?ticket=<ticket>       ← Kênh đẩy thông báo cá nhân theo người dùng (notif:user:{id})
 ```
 
-**Cơ chế xác thực (Auth handshake)**: JWT access token truyền qua query parameter (`?token=...`). `app/api/ws/deps.py::authenticate_ws()` giải mã và xác thực `auth_version`/`is_active`. Nếu không hợp lệ, đóng socket với mã code `4401`.
+**Cơ chế xác thực (Auth handshake)**: Trình duyệt không đặt được header tuỳ ý trên WebSocket handshake, nên access token JWT KHÔNG được truyền trực tiếp trên query string (từng làm vậy trước đây — rủi ro lộ token qua access log của proxy/load balancer). Thay vào đó, client gọi `POST /api/v1/auth/ws-ticket` (xác thực bằng header `Authorization` như request thường) để xin một **vé dùng một lần** (`app/core/ws_tickets.py::issue()`), sống 60 giây, lưu trong Redis dưới dạng SHA-256 hash. Vé được truyền qua query param `?ticket=...` khi mở socket; `app/api/ws/deps.py::authenticate_ws()` gọi `ws_tickets.py::redeem()` (đọc-và-xoá atomic) để đổi vé lấy `user_id`/`auth_version`, sau đó xác thực `auth_version`/`is_active` của user. Nếu không hợp lệ, đóng socket với mã code `4401`. Với socket đang mở lâu dài, một watchdog (`enforce_connection_validity()`) kiểm tra lại mỗi 60 giây xem tài khoản còn active và còn quyền truy cập kênh hay không.
 
 **Mô hình phân phối (Delivery model)**: `app/core/ws_manager.py::publish(channel, payload)` đẩy tin nhắn lên Redis (tiền tố `ws:<channel>`). Background task `redis_listener()` trong FastAPI lifespan nhận và phân phối về các WebSocket nội bộ của tiến trình.
 
@@ -317,7 +318,8 @@ Hệ thống thiết lập tiến trình `celery-beat` riêng biệt trong `dock
 | 2.1 | 2026-08-13 | Đã hoàn thành Auth & User Onboarding Module (Login, Register, Google & Facebook OAuth, Password recovery, Email verification, Edge JWT Guard, Auth Services & Store). Cập nhật tài liệu sát thực tế. |
 | 2.2 | 2026-08-22 | Đã hoàn thành Admin panel (users, roles, permissions, audit timeline), Notification triggers (task start/due-soon/change fan-out qua Celery Beat daily sweep), và Real-time Project Chat. Bổ sung Domain 8 (Chat) với 2 bảng `chat_messages` và `chat_read_states` (tổng 34 tables), Redis Pub/Sub bridge. |
 | 2.2.1 | 2026-09-03 | Đối soát tài liệu với mã nguồn thực tế: **21/32 REST router được mount** (11 router `leaves/skills/documents/approvals/change_requests/gantt/cpm/reports/versions/ai/system` vẫn là stub `TODO`, chưa mount); `workers/ai_tasks.py` và `report_tasks.py` là stub; CPM chạy nội bộ qua `utils/cpm.py` + `scheduling_service.py`; 123/123 unit test pass. Model DB đủ 34 bảng nhưng business logic Phase 3–5 phần lớn chưa hiện thực. |
+| 2.2.2 | 2026-09-16 | Sửa các sai lệch phát hiện khi đối soát lại với mã nguồn: thực tế **23/32 REST router được mount** (bản 2.2.1 liệt kê nhầm `/cpm` và `/ai` vào nhóm stub — cả hai đã mount thật; chỉ còn 9 router stub: `leaves/skills/documents/approvals/change_requests/gantt/reports/versions/system`). Xác thực WebSocket dùng **vé dùng một lần** (`app/core/ws_tickets.py`), không phải JWT trên query string như tài liệu cũ mô tả. Thư viện JWT backend đã đổi từ `python-jose` sang `PyJWT` (vá CVE-2024-33663/33664). Cập nhật số liệu test lên 234/234 (backend) và 28/28 trên 7 file (frontend). Sửa version Next.js (^15.5.25) và Recharts (^2.15.4), bỏ dòng "TanStack Table" (không có trong mã nguồn), bổ sung next-intl (i18n) và ThemeProvider (dark mode) vào bảng công nghệ Frontend. |
 
 ---
 
-*Cập nhật lần cuối: 2026-09-03 — Version 2.2.1 — Stack: Python FastAPI + Next.js 15*
+*Cập nhật lần cuối: 2026-09-16 — Version 2.2.2 — Stack: Python FastAPI + Next.js 15*

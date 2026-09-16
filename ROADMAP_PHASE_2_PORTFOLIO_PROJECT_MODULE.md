@@ -52,7 +52,7 @@ Module **Portfolio & Project Core (Phase 2)** xây dựng toàn bộ lớp quả
 - Frontend: `/app/(dashboard)/projects/[id]/wbs/page.tsx`, `WBSTreeView.tsx`.
 
 ### GIAI ĐOẠN 2.4 – Task Management, Dependencies & CPM Engine
-- Backend: `TaskService`, `scheduling_service.py`, pure Python CPM (`app/utils/cpm.py`), `/api/v1/tasks`, `/api/v1/dependencies`. CPM chạy nội bộ khi cập nhật task/dependency — **chưa có endpoint `/cpm` công khai** (`cpm.py` vẫn là stub).
+- Backend: `TaskService`, `scheduling_service.py`, pure Python CPM (`app/utils/cpm.py`), `/api/v1/tasks`, `/api/v1/dependencies`. CPM chạy nội bộ khi cập nhật task/dependency và tính lại nền qua `workers/scheduling_tasks.py`, gộp trùng theo dự án khi vượt `CPM_SYNC_TASK_THRESHOLD` (mặc định 300 task). Endpoint `/api/v1/projects/{id}/cpm` đã mount, chỉ đọc (`endpoints/cpm.py`).
 - Frontend: `/app/(dashboard)/projects/[id]/tasks/page.tsx`, `KanbanBoard.tsx`, `TaskDrawer.tsx`.
 
 ### GIAI ĐOẠN 2.5 – Assignments, WorkLogs & Resource Tracking

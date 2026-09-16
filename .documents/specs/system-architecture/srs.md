@@ -1,8 +1,8 @@
 # Software Requirements Specification (SRS)
 ## AI Project Planning & Portfolio Management System
 
-**Version:** 2.2.1
-**Date:** 2026-09-03
+**Version:** 2.2.2
+**Date:** 2026-09-16
 **Trạng thái:** Đối soát với mã nguồn thực tế — xem §6 (Phase 1–2 + Real-time + Admin/Audit đã hoàn thành; Phase 3–5 phần lớn mới ở mức model DB / hạ tầng).
 
 ---
@@ -32,14 +32,14 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 
 | Layer | Công nghệ | Phiên bản |
 |---|---|---|
-| **Frontend** | Next.js (App Router), React, TypeScript, Tailwind CSS v3, Zustand, TanStack Query v5, Recharts, @dnd-kit | Next.js 15, React 18 |
+| **Frontend** | Next.js (App Router), React, TypeScript, Tailwind CSS v3, Zustand, TanStack Query v5, Recharts, @dnd-kit, next-intl (i18n vi/en, locale trong cookie) | Next.js 15, React 18 |
 | **Backend** | FastAPI, Python, Pydantic v2, SQLAlchemy 2.0 (Async Engine), Alembic | Python 3.11+ |
 | **Database** | PostgreSQL (primary), Redis (cache / pub-sub / session) | PG 16, Redis 7 |
 | **Storage** | MinIO (S3-compatible) — BRD/SRS, avatar, báo cáo xuất ra | latest |
 | **Real-time Bus** | Redis Pub/Sub + ConnectionManager (hỗ trợ scale đa tiến trình) | Redis 7 |
 | **Queue & Scheduler** | Celery + Celery Beat + Redis Broker — xử lý AI, Email, Sweeps | Celery 5.4 |
 | **AI** | xKiro — cổng AI tương thích OpenAI, nhiều model miễn phí (DeepSeek, Qwen, Mistral) theo từng loại việc | openai 1.51 (SDK) |
-| **Auth** | JWT (Access Token 30m + Refresh Token 7d) + RBAC (34 permissions) | python-jose, passlib/bcrypt |
+| **Auth** | JWT (Access Token 30m + Refresh Token 7d) + RBAC (34 permissions); WebSocket xác thực bằng vé dùng một lần (không phải JWT trên query string) | PyJWT, passlib/bcrypt |
 | **Email** | fastapi-mail (SMTP) + Jinja2 templates | fastapi-mail 1.4 |
 | **Export** | python-docx (DOCX), openpyxl (XLSX) — server-side async generation | — |
 
@@ -82,7 +82,7 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 
 | ID | Yêu cầu |
 |---|---|
-| AUTH-01 | Đăng ký & Đăng nhập sử dụng JWT (Access Token expire 30 phút + Refresh Token expire 7 ngày), đồng bộ cookie `auth-token` cho Edge Middleware. |
+| AUTH-01 | Đăng ký & Đăng nhập sử dụng JWT (Access Token expire 30 phút + Refresh Token expire 7 ngày). Access Token chỉ lưu trong bộ nhớ phía client (không ghi localStorage); Refresh Token nằm trong cookie `httpOnly` do server đặt (`app/core/auth_cookies.py`). Cờ `has-session` (không chứa bí mật) đồng bộ cho Next.js Edge Middleware biết có phiên đăng nhập hay không. |
 | AUTH-02 | Mã hóa mật khẩu bằng bcrypt (passlib). |
 | AUTH-03 | Phân quyền theo mô hình RBAC: 34 Permissions gán cho 7 Roles, Role gán cho User. |
 | AUTH-04 | Social Login OAuth 2.0 (Google, Facebook) tự động liên kết tài khoản theo email. |
@@ -169,7 +169,7 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 | ID | Yêu cầu |
 |---|---|
 | CHAT-01 | **Kênh Chat theo Dự án**: Mỗi Project có một kênh trao đổi riêng biệt dành cho các thành viên trong `project_members`. |
-| CHAT-02 | **Giao thức WebSocket**: Kết nối qua `/ws/chat/{project_id}?token=<JWT>`, tự động kết nối lại khi mất mạng (Reconnection w/ exponential backoff). |
+| CHAT-02 | **Giao thức WebSocket**: Kết nối qua `/ws/chat/{project_id}?ticket=<ticket>` dùng vé một lần (60 giây, lấy trước qua `POST /api/v1/auth/ws-ticket`), tự động kết nối lại khi mất mạng (Reconnection w/ exponential backoff). |
 | CHAT-03 | **Message Bus**: Đẩy tin nhắn qua Redis Pub/Sub (`ws:chat:project:{id}`) để phân phối tới tất cả client đang kết nối trên mọi tiến trình worker. |
 | CHAT-04 | **Lưu trữ & Lịch sử**: Lưu trữ tin nhắn vào bảng `chat_messages`, cung cấp API phân trang theo con trỏ (`before_id`) qua `GET /api/v1/projects/{id}/messages`. |
 | CHAT-05 | **Trạng thái Chưa đọc & Đã đọc**: Theo dõi mốc tin nhắn đọc gần nhất qua bảng `chat_read_states`, cung cấp API `GET /unread-count` và `POST /read`. |
@@ -181,7 +181,7 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 
 | ID | Yêu cầu |
 |---|---|
-| NOTI-01 | **WebSocket Real-time Push**: Đẩy thông báo cá nhân tức thời tới người dùng qua `/ws/notifications?token=<JWT>` trên kênh `ws:notif:user:{user_id}`. |
+| NOTI-01 | **WebSocket Real-time Push**: Đẩy thông báo cá nhân tức thời tới người dùng qua `/ws/notifications?ticket=<ticket>` (vé một lần, xem CHAT-02) trên kênh `ws:notif:user:{user_id}`. |
 | NOTI-02 | **Fan-out Notification**: Khi một Task có thay đổi quan trọng (trạng thái, ngày bắt đầu, hạn chót, độ ưu tiên, người thực hiện), tự động gửi thông báo tới toàn bộ thành viên trong nhóm dự án (trừ người thực hiện thao tác). |
 | NOTI-03 | **Celery Beat Daily Sweep**: Tiến trình `celery-beat` chạy định kỳ lúc 08:00 AM hàng ngày quét các task bắt đầu hôm nay và task sắp đến hạn (1 ngày trước hạn) để gửi thông báo fan-out tự động. |
 | NOTI-04 | **Chống gửi trùng (Idempotency)**: Lưu dấu thời gian `last_start_notified_at` và `last_due_soon_notified_at` trên bảng `tasks`. Tự động reset cờ khi task được đổi hạn chót mới. |
@@ -252,29 +252,32 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 
 ### REST Routers (`/api/v1/...`)
 
-**21 router đang mount & phục vụ thật:**
+**23 router đang mount & phục vụ thật:**
 - `/auth`, `/oauth`, `/users`, `/roles`, `/permissions`
 - `/portfolios`, `/projects`, `/phases`, `/sprints`, `/epics`, `/milestones`
 - `/tasks`, `/subtasks`, `/dependencies`, `/assignments`, `/worklogs`
 - `/projects/{id}/messages` (Chat REST API)
-- `/resource-leveling`, `/dashboards`, `/notifications`, `/audit`
+- `/cpm` (chỉ đọc — engine chạy nội bộ từ Phase 2, endpoint chỉ phơi kết quả)
+- `/resource-leveling`, `/dashboards`, `/notifications`, `/audit`, `/ai`
 
-**11 router còn là stub `TODO`, bị comment trong `router.py`, CHƯA mount:**
+**9 router còn là stub `TODO`, bị comment trong `router.py`, CHƯA mount:**
 - `/leaves`, `/skills`, `/documents`, `/approvals`, `/change-requests`
-- `/gantt`, `/cpm`, `/reports`, `/versions`, `/ai`, `/system`
+- `/gantt`, `/reports`, `/versions`, `/system`
 
 ### 2 WebSocket Endpoints (`/ws/...`)
-- `/ws/chat/{project_id}?token=<JWT>` — Kênh chat nhóm dự án
-- `/ws/notifications?token=<JWT>` — Kênh đẩy thông báo tức thời cá nhân
+- `/ws/chat/{project_id}?ticket=<ticket>` — Kênh chat nhóm dự án
+- `/ws/notifications?ticket=<ticket>` — Kênh đẩy thông báo tức thời cá nhân
+
+Cả hai dùng vé một lần (single-use ticket, TTL 60 giây, cấp qua `POST /api/v1/auth/ws-ticket`), không phải JWT trên query string — xem `app/core/ws_tickets.py` và `app/api/ws/deps.py`.
 
 ---
 
 ## 6. Trạng thái Triển khai (Implementation Status)
 
-> Đối soát với mã nguồn ngày 2026-09-03. API thực tế: **21 REST router + 2 WebSocket router** được mount; 123/123 unit test pass.
+> Đối soát với mã nguồn ngày 2026-09-16. API thực tế: **23 REST router + 2 WebSocket router** được mount; 234/234 unit test backend pass (`pytest tests/unit`), 28/28 unit test frontend pass trên 7 file (`vitest`).
 
 - [x] **Core Auth & User Onboarding (Phase 1)**: Hoàn thành 100%.
-- [x] **Portfolio, Project Core & CPM Engine (Phase 2)**: Hoàn thành 100%. CPM chạy nội bộ (`utils/cpm.py` + `scheduling_service.py`); endpoint `/cpm` và `/gantt` **chưa mount** (còn stub).
+- [x] **Portfolio, Project Core & CPM Engine (Phase 2)**: Hoàn thành 100%. CPM chạy nội bộ (`utils/cpm.py` + `scheduling_service.py`); endpoint `/cpm` đã mount (chỉ đọc); `/gantt` **chưa mount** (còn stub).
 - [x] **Hệ thống Quản trị Admin & Audit Timeline**: Hoàn thành 100% (`/admin/users`, `/admin/roles`, `/admin/audit`).
 - [x] **Hạ tầng Real-time WebSocket & Redis Pub/Sub**: Hoàn thành 100% (`ConnectionManager`, `redis_listener`).
 - [x] **Real-time Project Chat**: Hoàn thành 100% (Backend endpoints + WS + Frontend UI & unread badge).
@@ -288,4 +291,4 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 
 ---
 
-*Cập nhật lần cuối: 2026-09-03 — Version 2.2.1 — Stack: Python FastAPI + Next.js 15*
+*Cập nhật lần cuối: 2026-09-16 — Version 2.2.2 — Stack: Python FastAPI + Next.js 15*

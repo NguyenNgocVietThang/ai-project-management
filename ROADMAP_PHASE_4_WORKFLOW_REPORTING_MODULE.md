@@ -40,7 +40,7 @@ Module **Workflow & Reporting (Phase 4)** thiết lập cơ chế kiểm soát c
 |---|---|---|---|---|---|
 | Audit Timeline & Activity Feed | Security | Medium | Hoàn thành | `AuditService` + `audit_timeline.py` | `/admin/audit`, `AuditTimeline` |
 | Real-time WebSocket Infra & Chat | SOP-CHAT-001 | High | Hoàn thành | `ws_manager.py` + `chat_service.py` | `ChatPanel`, `/projects/[id]/chat` |
-| Interactive Gantt Chart & CPM | SOP-PM-003 | Critical | Chỉ CPM nội bộ | `utils/cpm.py` + `scheduling_service.py` chạy thật; `gantt.py`/`cpm.py` là stub chưa mount | Chưa có `GanttChart` |
+| Interactive Gantt Chart & CPM | SOP-PM-003 | Critical | CPM đã mount (chỉ đọc); Gantt chưa làm | `utils/cpm.py` + `scheduling_service.py` chạy thật, endpoint `GET /projects/{id}/cpm` (`endpoints/cpm.py`) đã mount; `gantt.py` vẫn là stub `TODO` chưa mount | Chưa có `GanttChart` |
 | Change Request Workflow Engine | SOP-CR | Critical | Chỉ model DB | `change_requests.py`/`approvals.py` là stub `TODO`, chưa mount | Chưa có |
 | Project Versioning & Diff/Rollback | SOP-PM-004 | High | Chỉ model DB | `project_versions.py` là stub; không có `versioning_service` | Chưa có |
 | DOCX/XLSX Export via Celery | SOP-RPT-001 | High | Chỉ scaffold | `report_tasks.py` là stub trả về `file_url: ""`; `reports.py` chưa mount | Chưa có |
