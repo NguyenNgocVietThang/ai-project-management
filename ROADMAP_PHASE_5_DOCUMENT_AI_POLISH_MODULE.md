@@ -40,7 +40,7 @@ Module **Document AI & Polish (Phase 5)** hoàn thiện hệ sinh thái quản l
 |---|---|---|---|---|---|
 | Real-time Notification Push | SOP-NOTI-001 | Critical | Hoàn thành | `NotificationService.push` + WS | `NotificationBell`, `useNotificationSocket` |
 | Celery Beat Daily Task Sweeps | SOP-NOTI-001 | High | Hoàn thành | `notification_tasks.py` | — (Chạy ngầm tự động) |
-| BRD/SRS Document AI Parser | SOP-DOC-001 | Critical | Chưa bắt đầu | `documents.py` là stub `TODO`, chưa mount; không có Celery task | Chưa có |
+| BRD/SRS Document AI Parser | SOP-DOC-001 | Critical | Chưa bắt đầu | `documents.py` là stub `TODO`, chưa mount; `ai_tasks.parse_document_task` chỉ là Celery task stub `TODO`, chưa gọi AI thật | Chưa có |
 | Investor Dashboard (Read-Only) | Portal | High | Chưa bắt đầu | Không có `InvestorService` | Chưa có |
 | Avatar Upload & Profile Settings | Core | Medium | Hoàn thành | `UserService` + MinIO (`/users`) | `profile/page.tsx`, `AvatarSection` |
 | Query Optimization & Redis Caching | Performance | High | Một phần | `selectinload` dùng rải rác; chưa có tầng cache Redis chủ động | Lazy charts (Recharts) |

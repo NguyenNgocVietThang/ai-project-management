@@ -48,7 +48,7 @@ Xây dựng một **web application quản lý dự án và danh mục đầu t�
 - **Phân tích tác động thay đổi (AI Impact Analysis)** và tối ưu lịch (Schedule Optimization) khi phát sinh Change Request.
 - **Dashboard & Báo cáo đa chiều**: Gantt Chart tương tác, Burndown, Burnup, Velocity, Earned Value Analysis (EVA, CPI, SPI), xuất file DOCX/XLSX.
 
-### Trạng thái triển khai thực tế (cập nhật 2026-09-03)
+### Trạng thái triển khai thực tế (cập nhật 2026-09-16)
 
 | Nhóm chức năng | Trạng thái | Ghi chú |
 |---|---|---|
@@ -65,7 +65,7 @@ Xây dựng một **web application quản lý dự án và danh mục đầu t�
 | Leaves / Skills catalog | Chỉ model DB | endpoint là stub, chưa mount |
 | Investor Read-only Dashboard, Mobile polish | Chưa làm | — |
 
-> **API thực tế đang phục vụ:** 22 REST router (`/api/v1/...`) + 2 WebSocket router (`/ws/...`). 10 router còn lại (`leaves, skills, documents, approvals, change_requests, gantt, reports, project_versions, ai, system`) vẫn là stub `TODO: Implement`, bị comment trong [`router.py`](./backend/app/api/v1/router.py) và **không** được mount.
+> **API thực tế đang phục vụ:** 23 REST router (`/api/v1/...`) + 2 WebSocket router (`/ws/...`). 9 router còn lại (`leaves, skills, documents, approvals, change_requests, gantt, reports, project_versions, system`) vẫn là stub `TODO: Implement`, bị comment trong [`router.py`](./backend/app/api/v1/router.py) và **không** được mount.
 
 ---
 
@@ -74,7 +74,7 @@ Xây dựng một **web application quản lý dự án và danh mục đầu t�
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
 │                    Frontend (Next.js 15 / React 18)                    │
-│    App Router + Zustand + TanStack Query + Interactive Gantt + Chat    │
+│    App Router + Zustand + TanStack Query + WBS/Kanban + Real-time Chat │
 └──────────────────┬───────────────────────────────┬─────────────────────┘
                    │ REST API (/api/v1/...)        │ WebSocket (/ws/...)
                    ▼                               ▼
@@ -104,10 +104,11 @@ Xây dựng một **web application quản lý dự án và danh mục đầu t�
 ### Hạ tầng Real-time & WebSocket Architecture
 
 ```
-Client WebSocket (/ws/chat/{id} hoặc /ws/notifications?token=...)
+Client WebSocket (/ws/chat/{id} hoặc /ws/notifications?ticket=...)
    │
    ▼
-FastAPI WS Endpoint (authenticate_ws verifies JWT & checks project membership)
+FastAPI WS Endpoint (authenticate_ws đổi vé dùng-một-lần lấy từ POST /auth/ws-ticket,
+                      không dùng JWT trên query string; kiểm tra thành viên dự án)
    │
    ├── ConnectionManager (Local In-Memory Sockets Registry)
    │
@@ -131,21 +132,21 @@ FastAPI WS Endpoint (authenticate_ws verifies JWT & checks project membership)
 | **Database Driver** | `asyncpg` | `0.29.0` | High-performance Async PostgreSQL driver |
 | **Migrations** | **Alembic** | `1.13.3` | Database Schema Migration tool |
 | **Validation** | **Pydantic v2** | `2.9.0` | Data parsing & strict validation |
-| **Auth & Security** | `python-jose`, `passlib[bcrypt]` | — | JWT Access/Refresh tokens, Password hashing |
+| **Auth & Security** | `PyJWT`, `passlib[bcrypt]` | `2.13.0` | JWT Access/Refresh tokens, Password hashing (thay `python-jose` do CVE-2024-33663/33664) |
 | **Real-time Bus** | **Redis Pub/Sub + ConnectionManager** | `5.1.1` | Cross-process WebSocket broadcasting |
 | **Queue & Worker** | **Celery** | `5.4.0` | Background tasks & AI processing queue |
 | **Scheduler** | **Celery Beat** | `5.4.0` | Cron scheduler (quét task start/due-soon hàng ngày) |
 | **Caching** | Redis (`redis.asyncio`) | `5.1.1` | In-memory caching & session store |
-| **AI Provider** | `openai` (SDK) | — | xKiro — cổng AI tương thích OpenAI, nhiều model miễn phí (DeepSeek, Qwen, Mistral, ...) |
+| **AI Provider** | `openai` (SDK) | `1.51.0` | xKiro — cổng AI tương thích OpenAI, nhiều model miễn phí (DeepSeek, Qwen, Mistral, ...) |
 | **File Storage** | `minio` / `boto3` | `7.2.9` | S3-compatible storage (BRD/SRS, Avatar, Reports) |
 | **Email Service** | `fastapi-mail` + Jinja2 | `1.4.1` | Template email async dispatch |
 | **Reporting** | `python-docx`, `openpyxl` | — | Xuất báo cáo dự án định dạng DOCX & XLSX |
-| **Testing** | `pytest`, `pytest-asyncio`, `httpx` | — | Automated unit testing suite (`backend/tests/unit/`, 123/123 passed) |
+| **Testing** | `pytest`, `pytest-asyncio`, `httpx` | — | Automated test suite (`backend/tests/unit/` + `backend/tests/integration/`, 261 passed) |
 
 ### Frontend (Next.js / React / TypeScript)
 | Thành phần | Công nghệ / Thư viện | Phiên bản | Mô tả |
 |---|---|---|---|
-| **Framework** | **Next.js 15 (App Router)** | `15.0.0` | React Framework với Route Groups & Layouts |
+| **Framework** | **Next.js 15 (App Router)** | `15.5+` | React Framework với Route Groups & Layouts |
 | **UI Runtime** | **React** | `18.3.0` | Modern React with Server & Client components |
 | **Language** | **TypeScript** | `5.2.2+` | Full type-safety across frontend |
 | **Global State** | **Zustand** | `4.4.0+` | Auth state persistence & Cookie synchronization |
@@ -153,10 +154,11 @@ FastAPI WS Endpoint (authenticate_ws verifies JWT & checks project membership)
 | **HTTP Client** | **Axios** | `1.5.0+` | Interceptors for JWT attach & refresh flow |
 | **Real-time Client** | `lib/ws-client.ts` (Native WS) | — | Reconnecting WebSocket client với exponential backoff |
 | **Styling** | **Tailwind CSS v3** | `3.3.0+` | Utility-first CSS & responsive theme |
+| **Dark Mode** | `components/theme/ThemeProvider.tsx` | — | Class-based light/dark/system toggle, đồng bộ giữa các tab |
 | **Forms** | **React Hook Form + Zod** | — | Schema-based form validation |
-| **Tables** | **TanStack Table v8** | — | Headless data tables |
-| **Charts** | **Recharts** | `2.8.0+` | Gantt, Burndown, Burnup, Velocity, EVA charts |
-| **Drag & Drop** | `@dnd-kit/core`, `@dnd-kit/sortable` | `6.0.0+` | Task reordering & Kanban board |
+| **i18n** | **next-intl** | `4.14.2+` | Đa ngôn ngữ vi (mặc định)/en, lưu lựa chọn qua cookie `locale`, không dùng tiền tố `[locale]` trong URL |
+| **Charts** | **Recharts** | `2.15.4+` | Burndown, Burnup, Velocity, EVA charts |
+| **Drag & Drop** | `@dnd-kit/core` (`6.0.0+`), `@dnd-kit/sortable` (`8.0.0+`) | — | Task reordering & Kanban board |
 | **Icons** | `lucide-react` | `0.290.0+` | Modern icon system |
 | **Date Utils** | `date-fns` | `2.30.0` | Date formatting and manipulation |
 
@@ -206,11 +208,11 @@ AI Project Planning & Portfolio Management system/
 │   │   │   ├── __init__.py
 │   │   │   ├── v1/
 │   │   │   │   ├── __init__.py
-│   │   │   │   ├── router.py                 # Aggregator: 21 REST routers được mount (+11 stub bị comment)
-│   │   │   │   └── endpoints/                # 32 file handler (21 đã hiện thực, 11 còn là stub TODO)
+│   │   │   │   ├── router.py                 # Aggregator: 23 REST routers được mount (+9 stub bị comment)
+│   │   │   │   └── endpoints/                # 32 file handler (23 đã hiện thực & mount, 9 còn là stub TODO)
 │   │   │   └── ws/
 │   │   │       ├── __init__.py
-│   │   │       ├── deps.py                   # authenticate_ws (JWT validation via query param)
+│   │   │       ├── deps.py                   # authenticate_ws (đổi vé dùng-một-lần lấy qua POST /auth/ws-ticket, không phải JWT trên query string)
 │   │   │       ├── router.py                 # WebSocket router aggregator mounted at /ws
 │   │   │       ├── chat.py                   # /ws/chat/{project_id}
 │   │   │       └── notifications.py          # /ws/notifications
@@ -251,13 +253,15 @@ AI Project Planning & Portfolio Management system/
 │   │   │   ├── resource_service.py, role_service.py, user_service.py, storage_service.py
 │   │   │   └── ai/                           # AI Provider implementation (xKiro)
 │   │   ├── templates/email/                  # Jinja2 HTML email templates
-│   │   ├── utils/                            # Helper utilities (cpm.py, email.py, pagination.py)
+│   │   ├── utils/                            # Helper utilities (cpm.py, email.py, pagination.py, date_utils.py, sanitize.py)
 │   │   └── workers/                          # Celery Background Workers & Scheduler
 │   │       ├── celery_app.py                 # Celery app + beat_schedule (daily task sweep)
 │   │       ├── notification_tasks.py         # sweep_task_dates_task (task start & due-soon)
-│   │       ├── ai_tasks.py, email_tasks.py, report_tasks.py
+│   │       ├── scheduling_tasks.py           # Tính lại CPM bất đồng bộ khi dự án vượt ngưỡng CPM_SYNC_TASK_THRESHOLD
+│   │       ├── ai_tasks.py                   # generate_project_task chạy thật; impact/optimize/risk/parse_document vẫn là stub
+│   │       └── email_tasks.py, report_tasks.py  # report_tasks.py vẫn là stub trả về rỗng
 │   │   ├── alembic/versions/                 # Database migrations chain
-│   │   └── tests/unit/                       # Automated unit test suite (123/123 passing)
+│   │   └── tests/                            # unit/ + integration/ — bộ test tự động (261 passed)
 │
 ├── frontend/                                 # Next.js 15 React / TypeScript Frontend
 │   ├── src/
@@ -266,13 +270,15 @@ AI Project Planning & Portfolio Management system/
 │   │   │   ├── (dashboard)/                  # Authenticated layout with NotificationBell & Nav
 │   │   │   │   ├── layout.tsx                # Shell layout with useNotificationSocket
 │   │   │   │   ├── dashboard/page.tsx        # Unified portfolio & project dashboard
+│   │   │   │   ├── notifications/page.tsx    # Trang danh sách thông báo đầy đủ
 │   │   │   │   ├── portfolios/               # Portfolio list & detail pages
 │   │   │   │   ├── projects/                 # Projects list page
-│   │   │   │   │   └── [id]/                 # Project Shell (Tabs: Overview, Tasks, WBS, Members, Chat, Settings)
+│   │   │   │   │   └── [id]/                 # Project Shell (Tabs: Overview, Tasks, WBS, Members, Timesheet, Chat, Settings)
 │   │   │   │   │       ├── overview/page.tsx
 │   │   │   │   │       ├── tasks/page.tsx    # Kanban, danh sách & sprint (nội tuyến trong trang)
 │   │   │   │   │       ├── wbs/page.tsx      # WBS hierarchy tree view
 │   │   │   │   │       ├── members/page.tsx  # Project team members management
+│   │   │   │   │       ├── timesheet/page.tsx  # WorkLog / Timesheet của dự án
 │   │   │   │   │       ├── chat/page.tsx     # Real-time Project Chat room
 │   │   │   │   │       └── settings/page.tsx
 │   │   │   │   ├── admin/                    # Admin Portal (users, roles, audit)
@@ -295,6 +301,8 @@ AI Project Planning & Portfolio Management system/
 │   │   │   ├── users/                        # UserProfileForm, useUsers
 │   │   │   └── wbs/                          # useWBS (giao diện nội tuyến trong trang wbs)
 │   │   ├── components/common/                # Shared UI primitives (Avatar, Button, Modal, Input, Spinner, etc.)
+│   │   ├── components/theme/                 # ThemeProvider & ThemeToggle (light/dark/system, class-based)
+│   │   ├── i18n/                             # next-intl: config.ts (vi mặc định/en), actions.ts (lưu locale vào cookie)
 │   │   ├── lib/
 │   │   │   ├── ws-client.ts                  # Reconnecting WebSocket client helper
 │   │   │   ├── rbac.ts                       # isAdminUser helper
@@ -462,11 +470,11 @@ async def publish(channel: str, message: dict):
 
 ### Danh mục REST API Routers (`/api/v1/...`)
 
-**21 router đang được mount & phục vụ thật:**
+**23 router đang được mount & phục vụ thật:**
 
 | STT | Endpoint Prefix | Router File | Mô tả chức năng |
 |---|---|---|---|
-| 1 | `/auth` | `auth.py` | Đăng ký, đăng nhập, cấp token, đổi mật khẩu, xác thực email |
+| 1 | `/auth` | `auth.py` | Đăng ký, đăng nhập, cấp token, đổi mật khẩu, xác thực email, cấp vé WebSocket (`POST /auth/ws-ticket`) |
 | 2 | `/oauth` | `oauth.py` | Google & Facebook OAuth 2.0 Social Login |
 | 3 | `/users` | `users.py` | CRUD người dùng, xem & cập nhật hồ sơ cá nhân |
 | 4 | `/roles` | `roles.py` | Quản lý vai trò (Role CRUD) và gán quyền |
@@ -487,17 +495,21 @@ async def publish(channel: str, message: dict):
 | 19 | `/dashboards` | `dashboards.py` | Tổng hợp chỉ số KPI, EVA, Burndown/Burnup/Velocity |
 | 20 | `/notifications` | `notifications.py` | Lấy danh sách thông báo, đếm unread count, đánh dấu đã đọc |
 | 21 | `/audit` | `audit_timeline.py` | Truy vết lịch sử biến động toàn hệ thống (Audit Trail) |
+| 22 | `/projects/{id}/cpm` | `cpm.py` | Phân tích đường găng (CPM) của dự án — chỉ đọc (`GET`), engine tính toán chạy nội bộ ở mọi thao tác ghi task/dependency |
+| 23 | `/ai` | `ai.py` | `POST /ai/generate-project` (AI Project Generator, xếp hàng qua Celery) & `GET /ai/jobs/{job_id}` |
 
-**11 router còn là stub `TODO: Implement` — bị comment trong `router.py`, CHƯA mount:**
-`/leaves` · `/skills` · `/documents` · `/approvals` · `/change-requests` · `/gantt` · `/cpm` · `/reports` · `/versions` · `/ai` · `/system`
+**9 router còn là stub `TODO: Implement` — bị comment trong `router.py`, CHƯA mount:**
+`/leaves` · `/skills` · `/documents` · `/approvals` · `/change-requests` · `/gantt` · `/reports` · `/versions` · `/system`
 > Các file này tồn tại trong `api/v1/endpoints/` nhưng chỉ trả về placeholder và không có dependency auth. Xem chú thích trong [`router.py`](./backend/app/api/v1/router.py).
 
 ### Danh mục WebSocket Endpoints (`/ws/...`)
 
 | Endpoint Route | Giao thức | Xác thực | Mục đích |
 |---|---|---|---|
-| `/ws/chat/{project_id}` | WebSocket | `?token=<JWT>` | Kênh chat thời gian thực cho thành viên dự án (`project_members`) |
-| `/ws/notifications` | WebSocket | `?token=<JWT>` | Đẩy thông báo cá nhân tức thời tới người dùng (`notif:user:{user_id}`) |
+| `/ws/chat/{project_id}` | WebSocket | `?ticket=<vé một lần>` | Kênh chat thời gian thực cho thành viên dự án (`project_members`) |
+| `/ws/notifications` | WebSocket | `?ticket=<vé một lần>` | Đẩy thông báo cá nhân tức thời tới người dùng (`notif:user:{user_id}`) |
+
+> Vé (`ticket`) được cấp qua `POST /auth/ws-ticket` (xác thực bằng header `Authorization` như request thường), sống 60 giây, chỉ dùng được một lần và bị xoá khỏi Redis ngay khi đổi lấy kết nối — xem [`app/core/ws_tickets.py`](./backend/app/core/ws_tickets.py). Access token JWT không được truyền trên query string của WebSocket.
 
 > - **Swagger UI Interactive Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
 > - **ReDoc OpenAPI Documentation:** [http://localhost:8000/redoc](http://localhost:8000/redoc)
@@ -602,9 +614,9 @@ Truy cập ứng dụng tại: **[http://localhost:3000](http://localhost:3000)*
 ```env
 # Application
 APP_ENV=development
-APP_NAME=AI Project Management API
-APP_VERSION=2.2.0
-SECRET_KEY=your-super-secret-key-min-32-chars-change-in-production
+APP_TIMEZONE=Asia/Ho_Chi_Minh
+MAX_DAILY_WORK_HOURS=8.0
+SECRET_KEY=your-super-secret-key-change-in-production-min-32-chars
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 REFRESH_TOKEN_EXPIRE_DAYS=7
@@ -620,25 +632,42 @@ CELERY_BROKER_URL=redis://localhost:6379/1
 CELERY_RESULT_BACKEND=redis://localhost:6379/2
 
 # CORS
-CORS_ORIGINS=["http://localhost:3000","http://localhost:5173"]
+CORS_ORIGINS=["http://localhost:5173","http://localhost:3000"]
 
 # MinIO Object Storage
-MINIO_ENDPOINT=localhost:9000
+MINIO_ENDPOINT=127.0.0.1:9000
 MINIO_ACCESS_KEY=minioadmin
 MINIO_SECRET_KEY=minioadmin
 MINIO_BUCKET=ai-project-files
 MINIO_USE_SSL=false
 
-# AI Provider (xKiro)
-XKIRO_API_KEY=sk-xt-...
+# AI Provider (xKiro) — mỗi loại tác vụ AI dùng một model riêng (app/services/ai/model_router.py)
+XKIRO_API_KEY=sk-xt-your-xkiro-api-key-here
 XKIRO_BASE_URL=https://api.xkiro.com/v1
+XKIRO_MODEL_PROJECT_GENERATION=deepseek/deepseek-v4-pro
+XKIRO_MODEL_DOCUMENT_PARSING=qwen/qwen3-vl-plus:free
+XKIRO_MODEL_IMPACT_ANALYSIS=deepseek/deepseek-v4-flash
+XKIRO_MODEL_SCHEDULE_OPTIMIZATION=qwen/qwen3.7-max:free
+XKIRO_MODEL_RESOURCE_RECOMMENDATION=mistralai/mistral-medium-3.5
+XKIRO_MODEL_RISK_ANALYSIS=mistralai/mistral-large-2512
+XKIRO_MODEL_CHAT_QUICK=deepseek/deepseek-chat-v3.1
 
-# Email Service
+# Email (SMTP)
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your-email@gmail.com
 SMTP_PASSWORD=your-app-password
-EMAIL_FROM=noreply@aiprojectmanagement.com
+EMAIL_FROM=noreply@projectmanagement.com
+EMAIL_FROM_NAME="AI Project Management"
+
+# Social Login (OAuth 2.0)
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+GOOGLE_REDIRECT_URI=http://localhost:8000/api/v1/oauth/google/callback
+FACEBOOK_APP_ID=your-facebook-app-id
+FACEBOOK_APP_SECRET=your-facebook-app-secret
+FACEBOOK_REDIRECT_URI=http://localhost:8000/api/v1/oauth/facebook/callback
+FRONTEND_URL=http://localhost:3000
 ```
 
 ### Frontend Environment (`frontend/.env.local`)
@@ -649,6 +678,8 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
 ```
 
 > **Lưu ý**: `NEXT_PUBLIC_WS_URL` sử dụng định dạng bare origin (không có đuôi `/ws`), mã nguồn frontend sẽ tự động ghép nối `/ws/chat/{project_id}` và `/ws/notifications`.
+>
+> **Lưu ý (Windows / Docker)**: `docker-compose.yml` ghi đè hai biến trên thành `http://127.0.0.1:8000/api/v1` và `ws://127.0.0.1:8000` cho service `frontend`, vì `localhost` phân giải sang IPv6 `::1` mà Docker Desktop trên Windows không forward. Khi chạy theo cách này, hãy mở trình duyệt tại `http://127.0.0.1:3000` (không phải `http://localhost:3000`) — cookie phiên đăng nhập (`refresh-token`, `has-session`) chỉ hoạt động đúng khi frontend và backend cùng hostname; dùng `localhost` có thể gây vòng lặp đăng nhập.
 
 ---
 
@@ -658,7 +689,7 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
 2. **Xử lý Real-time qua Redis Pub/Sub**: WebSocket messages đẩy qua hàm `publish(channel, data)`, `redis_listener` nhận và phân phối về các socket cục bộ nhằm hỗ trợ scale đa tiến trình worker.
 3. **Quản lý Token & Bảo mật**:
    - Access Token có thời hạn 30 phút, Refresh Token 7 ngày.
-   - WebSocket xác thực qua Query Token (`authenticate_ws`) với kiểm tra `auth_version` và `is_active`.
+   - WebSocket xác thực qua vé dùng-một-lần (`authenticate_ws` đổi `ticket` lấy từ `POST /auth/ws-ticket`, sống 60 giây), không truyền JWT trên query string; socket đang mở được kiểm tra lại định kỳ theo `auth_version` và `is_active`.
    - Phân quyền endpoint qua `require_roles()` hoặc `require_permissions()`.
 4. **Không block Event Loop**: Toàn bộ tác vụ nặng (AI generation, Document parsing, Gửi email, Xuất báo cáo, Quét lịch trình) bắt buộc chạy qua Celery Background Tasks.
 5. **Đồng bộ hóa Frontend State**:
@@ -741,4 +772,4 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
 - **Giấy phép:** [MIT License](./LICENSE)
 
 ---
-*Cập nhật toàn diện hệ thống: 2026-09-03 (đối soát README với mã nguồn thực tế: 21/32 REST router đang mount, 123/123 unit test pass, Phase 3–5 mới ở mức hạ tầng).*
+*Cập nhật toàn diện hệ thống: 2026-09-16 (đối soát README với mã nguồn thực tế: 23/32 REST router đang mount + 2 WebSocket router, backend 261 test pass / frontend 28 test pass (7 file), Phase 3–5 mới ở mức hạ tầng).*
