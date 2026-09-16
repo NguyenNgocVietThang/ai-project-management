@@ -49,4 +49,10 @@ celery_app.conf.beat_schedule = {
         "task": "notifications.sweep_task_dates",
         "schedule": crontab(hour=8, minute=0),  # 08:00 theo APP_TIMEZONE
     },
+    # SOP-AI-005: quet rui ro dinh ky cho tung project ACTIVE, sau gio sweep task
+    # dates de risk_analyzer thay duoc so lieu qua-han moi nhat trong ngay.
+    "sweep-risk-analysis-daily": {
+        "task": "ai.sweep_active_projects_for_risk",
+        "schedule": crontab(hour=8, minute=30),
+    },
 }

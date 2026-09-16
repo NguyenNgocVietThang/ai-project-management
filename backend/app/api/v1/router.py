@@ -5,6 +5,7 @@ from app.api.v1.endpoints import (
     assignments,
     audit_timeline,
     auth,
+    change_requests,
     chat,
     cpm,
     dashboards,
@@ -55,11 +56,10 @@ api_router.include_router(chat.router, tags=["Chat"])
 # api_router.include_router(skills.router, prefix="/skills", tags=["Skills"])
 # api_router.include_router(documents.router, prefix="/documents", tags=["Documents"])
 # api_router.include_router(approvals.router, prefix="/approvals", tags=["Approvals"])
-# api_router.include_router(
-#     change_requests.router,
-#     prefix="/change-requests",
-#     tags=["Change Requests"],
-# )
+# change_requests la ngoai le: khong con la stub CRUD khong auth nua (xem
+# services/change_request_service.py) — CRUD toi gian that, co
+# get_project_context + quyen PM/BA, lam nen cho AI Impact Analysis (SOP-AI-002).
+api_router.include_router(change_requests.router, tags=["Change Requests"])
 # api_router.include_router(gantt.router, prefix="/gantt", tags=["Gantt"])
 # CPM la ngoai le duy nhat trong danh sach bi comment o tren: engine da hoan chinh
 # va chay noi bo tu Phase 2, chi thieu duong doc ket qua. Endpoint nay chi doc va

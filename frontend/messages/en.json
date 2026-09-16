@@ -61,6 +61,8 @@
     "settings": "Settings",
     "gantt": "Gantt",
     "ganttLater": "Planned for a later phase",
+    "changeRequests": "Change Requests",
+    "aiInsights": "AI Insights",
     "navigation": "Project navigation",
     "backToProjects": "Back to projects",
     "standalone": "Standalone project",
