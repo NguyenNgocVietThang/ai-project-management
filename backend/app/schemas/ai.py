@@ -20,6 +20,10 @@ class AIRiskAnalysisRequest(BaseModel):
     project_id: int
 
 
+class AIResourceRecommendationRequest(BaseModel):
+    task_id: int
+
+
 class AIJobResponse(BaseModel):
     job_id: str
     status: str
