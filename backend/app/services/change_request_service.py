@@ -1,7 +1,7 @@
 """CRUD tối giản cho Change Request — nền cho AI Impact Analysis (SOP-AI-002).
 
 Chỉ cài đặt phần tạo/xem/chuyển trạng thái DRAFT->SUBMITTED. Quy trình duyệt nhiều bước
-(bảng `approvals`, BA -> PO -> PM) không thuộc phạm vi này — xem tasks/plan.md.
+(bảng `approvals`, BA -> PO -> PM) không thuộc phạm vi này — xem docs/archive/phase3-ai-features/plan.md.
 """
 from typing import Annotated
 

@@ -312,8 +312,12 @@ AI Project Planning & Portfolio Management system/
 │   │   └── middleware.ts                     # Next.js Edge Route Guard
 │
 ├── docker-compose.yml                        # 7-service orchestration configuration
-├── erd_ai_project_management.html            # Interactive HTML ERD diagram
-└── .documents/specs/system-architecture/     # BRD, SRS, Design, Sequence Diagrams
+└── docs/                                      # Toàn bộ tài liệu dự án
+    ├── specs/system-architecture/             # BRD, SRS, Design, Sequence Diagrams
+    ├── roadmap/                                # PHASE_1..5 roadmap từng module
+    ├── audits/                                 # Biên bản rà soát & ghi nhận kiến trúc
+    ├── archive/                                # Kế hoạch/todo của các giai đoạn đã hoàn thành
+    └── diagrams/                               # ERD tương tác (HTML) và sơ đồ khác
 ```
 
 ---
@@ -758,11 +762,14 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
 ### Danh mục tài liệu kỹ thuật
 | Tài liệu | Vị trí | Mô tả |
 |---|---|---|
-| **BRD** | [.documents/specs/system-architecture/brd.md](./.documents/specs/system-architecture/brd.md) | Business Requirements Document — Yêu cầu nghiệp vụ |
-| **SRS** | [.documents/specs/system-architecture/srs.md](./.documents/specs/system-architecture/srs.md) | Software Requirements Specification — Đặc tả chức năng chi tiết |
-| **Architecture Design** | [.documents/specs/system-architecture/design.md](./.documents/specs/system-architecture/design.md) | Tài liệu thiết kế kiến trúc hệ thống tổng thể |
-| **Sequence Diagrams** | [.documents/specs/system-architecture/Sequence SOP/](./.documents/specs/system-architecture/Sequence%20SOP/) | Chuỗi Sequence Diagrams PlantUML cho từng SOP |
-| **Interactive ERD** | [erd_ai_project_management.html](./erd_ai_project_management.html) | Sơ đồ tương tác cấu trúc 34 bảng Database |
+| **BRD** | [docs/specs/system-architecture/brd.md](./docs/specs/system-architecture/brd.md) | Business Requirements Document — Yêu cầu nghiệp vụ |
+| **SRS** | [docs/specs/system-architecture/srs.md](./docs/specs/system-architecture/srs.md) | Software Requirements Specification — Đặc tả chức năng chi tiết |
+| **Architecture Design** | [docs/specs/system-architecture/design.md](./docs/specs/system-architecture/design.md) | Tài liệu thiết kế kiến trúc hệ thống tổng thể |
+| **Sequence Diagrams** | [docs/specs/system-architecture/Sequence SOP/](./docs/specs/system-architecture/Sequence%20SOP/) | Chuỗi Sequence Diagrams PlantUML cho từng SOP |
+| **Interactive ERD** | [docs/diagrams/erd_ai_project_management.html](./docs/diagrams/erd_ai_project_management.html) | Sơ đồ tương tác cấu trúc 34 bảng Database |
+| **Roadmap từng Phase** | [docs/roadmap/](./docs/roadmap/) | PHASE_1_AUTH_MODULE → PHASE_5_DOCUMENT_AI_POLISH_MODULE |
+| **Audit & Findings** | [docs/audits/](./docs/audits/) | Biên bản rà soát kiến trúc và ghi nhận hệ thống theo mốc thời gian |
+| **Archive kế hoạch đã xong** | [docs/archive/](./docs/archive/) | Plan/todo của các giai đoạn đã hoàn thành, lưu lại để tham chiếu |
 
 ---
 

@@ -92,4 +92,4 @@ Module **AI Features (Phase 3)** tích hợp trí tuệ nhân tạo vào toàn b
 
 ---
 
-*Cập nhật lần cuối: 2026-09-17 — Phase 3 (AI Features) hoàn thành 5/5 trụ cột. Xem `tasks/plan.md` cho quyết định phạm vi (Change Request CRUD tối giản là nền mới cho SOP-AI-002, không có workflow duyệt nhiều bước) và danh sách file đã thêm/sửa.*
+*Cập nhật lần cuối: 2026-09-17 — Phase 3 (AI Features) hoàn thành 5/5 trụ cột. Xem `docs/archive/phase3-ai-features/plan.md` cho quyết định phạm vi (Change Request CRUD tối giản là nền mới cho SOP-AI-002, không có workflow duyệt nhiều bước) và danh sách file đã thêm/sửa.*
