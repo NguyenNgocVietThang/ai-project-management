@@ -3,7 +3,7 @@
 Đây là dịch vụ CHỈ ĐỌC / mang tính tư vấn: nó không bao giờ ghi lại ngày tháng
 lên các dòng Task thật. Kết quả trả về chỉ là một danh sách đề xuất mà PM xem
 xét rồi tự áp dụng qua các API chỉnh sửa task đã có sẵn — xem
-ROADMAP_PHASE_3_AI_FEATURES_MODULE.md (SOP-AI-003).
+docs/roadmap/PHASE_3_AI_FEATURES_MODULE.md (SOP-AI-003).
 
 Cấu trúc mirror `app/services/ai/project_generator.py`: cùng cặp
 `get_ai_provider()` -> `XkiroProvider()` + `SYSTEM_PROMPT` + `generate_json`.

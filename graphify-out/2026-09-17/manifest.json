@@ -2292,9 +2292,9 @@
     "semantic_hash": ""
   },
   "ROADMAP_PHASE_3_AI_FEATURES_MODULE.md": {
-    "mtime": 1789574238.069367,
-    "seen": 1789574717.9258695,
-    "ast_hash": "f7ba6441633f80e4e2a0027b08b457b4",
+    "mtime": 1789579265.3928366,
+    "seen": 1789579525.810505,
+    "ast_hash": "d8c1e72900558ce031b5342a9e461a3b",
     "semantic_hash": ""
   },
   "ROADMAP_PHASE_4_WORKFLOW_REPORTING_MODULE.md": {
@@ -2389,8 +2389,8 @@
   },
   "backend/pyproject.toml": {
     "mtime": 1788665596.8763008,
-    "seen": 1789575426.416062,
-    "ast_hash": "",
+    "seen": 1789579525.8095052,
+    "ast_hash": "5f25e46e9f1b597a8585cf15f273f070",
     "semantic_hash": ""
   },
   ".codex/hooks.json": {
@@ -2646,9 +2646,9 @@
     "semantic_hash": ""
   },
   "tasks/todo.md": {
-    "mtime": 1789577203.7804935,
-    "seen": 1789579208.3804653,
-    "ast_hash": "dd5c4e197a0799c82dd1fbad44f41354",
+    "mtime": 1789579343.3754206,
+    "seen": 1789579525.810505,
+    "ast_hash": "98631279f2d5222e7e686a69eda642ba",
     "semantic_hash": ""
   }
 }

@@ -1,6 +1,6 @@
 """Change Request CRUD tối giản — nền cho AI Impact Analysis (SOP-AI-002).
 
-Không có workflow duyệt nhiều bước ở đây; chỉ create/list/get/submit. Xem tasks/plan.md.
+Không có workflow duyệt nhiều bước ở đây; chỉ create/list/get/submit. Xem docs/archive/phase3-ai-features/plan.md.
 """
 from datetime import UTC, datetime
 from types import SimpleNamespace
