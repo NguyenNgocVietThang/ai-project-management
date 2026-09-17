@@ -2243,24 +2243,6 @@
     "ast_hash": "53306a6a454ce914e0562b6b12eb0cb1",
     "semantic_hash": "53306a6a454ce914e0562b6b12eb0cb1"
   },
-  ".documents/specs/system-architecture/brd.md": {
-    "mtime": 1789284187.4211917,
-    "seen": 1789284259.4176497,
-    "ast_hash": "71d31f80a95abbba4f2926b8ad93dce9",
-    "semantic_hash": ""
-  },
-  ".documents/specs/system-architecture/design.md": {
-    "mtime": 1789574657.6366043,
-    "seen": 1789574717.9258695,
-    "ast_hash": "1bbc9a2c10abd5439cfc03b370924432",
-    "semantic_hash": ""
-  },
-  ".documents/specs/system-architecture/srs.md": {
-    "mtime": 1789574601.9849114,
-    "seen": 1789574717.9258695,
-    "ast_hash": "958ae56c620296a0d127eeda927e2afe",
-    "semantic_hash": ""
-  },
   ".github/workflows/security.yml": {
     "mtime": 1788665659.6043184,
     "seen": 1789284259.4176497,
@@ -2274,39 +2256,9 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1789574607.4156144,
-    "seen": 1789574717.9258695,
-    "ast_hash": "ce2b292556d4f0ae68da77c0a0b5a964",
-    "semantic_hash": ""
-  },
-  "ROADMAP_PHASE_1_AUTH_MODULE.md": {
-    "mtime": 1788666593.9040492,
-    "seen": 1789284259.4176497,
-    "ast_hash": "fc191c22d4d0894baddb4f05b7143d8a",
-    "semantic_hash": ""
-  },
-  "ROADMAP_PHASE_2_PORTFOLIO_PROJECT_MODULE.md": {
-    "mtime": 1789574186.2132137,
-    "seen": 1789574717.9258695,
-    "ast_hash": "24a319e82627d0b1556b114e21584a47",
-    "semantic_hash": ""
-  },
-  "ROADMAP_PHASE_3_AI_FEATURES_MODULE.md": {
-    "mtime": 1789579265.3928366,
-    "seen": 1789579525.810505,
-    "ast_hash": "d8c1e72900558ce031b5342a9e461a3b",
-    "semantic_hash": ""
-  },
-  "ROADMAP_PHASE_4_WORKFLOW_REPORTING_MODULE.md": {
-    "mtime": 1789574257.3562775,
-    "seen": 1789574717.9258695,
-    "ast_hash": "f20845da2fa4f57c6d7bc295ee5223ff",
-    "semantic_hash": ""
-  },
-  "ROADMAP_PHASE_5_DOCUMENT_AI_POLISH_MODULE.md": {
-    "mtime": 1789574284.0739477,
-    "seen": 1789574717.9258695,
-    "ast_hash": "7aa0cf1ce08fe532048bb1c8b40d5a2f",
+    "mtime": 1789608658.2464077,
+    "seen": 1789608902.494166,
+    "ast_hash": "ba8bc1e4ace6583b4a6f498f53088433",
     "semantic_hash": ""
   },
   "backend/app/templates/email/project_invitation.html": {
@@ -2345,18 +2297,6 @@
     "ast_hash": "68601b163902a248204e42663d80ff6f",
     "semantic_hash": ""
   },
-  "erd_ai_project_management.html": {
-    "mtime": 1782324175.5876603,
-    "seen": 1789284259.4176497,
-    "ast_hash": "34403e57fb6121d4daf9a41a98a94105",
-    "semantic_hash": ""
-  },
-  "findings.md": {
-    "mtime": 1788665755.3191369,
-    "seen": 1789284259.4176497,
-    "ast_hash": "1284d6822ee6ca973b0272a368ce2f47",
-    "semantic_hash": ""
-  },
   "backend/tests/unit/test_ai_service.py": {
     "mtime": 1789296669.1839726,
     "seen": 1789297099.7940066,
@@ -2390,7 +2330,7 @@
   "backend/pyproject.toml": {
     "mtime": 1788665596.8763008,
     "seen": 1789579525.8095052,
-    "ast_hash": "5f25e46e9f1b597a8585cf15f273f070",
+    "ast_hash": "",
     "semantic_hash": ""
   },
   ".codex/hooks.json": {
@@ -2435,12 +2375,6 @@
     "ast_hash": "8a6643a420fdad6bfb583523bc6cef16",
     "semantic_hash": ""
   },
-  "docs/AUDIT_2026-09-15.md": {
-    "mtime": 1789568420.832051,
-    "seen": 1789573920.3465474,
-    "ast_hash": "1fb20e30e6f6c8f0fef389a183db6cf4",
-    "semantic_hash": ""
-  },
   "backend/app/schemas/change_request.py": {
     "mtime": 1789577077.1928153,
     "seen": 1789579208.2747216,
@@ -2478,21 +2412,21 @@
     "semantic_hash": ""
   },
   "backend/app/services/ai/schedule_optimizer.py": {
-    "mtime": 1789578634.4367778,
-    "seen": 1789579208.2983146,
-    "ast_hash": "79281a668390f88aabbb74c1afa0a4f8",
+    "mtime": 1789608629.1516805,
+    "seen": 1789608902.2131712,
+    "ast_hash": "db7cf521f2e25f2f20739224bc94c07c",
     "semantic_hash": ""
   },
   "backend/app/services/change_request_service.py": {
-    "mtime": 1789577003.4530742,
-    "seen": 1789579208.2993176,
-    "ast_hash": "df4266fd6fcccdf588e7274198113c5a",
+    "mtime": 1789608620.8314621,
+    "seen": 1789608902.2161646,
+    "ast_hash": "ae64c25d23ba26dfdec0690f65d92a04",
     "semantic_hash": ""
   },
   "backend/tests/unit/test_change_request_service.py": {
-    "mtime": 1789577172.5641017,
-    "seen": 1789579208.3143113,
-    "ast_hash": "75d6da82d335187385e1ba7ee9d145b9",
+    "mtime": 1789608622.8981519,
+    "seen": 1789608902.254169,
+    "ast_hash": "1e6987f66c8a375c034de7aa7d906f65",
     "semantic_hash": ""
   },
   "backend/tests/unit/test_impact_analyzer.py": {
@@ -2639,16 +2573,82 @@
     "ast_hash": "98408cf1ac61d8683a574797ff4c04db",
     "semantic_hash": ""
   },
-  "tasks/plan.md": {
+  "docs/archive/phase3-ai-features/plan.md": {
     "mtime": 1789576901.8594005,
-    "seen": 1789579208.3804653,
+    "seen": 1789608902.5011702,
     "ast_hash": "35f80cb491f5ea6c5dae10408d2f6d0a",
     "semantic_hash": ""
   },
-  "tasks/todo.md": {
+  "docs/archive/phase3-ai-features/todo.md": {
     "mtime": 1789579343.3754206,
-    "seen": 1789579525.810505,
+    "seen": 1789608902.5011702,
     "ast_hash": "98631279f2d5222e7e686a69eda642ba",
+    "semantic_hash": ""
+  },
+  "docs/audits/AUDIT_2026-09-15.md": {
+    "mtime": 1789568420.832051,
+    "seen": 1789608902.5011702,
+    "ast_hash": "1fb20e30e6f6c8f0fef389a183db6cf4",
+    "semantic_hash": ""
+  },
+  "docs/audits/FINDINGS_2026-09-06.md": {
+    "mtime": 1788665755.3191369,
+    "seen": 1789608902.5011702,
+    "ast_hash": "1284d6822ee6ca973b0272a368ce2f47",
+    "semantic_hash": ""
+  },
+  "docs/diagrams/erd_ai_project_management.html": {
+    "mtime": 1782324175.5876603,
+    "seen": 1789608902.5011702,
+    "ast_hash": "34403e57fb6121d4daf9a41a98a94105",
+    "semantic_hash": ""
+  },
+  "docs/roadmap/PHASE_1_AUTH_MODULE.md": {
+    "mtime": 1788666593.9040492,
+    "seen": 1789608902.5011702,
+    "ast_hash": "fc191c22d4d0894baddb4f05b7143d8a",
+    "semantic_hash": ""
+  },
+  "docs/roadmap/PHASE_2_PORTFOLIO_PROJECT_MODULE.md": {
+    "mtime": 1789574186.2132137,
+    "seen": 1789608902.5011702,
+    "ast_hash": "24a319e82627d0b1556b114e21584a47",
+    "semantic_hash": ""
+  },
+  "docs/roadmap/PHASE_3_AI_FEATURES_MODULE.md": {
+    "mtime": 1789608637.735812,
+    "seen": 1789608902.5011702,
+    "ast_hash": "e0e165fb889306dbfbc6d7c9b68c74e8",
+    "semantic_hash": ""
+  },
+  "docs/roadmap/PHASE_4_WORKFLOW_REPORTING_MODULE.md": {
+    "mtime": 1789574257.3562775,
+    "seen": 1789608902.5011702,
+    "ast_hash": "f20845da2fa4f57c6d7bc295ee5223ff",
+    "semantic_hash": ""
+  },
+  "docs/roadmap/PHASE_5_DOCUMENT_AI_POLISH_MODULE.md": {
+    "mtime": 1789574284.0739477,
+    "seen": 1789608902.5011702,
+    "ast_hash": "7aa0cf1ce08fe532048bb1c8b40d5a2f",
+    "semantic_hash": ""
+  },
+  "docs/specs/system-architecture/brd.md": {
+    "mtime": 1789284187.4211917,
+    "seen": 1789608902.5011702,
+    "ast_hash": "71d31f80a95abbba4f2926b8ad93dce9",
+    "semantic_hash": ""
+  },
+  "docs/specs/system-architecture/design.md": {
+    "mtime": 1789574657.6366043,
+    "seen": 1789608902.5011702,
+    "ast_hash": "1bbc9a2c10abd5439cfc03b370924432",
+    "semantic_hash": ""
+  },
+  "docs/specs/system-architecture/srs.md": {
+    "mtime": 1789574601.9849114,
+    "seen": 1789608902.5011702,
+    "ast_hash": "958ae56c620296a0d127eeda927e2afe",
     "semantic_hash": ""
   }
 }
