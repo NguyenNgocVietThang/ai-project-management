@@ -48,7 +48,7 @@ Xây dựng một **web application quản lý dự án và danh mục đầu t�
 - **Phân tích tác động thay đổi (AI Impact Analysis)** và tối ưu lịch (Schedule Optimization) khi phát sinh Change Request.
 - **Dashboard & Báo cáo đa chiều**: Gantt Chart tương tác, Burndown, Burnup, Velocity, Earned Value Analysis (EVA, CPI, SPI), xuất file DOCX/XLSX.
 
-### Trạng thái triển khai thực tế (cập nhật 2026-09-16)
+### Trạng thái triển khai thực tế (cập nhật 2026-09-18)
 
 | Nhóm chức năng | Trạng thái | Ghi chú |
 |---|---|---|
@@ -57,15 +57,16 @@ Xây dựng một **web application quản lý dự án và danh mục đầu t�
 | CPM Engine | Chạy thật + test | `app/utils/cpm.py` + `scheduling_service.py`; endpoint `GET /projects/{id}/cpm` đã mount (chỉ đọc). `/gantt` vẫn là stub (Phase 4) |
 | Real-time Chat + Notification Push + Celery Beat daily sweep | Chạy thật + test | Phase 2/5 hoàn thành |
 | Dashboard KPI / EVA / Burndown | Chạy thật | endpoint `/dashboards` đã mount |
-| AI Project Generator | Chạy thật | `BaseAIProvider` + `XkiroProvider` + `project_generator.py`, endpoint `/ai` đã mount, Celery `ai_tasks` sinh Project/Phase/Task/Dependency thật |
-| AI (Impact, Optimize, Risk, Resource, Document Parsing) | Chỉ hạ tầng | Model router đã có model cho từng task; Celery `ai_tasks` các SOP còn lại vẫn là stub |
-| Change Request / Approvals / Project Versioning / Rollback | Chỉ model DB | Endpoint là stub `TODO`, **chưa mount**, chưa có UI |
+| AI Project Generator | Chạy thật + UI | `POST /ai/generate-project` + Celery sinh Project/Phase/Task/Dependency thật; UI `AIGeneratorModal.tsx` |
+| AI Impact / Schedule / Resource / Risk | Chạy thật + UI | 4 endpoint AI đã mount; xử lý qua Celery; UI tại trang Change Request và `/projects/{id}/ai-insights`; Risk Analysis có lịch quét 08:30 hằng ngày |
+| Change Request | CRUD tối giản chạy thật + UI | Create/list/get/submit đã mount và có phân quyền; làm nền cho AI Impact Analysis. Workflow duyệt nhiều cấp vẫn thuộc Phase 4 |
+| Approvals / Project Versioning / Rollback | Chỉ model DB | Endpoint vẫn là stub `TODO`, chưa mount, chưa có UI |
 | Reports DOCX/XLSX | Chỉ scaffold | `report_tasks.py` là stub trả về rỗng, endpoint `/reports` chưa mount |
 | Documents / AI Document Parser | Chỉ model DB | endpoint `/documents` là stub, chưa mount |
 | Leaves / Skills catalog | Chỉ model DB | endpoint là stub, chưa mount |
 | Investor Read-only Dashboard, Mobile polish | Chưa làm | — |
 
-> **API thực tế đang phục vụ:** 23 REST router (`/api/v1/...`) + 2 WebSocket router (`/ws/...`). 9 router còn lại (`leaves, skills, documents, approvals, change_requests, gantt, reports, project_versions, system`) vẫn là stub `TODO: Implement`, bị comment trong [`router.py`](./backend/app/api/v1/router.py) và **không** được mount.
+> **API thực tế đang phục vụ:** 24 REST router (`/api/v1/...`) + 2 WebSocket router (`/ws/...`). 8 router còn lại (`leaves, skills, documents, approvals, gantt, reports, project_versions, system`) vẫn là stub `TODO: Implement`, bị comment trong [`router.py`](./backend/app/api/v1/router.py) và **không** được mount.
 
 ---
 
@@ -208,8 +209,8 @@ AI Project Planning & Portfolio Management system/
 │   │   │   ├── __init__.py
 │   │   │   ├── v1/
 │   │   │   │   ├── __init__.py
-│   │   │   │   ├── router.py                 # Aggregator: 23 REST routers được mount (+9 stub bị comment)
-│   │   │   │   └── endpoints/                # 32 file handler (23 đã hiện thực & mount, 9 còn là stub TODO)
+│   │   │   │   ├── router.py                 # Aggregator: 24 REST routers được mount (+8 stub bị comment)
+│   │   │   │   └── endpoints/                # 32 file handler (24 đã hiện thực & mount, 8 còn là stub TODO)
 │   │   │   └── ws/
 │   │   │       ├── __init__.py
 │   │   │       ├── deps.py                   # authenticate_ws (đổi vé dùng-một-lần lấy qua POST /auth/ws-ticket, không phải JWT trên query string)
@@ -394,10 +395,14 @@ class Task(Base):
 
 - **SOP-PM-001: Khởi tạo dự án & Quản lý thành viên**: PM tạo dự án, phân bổ ngân sách, gán thành viên qua `project_members`.
 - **SOP-AI-001: AI Project Generator**: PM nhập Prompt tự nhiên → AI sinh cấu trúc WBS (Phases, Sprints, Epics, Tasks, Dependencies) → Tự động tính toán CPM.
+- **SOP-AI-002: AI Impact Analysis**: BA/PM tạo và submit Change Request → AI phân tích tác động đến tiến độ, ngân sách, nguồn lực và đường găng → Lưu `impact_reports` để nhóm dự án xem xét.
+- **SOP-AI-003: Schedule Optimization**: AI đọc CPM, phân bổ nguồn lực và lịch nghỉ đã duyệt → Đề xuất fast-tracking, crashing hoặc phân công lại; không tự ghi đè lịch công việc.
+- **SOP-AI-004: Resource Recommendation**: AI kết hợp kỹ năng, tải công việc, chi phí và lịch nghỉ để xếp hạng ứng viên phù hợp cho từng task; chỉ đề xuất, không tự tạo assignment.
+- **SOP-AI-005: Risk Analysis**: Phân tích rủi ro thủ công hoặc tự động lúc 08:30 hằng ngày → Ghi lịch sử `risk_reports` và đề xuất biện pháp giảm thiểu.
 - **SOP-PM-002: Time Tracking & Timesheets**: Member bấm `Start`/`Stop` hoặc ghi nhận WorkLog thủ công → Cập nhật `actual_hours` và chi phí.
 - **SOP-PM-003: Critical Path Method (CPM)**: Tự động chạy thuật toán Topological Sort + Forward/Backward pass khi có cập nhật thời lượng hoặc quan hệ phụ thuộc.
-- **SOP-RM-001 & SOP-AI-004: Resource Leveling & Đề xuất AI**: Đề xuất nhân sự tối ưu dựa trên kỹ năng (`user_skills`), chi phí và lịch nghỉ phép (`leaves`), cảnh báo khi quá tải >8h/ngày.
-- **SOP-CR-001: Change Request Workflow**: Quy trình duyệt đa cấp tuần tự `Customer → BA → PO → AI Impact Analysis → PM Final Approval → Snapshot Version → Apply`.
+- **SOP-RM-001: Resource Leveling**: Kiểm tra tải nhân sự và cảnh báo khi phân bổ vượt quá 8 giờ/ngày.
+- **SOP-CR-001: Change Request Workflow**: CRUD và bước submit đã chạy thật để phục vụ AI Impact Analysis; chuỗi duyệt đa cấp `Customer → BA → PO → PM`, snapshot và apply vẫn nằm trong Phase 4.
 - **SOP-PM-004: Project Versioning & Rollback**: Tự động lưu snapshot baseline trước khi cập nhật lớn, cho phép so sánh Diff và khôi phục khi cần.
 - **SOP-CHAT-001: Project Real-time Chat**: Kênh chat nội bộ dự án kết nối qua WebSocket `/ws/chat/{project_id}`, lưu trữ lịch sử tin nhắn và đếm unread count.
 - **SOP-NOTI-001: Real-time Notification & Daily Sweep**: Đẩy thông báo tức thời qua WebSocket `/ws/notifications` khi có sự kiện (giao task, đổi trạng thái, cập nhật ngày); Celery Beat quét định kỳ 08:00 AM hàng ngày gửi thông báo task bắt đầu và sắp đến hạn.
@@ -706,11 +711,11 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
 
 ```
 [Phase 1: Core Auth & RBAC] ──► [Phase 2: Project Core & Chat] ──► [Phase 3: AI Engine]
-       (100% Hoàn thành)                (100% Hoàn thành)             (~15% — chỉ có Provider layer)
+       (100% Hoàn thành)                (100% Hoàn thành)                (100% Hoàn thành)
                                                                             │
 [Phase 5: Document AI & Polish] ◄──── [Phase 4: Workflow & Reporting] ◄─────┘
   (~40% — WS/Beat/Notif xong,          (~30% — chỉ Audit Timeline + WS xong,
-   Document/Investor chưa làm)          CR/Versioning/Reports mới ở mức model DB)
+   Document/Investor chưa làm)          CR tối giản; Approval/Versioning/Reports chưa làm)
 ```
 
 - [x] **Phase 1 — Core Auth & User Onboarding** *(Hoàn thành)*
@@ -730,19 +735,21 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
   - [x] Endpoint `/cpm` công khai (`GET /projects/{id}/cpm`, chỉ đọc).
   - [ ] Endpoint `/gantt` + UI Gantt (thuộc Phase 4).
 
-- [~] **Phase 3 — AI Features Module** *(AI Project Generator hoàn thành, các SOP còn lại vẫn là stub)*
+- [x] **Phase 3 — AI Features Module** *(Hoàn thành 5/5 trụ cột AI)*
   - [x] Tầng trừu tượng hóa AI Provider (`BaseAIProvider`, `XkiroProvider`).
-  - [x] `project_generator.py` — hàm `generate_project_from_prompt()`, gọi thật qua endpoint `/ai/generate-project` + Celery `ai_tasks.generate_project_task`.
-  - [x] Models logging (`ai_requests`, `ai_outputs`, `risk_reports`) đã migrate.
-  - [ ] Impact Analysis / Schedule Optimize / Risk Analysis / Document Parsing (đang là stub trong `ai_tasks.py`).
-  - [ ] AI Project Generator UI, Impact Analysis, Schedule Optimization, Resource Recommendation, Risk Analysis.
+  - [x] **AI Project Generator (SOP-AI-001):** endpoint `/ai/generate-project`, Celery sinh cấu trúc dự án thật và UI `AIGeneratorModal`.
+  - [x] **AI Impact Analysis (SOP-AI-002):** Change Request CRUD tối giản, endpoint `/ai/impact-analysis`, lưu `impact_reports` và UI phân tích tác động.
+  - [x] **AI Schedule Optimization (SOP-AI-003):** endpoint `/ai/optimize-schedule` và `SchedulePanel`; kết quả là đề xuất, không tự ghi đè lịch.
+  - [x] **AI Resource Recommendation (SOP-AI-004):** endpoint `/ai/resource-recommendation` và `ResourceRecommendationPanel`.
+  - [x] **AI Risk Analysis (SOP-AI-005):** endpoint `/ai/risk-analysis`, lưu `risk_reports`, `RiskWidget` và Celery Beat quét lúc 08:30 hằng ngày.
+  - [x] Models logging/report (`ai_requests`, `ai_outputs`, `impact_reports`, `risk_reports`) đã migrate.
 
 - [ ] **Phase 4 — Workflow & Reporting Module** *(~30%)*
   - [x] Hệ thống Quản trị & Audit Timeline toàn diện (`/admin/audit`, cursor pagination).
   - [x] Hạ tầng WebSocket + Redis Pub/Sub (`ws_manager.py`).
   - [x] Models DB: `change_requests`, `approvals`, `project_versions`, `impact_reports` đã migrate.
   - [x] Dashboard endpoints (`/dashboards`: KPI, EVA, Burndown).
-  - [ ] Change Request & Multi-Level Approval workflow (endpoint stub, chưa mount, chưa có UI).
+  - [~] Change Request đã có CRUD tối giản + submit + UI; Multi-Level Approval workflow, snapshot và apply chưa triển khai.
   - [ ] Project Versioning snapshot & Rollback (endpoint stub, chưa mount).
   - [ ] Interactive Gantt Chart endpoint + UI.
   - [ ] DOCX / XLSX Export (`report_tasks.py` là stub trả về rỗng, endpoint `/reports` chưa mount).
@@ -779,4 +786,4 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
 - **Giấy phép:** [MIT License](./LICENSE)
 
 ---
-*Cập nhật toàn diện hệ thống: 2026-09-16 (đối soát README với mã nguồn thực tế: 23/32 REST router đang mount + 2 WebSocket router, backend 261 test pass / frontend 28 test pass (7 file), Phase 3–5 mới ở mức hạ tầng).*
+*Cập nhật toàn diện hệ thống: 2026-09-18 (đối soát README với mã nguồn thực tế: 24/32 REST router đang mount + 2 WebSocket router; Phase 1–3 hoàn thành, Phase 4–5 đang phát triển).*
