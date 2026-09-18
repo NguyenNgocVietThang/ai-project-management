@@ -1,4 +1,4 @@
-# AI Project Planning & Portfolio Management System
+# Hệ thống Lập kế hoạch Dự án và Quản lý Danh mục bằng AI
 
 > **Hệ thống quản lý dự án & danh mục thông minh tích hợp AI — tương đương MS Project với lớp AI tự động phân tích, đề xuất và tối ưu hóa kế hoạch, hỗ trợ Real-time Project Chat và WebSocket Notifications.**
 
@@ -17,20 +17,20 @@
 
 1. [Tổng quan dự án](#1-tổng-quan-dự-án)
 2. [Kiến trúc hệ thống](#2-kiến-trúc-hệ-thống)
-3. [Technology Stack](#3-technology-stack)
+3. [Ngăn xếp công nghệ](#3-technology-stack)
 4. [Phân cấp cấu trúc dự án (WBS)](#4-phân-cấp-cấu-trúc-dự-án-wbs)
 5. [Cấu trúc thư mục dự án](#5-cấu-trúc-thư-mục-dự-án)
-6. [Database Schema (8 Domains & 34 Tables)](#6-database-schema-8-domains--34-tables)
+6. [Lược đồ cơ sở dữ liệu (8 Domains & 34 Tables)](#6-database-schema-8-domains--34-tables)
 7. [Hệ thống phân quyền (RBAC) & Quản trị Admin](#7-hệ-thống-phân-quyền-rbac--quản-trị-admin)
 8. [Quy trình vận hành chuẩn (SOP)](#8-quy-trình-vận-hành-chuẩn-sop)
 9. [Thuật toán cốt lõi & Hạ tầng Real-time](#9-thuật-toán-cốt-lõi--hạ-tầng-real-time)
-10. [API Specification & WebSocket Endpoints](#10-api-specification--websocket-endpoints)
+10. [Đặc tả API và các điểm cuối WebSocket](#10-api-specification--websocket-endpoints)
 11. [Cài đặt và Chạy hệ thống](#11-cài-đặt-và-chạy-hệ-thống)
 12. [Cấu hình & Biến môi trường](#12-cấu-hình--biến-môi-trường)
 13. [Quy tắc phát triển](#13-quy-tắc-phát-triển)
-14. [Roadmap phát triển](#14-roadmap-phát-triển)
+14. [Lộ trình phát triển](#14-roadmap-phát-triển)
 15. [Tài liệu tham khảo & Thuật ngữ](#15-tài-liệu-tham-khảo--thuật-ngữ)
-16. [License & Contributors](#16-license--contributors)
+16. [Giấy phép và người đóng góp](#16-license--contributors)
 
 ---
 
@@ -38,14 +38,14 @@
 
 Xây dựng một **web application quản lý dự án và danh mục đầu tư thông minh** tích hợp AI, tương đương MS Project nhưng được trang bị lớp AI tự động phân tích, sinh kế hoạch, đề xuất nhân sự, phát hiện rủi ro và đánh giá tác động thay đổi. Hệ thống hỗ trợ đa người dùng (multi-role), giao tiếp thời gian thực (Real-time Project Chat & WebSocket Notification Push) và quét lịch trình tự động qua Celery Beat.
 
-### Mục tiêu cốt lõi (tầm nhìn sản phẩm — không phải toàn bộ đã hoàn thành, xem [§14 Roadmap](#14-roadmap-phát-triển)):
+### Mục tiêu cốt lõi (tầm nhìn sản phẩm — không phải toàn bộ đã hoàn thành, xem [§14 Lộ trình](#14-roadmap-phát-triển)):
 - **Quản lý danh mục & dự án (Portfolio & Project Management)** theo chuẩn kết hợp Waterfall & Agile.
 - **Sinh kế hoạch dự án tự động (AI Project Generator)** từ mô tả ngôn ngữ tự nhiên (Prompt) thông qua xKiro (DeepSeek, Qwen, Mistral, ...).
 - **Tính toán đường găng (Critical Path Method - CPM)**, sắp xếp tô-pô (Topological Sort) và cân bằng tải nhân sự (Resource Leveling).
 - **Giao tiếp thời gian thực (Real-time Collaboration)**: Kênh Chat nội bộ theo từng dự án (`/ws/chat/{project_id}`) và đẩy thông báo tức thời (`/ws/notifications`) qua WebSocket kết hợp Redis Pub/Sub đa tiến trình.
 - **Hệ thống Quản trị & Audit Timeline**: Quản lý người dùng, vai trò, 34 quyền hạn (permissions) chi tiết và truy vết toàn bộ thay đổi hệ thống.
 - **Tự động quét lịch & gửi thông báo định kỳ**: Celery Beat quét định kỳ hàng ngày (08:00 Asia/Ho_Chi_Minh) các công việc bắt đầu trong ngày hoặc sắp đến hạn để gửi thông báo fan-out tới toàn bộ nhóm dự án.
-- **Phân tích tác động thay đổi (AI Impact Analysis)** và tối ưu lịch (Schedule Optimization) khi phát sinh Change Request.
+- **Phân tích tác động thay đổi (Phân tích tác động bằng AI)** và tối ưu lịch (Schedule Optimization) khi phát sinh Change Request.
 - **Dashboard & Báo cáo đa chiều**: Gantt Chart tương tác, Burndown, Burnup, Velocity, Earned Value Analysis (EVA, CPI, SPI), xuất file DOCX/XLSX.
 
 ### Trạng thái triển khai thực tế (cập nhật 2026-09-18)
@@ -121,35 +121,35 @@ FastAPI WS Endpoint (authenticate_ws đổi vé dùng-một-lần lấy từ POS
 
 ---
 
-## 3. Technology Stack
+## 3. Ngăn xếp công nghệ
 
-### Backend (Python)
+### Phía máy chủ (Python)
 | Thành phần | Công nghệ / Thư viện | Phiên bản | Mô tả |
 |---|---|---|---|
-| **Framework** | **FastAPI** | `0.115+` | Asynchronous High-performance Web Framework |
+| Khung phát triển | **FastAPI** | `0.115+` | Asynchronous High-performance Web Framework |
 | **ASGI Server** | `uvicorn[standard]` | `0.30.0` | ASGI Server với hỗ trợ native WebSocket |
-| **Language** | Python | `3.11+` | Type hints nghiêm ngặt, async/await |
+| Ngôn ngữ | Python | `3.11+` | Type hints nghiêm ngặt, async/await |
 | **ORM** | **SQLAlchemy** | `2.0.35+` | Async ORM & Session management (Mapped/mapped_column) |
 | **Database Driver** | `asyncpg` | `0.29.0` | High-performance Async PostgreSQL driver |
 | **Migrations** | **Alembic** | `1.13.3` | Database Schema Migration tool |
-| **Validation** | **Pydantic v2** | `2.9.0` | Data parsing & strict validation |
+| Kiểm tra dữ liệu | **Pydantic v2** | `2.9.0` | Data parsing & strict validation |
 | **Auth & Security** | `PyJWT`, `passlib[bcrypt]` | `2.13.0` | JWT Access/Refresh tokens, Password hashing (thay `python-jose` do CVE-2024-33663/33664) |
 | **Real-time Bus** | **Redis Pub/Sub + ConnectionManager** | `5.1.1` | Cross-process WebSocket broadcasting |
 | **Queue & Worker** | **Celery** | `5.4.0` | Background tasks & AI processing queue |
-| **Scheduler** | **Celery Beat** | `5.4.0` | Cron scheduler (quét task start/due-soon hàng ngày) |
+| Bộ lập lịch | **Celery Beat** | `5.4.0` | Cron scheduler (quét task start/due-soon hàng ngày) |
 | **Caching** | Redis (`redis.asyncio`) | `5.1.1` | In-memory caching & session store |
 | **AI Provider** | `openai` (SDK) | `1.51.0` | xKiro — cổng AI tương thích OpenAI, nhiều model miễn phí (DeepSeek, Qwen, Mistral, ...) |
-| **File Storage** | `minio` / `boto3` | `7.2.9` | S3-compatible storage (BRD/SRS, Avatar, Reports) |
-| **Email Service** | `fastapi-mail` + Jinja2 | `1.4.1` | Template email async dispatch |
-| **Reporting** | `python-docx`, `openpyxl` | — | Xuất báo cáo dự án định dạng DOCX & XLSX |
-| **Testing** | `pytest`, `pytest-asyncio`, `httpx` | — | Automated test suite (`backend/tests/unit/` + `backend/tests/integration/`, 261 passed) |
+| Lưu trữ tệp | `minio` / `boto3` | `7.2.9` | S3-compatible storage (BRD/SRS, Avatar, Reports) |
+| Dịch vụ email | `fastapi-mail` + Jinja2 | `1.4.1` | Template email async dispatch |
+| Báo cáo | `python-docx`, `openpyxl` | — | Xuất báo cáo dự án định dạng DOCX & XLSX |
+| Kiểm thử | `pytest`, `pytest-asyncio`, `httpx` | — | Automated test suite (`backend/tests/unit/` + `backend/tests/integration/`, 261 passed) |
 
-### Frontend (Next.js / React / TypeScript)
+### Phía giao diện (Next.js / React / TypeScript)
 | Thành phần | Công nghệ / Thư viện | Phiên bản | Mô tả |
 |---|---|---|---|
-| **Framework** | **Next.js 15 (App Router)** | `15.5+` | React Framework với Route Groups & Layouts |
+| Khung phát triển | **Next.js 15 (App Router)** | `15.5+` | React Framework với Route Groups & Layouts |
 | **UI Runtime** | **React** | `18.3.0` | Modern React with Server & Client components |
-| **Language** | **TypeScript** | `5.2.2+` | Full type-safety across frontend |
+| Ngôn ngữ | **TypeScript** | `5.2.2+` | Full type-safety across frontend |
 | **Global State** | **Zustand** | `4.4.0+` | Auth state persistence & Cookie synchronization |
 | **Server State** | **TanStack Query v5** | `5.0.0+` | React Query server-state caching & mutations |
 | **HTTP Client** | **Axios** | `1.5.0+` | Interceptors for JWT attach & refresh flow |
@@ -164,7 +164,7 @@ FastAPI WS Endpoint (authenticate_ws đổi vé dùng-một-lần lấy từ POS
 | **Date Utils** | `date-fns` | `2.30.0` | Date formatting and manipulation |
 
 ### Hạ tầng Docker (7 Dịch vụ trong `docker-compose.yml`)
-| Container Service | Base Image | Cổng ánh xạ | Chức năng |
+| Dịch vụ container | Ảnh nền | Cổng ánh xạ | Chức năng |
 |---|---|---|---|
 | `postgres` | `postgres:16-alpine` | `5432:5432` | Cơ sở dữ liệu quan hệ chính |
 | `redis` | `redis:7-alpine` | `6379:6379` | Cache, Celery Broker & WebSocket Pub/Sub Bus |
@@ -323,7 +323,7 @@ AI Project Planning & Portfolio Management system/
 
 ---
 
-## 6. Database Schema (8 Domains & 34 Tables)
+## 6. Lược đồ cơ sở dữ liệu (8 Domains & 34 Tables)
 
 Cơ sở dữ liệu gồm **34 bảng** (4 bảng quan hệ Many-to-Many + 30 bảng thực thể) chia thành **8 Domains chức năng**:
 
@@ -384,7 +384,7 @@ class Task(Base):
 | **Customer** | Khách hàng | Khởi tạo Change Request, Theo dõi tiến độ dự án của mình |
 | **Investor** | Nhà đầu tư | Xem Dashboard chỉ số Portfolio / Dự án ở chế độ **Read-only** |
 
-### Quản trị Admin Panel (Frontend `/admin`)
+### Quản trị Admin Panel (Phía giao diện `/admin`)
 - **Users (`/admin/users`)**: Tạo người dùng, chỉnh sửa thông tin, kích hoạt / vô hiệu hóa tài khoản an toàn (bảo vệ tài khoản admin cuối cùng).
 - **Roles (`/admin/roles`)**: Tạo vai trò tùy chỉnh, gán nhóm quyền theo tài nguyên từ 34 permissions (bảo vệ vai trò mặc định "Admin").
 - **Audit Logs (`/admin/audit`)**: Bảng truy vết toàn bộ thao tác hệ thống với bộ lọc theo loại đối tượng (`entity_type`) và phân trang.
@@ -394,15 +394,15 @@ class Task(Base):
 ## 8. Quy trình vận hành chuẩn (SOP)
 
 - **SOP-PM-001: Khởi tạo dự án & Quản lý thành viên**: PM tạo dự án, phân bổ ngân sách, gán thành viên qua `project_members`.
-- **SOP-AI-001: AI Project Generator**: PM nhập Prompt tự nhiên → AI sinh cấu trúc WBS (Phases, Sprints, Epics, Tasks, Dependencies) → Tự động tính toán CPM.
-- **SOP-AI-002: AI Impact Analysis**: BA/PM tạo và submit Change Request → AI phân tích tác động đến tiến độ, ngân sách, nguồn lực và đường găng → Lưu `impact_reports` để nhóm dự án xem xét.
+- **SOP-AI-001: AI Project Generator**: PM nhập Prompt tự nhiên → AI sinh cấu trúc WBS (Phases, Sprints, Epics, Tasks, Phụ thuộc) → Tự động tính toán CPM.
+- **SOP-AI-002: Phân tích tác động bằng AI**: BA/PM tạo và submit Change Request → AI phân tích tác động đến tiến độ, ngân sách, nguồn lực và đường găng → Lưu `impact_reports` để nhóm dự án xem xét.
 - **SOP-AI-003: Schedule Optimization**: AI đọc CPM, phân bổ nguồn lực và lịch nghỉ đã duyệt → Đề xuất fast-tracking, crashing hoặc phân công lại; không tự ghi đè lịch công việc.
 - **SOP-AI-004: Resource Recommendation**: AI kết hợp kỹ năng, tải công việc, chi phí và lịch nghỉ để xếp hạng ứng viên phù hợp cho từng task; chỉ đề xuất, không tự tạo assignment.
-- **SOP-AI-005: Risk Analysis**: Phân tích rủi ro thủ công hoặc tự động lúc 08:30 hằng ngày → Ghi lịch sử `risk_reports` và đề xuất biện pháp giảm thiểu.
+- **SOP-AI-005: Phân tích rủi ro**: Phân tích rủi ro thủ công hoặc tự động lúc 08:30 hằng ngày → Ghi lịch sử `risk_reports` và đề xuất biện pháp giảm thiểu.
 - **SOP-PM-002: Time Tracking & Timesheets**: Member bấm `Start`/`Stop` hoặc ghi nhận WorkLog thủ công → Cập nhật `actual_hours` và chi phí.
 - **SOP-PM-003: Critical Path Method (CPM)**: Tự động chạy thuật toán Topological Sort + Forward/Backward pass khi có cập nhật thời lượng hoặc quan hệ phụ thuộc.
 - **SOP-RM-001: Resource Leveling**: Kiểm tra tải nhân sự và cảnh báo khi phân bổ vượt quá 8 giờ/ngày.
-- **SOP-CR-001: Change Request Workflow**: CRUD và bước submit đã chạy thật để phục vụ AI Impact Analysis; chuỗi duyệt đa cấp `Customer → BA → PO → PM`, snapshot và apply vẫn nằm trong Phase 4.
+- **SOP-CR-001: Change Request Workflow**: CRUD và bước submit đã chạy thật để phục vụ Phân tích tác động bằng AI; chuỗi duyệt đa cấp `Customer → BA → PO → PM`, snapshot và apply vẫn nằm trong Phase 4.
 - **SOP-PM-004: Project Versioning & Rollback**: Tự động lưu snapshot baseline trước khi cập nhật lớn, cho phép so sánh Diff và khôi phục khi cần.
 - **SOP-CHAT-001: Project Real-time Chat**: Kênh chat nội bộ dự án kết nối qua WebSocket `/ws/chat/{project_id}`, lưu trữ lịch sử tin nhắn và đếm unread count.
 - **SOP-NOTI-001: Real-time Notification & Daily Sweep**: Đẩy thông báo tức thời qua WebSocket `/ws/notifications` khi có sự kiện (giao task, đổi trạng thái, cập nhật ngày); Celery Beat quét định kỳ 08:00 AM hàng ngày gửi thông báo task bắt đầu và sắp đến hạn.
@@ -475,7 +475,7 @@ async def publish(channel: str, message: dict):
 
 ---
 
-## 10. API Specification & WebSocket Endpoints
+## 10. Đặc tả API và các điểm cuối WebSocket
 
 ### Danh mục REST API Routers (`/api/v1/...`)
 
@@ -540,7 +540,7 @@ async def publish(channel: str, message: dict):
 ### Cách 1: Khởi chạy toàn bộ hệ thống bằng Docker Compose
 
 ```bash
-# 1. Khởi động 7 dịch vụ (PostgreSQL, Redis, MinIO, Backend, Celery Worker, Celery Beat, Frontend)
+# 1. Khởi động 7 dịch vụ (PostgreSQL, Redis, MinIO, Phía máy chủ, Celery Worker, Celery Beat, Phía giao diện)
 docker-compose up -d
 
 # 2. Kiểm tra trạng thái các container
@@ -557,7 +557,7 @@ docker-compose down
 
 ### Cách 2: Cài đặt và chạy thủ công (Local Development)
 
-#### 1. Khởi động Backend (FastAPI)
+#### 1. Khởi động Phía máy chủ (FastAPI)
 
 ```bash
 cd backend
@@ -602,7 +602,7 @@ cd backend
 celery -A app.workers.celery_app beat --loglevel=info
 ```
 
-#### 3. Khởi động Frontend (Next.js 15)
+#### 3. Khởi động Phía giao diện (Next.js 15)
 
 ```bash
 # Terminal 4: Khởi động Next.js App
@@ -618,7 +618,7 @@ Truy cập ứng dụng tại: **[http://localhost:3000](http://localhost:3000)*
 
 ## 12. Cấu hình & Biến môi trường
 
-### Backend Environment (`backend/.env`)
+### Môi trường phía máy chủ (`backend/.env`)
 
 ```env
 # Application
@@ -679,7 +679,7 @@ FACEBOOK_REDIRECT_URI=http://localhost:8000/api/v1/oauth/facebook/callback
 FRONTEND_URL=http://localhost:3000
 ```
 
-### Frontend Environment (`frontend/.env.local`)
+### Môi trường phía giao diện (`frontend/.env.local`)
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
@@ -707,7 +707,7 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
 
 ---
 
-## 14. Roadmap phát triển
+## 14. Lộ trình phát triển
 
 ```
 [Phase 1: Core Auth & RBAC] ──► [Phase 2: Project Core & Chat] ──► [Phase 3: AI Engine]
@@ -735,7 +735,7 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
   - [x] Endpoint `/cpm` công khai (`GET /projects/{id}/cpm`, chỉ đọc).
   - [ ] Endpoint `/gantt` + UI Gantt (thuộc Phase 4).
 
-- [x] **Phase 3 — AI Features Module** *(Hoàn thành 5/5 trụ cột AI)*
+- [x] **Phase 3 — Mô-đun tính năng AI** *(Hoàn thành 5/5 trụ cột AI)*
   - [x] Tầng trừu tượng hóa AI Provider (`BaseAIProvider`, `XkiroProvider`).
   - [x] **AI Project Generator (SOP-AI-001):** endpoint `/ai/generate-project`, Celery sinh cấu trúc dự án thật và UI `AIGeneratorModal`.
   - [x] **AI Impact Analysis (SOP-AI-002):** Change Request CRUD tối giản, endpoint `/ai/impact-analysis`, lưu `impact_reports` và UI phân tích tác động.
@@ -756,7 +756,7 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
 
 - [ ] **Phase 5 — Document AI & Polish** *(~40%)*
   - [x] **Real-time Notification Push qua WebSocket (`/ws/notifications`)**.
-  - [x] **Celery Beat Scheduled Runner trong Docker Compose**.
+  - [x] **Tiến trình Celery Beat chạy theo lịch trong Docker Compose**.
   - [x] Profile & Avatar MinIO (frontend + backend).
   - [ ] Document upload & AI parser (endpoint `/documents` là stub, chưa mount).
   - [ ] Investor Read-Only Dashboard view.
@@ -771,7 +771,7 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
 |---|---|---|
 | **BRD** | [docs/specs/system-architecture/brd.md](./docs/specs/system-architecture/brd.md) | Business Requirements Document — Yêu cầu nghiệp vụ |
 | **SRS** | [docs/specs/system-architecture/srs.md](./docs/specs/system-architecture/srs.md) | Software Requirements Specification — Đặc tả chức năng chi tiết |
-| **Architecture Design** | [docs/specs/system-architecture/design.md](./docs/specs/system-architecture/design.md) | Tài liệu thiết kế kiến trúc hệ thống tổng thể |
+| Thiết kế kiến trúc | [docs/specs/system-architecture/design.md](./docs/specs/system-architecture/design.md) | Tài liệu thiết kế kiến trúc hệ thống tổng thể |
 | **Sequence Diagrams** | [docs/specs/system-architecture/Sequence SOP/](./docs/specs/system-architecture/Sequence%20SOP/) | Chuỗi Sequence Diagrams PlantUML cho từng SOP |
 | **Interactive ERD** | [docs/diagrams/erd_ai_project_management.html](./docs/diagrams/erd_ai_project_management.html) | Sơ đồ tương tác cấu trúc 34 bảng Database |
 | **Roadmap từng Phase** | [docs/roadmap/](./docs/roadmap/) | PHASE_1_AUTH_MODULE → PHASE_5_DOCUMENT_AI_POLISH_MODULE |
@@ -780,7 +780,7 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
 
 ---
 
-## 16. License & Contributors
+## 16. Giấy phép và người đóng góp
 
 - **Lead Architect & Developer:** Nguyễn Ngọc Việt Thắng
 - **Giấy phép:** [MIT License](./LICENSE)

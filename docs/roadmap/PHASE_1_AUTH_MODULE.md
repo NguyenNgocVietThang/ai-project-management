@@ -1,4 +1,4 @@
-# Roadmap: Auth & User Onboarding Module (Phase 1)
+# Lộ trình: Auth & User Onboarding Module (Phase 1)
 
 > **Phiên bản:** 1.2 | **Cập nhật:** 2026-09-06  
 > **Trạng thái:** Hoàn thành, đã qua rà soát bảo mật | **Ngày hoàn thành:** 2026-08-22 (rà soát & gia cố: 2026-09-06) 
@@ -64,7 +64,7 @@ Module **Auth & User Onboarding (Phase 1)** chịu trách nhiệm thiết lập 
 - Backend: `POST /api/v1/auth/forgot-password`, `POST /api/v1/auth/reset-password`, FastAPI-Mail template.
 - Frontend: `ForgotPasswordForm.tsx`, `ResetPasswordForm.tsx`.
 
-### GIAI ĐOẠN 1.4 – Email Verification & Security Guard (SOP-AUTH-004)
+### GIAI ĐOẠN 1.4 – Email Xác minh & Security Guard (SOP-AUTH-004)
 - Backend: `GET /api/v1/auth/verify-email`, `POST /api/v1/auth/resend-verification`.
 - Frontend: `EmailVerificationBanner.tsx`, `/app/(auth)/verify-email/page.tsx`.
 

@@ -1,9 +1,9 @@
 ## graphify
 
-This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+Dự án có đồ thị tri thức tại `graphify-out/`, gồm các nút trung tâm, cấu trúc cộng đồng và quan hệ giữa các tệp.
 
-Rules:
-- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
-- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
-- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
-- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+Quy tắc:
+- Khi có câu hỏi về mã nguồn và `graphify-out/graph.json` tồn tại, chạy `graphify query "<câu hỏi>"` trước. Dùng `graphify path "<A>" "<B>"` để tìm quan hệ và `graphify explain "<khái niệm>"` để phân tích một khái niệm. Các lệnh này trả về đồ thị con đúng phạm vi, thường nhỏ hơn nhiều so với `GRAPH_REPORT.md` hoặc kết quả tìm kiếm thô.
+- Nếu `graphify-out/wiki/index.md` tồn tại, dùng tệp này để điều hướng tổng quan thay vì duyệt trực tiếp mã nguồn.
+- Chỉ đọc `graphify-out/GRAPH_REPORT.md` khi cần rà soát kiến trúc tổng thể hoặc khi các lệnh query/path/explain chưa cung cấp đủ ngữ cảnh.
+- Sau khi sửa mã, chạy `graphify update .` để cập nhật đồ thị (chỉ dùng AST, không tốn chi phí API).

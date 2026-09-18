@@ -1,6 +1,6 @@
-# Implementation Plan: Phase 3 (AI Features) — 4 trụ cột AI còn lại
+# Kế hoạch triển khai: Phase 3 (AI Features) — 4 trụ cột AI còn lại
 
-## Overview
+## Tổng quan
 
 Roadmap Phase 3 (`ROADMAP_PHASE_3_AI_FEATURES_MODULE.md`) đã xong SOP-AI-001 (AI Project
 Generator, chạy thật đầu-cuối). Bốn trụ cột còn lại vẫn là Celery task stub `TODO` không có
@@ -72,7 +72,7 @@ cả 4 xong, tôi (agent điều phối) tự làm 1 lượt "nối dây" tuần
 trên (mỗi trụ cột chỉ thêm vài dòng độc lập, không chồng lấn) — rồi chạy test + build để xác
 minh toàn bộ.
 
-## Task List
+## Danh sách công việc
 
 ### Nền tảng (tuần tự, làm trước, chặn Task 2)
 - [ ] Task 1: Change Request CRUD tối giản (schema + service + endpoint thật + mount router)
@@ -83,7 +83,7 @@ minh toàn bộ.
 - [ ] Task 4: Resource Recommendation — backend engine (skills + workload + cost) + frontend tool
 - [ ] Task 5: Risk Analysis — backend engine + persist RiskReport + frontend widget
 
-### Checkpoint: 4 trụ cột backend/frontend cô lập xong
+### Điểm kiểm tra: 4 trụ cột backend/frontend cô lập xong
 - [ ] Mỗi module mới có test unit pass độc lập
 - [ ] Không agent nào đụng file dùng chung
 
@@ -94,7 +94,7 @@ minh toàn bộ.
       kỳ), `ai.service.ts` + `ai.types.ts`, `layout.tsx` (2 tab mới), `messages/*.json`
       (i18n key mới)
 
-### Checkpoint: Tích hợp hoàn chỉnh
+### Điểm kiểm tra: Tích hợp hoàn chỉnh
 - [ ] `pytest` backend pass (đơn vị + mới)
 - [ ] `npm run build` / lint frontend pass
 - [ ] Kiểm tra thủ công qua browser: tạo Change Request → chạy Impact Analysis → xem report;
@@ -103,9 +103,9 @@ minh toàn bộ.
 - [ ] Cập nhật `ROADMAP_PHASE_3_AI_FEATURES_MODULE.md` — đánh dấu GIAI ĐOẠN 3.3–3.6 hoàn
       thành, cập nhật bảng trạng thái
 
-## Risks and Mitigations
+## Rủi ro và biện pháp giảm thiểu
 
-| Risk | Impact | Mitigation |
+| Rủi ro | Tác động | Biện pháp giảm thiểu |
 |---|---|---|
 | Đụng độ file dùng chung giữa các agent song song | Cao — mất code | Agent chỉ tạo/sửa file cô lập của mình; wiring do 1 agent (tôi) làm tuần tự sau |
 | Change Request là scope mở rộng ngoài "AI Features" thuần tuý | Trung bình | Giữ tối giản (không có workflow duyệt nhiều bước), ghi rõ quyết định phạm vi ở trên |
@@ -113,7 +113,7 @@ minh toàn bộ.
 | Schedule Optimization đề xuất ngày không hợp lệ (đè lên CPM thật) | Trung bình | Chỉ hiển thị đề xuất (read-only), KHÔNG tự động ghi đè lịch trình — PM tự áp dụng thủ công qua các API sẵn có |
 | Risk Analysis định kỳ chạy tràn nếu nhiều project ACTIVE | Thấp | Enqueue riêng từng project, Celery task đã có `task_acks_late` + retry tắt theo cấu hình hiện tại |
 
-## Open Questions
+## Câu hỏi còn mở
 
 - Workflow phê duyệt Change Request nhiều bước (Approval BA→PO→PM) — không nằm trong phạm
   vi này, cần một plan riêng nếu người dùng muốn làm tiếp.

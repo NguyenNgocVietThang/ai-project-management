@@ -1,12 +1,12 @@
-# System Architecture Design
-## AI Project Planning & Portfolio Management System
+# Thiết kế kiến trúc hệ thống
+## Hệ thống Lập kế hoạch Dự án và Quản lý Danh mục bằng AI
 
 **Version:** 2.2.2
 **Date:** 2026-09-16
 
 ---
 
-## Overview
+## Tổng quan
 
 Hệ thống **AI Project Planning & Portfolio Management** được thiết kế theo kiến trúc hiện đại, tập trung hoàn toàn vào **Python (FastAPI)** cho phía Server và **Next.js 15 (React + TypeScript)** cho phía Client. Thiết kế tối ưu hóa cho:
 - Tốc độ xử lý I/O bất đồng bộ (AsyncIO + SQLAlchemy Async Engine với asyncpg)
@@ -17,9 +17,9 @@ Hệ thống **AI Project Planning & Portfolio Management** được thiết k�
 
 ---
 
-## Technology Stack
+## Ngăn xếp công nghệ
 
-### Backend Layer
+### Lớp phía máy chủ
 
 | Thành phần | Thư viện | Phiên bản |
 |---|---|---|
@@ -34,24 +34,24 @@ Hệ thống **AI Project Planning & Portfolio Management** được thiết k�
 | Security (Hash) | passlib[bcrypt] | 1.7.4 |
 | Real-time Bus | Redis Pub/Sub + ConnectionManager | 5.1.1 |
 | Task Queue | Celery[redis] | 5.4.0 |
-| Scheduler | Celery Beat | 5.4.0 |
+| Bộ lập lịch | Celery Beat | 5.4.0 |
 | Message Broker / Cache | Redis | 5.1.1 |
 | AI — xKiro | openai (SDK) | 1.51.0 |
-| File Storage | minio / boto3 | 7.2.9 / 1.35.0 |
+| Lưu trữ tệp | minio / boto3 | 7.2.9 / 1.35.0 |
 | Email | fastapi-mail + Jinja2 | 1.4.1 / 3.1.4 |
 | Export DOCX | python-docx | 1.1.2 |
 | Export XLSX | openpyxl | 3.1.5 |
 | HTTP Client | httpx | 0.27.2 |
 | Date Utils | python-dateutil, pytz | 2.9.0 / 2024.2 |
-| Testing | pytest, pytest-asyncio, httpx | — |
+| Kiểm thử | pytest, pytest-asyncio, httpx | — |
 
-### Frontend Layer
+### Lớp phía giao diện
 
 | Thành phần | Thư viện | Phiên bản |
 |---|---|---|
-| Framework | Next.js (App Router) | ^15.5.25 |
+| Khung phát triển | Next.js (App Router) | ^15.5.25 |
 | UI Runtime | React | ^18.3.0 |
-| Language | TypeScript | ^5.2.2 |
+| Ngôn ngữ | TypeScript | ^5.2.2 |
 | Server State | TanStack Query v5 | ^5.0.0 |
 | Global State | Zustand | ^4.4.0 |
 | HTTP Client | Axios | ^1.5.0 |
@@ -82,7 +82,7 @@ Hệ thống **AI Project Planning & Portfolio Management** được thiết k�
 
 ---
 
-## Backend Architecture
+## Kiến trúc phía máy chủ
 
 Backend được thiết kế theo mô hình **Layered Architecture** (Kiến trúc phân tầng):
 
@@ -122,7 +122,7 @@ HTTP / WS Request
 └────────────────────────────────────────────────────────┘
 ```
 
-### Cấu trúc thư mục Backend thực tế
+### Cấu trúc thư mục phía máy chủ thực tế
 
 ```
 backend/
@@ -186,7 +186,7 @@ backend/
 
 ---
 
-## Frontend Architecture
+## Kiến trúc phía giao diện
 
 Frontend sử dụng **Next.js 15 App Router** theo mô hình **Feature-colocated architecture**:
 
@@ -233,7 +233,7 @@ frontend/src/
 
 ---
 
-## Database Schema (SQLAlchemy — 8 Domains, 34 Tables)
+## Lược đồ cơ sở dữ liệu (SQLAlchemy — 8 Domains, 34 Tables)
 
 ### ERD tổng quan
 
@@ -298,7 +298,7 @@ Hệ thống cung cấp 2 native FastAPI `WebSocket` endpoints được mount t�
 
 ---
 
-## Celery Beat & Scheduled Tasks
+## Celery Beat và tác vụ theo lịch
 
 Hệ thống thiết lập tiến trình `celery-beat` riêng biệt trong `docker-compose.yml`:
 - **Task**: `sweep-task-dates-daily` (`app/workers/notification_tasks.py`)

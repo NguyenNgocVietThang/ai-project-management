@@ -1,4 +1,4 @@
-# Roadmap: Portfolio & Project Core Module (Phase 2)
+# Lộ trình: Portfolio & Project Core Module (Phase 2)
 
 > **Phiên bản:** 1.2 | **Cập nhật:** 2026-09-06  
 > **Trạng thái:** Hoàn thành, đã qua rà soát | **Ngày hoàn thành:** 2026-08-22 (rà soát & gia cố: 2026-09-06) 
@@ -31,7 +31,7 @@ Module **Portfolio & Project Core (Phase 2)** xây dựng toàn bộ lớp quả
 | WBS, Phases, Sprints & Milestones | SOP-PM-003 | High | Hoàn thành | `WBSService` + Endpoints | `projects/[id]/wbs/page.tsx` (cây, trình sửa và hộp thoại xoá đều nội tuyến trong trang) |
 | Task CRUD & Dependencies Graph | SOP-PM-003 | Critical | Hoàn thành | `TaskService` + `scheduling_service.py` + `utils/cpm.py` | `projects/[id]/tasks/page.tsx` (bảng Kanban nội tuyến), `TaskDrawer` |
 | Assignments & WorkLogs Tracking | SOP-RM-001 | High | Hoàn thành | `ResourceService` | `TaskDrawer` (gán việc & ghi giờ), `projects/[id]/timesheet/page.tsx` |
-| Project & Portfolio Dashboard | Reporting | High | Hoàn thành | `DashboardService` + `NotificationService` | `StatsRow`, `ActiveProjectsGrid`, `MyTasksList`, `RecentActivityFeed`, `ProjectOverviewCharts`, `NotificationBell` |
+| Project & Portfolio Dashboard | Báo cáo | High | Hoàn thành | `DashboardService` + `NotificationService` | `StatsRow`, `ActiveProjectsGrid`, `MyTasksList`, `RecentActivityFeed`, `ProjectOverviewCharts`, `NotificationBell` |
 | Real-time Project Chat | SOP-CHAT-001 | High | Hoàn thành | `ChatService` + `/ws/chat/{id}` | `ChatPanel`, `ChatMessageItem`, `useChatSocket` |
 | Notification Triggers & Beat Sweep | SOP-NOTI-001 | High | Hoàn thành | `notify_project_team` + Celery Beat | `NotificationBell`, `useNotificationSocket` |
 
@@ -51,7 +51,7 @@ Module **Portfolio & Project Core (Phase 2)** xây dựng toàn bộ lớp quả
 - Backend: `WBSService`, `/api/v1/phases`, `/api/v1/sprints`, `/api/v1/epics`, `/api/v1/milestones`.
 - Frontend: `/app/(dashboard)/projects/[id]/wbs/page.tsx`, `WBSTreeView.tsx`.
 
-### GIAI ĐOẠN 2.4 – Task Management, Dependencies & CPM Engine
+### GIAI ĐOẠN 2.4 – Task Management, Phụ thuộc & CPM Engine
 - Backend: `TaskService`, `scheduling_service.py`, pure Python CPM (`app/utils/cpm.py`), `/api/v1/tasks`, `/api/v1/dependencies`. CPM chạy nội bộ khi cập nhật task/dependency và tính lại nền qua `workers/scheduling_tasks.py`, gộp trùng theo dự án khi vượt `CPM_SYNC_TASK_THRESHOLD` (mặc định 300 task). Endpoint `/api/v1/projects/{id}/cpm` đã mount, chỉ đọc (`endpoints/cpm.py`).
 - Frontend: `/app/(dashboard)/projects/[id]/tasks/page.tsx`, `KanbanBoard.tsx`, `TaskDrawer.tsx`.
 
@@ -87,7 +87,7 @@ Module **Portfolio & Project Core (Phase 2)** xây dựng toàn bộ lớp quả
 ## Rà soát 2026-09-06
 
 ### Lỗi chặn đã sửa
-- **Toàn bộ Dashboard trả 404.** Frontend gọi `/dashboard/…`, backend mount
+- **Toàn bộ Dashboard trả 404.** Phía giao diện gọi `/dashboard/…`, backend mount
   `/dashboards/…`. Trang chủ đã hỏng kể từ commit `0e3e498`.
 
 ### Bảo mật

@@ -59,11 +59,7 @@ class DashboardService:
 
     def __init__(self, db: AsyncSession):
         self.db = db
-
-    # ─────────────────────────────────────────────────────────────────────────
-    #  3.1  Home Dashboard – tóm tắt cho người dùng
-    # ─────────────────────────────────────────────────────────────────────────
-
+    #  3.1  Trang tổng quan – tóm tắt cho người dùng
     async def get_user_summary(self, user: User) -> UserDashboardSummary:
         today = date.today()
         admin = _is_admin(user)
@@ -113,11 +109,7 @@ class DashboardService:
             my_tasks=my_tasks,
             recent_activity=recent_activity,
         )
-
-    # ─────────────────────────────────────────────────────────────────────────
-    #  3.1  Portfolio Health
-    # ─────────────────────────────────────────────────────────────────────────
-
+    #  3.1  Sức khỏe danh mục
     async def get_portfolio_health(
         self, portfolio_id: int, user: User
     ) -> PortfolioHealthResponse:
@@ -183,18 +175,12 @@ class DashboardService:
             overall_progress=overall_progress,
             projects=portfolio_projects,
         )
-
-    # ─────────────────────────────────────────────────────────────────────────
     #  3.2  Thống kê Dashboard dự án
-    # ─────────────────────────────────────────────────────────────────────────
-
     async def get_project_stats(
         self, project_id: int, user: User
     ) -> ProjectDashboardStats:
         # Dùng chung một nguồn phân quyền cấp dự án với phần còn lại của Phase 2.
-        # Trước đây hàm này tự viết lại kiểm tra thành viên, và chính việc
-        # dashboard_service đứng ngoài phase2_common là lý do lỗi rò rỉ audit log
-        # lọt lưới. get_project_context cũng xử lý dự án đã xoá mềm.
+
         project = (await get_project_context(self.db, project_id, user)).project
 
         today = date.today()
@@ -272,11 +258,7 @@ class DashboardService:
             overdue_tasks=int(overdue_tasks),
             critical_tasks=int(critical_tasks),
         )
-
-    # ─────────────────────────────────────────────────────────────────────────
     #  Hàm hỗ trợ nội bộ
-    # ─────────────────────────────────────────────────────────────────────────
-
     async def _visible_project_ids(self, user_id: int, admin: bool) -> list[int]:
         """Trả về danh sách ID dự án mà người dùng này nhìn thấy được."""
         if admin:

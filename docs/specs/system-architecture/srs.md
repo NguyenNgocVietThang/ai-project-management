@@ -1,5 +1,5 @@
-# Software Requirements Specification (SRS)
-## AI Project Planning & Portfolio Management System
+# Đặc tả yêu cầu phần mềm (SRS)
+## Hệ thống Lập kế hoạch Dự án và Quản lý Danh mục bằng AI
 
 **Version:** 2.2.2
 **Date:** 2026-09-16
@@ -26,14 +26,14 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 
 ---
 
-## 2. Kiến trúc Hệ thống (System Architecture)
+## 2. Kiến trúc Hệ thống (Kiến trúc hệ thống)
 
-### 2.1 Công nghệ (Technology Stack)
+### 2.1 Công nghệ (Ngăn xếp công nghệ)
 
 | Layer | Công nghệ | Phiên bản |
 |---|---|---|
-| **Frontend** | Next.js (App Router), React, TypeScript, Tailwind CSS v3, Zustand, TanStack Query v5, Recharts, @dnd-kit, next-intl (i18n vi/en, locale trong cookie) | Next.js 15, React 18 |
-| **Backend** | FastAPI, Python, Pydantic v2, SQLAlchemy 2.0 (Async Engine), Alembic | Python 3.11+ |
+| Phía giao diện | Next.js (App Router), React, TypeScript, Tailwind CSS v3, Zustand, TanStack Query v5, Recharts, @dnd-kit, next-intl (i18n vi/en, locale trong cookie) | Next.js 15, React 18 |
+| Phía máy chủ | FastAPI, Python, Pydantic v2, SQLAlchemy 2.0 (Async Engine), Alembic | Python 3.11+ |
 | **Database** | PostgreSQL (primary), Redis (cache / pub-sub / session) | PG 16, Redis 7 |
 | **Storage** | MinIO (S3-compatible) — BRD/SRS, avatar, báo cáo xuất ra | latest |
 | **Real-time Bus** | Redis Pub/Sub + ConnectionManager (hỗ trợ scale đa tiến trình) | Redis 7 |
@@ -76,7 +76,7 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 
 ---
 
-## 3. Yêu cầu chức năng (Functional Requirements)
+## 3. Yêu cầu chức năng (Yêu cầu chức năng)
 
 ### 3.1 Authentication & Authorization (SRS-AUTH)
 
@@ -222,7 +222,7 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 
 ---
 
-### 3.12 Document & Reporting (SRS-RPT)
+### 3.12 Tài liệu và báo cáo (SRS-RPT)
 
 | ID | Yêu cầu |
 |---|---|
@@ -233,7 +233,7 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 
 ---
 
-## 4. Cơ sở dữ liệu (Database Schema — 8 Domains, 34 Tables)
+## 4. Cơ sở dữ liệu (Lược đồ cơ sở dữ liệu — 8 Domains, 34 Tables)
 
 | Domain | Số bảng | Danh sách bảng |
 |---|---|---|
@@ -272,7 +272,7 @@ Cả hai dùng vé một lần (single-use ticket, TTL 60 giây, cấp qua `POST
 
 ---
 
-## 6. Trạng thái Triển khai (Implementation Status)
+## 6. Trạng thái Triển khai (Trạng thái triển khai)
 
 > Đối soát với mã nguồn ngày 2026-09-16. API thực tế: **23 REST router + 2 WebSocket router** được mount; 234/234 unit test backend pass (`pytest tests/unit`), 28/28 unit test frontend pass trên 7 file (`vitest`).
 

@@ -1,17 +1,5 @@
-// Helper WebSocket tự kết nối lại, dùng chung bởi các hook real-time của chat và
-// notification (features/chat/hooks/useChatSocket.ts,
-// features/notifications/hooks/useNotifications.ts).
-//
-// Ba điểm khác biệt so với một wrapper reconnect ngây thơ, mỗi điểm sửa một lỗi thật:
-//
-//   * URL được dựng lại trước MỖI lần kết nối, không phải một lần lúc mount. Handshake
-//     cần một vé dùng một lần (xem backend app/core/ws_tickets.py) và vé cũ đã chết.
-//     Bản trước giữ nguyên URL đầu tiên, nên khi access token hết hạn, mọi lần thử
-//     lại đều bị từ chối và client quay vòng mãi mãi.
-//   * Backoff có jitter. Không có nó, mọi tab của mọi người dùng thức dậy cùng lúc
-//     sau một sự cố và cùng đập vào server (thundering herd).
-//   * Số lần thử có giới hạn. Bản trước thử lại vô hạn, kể cả khi server từ chối
-//     bằng 4401 — biến một lỗi xác thực thành bão request 4 lần/phút vĩnh viễn.
+// WebSocket dùng chung cho chat và thông báo: cấp vé mới ở mỗi lần kết nối,
+// giãn lần thử bằng jitter và dừng sau số lần giới hạn.
 
 export interface WSClientOptions {
   /** Được gọi trước mỗi lần kết nối. Trả về null để bỏ cuộc (vd không còn phiên). */
