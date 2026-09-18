@@ -120,7 +120,7 @@ async def test_timer_recovery_keeps_audit_in_the_correct_project(session, projec
     service = ResourceService(session)
     timer = await service.start_timer(first.id, owner)
     await session.flush()
-    # Remove membership and PM ownership while retaining the running worklog.
+    # Gỡ tư cách thành viên và quyền sở hữu của PM nhưng giữ lại nhật ký đang chạy.
     replacement = await make_user()
     project.pm_id = replacement.id
     await session.execute(delete(project_members).where(project_members.c.project_id == project.id))
@@ -206,6 +206,6 @@ async def test_timer_can_stop_within_the_same_clock_tick(session, project_work, 
 
     monkeypatch.setattr(resource_module, 'datetime', FixedClock)
     stopped = await service.stop_timer(timer.id, owner)
-    # SQLite drops timezone information when reading stored timestamps.
+    # SQLite bỏ thông tin múi giờ khi đọc dấu thời gian đã lưu.
     assert stopped.end_time.replace(tzinfo=UTC) > stopped.start_time.replace(tzinfo=UTC)
     assert stopped.hours == 0

@@ -1,17 +1,17 @@
-# Business Requirements Document (BRD)
-## AI Project Planning & Portfolio Management System
+# Tài liệu yêu cầu nghiệp vụ (BRD)
+## Hệ thống Lập kế hoạch Dự án và Quản lý Danh mục bằng AI
 
 **Version:** 2.2
 **Date:** 2026-08-22
 
 ---
 
-## 1. Tổng quan dự án (Project Overview)
+## 1. Tổng quan dự án (Tổng quan dự án)
 
 ### 1.1 Mục đích (Purpose)
 Xây dựng một hệ thống quản lý danh mục và kế hoạch dự án thông minh (AI Project Planning & Portfolio Management). Hệ thống có các tính năng cốt lõi tương đương Microsoft Project nhưng được tăng cường sức mạnh bởi Trí tuệ Nhân tạo (AI) để tự động hóa việc lên kế hoạch, phân bổ nguồn lực, phân tích rủi ro và đánh giá tác động của các thay đổi (Change Requests), đồng thời hỗ trợ cộng tác thời gian thực (Real-time Project Chat & WebSocket Notifications).
 
-### 1.2 Mục tiêu kinh doanh (Business Objectives)
+### 1.2 Mục tiêu kinh doanh (Mục tiêu kinh doanh)
 - **Tự động hóa lập kế hoạch:** Giảm 80% thời gian tạo cấu trúc WBS và lên lịch dự án nhờ AI (xKiro).
 - **Tối ưu hóa nguồn lực:** Tự động phát hiện cảnh báo quá tải (Resource Leveling) và gợi ý nhân sự phù hợp cho công việc.
 - **Kiểm soát rủi ro và thay đổi:** Chuẩn hóa quy trình Change Request (CR) nhiều bước, có AI phân tích tác động trước khi áp dụng.
@@ -21,22 +21,22 @@ Xây dựng một hệ thống quản lý danh mục và kế hoạch dự án t
 
 ---
 
-## 2. Phạm vi dự án (Project Scope)
+## 2. Phạm vi dự án (Phạm vi dự án)
 
-### 2.1 Các tính năng trong phạm vi (In-Scope)
+### 2.1 Các tính năng trong phạm vi (Trong phạm vi)
 - **Quản lý phân cấp dự án:** Portfolio → Project → Phase / Sprint / Epic / Milestone → Task → Subtask.
 - **Thuật toán đường găng (CPM):** Tự động tính toán Early Start/Finish, Late Start/Finish, Total Float và xác định Critical Path.
 - **Cộng tác thời gian thực (Real-Time Collaboration):** Kênh Project Chat kết nối WebSocket, hỗ trợ phân trang lịch sử tin nhắn và đếm số tin chưa đọc.
 - **Thông báo đa kênh & Quét định kỳ:** Đẩy thông báo thời gian thực qua WebSocket, fan-out thông báo khi Task thay đổi và Celery Beat quét lịch tự động hàng ngày lúc 08:00 AM.
 - **Quản trị hệ thống & RBAC:** Quản lý Người dùng, Vai trò, gán 34 quyền hạn và xem Audit Timeline truy vết mọi thay đổi.
 - **Tích hợp AI (SOP-AI-001 đến SOP-AI-005):** Tạo dự án từ prompt, phân tích rủi ro, phân tích tác động, tối ưu lịch trình, gợi ý nhân sự.
-- **Quản lý Change Request (CR) & Phê duyệt đa cấp:** Luồng duyệt tuần tự BA → PO → PM kèm AI Impact Analysis.
+- **Quản lý Change Request (CR) & Phê duyệt đa cấp:** Luồng duyệt tuần tự BA → PO → PM kèm Phân tích tác động bằng AI.
 - **Time Tracking & Timesheet:** Ghi nhận giờ làm việc thực tế (`worklogs`) và kiểm tra quá tải tài nguyên.
 - **Quản lý phiên bản (Versioning & Rollback):** Snapshot baseline và khôi phục dữ liệu dự án.
 - **Dashboard & Báo cáo:** Gantt Chart tương tác, Burndown, Burnup, Velocity, CPI/SPI/EVA và xuất báo cáo DOCX/XLSX.
 - **Quản lý tài liệu:** Tải lên tài liệu BRD/SRS lên MinIO và bóc tách tài liệu bằng AI.
 
-### 2.2 Ngoài phạm vi (Out-of-Scope)
+### 2.2 Ngoài phạm vi (Ngoài phạm vi)
 - Thanh toán và tích hợp cổng thanh toán trực tuyến.
 - Quản lý kho mã nguồn (Git Server Hosting).
 - Tích hợp CI/CD Pipeline runner nội bộ.
@@ -71,7 +71,7 @@ Hệ thống hỗ trợ 7 vai trò riêng biệt với các quyền hạn cụ t
 ### 4.3 Quản lý yêu cầu thay đổi (Change Request Workflow - SOP-CR-001)
 - **Customer / PM** tạo CR.
 - **BA** và **PO** lần lượt xem xét và phê duyệt về mặt nghiệp vụ.
-- **AI** chạy `Impact Analysis` (SOP-AI-002) tính toán mức ảnh hưởng về chi phí, rủi ro, tiến độ.
+- **AI** chạy `Phân tích tác động` (SOP-AI-002) tính toán mức ảnh hưởng về chi phí, rủi ro, tiến độ.
 - **PM** đánh giá báo cáo AI. Nếu đồng ý, AI chạy tiếp `Schedule Optimization` (SOP-AI-003) để vẽ lại lịch trình tối ưu.
 - PM xác nhận bản lịch trình mới → Hệ thống tự động snapshot một bản `Project Version` cũ và apply thay đổi vào dự án chính thức.
 

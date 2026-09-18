@@ -35,13 +35,13 @@ làm workflow duyệt nhiều bước (bảng `approvals` giữ nguyên stub).
 
 ---
 
-## Checkpoint: Sau Task 1
+## Điểm kiểm tra: Sau Task 1
 - [x] `pytest tests/unit/test_change_request_service.py` pass — 6 passed
 - [x] Không sửa `router.py`, `endpoints/ai.py`, hay bất kỳ file dùng chung nào (việc mount router thuộc Task 6)
 
 ---
 
-## Task 2: AI Impact Analysis (SOP-AI-002) — song song, sau Task 1
+## Task 2: Phân tích tác động bằng AI (SOP-AI-002) — song song, sau Task 1
 
 **Description:** Sinh phân tích tác động (Timeline/Budget/Resource/Critical Path) cho 1
 Change Request bằng AI, ghi vào bảng `impact_reports`. Kèm UI: trang Change Requests
@@ -155,7 +155,7 @@ phép (`leaves`).
 
 ---
 
-## Task 5: AI Risk Analysis (SOP-AI-005) — song song, sau Task 1
+## Task 5: AI Phân tích rủi ro (SOP-AI-005) — song song, sau Task 1
 
 **Description:** Phân tích rủi ro dự án (trễ hạn, quá tải, vượt ngân sách), phân loại ma
 trận 5x5, gợi ý giảm thiểu. Ghi vào bảng `risk_reports`. Có thể trigger thủ công; quét định
@@ -193,7 +193,7 @@ kỳ do Task 6 nối vào Celery Beat.
 
 ---
 
-## Checkpoint: Sau Task 2–5 (chạy song song)
+## Điểm kiểm tra: Sau Task 2–5 (chạy song song)
 - [x] Cả 4 agent báo cáo hoàn thành, không ai đụng file dùng chung (3 agent chạy trong git
       worktree cô lập, 1 agent — Risk Analysis — chạy trực tiếp trên main tree do worktree
       thứ 4 bị lỗi tạo 2 lần liên tiếp, nhưng vẫn tuân thủ đúng ranh giới file)
@@ -263,7 +263,7 @@ Risk Analysis định kỳ, frontend service/types dùng chung, 2 tab nav mới,
 
 ---
 
-## Checkpoint: Hoàn chỉnh
+## Điểm kiểm tra: Hoàn chỉnh
 - [x] `pytest` backend pass toàn bộ (264/264 unit test)
 - [x] `npm run build` frontend pass
 - [ ] 4 luồng AI chạy được qua browser thật (preview_start), có ảnh chụp/log xác minh —

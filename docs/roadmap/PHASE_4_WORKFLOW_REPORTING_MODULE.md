@@ -1,4 +1,4 @@
-# Roadmap: Workflow & Reporting Module (Phase 4)
+# Lộ trình: Mô-đun quy trình và báo cáo (Phase 4)
 
 > **Phiên bản:** 1.2 | **Cập nhật:** 2026-09-03  
 > **Trạng thái:** ~30% — Audit Timeline (`/admin/audit`), hạ tầng WebSocket/Redis và Dashboard endpoints đã chạy thật. Change Request, Approvals, Project Versioning, Reports DOCX/XLSX, Gantt: MỚI có model DB / endpoint scaffold stub, CHƯA mount, CHƯA có UI. 
@@ -44,7 +44,7 @@ Module **Workflow & Reporting (Phase 4)** thiết lập cơ chế kiểm soát c
 | Change Request Workflow Engine | SOP-CR | Critical | Chỉ model DB | `change_requests.py`/`approvals.py` là stub `TODO`, chưa mount | Chưa có |
 | Project Versioning & Diff/Rollback | SOP-PM-004 | High | Chỉ model DB | `project_versions.py` là stub; không có `versioning_service` | Chưa có |
 | DOCX/XLSX Export via Celery | SOP-RPT-001 | High | Chỉ scaffold | `report_tasks.py` là stub trả về `file_url: ""`; `reports.py` chưa mount | Chưa có |
-| Agile & EVA Metrics Engine | Reporting | High | Hoàn thành | `dashboards.py` + `dashboard_service.py` (đã mount) | `BurndownChart`, `StatsRow` |
+| Agile & EVA Metrics Engine | Báo cáo | High | Hoàn thành | `dashboards.py` + `dashboard_service.py` (đã mount) | `BurndownChart`, `StatsRow` |
 
 ---
 

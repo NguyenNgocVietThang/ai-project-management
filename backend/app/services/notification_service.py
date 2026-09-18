@@ -100,11 +100,7 @@ class NotificationService:
             ]
         )
         return notifications
-
-    # ─────────────────────────────────────────────────────────────────────────
     #  Danh sách
-    # ─────────────────────────────────────────────────────────────────────────
-
     async def list(
         self,
         user_id: int,
@@ -139,11 +135,7 @@ class NotificationService:
             page_size=page_size,
             total_pages=total_pages,
         )
-
-    # ─────────────────────────────────────────────────────────────────────────
     #  Số lượng chưa đọc (nhẹ, được gọi thường xuyên cho badge)
-    # ─────────────────────────────────────────────────────────────────────────
-
     async def unread_count(self, user_id: int) -> UnreadCountResponse:
         count = await self._unread_count(user_id)
         return UnreadCountResponse(unread_count=count)
@@ -158,11 +150,7 @@ class NotificationService:
             )
             or 0
         )
-
-    # ─────────────────────────────────────────────────────────────────────────
     #  Đánh dấu một notification là đã đọc
-    # ─────────────────────────────────────────────────────────────────────────
-
     async def mark_read(self, notification_id: int, user_id: int) -> NotificationResponse:
         notification = await self.db.scalar(
             select(Notification).where(Notification.id == notification_id)
@@ -178,11 +166,7 @@ class NotificationService:
             await self.db.flush()
 
         return self._to_response(notification)
-
-    # ─────────────────────────────────────────────────────────────────────────
     #  Đánh dấu tất cả là đã đọc
-    # ─────────────────────────────────────────────────────────────────────────
-
     async def mark_all_read(self, user_id: int) -> MarkReadResponse:
         now = datetime.now(UTC)
         result = await self.db.execute(
@@ -195,11 +179,7 @@ class NotificationService:
         )
         updated = result.rowcount
         return MarkReadResponse(updated=updated, unread_count=0)
-
-    # ─────────────────────────────────────────────────────────────────────────
     #  Xóa notification
-    # ─────────────────────────────────────────────────────────────────────────
-
     async def delete(self, notification_id: int, user_id: int) -> None:
         notification = await self.db.scalar(
             select(Notification).where(Notification.id == notification_id)
@@ -210,11 +190,7 @@ class NotificationService:
             raise ForbiddenException("Access denied")
         await self.db.delete(notification)
         await self.db.flush()
-
-    # ─────────────────────────────────────────────────────────────────────────
     #  Hàm hỗ trợ static: đẩy một notification (được gọi từ các service khác)
-    # ─────────────────────────────────────────────────────────────────────────
-
     @staticmethod
     async def push(
         db: AsyncSession,
@@ -264,11 +240,7 @@ class NotificationService:
             },
         )
         return notification
-
-    # ─────────────────────────────────────────────────────────────────────────
     #  Bộ chuyển đổi (serialiser)
-    # ─────────────────────────────────────────────────────────────────────────
-
     @staticmethod
     def _to_response(n: Notification) -> NotificationResponse:
         return NotificationResponse(

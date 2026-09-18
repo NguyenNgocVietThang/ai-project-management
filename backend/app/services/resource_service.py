@@ -394,8 +394,8 @@ class ResourceService:
                 can_continue = False
             if can_continue:
                 raise ConflictException("You already have a running timer")
-            # A deleted project or revoked membership must not leave an invisible
-            # timer blocking all future work. Finalize only this user's timer.
+            # Dự án bị xóa hoặc quyền thành viên bị thu hồi không được để lại bộ
+            # đếm giờ ẩn; chỉ kết thúc bộ đếm của người dùng hiện tại.
             await self.stop_timer(active.id, user)
         now = datetime.now(UTC)
         item = Worklog(
@@ -416,8 +416,8 @@ class ResourceService:
         if item is None:
             raise NotFoundException("Worklog not found")
         if item.user_id == user.id:
-            # Owners can stop their own clock after losing project access, but
-            # all ordinary worklog reads/edits still require project access.
+            # Chủ nhật ký được dừng bộ đếm của mình sau khi mất quyền dự án;
+            # các thao tác đọc/sửa khác vẫn phải có quyền truy cập dự án.
             task = await self.db.get(Task, item.task_id)
             if task is None:
                 raise NotFoundException("Task not found")

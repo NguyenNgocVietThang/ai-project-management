@@ -1,4 +1,4 @@
-# Roadmap: Document AI & Polish Module (Phase 5)
+# Lộ trình: Mô-đun AI tài liệu và hoàn thiện (Phase 5)
 
 > **Phiên bản:** 1.2 | **Cập nhật:** 2026-09-03  
 > **Trạng thái:** ~40% — Real-time Notification Push (`/ws/notifications`), Celery Beat daily sweep và Profile/Avatar đã chạy thật. Document AI Parser (endpoint `/documents` stub, chưa mount), Investor Dashboard, Mobile polish: CHƯA làm. 
