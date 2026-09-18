@@ -1,0 +1,130 @@
+flowchart TD
+
+subgraph group_client["Client Experience"]
+  node_dashboard_ui["Dashboard UI<br/>[page.tsx]"]
+  node_project_ui["Project Workspace<br/>[page.tsx]"]
+  node_task_hook["Task Hooks<br/>[useTasks.ts]"]
+  node_chat_ui["Chat UI<br/>[useChatSocket.ts]"]
+  node_notification_ui["Notification UI"]
+  node_auth_service_client["Auth Client<br/>[auth.service.ts]"]
+end
+
+subgraph group_api["API Domains"]
+  node_api_router["REST Router<br/>[router.py]"]
+  node_auth_endpoint["Auth Endpoints<br/>[auth.py]"]
+  node_project_endpoint["Project Endpoints<br/>[projects.py]"]
+  node_task_endpoint["Task Endpoints<br/>[tasks.py]"]
+  node_ai_endpoint["AI Endpoints<br/>[ai.py]"]
+  node_dashboard_endpoint["Dashboard Endpoints<br/>[dashboards.py]"]
+  node_ws_chat["Chat WebSocket<br/>[chat.py]"]
+  node_ws_notifications["Notification WebSocket<br/>[notifications.py]"]
+end
+
+subgraph group_services["Application Services"]
+  node_auth_service["Authentication<br/>[auth_service.py]"]
+  node_project_service["Project Service<br/>[project_service.py]"]
+  node_task_service["Task Service<br/>[task_service.py]"]
+  node_ai_generation["AI Generation"]
+  node_cpm_engine["CPM Engine<br/>[cpm.py]"]
+  node_dashboard_service["Dashboard Service"]
+end
+
+subgraph group_realtime["Realtime Platform"]
+  node_ws_manager["Connection Manager<br/>[ws_manager.py]"]
+end
+
+subgraph group_data["Data And Workers"]
+  node_project_repository["Project Repository"]
+  node_task_repository["Task Repository<br/>[task_repository.py]"]
+  node_postgres[("PostgreSQL<br/>[session.py]")]
+  node_redis[("Redis<br/>[redis_client.py]")]
+  node_celery_queue["Celery Queue<br/>[celery_app.py]"]
+  node_ai_worker["AI Worker<br/>[ai_tasks.py]"]
+  node_schedule_worker["Schedule Worker"]
+end
+
+node_user(("Project User"))
+node_xkiro["xKiro Provider"]
+node_oauth_provider["OAuth Providers"]
+
+node_user -->|"authenticates"| node_auth_service_client
+node_user -->|"plans projects"| node_project_ui
+node_project_ui -->|"manages tasks"| node_task_hook
+node_auth_service_client -->|"requests auth"| node_auth_endpoint
+node_api_router -->|"dispatches"| node_auth_endpoint
+node_api_router -->|"dispatches"| node_project_endpoint
+node_api_router -->|"dispatches"| node_task_endpoint
+node_api_router -->|"dispatches"| node_ai_endpoint
+node_api_router -->|"dispatches"| node_dashboard_endpoint
+node_auth_endpoint -->|"calls"| node_auth_service
+node_project_endpoint -->|"calls"| node_project_service
+node_task_hook -->|"calls"| node_task_service
+node_task_service -->|"requests"| node_task_endpoint
+node_task_endpoint -->|"calls"| node_task_service
+node_ai_endpoint -->|"starts"| node_ai_generation
+node_dashboard_ui -->|"loads KPIs"| node_dashboard_endpoint
+node_dashboard_endpoint -->|"calls"| node_dashboard_service
+node_auth_service -->|"reads users"| node_project_repository
+node_project_service -->|"reads writes"| node_project_repository
+node_task_service -->|"reads writes"| node_task_repository
+node_project_repository -->|"queries"| node_postgres
+node_task_repository -->|"queries"| node_postgres
+node_dashboard_service -->|"aggregates"| node_postgres
+node_ai_endpoint -->|"queues job"| node_celery_queue
+node_celery_queue -->|"delivers job"| node_ai_worker
+node_ai_worker -->|"runs generation"| node_ai_generation
+node_ai_generation -.->|"requests plan"| node_xkiro
+node_ai_worker -->|"creates project"| node_project_service
+node_ai_worker -->|"stores output"| node_postgres
+node_project_service -->|"calculates CPM"| node_cpm_engine
+node_project_ui -->|"opens chat"| node_chat_ui
+node_chat_ui -->|"connects"| node_ws_chat
+node_notification_ui -->|"connects"| node_ws_notifications
+node_ws_chat -->|"registers sockets"| node_ws_manager
+node_ws_notifications -->|"registers sockets"| node_ws_manager
+node_ws_manager -->|"publishes subscribes"| node_redis
+node_schedule_worker -->|"runs scheduled"| node_celery_queue
+node_celery_queue -->|"delivers sweep"| node_schedule_worker
+node_auth_service -.->|"exchanges identity"| node_oauth_provider
+
+click node_dashboard_ui "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/frontend/src/app/(dashboard)/dashboard/page.tsx"
+click node_project_ui "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/frontend/src/app/(dashboard)/projects/%5Bid%5D/overview/page.tsx"
+click node_task_hook "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/frontend/src/features/tasks/hooks/useTasks.ts"
+click node_chat_ui "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/frontend/src/features/chat/hooks/useChatSocket.ts"
+click node_notification_ui "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/frontend/src/features/notifications/hooks/useNotifications.ts"
+click node_auth_service_client "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/frontend/src/services/auth.service.ts"
+click node_api_router "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/backend/app/api/v1/router.py"
+click node_auth_endpoint "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/backend/app/api/v1/endpoints/auth.py"
+click node_project_endpoint "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/backend/app/api/v1/endpoints/projects.py"
+click node_task_endpoint "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/backend/app/api/v1/endpoints/tasks.py"
+click node_ai_endpoint "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/backend/app/api/v1/endpoints/ai.py"
+click node_dashboard_endpoint "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/backend/app/api/v1/endpoints/dashboards.py"
+click node_ws_chat "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/backend/app/api/ws/chat.py"
+click node_ws_notifications "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/backend/app/api/ws/notifications.py"
+click node_auth_service "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/backend/app/services/auth_service.py"
+click node_project_service "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/backend/app/services/project_service.py"
+click node_task_service "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/backend/app/services/task_service.py"
+click node_ai_generation "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/backend/app/services/ai/project_generator.py"
+click node_cpm_engine "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/backend/app/utils/cpm.py"
+click node_dashboard_service "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/backend/app/services/dashboard_service.py"
+click node_ws_manager "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/backend/app/core/ws_manager.py"
+click node_project_repository "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/backend/app/repositories/project_repository.py"
+click node_task_repository "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/backend/app/repositories/task_repository.py"
+click node_postgres "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/backend/app/db/session.py"
+click node_redis "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/backend/app/core/redis_client.py"
+click node_celery_queue "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/backend/app/workers/celery_app.py"
+click node_ai_worker "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/backend/app/workers/ai_tasks.py"
+click node_schedule_worker "https://github.com/nguyenngocvietthang/ai-project-management/blob/main/backend/app/workers/scheduling_tasks.py"
+
+classDef toneNeutral fill:#f8fafc,stroke:#334155,stroke-width:1.5px,color:#0f172a
+classDef toneBlue fill:#dbeafe,stroke:#2563eb,stroke-width:1.5px,color:#172554
+classDef toneAmber fill:#fef3c7,stroke:#d97706,stroke-width:1.5px,color:#78350f
+classDef toneMint fill:#dcfce7,stroke:#16a34a,stroke-width:1.5px,color:#14532d
+classDef toneRose fill:#ffe4e6,stroke:#e11d48,stroke-width:1.5px,color:#881337
+classDef toneIndigo fill:#e0e7ff,stroke:#4f46e5,stroke-width:1.5px,color:#312e81
+classDef toneTeal fill:#ccfbf1,stroke:#0f766e,stroke-width:1.5px,color:#134e4a
+class node_dashboard_ui,node_project_ui,node_task_hook,node_chat_ui,node_notification_ui,node_auth_service_client,node_user toneBlue
+class node_api_router,node_auth_endpoint,node_project_endpoint,node_task_endpoint,node_ai_endpoint,node_dashboard_endpoint,node_ws_chat,node_ws_notifications toneAmber
+class node_auth_service,node_project_service,node_task_service,node_ai_generation,node_cpm_engine,node_dashboard_service toneMint
+class node_ws_manager toneRose
+class node_project_repository,node_task_repository,node_postgres,node_redis,node_celery_queue,node_ai_worker,node_schedule_worker,node_xkiro,node_oauth_provider toneIndigo
