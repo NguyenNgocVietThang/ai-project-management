@@ -180,9 +180,9 @@ class OAuthService:
             return {
                 "id": provider_id,
                 "email": profile.get("email"),
-                # Google trả về cờ này trong mọi response của userinfo. Nếu không đọc
-                # nó thì một identity mang email của người khác vẫn được gộp thẳng vào
-                # tài khoản local đang tồn tại — xem _get_or_create_social_user.
+                # Google trả cờ verified_email trong userinfo; nếu không đọc, identity mang
+                # email của người khác bị gộp vào tài khoản local đang có (xem
+                # _get_or_create_social_user).
                 "email_verified": bool(profile.get("verified_email")),
                 "full_name": profile.get("name") or profile.get("email", "").split("@")[0],
                 "avatar_url": profile.get("picture"),
@@ -237,11 +237,9 @@ class OAuthService:
             return {
                 "id": provider_id,
                 "email": profile.get("email"),
-                # Graph API không công bố trạng thái xác minh email dưới bất kỳ hình
-                # thức nào, nên ở đây không có gì để khẳng định. Không suy đoán: người
-                # dùng vẫn đăng nhập được, chỉ là không tự động gộp vào một tài khoản
-                # local có sẵn (họ có thể liên kết từ trang hồ sơ, nơi danh tính đã
-                # được chứng minh bằng phiên đăng nhập).
+                # Graph API không cho biết trạng thái xác minh email nên không tự động gộp
+                # vào tài khoản local có sẵn; người dùng vẫn đăng nhập được và có thể liên
+                # kết từ trang hồ sơ.
                 "email_verified": False,
                 "full_name": profile.get("name") or "Facebook User",
                 "avatar_url": picture,
@@ -298,9 +296,8 @@ class OAuthService:
                 if user.is_active is False:
                     raise UnauthorizedException("Account is inactive")
                 if not email_provider_verified:
-                    # Vẫn còn một đường an toàn để đi: đăng nhập bằng mật khẩu rồi
-                    # liên kết tài khoản mạng xã hội từ trang hồ sơ, ở đó quyền sở hữu
-                    # tài khoản đã được chứng minh bằng phiên đăng nhập.
+                    # Đường an toàn: đăng nhập bằng mật khẩu rồi liên kết mạng xã hội từ
+                    # trang hồ sơ.
                     raise ConflictException(
                         "An account with this email already exists. Sign in with your "
                         "password and link this provider from your profile settings."
@@ -330,9 +327,8 @@ class OAuthService:
             username = f"{base_username[: 50 - len(suffix)]}{suffix}"
             counter += 1
 
-        # users.email là NOT NULL + UNIQUE, nên identity không có email vẫn cần một giá
-        # trị. Nó được đánh dấu rõ ràng là chưa xác minh (khác với trước đây) để không
-        # có logic nào phía sau tưởng rằng đã kiểm chứng được địa chỉ này.
+        # users.email là NOT NULL + UNIQUE nên identity không có email vẫn cần một giá trị;
+        # đánh dấu chưa xác minh để logic phía sau không coi là đã kiểm chứng.
         effective_email = email or f"{provider}_{provider_id}@social.invalid"
         return await self.users.create(
             User(

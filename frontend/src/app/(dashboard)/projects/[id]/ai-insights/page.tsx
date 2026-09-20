@@ -1,10 +1,7 @@
 'use client'
 
-// Trang gộp 3 trụ cột AI còn lại của Phase 3 (không cần route riêng cho mỗi
-// cái): Risk Analysis (SOP-AI-005), Schedule Optimization (SOP-AI-003), và
-// Resource Recommendation (SOP-AI-004) — chọn 1 task rồi xin AI gợi ý người
-// phù hợp. AI Impact Analysis (SOP-AI-002) có trang riêng ở /change-requests
-// vì nó gắn liền với vòng đời một Change Request cụ thể.
+// Gộp Risk Analysis (SOP-AI-005), Schedule Optimization (SOP-AI-003) và Resource Recommendation
+// (SOP-AI-004). AI Impact Analysis (SOP-AI-002) có trang riêng ở /change-requests.
 import { useMemo, useState } from 'react'
 import { useNumericParam } from '@/hooks/useNumericParam'
 import { ErrorState, LoadingState } from '@/components/common/PageState'

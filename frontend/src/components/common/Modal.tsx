@@ -21,9 +21,8 @@ export function Modal({ open, onClose, title, description, children, className }
   const panelRef = useRef<HTMLElement>(null)
   const onCloseRef = useRef(onClose)
   useEffect(() => { onCloseRef.current = onClose }, [onClose])
-  // ID phải là duy nhất cho từng instance. Trước đây nó là chuỗi cứng
-  // "modal-title", và trang Tasks render TaskCreateModal cùng TaskDrawer cùng
-  // lúc — hai phần tử trùng id, DOM không hợp lệ, screen reader đọc sai tiêu đề.
+  // ID phải duy nhất cho từng instance vì nhiều modal có thể render cùng lúc (TaskCreateModal và
+  // TaskDrawer).
   const titleId = useId()
   const descriptionId = useId()
 

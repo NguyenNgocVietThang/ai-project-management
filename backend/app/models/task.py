@@ -60,15 +60,11 @@ class Task(Base):
     status: Mapped[TaskStatus] = mapped_column(Enum(TaskStatus), default=TaskStatus.TODO, nullable=False)
     priority: Mapped[TaskPriority] = mapped_column(Enum(TaskPriority), default=TaskPriority.MEDIUM, nullable=False)
     story_points: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    # JSONB, không phải JSON: cột trong DB là JSONB (migration 20260814), và chỉ
-    # comparator của JSONB mới sinh ra toán tử containment `@>`. Với JSON generic,
-    # `Task.labels.contains([...])` âm thầm rơi về so khớp chuỗi — nên bộ lọc
-    # `?labels=` không hoạt động và GIN index không bao giờ được dùng tới.
+    # JSONB thay vì JSON: chỉ comparator của JSONB sinh toán tử `@>` cho `.contains()`; với
+    # JSON thường bộ lọc `?labels=` rơi về so khớp chuỗi và không dùng được GIN index.
     labels: Mapped[list[str]] = mapped_column(
-        # with_variant: JSONB la kieu that trong Postgres (va la thu khien
-        # `.contains()` sinh ra toan tu `@>`), nhung SQLite khong biet no. Bien the
-        # nay cho phep bo test integration chay tren SQLite ma khong doi gi o
-        # hanh vi production.
+        # with_variant: SQLite không có JSONB; biến thể này cho test integration chạy trên
+        # SQLite mà không đổi hành vi production.
         JSONB().with_variant(JSON(), "sqlite"),
         default=list,
         nullable=False,

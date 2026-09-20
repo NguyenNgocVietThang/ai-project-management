@@ -1,10 +1,7 @@
 'use client'
 
-// SOP-AI-003: panel tự chứa cho việc tối ưu lịch trình bằng AI (fast-track /
-// crash / cân bằng workload). Component KHÔNG tự fetch danh sách task — nhận
-// `tasks` từ component cha để tra tên task theo task_id khi hiển thị đề xuất.
-// Đây là file cô lập, chưa được gắn vào page route nào — orchestrator sẽ ghép
-// vào trang project sau.
+// SOP-AI-003: panel tối ưu lịch trình bằng AI (fast-track / crash / cân bằng workload). Nhận
+// `tasks` từ component cha để tra tên task theo task_id.
 import { useId, useState } from 'react'
 import { Sparkles } from 'lucide-react'
 import { Alert } from '@/components/common/Alert'

@@ -39,9 +39,8 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   setTokens: (tokens) => set({ accessToken: tokens?.access_token ?? null }),
   setUser: (user) => set({ user }),
   clear: () => {
-    // Cookie thật là httpOnly và chỉ server xoá được (qua /auth/logout). Cờ này
-    // thì không, nên dọn nó ở đây để middleware không giữ người dùng ở trạng thái
-    // "đã đăng nhập" sau một lần đăng xuất mà request tới server bị lỗi.
+    // Cookie thật là httpOnly, chỉ server xoá được (qua /auth/logout); dọn cờ này để middleware
+    // không coi người dùng còn đăng nhập khi request logout lỗi.
     Cookies.remove(SESSION_FLAG_COOKIE, { path: '/' })
     set({ accessToken: null, user: null })
   },

@@ -20,9 +20,8 @@ from app.services.ai.parsing import wrap_user_input
 from app.services.ai.xkiro_provider import XkiroProvider
 from app.utils.cpm import compute_cpm_for_project
 
-# Model trả risk_level không hợp lệ (bịa chuỗi, sai kiểu...) thì mặc định về MEDIUM
-# chứ không phải LOW: một risk_level bịa ra vẫn cần người thật xem lại, và MEDIUM
-# buộc nó lọt vào các bộ lọc rà soát thay vì bị coi là an toàn.
+# risk_level không hợp lệ từ model thì mặc định MEDIUM (không phải LOW) để vẫn được người
+# thật rà soát.
 DEFAULT_RISK_LEVEL = RiskLevel.MEDIUM
 
 # Giữ prompt trong giới hạn MAX_USER_PROMPT_CHARS của wrap_user_input (8000 ký tự) —

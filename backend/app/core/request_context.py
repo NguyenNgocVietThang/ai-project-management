@@ -18,10 +18,9 @@ MAX_IP_LENGTH = 45
 
 _client_ip: ContextVar[str | None] = ContextVar("client_ip", default=None)
 
-# Dự án mà request hiện tại đang thao tác. Được get_project_context() đặt (xem
-# app/services/phase2_common.py) — tức là mọi đường vào tài nguyên phạm vi dự án
-# đều đi qua đó — và được đọc tại thời điểm INSERT AuditLog. Nhờ vậy audit_logs
-# có project_id để lọc mà không phải thêm tham số vào 30+ nơi gọi add_audit.
+# Dự án của request hiện tại, do get_project_context() đặt (app/services/phase2_common.py)
+# và đọc khi INSERT AuditLog, để audit_logs có project_id mà không phải truyền tham số qua
+# từng lời gọi.
 _project_id: ContextVar[int | None] = ContextVar("project_id", default=None)
 
 

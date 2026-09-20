@@ -31,9 +31,8 @@ export function useUnreadCount() {
  * lần ở cấp shell của dashboard (xem (dashboard)/layout.tsx), không phải mỗi trang. */
 export function useNotificationSocket() {
   const qc = useQueryClient()
-  // Hook này mount ở shell của dashboard, có thể trước khi phiên được khôi phục
-  // từ cookie refresh. Access token là dependency thật sự: nếu không, effect chạy
-  // một lần với token rỗng, bỏ cuộc, rồi không bao giờ thử lại.
+  // Hook mount ở shell dashboard, có thể trước khi phiên được khôi phục từ cookie refresh; access
+  // token là dependency để effect chạy lại khi có token.
   const accessToken = useAuthStore((state) => state.accessToken)
 
   useEffect(() => {

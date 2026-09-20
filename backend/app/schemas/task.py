@@ -42,9 +42,7 @@ class TaskUpdate(BaseModel):
     start_date: date | None = None
     due_date: date | None = None
     story_points: int | None = Field(default=None, ge=0)
-    # Truoc day khong co truong nay o bat ky schema ghi nao, nen `progress`
-    # chi nhan duoc 0 hoac 100 tu change_status - khong co cach nao ghi nhan
-    # mot cong viec dang lam do dang.
+    # Cho phép ghi tiến độ trung gian, không chỉ 0/100 từ change_status.
     progress: float | None = Field(default=None, ge=0, le=100)
     labels: list[str] | None = None
 

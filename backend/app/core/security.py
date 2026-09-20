@@ -14,11 +14,8 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 MIN_PASSWORD_LENGTH = 12
 MAX_PASSWORD_LENGTH = 72
 
-# Độ dài mới là thuộc tính thực sự chống lại việc crack offline, nên mức yêu cầu là
-# 12 ký tự thay vì một mớ quy tắc về lớp ký tự. Danh sách ngắn này
-# chỉ bắt được số ít mật khẩu xuất hiện đầu tiên trong mọi lần credential
-# stuffing; nó không thay thế được việc kiểm tra với breach-corpus (range API
-# k-anonymity của Have I Been Pwned là bước nâng cấp tự nhiên).
+# Yêu cầu tối thiểu 12 ký tự thay vì quy tắc về lớp ký tự. Danh sách ngắn này chỉ chặn các
+# mật khẩu phổ biến nhất, không thay thế kiểm tra với breach corpus (ví dụ HIBP).
 COMMON_PASSWORDS = frozenset(
     {
         "123456789012", "111111111111", "123123123123", "password1234",
@@ -71,8 +68,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     expire = _utcnow() + (
         expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     )
-    # jti: một id ổn định cho từng token để có thể thu hồi một token đơn lẻ (logout,
-    # xoay vòng refresh) mà không cần chờ nó hết hạn — xem
+    # jti định danh từng token để thu hồi riêng lẻ (logout, xoay refresh), xem
     # app/core/token_revocation.py.
     to_encode.update(
         {"exp": expire, "iat": _utcnow(), "type": "access", "jti": uuid.uuid4().hex}

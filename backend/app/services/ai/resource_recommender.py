@@ -76,9 +76,8 @@ async def _candidate_stats(db: AsyncSession, project_id: int, task: Task) -> lis
         (await db.scalars(select(User).where(User.id.in_(member_ids)))).all()
     )
 
-    # Tong gio phan bo tren cac assignment cua task CHUA o trang thai DONE - mot
-    # phep xap xi don gian cho "workload hien tai", khong can mo phong theo tung
-    # ngay nhu workload_warnings (o do can canh bao qua tai theo NGAY cu the).
+    # Workload hiện tại xấp xỉ bằng tổng giờ phân bổ trên các assignment của task chưa DONE;
+    # không cần mô phỏng theo từng ngày như workload_warnings.
     open_assignments = (
         await db.execute(
             select(Assignment.user_id, Assignment.allocated_hours)

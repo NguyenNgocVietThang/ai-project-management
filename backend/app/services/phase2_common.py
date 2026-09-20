@@ -35,10 +35,9 @@ async def get_project_context(
     project = await db.get(Project, project_id)
     if project is None or project.deleted_at is not None:
         raise NotFoundException("Project not found")
-    # Công bố dự án cho phần còn lại của request để mỗi dòng audit ghi lại được nó
-    # mà không cần truyền qua từng lời gọi — xem app/core/request_context.py. Chỉ
-    # đặt sau khi project đã được xác nhận tồn tại, và trước khi kiểm tra quyền
-    # cũng không sao: một request bị 403 thì không ghi audit nào cả.
+    # Đặt project cho phần còn lại của request để mỗi dòng audit ghi được project_id (xem
+    # app/core/request_context.py). Đặt sau khi xác nhận project tồn tại; request bị 403
+    # không ghi audit.
     set_current_project_id(project_id)
     admin = is_admin(user)
     if admin:
@@ -52,10 +51,9 @@ async def get_project_context(
         )
     )
     if role is None:
-        # project_service coi project.pm_id là quản lý dự án (xem _capabilities ở đó),
-        # nên nếu chỉ đọc project_members thì hai nơi có hai định nghĩa "PM" khác nhau.
-        # Hiện create() luôn thêm PM vào project_members nên chưa vỡ, nhưng bất kỳ
-        # đường nào đặt pm_id mà không thêm dòng thành viên sẽ khoá chính PM ra ngoài.
+        # project_service coi project.pm_id là PM (xem _capabilities); chỉ đọc
+        # project_members sẽ cho hai định nghĩa "PM" khác nhau, và khoá PM ra ngoài nếu
+        # pm_id được đặt mà không có dòng thành viên.
         if project.pm_id == user.id:
             return ProjectContext(project=project, role="PM", is_admin=False)
         raise ForbiddenException("You do not have access to this project")
@@ -103,9 +101,8 @@ async def notify_project_team(
         )
     ).all()
     recipients = [user_id for user_id in member_ids if user_id not in exclude]
-    # Một lần INSERT + một pipeline Redis cho cả nhóm. Vòng lặp gọi push() trước đây
-    # tốn một flush và một round-trip Redis cho MỖI thành viên, ngay trong request —
-    # nghĩa là mỗi lần đổi trạng thái task trên dự án 50 người phải trả 100 round-trip.
+    # Một INSERT và một pipeline Redis cho cả nhóm, thay vì một flush và một round-trip
+    # Redis cho mỗi thành viên ngay trong request.
     await NotificationService.push_many(
         db,
         recipients,

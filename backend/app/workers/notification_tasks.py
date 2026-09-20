@@ -45,11 +45,8 @@ def sweep_task_dates_task(self) -> dict:
     return asyncio.run(_sweep_with_own_session())
 
 
-# Bao nhieu task thi commit mot lan. Mot ban quet toan he thong co the cham hang
-# nghin task, moi task lai fan-out cho ca nhom; gom tat ca vao MOT transaction se
-# giu lock rat lau va mat trang neu co bat ky loi nao o cuoi. Cac cot
-# last_*_notified_at khien viec commit theo lo van an toan: phan da lam se khong
-# duoc lam lai o lan chay sau.
+# Commit theo lô: một bản quét có thể chạm hàng nghìn task, gom vào một transaction sẽ giữ
+# lock lâu. Các cột last_*_notified_at giúp phần đã làm không lặp lại ở lần chạy sau.
 COMMIT_BATCH_SIZE = 100
 
 

@@ -109,11 +109,8 @@ async def _persist_plan(db, plan: dict, user) -> "object":
     if not isinstance(phases_data, list) or not phases_data:
         raise BadRequestException("AI response has no phases")
 
-    # Một model đôi khi trả "phases" dạng list chuỗi tên phase kèm "tasks" là một
-    # mảng phẳng riêng ở cấp cao nhất, thay vì phases[].tasks[] lồng nhau như đã
-    # yêu cầu trong SYSTEM_PROMPT. Nếu không chặn ở đây, vòng lặp bên dưới âm thầm
-    # bỏ qua mọi phần tử không phải dict và tạo ra một Project rỗng (0 phase, 0
-    # task) nhưng vẫn báo COMPLETED — người dùng tưởng AI đã sinh xong kế hoạch.
+    # Model đôi khi trả "phases" là list tên kèm "tasks" phẳng ở cấp cao nhất thay vì
+    # phases[].tasks[]. Chặn ở đây, nếu không sẽ tạo Project rỗng nhưng vẫn báo COMPLETED.
     has_any_task = any(
         isinstance(phase, dict) and any(isinstance(task, dict) for task in (phase.get("tasks") or []))
         for phase in phases_data
@@ -388,9 +385,8 @@ async def _sweep_active_projects_for_risk() -> dict:
             project = await db.get(Project, project_id)
             if project is None:
                 continue
-            # Quét tự động không có user thao tác — gán cho PM cua du an de AIRequest
-            # van co user_id hop le (cot nay NOT NULL) va PM la nguoi hop ly nhat de
-            # xem lai job neu can.
+            # Bản quét tự động không có người thao tác nên gán cho PM của dự án
+            # (AIRequest.user_id là NOT NULL).
             ai_request = AIRequest(
                 project_id=project_id,
                 user_id=project.pm_id,

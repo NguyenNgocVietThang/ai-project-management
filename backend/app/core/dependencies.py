@@ -22,9 +22,8 @@ async def _user_from_token(token: str, db: AsyncSession) -> User:
     if payload is None or payload.get("type") != "access":
         raise credentials_exception
 
-    # Access token mang `jti` chính là để có thể thu hồi riêng lẻ. Nếu không tra
-    # danh sách thu hồi ở đây thì `jti` chỉ là trang trí, và logout không thực sự
-    # kết thúc phiên cho tới khi token tự hết hạn.
+    # Tra danh sách thu hồi theo `jti`; nếu không, logout không kết thúc phiên cho tới khi
+    # token hết hạn.
     if await is_revoked(payload.get("jti")):
         raise credentials_exception
 

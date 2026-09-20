@@ -103,9 +103,8 @@ async def chat_ws(
                     {"type": "error", "detail": "You are sending messages too quickly."}
                 )
                 continue
-            # Session ngắn hạn cho từng tin nhắn: giữ một session mở suốt vòng đời
-            # socket sẽ chiếm một connection trong pool cho tới khi người dùng
-            # đóng tab.
+            # Session ngắn hạn cho từng tin nhắn để không giữ một connection trong pool suốt
+            # vòng đời socket.
             async with AsyncSessionLocal() as db:
                 await ChatService(db).create_message(
                     project_id, user, ChatMessageCreate(content=content)

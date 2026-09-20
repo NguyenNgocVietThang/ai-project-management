@@ -35,8 +35,7 @@ async def _start(provider: str, oauth_service: OAuthServiceDep) -> RedirectRespo
     return response
 
 
-# Callback thực hiện hai lời gọi HTTP ra ngoài tới provider; nếu không giới hạn,
-# một kẻ chưa xác thực có thể ép server tạo request outbound không giới hạn và
+# Callback gọi hai request HTTP ra provider; cần giới hạn tốc độ để kẻ chưa xác thực không
 # làm cạn connection pool.
 @router.get("/google/login")
 @limiter.limit(OAUTH_START_LIMIT)
@@ -67,9 +66,7 @@ async def _handle_callback(
         )
         mode = parsed_state.mode
         if error or not code:
-            # `error` do provider (và qua đó, do kẻ tấn công) kiểm soát. Nó KHÔNG
-            # được phản chiếu vào URL của SPA — làm vậy là biến callback thành một
-            # kênh chèn văn bản tuỳ ý vào giao diện của chính mình.
+            # `error` do provider kiểm soát nên không được phản chiếu vào URL của SPA.
             raise BadRequestException("OAuth provider did not return a code")
 
         _, tokens = await oauth_service.complete_oauth(

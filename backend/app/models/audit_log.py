@@ -27,9 +27,8 @@ class AuditLog(Base):
         String(45), nullable=True, default=get_client_ip
     )
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
-    # Cũng được điền tự động từ request context. Nếu không có cột này thì không thể
-    # lọc dòng audit theo dự án, và feed hoạt động trên dashboard buộc phải trả về
-    # các thay đổi của những dự án mà người xem không thuộc về.
+    # Cũng điền từ request context; cần để lọc audit theo dự án và giới hạn feed dashboard
+    # theo dự án của người xem.
     project_id: Mapped[int | None] = mapped_column(
         ForeignKey("projects.id", ondelete="SET NULL"),
         nullable=True,

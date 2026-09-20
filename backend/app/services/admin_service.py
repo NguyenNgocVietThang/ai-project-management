@@ -113,9 +113,8 @@ class AdminUserService:
         return user
 
     async def create_user(self, data: AdminUserCreate, actor: User) -> User:
-        # Cùng một vector leo thang quyền như role_ids của update_user, chỉ qua một cửa khác:
-        # nếu không, người giữ quyền "user:create" có thể tạo một tài khoản mới mang
-        # role Admin và đăng nhập bằng tài khoản đó.
+        # Cùng vector leo thang quyền như role_ids của update_user: người có quyền
+        # "user:create" không được tạo tài khoản mang role Admin.
         if data.role_ids and not is_admin(actor):
             raise ForbiddenException(
                 "Admin privileges are required to assign roles to a new user"

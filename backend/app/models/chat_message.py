@@ -10,9 +10,8 @@ class ChatMessage(Base):
 
     __tablename__ = "chat_messages"
     __table_args__ = (
-        # ChatService.history lọc theo project_id + id < before_id và ORDER BY id
-        # DESC. Index trên created_at không phục vụ được thứ tự đó, nên Postgres
-        # vẫn phải sort toàn bộ lịch sử của dự án ở mỗi lần cuộn.
+        # ChatService.history lọc theo project_id + id < before_id và ORDER BY id DESC;
+        # index trên created_at không phục vụ được thứ tự này.
         Index("ix_chat_messages_project_id_desc", "project_id", text("id DESC")),
     )
 

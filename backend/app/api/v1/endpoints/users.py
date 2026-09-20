@@ -24,12 +24,8 @@ from app.services.user_service import UserServiceDep
 router = APIRouter()
 
 
-# ─── Admin: quản lý người dùng ─────────────────────────────────────────────────
-# NOTE: các route này dùng path converter tường minh "{user_id:int}" (không phải
-# "{user_id}" thường) để các route cố định như "/me" và "/search" bên dưới không bao giờ bị
-# các route admin nuốt mất — str converter mặc định của Starlette sẽ
-# khớp cả "me"/"search" và làm Pydantic ép kiểu int thất bại (422)
-# trước khi kịp rơi xuống route cố định.
+# Admin: quản lý người dùng. Dùng converter `{user_id:int}` để không nuốt các route cố định
+# `/me`, `/search` bên dưới (converter mặc định khớp cả "me" và gây 422).
 
 
 @router.get("/", response_model=PaginatedResponse[AdminUserResponse])
@@ -62,9 +58,8 @@ async def search_users(
     request: Request,
     current_user: CurrentUser,
     user_service: UserServiceDep,
-    # min_length=3: đây là bộ chọn thành viên, không phải nơi trút toàn bộ danh bạ. Một
-    # ký tự đơn ("a", "@") khớp gần như mọi tài khoản và cho phép bất kỳ người dùng đã đăng nhập
-    # nào thu thập toàn bộ danh sách nhân sự, bao gồm cả email.
+    # min_length=3: một ký tự đơn khớp gần như mọi tài khoản, cho phép thu thập toàn bộ nhân
+    # sự và email.
     q: Annotated[str, Query(min_length=3, max_length=200)],
     limit: Annotated[int, Query(ge=1, le=50)] = 20,
 ):
@@ -168,9 +163,8 @@ async def connect_social_account(
         mode="link",
         user_id=current_user.id,
     )
-    # Cookie phải được đặt ở đây chứ không phải lúc redirect: SPA nhận URL rồi tự
-    # điều hướng, nên đây là response cuối cùng mà ta còn chạm được tới trình duyệt
-    # trước khi nó rời sang tên miền của provider.
+    # Đặt cookie tại đây vì đây là response cuối cùng còn tới được trình duyệt trước khi rời
+    # sang tên miền provider.
     response.set_cookie(STATE_COOKIE_NAME, browser_secret, **state_cookie_kwargs())
     return OAuthConnectResponse(
         authorization_url=oauth_service.get_authorization_url(provider, state, challenge)

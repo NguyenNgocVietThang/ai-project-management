@@ -29,12 +29,9 @@ from app.api.v1.endpoints import (
 
 api_router = APIRouter()
 
-# Các router bị comment bên dưới (Phase 5: AI, documents, reports, CPM, Gantt,
-# change requests, ...) vẫn chỉ là các stub `TODO: Implement` thuần túy, KHÔNG có
-# dependency auth. Việc mount chúng đã phơi bày ~55 route CRUD không xác thực ra
-# internet. Chỉ bật lại từng cái khi đã có phần triển khai thực sự và một
-# dependency auth/permission — xem các file endpoint trong api/v1/endpoints/.
-
+# Chưa mount: leaves, skills, documents, approvals, gantt, reports, project_versions,
+# system. Các endpoint này vẫn là stub `TODO: Implement` không có auth; chỉ mount khi đã
+# có triển khai thật và dependency phân quyền.
 api_router.include_router(auth.router, prefix="/auth", tags=["Auth"])
 api_router.include_router(oauth.router, prefix="/oauth", tags=["OAuth"])
 api_router.include_router(users.router, prefix="/users", tags=["Users"])
@@ -52,24 +49,10 @@ api_router.include_router(dependencies.router, tags=["Dependencies"])
 api_router.include_router(assignments.router, tags=["Assignments"])
 api_router.include_router(worklogs.router, tags=["Worklogs"])
 api_router.include_router(chat.router, tags=["Chat"])
-# api_router.include_router(leaves.router, prefix="/leaves", tags=["Leaves"])
-# api_router.include_router(skills.router, prefix="/skills", tags=["Skills"])
-# api_router.include_router(documents.router, prefix="/documents", tags=["Documents"])
-# api_router.include_router(approvals.router, prefix="/approvals", tags=["Approvals"])
-# change_requests la ngoai le: khong con la stub CRUD khong auth nua (xem
-# services/change_request_service.py) — CRUD toi gian that, co
-# get_project_context + quyen PM/BA, lam nen cho AI Impact Analysis (SOP-AI-002).
 api_router.include_router(change_requests.router, tags=["Change Requests"])
-# api_router.include_router(gantt.router, prefix="/gantt", tags=["Gantt"])
-# CPM la ngoai le duy nhat trong danh sach bi comment o tren: engine da hoan chinh
-# va chay noi bo tu Phase 2, chi thieu duong doc ket qua. Endpoint nay chi doc va
-# co get_project_context, khong phai stub CRUD khong auth nhu cac file con lai.
 api_router.include_router(cpm.router, tags=["CPM"])
 api_router.include_router(resource_leveling.router, tags=["Resource Leveling"])
 api_router.include_router(dashboards.router, prefix="/dashboards", tags=["Dashboards"])
-# api_router.include_router(reports.router, prefix="/reports", tags=["Reports"])
 api_router.include_router(notifications.router, prefix="/notifications", tags=["Notifications"])
 api_router.include_router(audit_timeline.router, prefix="/audit", tags=["Audit"])
-# api_router.include_router(project_versions.router, prefix="/versions", tags=["Project Versions"])
 api_router.include_router(ai.router, prefix="/ai", tags=["AI"])
-# api_router.include_router(system.router, prefix="/system", tags=["System"])

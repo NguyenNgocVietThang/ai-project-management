@@ -19,27 +19,18 @@ class Settings(BaseSettings):
     APP_NAME: str = "AI Project Management API"
     APP_VERSION: str = "1.0.0"
     APP_ENV: str = "development"
-    # Cung mot gia tri duoc dung cho lich Celery Beat va cho `today` cua cac
-    # ban quet - xem app/workers/. Truoc day o day la Asia/Bangkok con Celery
-    # la Asia/Ho_Chi_Minh; cung mui gio nen chua vo, nhung do la trung hop.
+    # Dùng chung cho lịch Celery Beat và `today` của các bản quét (xem app/workers/).
     APP_TIMEZONE: str = "Asia/Ho_Chi_Minh"
     MAX_DAILY_WORK_HOURS: float = 8.0
-    # Trên ngưỡng này, việc tính lại đường găng được đẩy sang Celery thay vì chạy
-    # trong chính request. Việc tính lại là toàn dự án — nó nạp mọi task và
-    # dependency rồi ghi lại sáu cột trên từng dòng — nên chi phí tăng tuyến tính
-    # theo kích thước dự án trong khi thao tác kích hoạt nó (đổi tên một task, kéo
-    # thả một thẻ) thì không. Dưới ngưỡng, chạy đồng bộ vẫn rẻ và giữ cho UI luôn
-    # nhất quán ngay lập tức.
+    # Trên ngưỡng này, tính lại đường găng được đẩy sang Celery vì chi phí tăng theo kích
+    # thước dự án; dưới ngưỡng chạy đồng bộ để UI nhất quán ngay.
     CPM_SYNC_TASK_THRESHOLD: int = 300
     API_V1_PREFIX: str = "/api/v1"
-    # Danh sách cho phép của Host header cho TrustedHostMiddleware. "*" là ổn cho
-    # development cục bộ; hãy đặt các hostname thật ở production để chặn Host-header
-    # poisoning (link đặt lại mật khẩu được dựng từ FRONTEND_URL, nhưng cache và
-    # proxy lại key theo Host).
+    # Host cho TrustedHostMiddleware. "*" chỉ dùng cho development; production phải đặt
+    # hostname thật để chặn Host-header poisoning.
     ALLOWED_HOSTS: list[str] = ["*"]
-    # Chỉ bật khi chạy sau một reverse proxy có ghi đè X-Forwarded-For.
-    # Khi ứng dụng có thể truy cập trực tiếp, tin tưởng header này cho phép bất kỳ ai
-    # giả mạo IP được ghi trong audit log.
+    # Chỉ bật khi chạy sau reverse proxy có ghi đè X-Forwarded-For, nếu không ai cũng giả
+    # mạo được IP trong audit log.
     TRUST_PROXY_HEADERS: bool = False
     CORS_ORIGINS: list[str] = [
         "http://localhost:5173",
@@ -70,9 +61,8 @@ class Settings(BaseSettings):
     MINIO_BUCKET: str = "ai-project-files"
     MINIO_USE_SSL: bool = False
 
-    # xKiro — cổng AI tương thích OpenAI, gộp nhiều model miễn phí qua 1 API key.
-    # Mỗi task AI dùng một model riêng (xem app/services/ai/model_router.py) để
-    # cân bằng chất lượng/độ trễ theo từng loại việc, thay vì 1 model cho tất cả.
+    # xKiro: cổng AI tương thích OpenAI. Mỗi task AI dùng model riêng, xem
+    # app/services/ai/model_router.py.
     XKIRO_API_KEY: str = ""
     XKIRO_BASE_URL: str = "https://api.xkiro.com/v1"
     XKIRO_MODEL_PROJECT_GENERATION: str = "deepseek/deepseek-v4-pro"
@@ -132,10 +122,8 @@ class Settings(BaseSettings):
         if self.MINIO_ACCESS_KEY == "minioadmin" or self.MINIO_SECRET_KEY == "minioadmin":
             problems.append("MINIO_ACCESS_KEY/MINIO_SECRET_KEY are still the defaults")
 
-        # Ba mục dưới đây từng lọt lưới: chúng có giá trị mặc định dùng được cho
-        # development, nên một bản triển khai quên đặt chúng vẫn khởi động bình
-        # thường mà không có cảnh báo nào. Không mục nào tự bộc lộ khi hỏng — một
-        # ALLOWED_HOSTS mở toang trông y hệt một cái đã cấu hình đúng.
+        # Ba mục dưới có mặc định dùng được cho development nên quên đặt vẫn khởi động bình
+        # thường, vì vậy kiểm tra tường minh.
         if "*" in self.ALLOWED_HOSTS:
             problems.append(
                 "ALLOWED_HOSTS still accepts any Host header; list the real hostnames "

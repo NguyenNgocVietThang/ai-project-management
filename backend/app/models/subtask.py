@@ -16,9 +16,8 @@ class SubtaskStatus(str, enum.Enum):
 class Subtask(Base):
     __tablename__ = "subtasks"
     __table_args__ = (
-        # Postgres KHÔNG tự tạo index cho khoá ngoại. Nếu không có các dòng
-        # dưới đây, mọi truy vấn lọc theo dự án ở wbs_service và
-        # scheduling_service đều là seq scan toàn bảng.
+        # Postgres không tự tạo index cho khoá ngoại; cần cho các truy vấn lọc theo dự án ở
+        # wbs_service và scheduling_service.
         Index("ix_subtasks_task", "task_id"),
     )
 

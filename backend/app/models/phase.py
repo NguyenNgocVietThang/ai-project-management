@@ -17,9 +17,8 @@ class PhaseStatus(str, enum.Enum):
 class Phase(Base):
     __tablename__ = "phases"
     __table_args__ = (
-        # Postgres KHÔNG tự tạo index cho khoá ngoại. Nếu không có các dòng
-        # dưới đây, mọi truy vấn lọc theo dự án ở wbs_service và
-        # scheduling_service đều là seq scan toàn bảng.
+        # Postgres không tự tạo index cho khoá ngoại; cần cho các truy vấn lọc theo dự án ở
+        # wbs_service và scheduling_service.
         Index("ix_phases_project_order", "project_id", "order_index"),
     )
 

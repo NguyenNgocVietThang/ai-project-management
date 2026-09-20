@@ -397,9 +397,8 @@ class DashboardService:
             select(AuditLog, User.full_name.label("actor_name"))
             .outerjoin(User, User.id == AuditLog.user_id)
             .where(
-                # Không có mệnh đề này thì feed trả về các thay đổi mới nhất của TOÀN
-                # HỆ THỐNG cho bất kỳ ai đã đăng nhập — kèm mô tả và tên người thực hiện
-                # của những dự án mà người xem không thuộc về.
+                # Thiếu mệnh đề này, feed trả về thay đổi của toàn hệ thống cho mọi người
+                # dùng đã đăng nhập.
                 AuditLog.project_id.in_(project_ids),
                 AuditLog.entity_type.in_(["Task", "Project", "Phase", "Sprint", "Milestone"]),
             )

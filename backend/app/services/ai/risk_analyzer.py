@@ -101,9 +101,8 @@ async def _compute_signals(
     try:
         cpm_result = compute_cpm_for_project(tasks, dependencies)
     except ValueError:
-        # Chu trình phụ thuộc: không thể tính CPM. Không để lỗi này chặn cả lượt
-        # quét rủi ro — chỉ đơn giản là thiếu tín hiệu đường găng lần này (và bản
-        # thân chu trình phụ thuộc đáng lẽ đã bị chặn từ recalculate_project).
+        # Có chu trình phụ thuộc thì không tính được CPM; bỏ tín hiệu đường găng lần này
+        # thay vì chặn cả lượt quét.
         logger.warning(
             "Risk analysis: cycle detected in dependency graph for project_id=%s", project.id
         )
@@ -224,9 +223,8 @@ async def _count_overloaded_user_days(db: AsyncSession, tasks: list[Task], today
     return overloaded
 
 
-# Ngưỡng ánh xạ risk_score (đã clamp về [0,10]) sang RiskLevel khi AI không trả
-# về risk_level hợp lệ. Đơn giản, tuyến tính — chỉ là lưới an toàn, không phải
-# mô hình rủi ro chính (mô hình chính là chính AI).
+# Ngưỡng ánh xạ risk_score (đã clamp về [0,10]) sang RiskLevel khi AI không trả risk_level
+# hợp lệ; chỉ là lưới an toàn.
 _SCORE_LEVEL_THRESHOLDS: list[tuple[float, RiskLevel]] = [
     (2.5, RiskLevel.LOW),
     (5.0, RiskLevel.MEDIUM),
@@ -300,9 +298,8 @@ async def run_risk_analysis(db: AsyncSession, project_id: int) -> RiskReport:
     try:
         ai_result = await generate_risk_analysis(project, signals)
     except AIResponseError:
-        # Output của AI không dùng được (JSON hỏng, rỗng, quá lớn...). Không để
-        # cả lượt quét rủi ro sập — vẫn lưu một báo cáo với giá trị mặc định an
-        # toàn, để lịch sử risk_reports không bị thủng một khoảng thời gian.
+        # Output AI không dùng được (JSON hỏng, rỗng, quá lớn...): vẫn lưu báo cáo với giá
+        # trị mặc định an toàn để risk_reports không bị đứt quãng.
         logger.exception(
             "Risk analysis: AI returned unusable output for project_id=%s", project_id
         )

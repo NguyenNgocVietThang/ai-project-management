@@ -11,11 +11,8 @@ from app.workers.celery_app import celery_app
 logger = logging.getLogger(__name__)
 
 
-# Hai task truoc day o day - emails.send_notification va emails.send_welcome - la
-# stub tra ve {"status": "sent"} ma khong gui gi ca. Khong noi nao goi chung, nen
-# chung chi la bay: bat ky ai noi day vao mot luong deu nhan mot xac nhan gia.
-# Chung da duoc go bo. Thong bao trong ung dung di qua NotificationService; email
-# giao dich thi dung cac task ben duoi, deu la that va deu co retry.
+# Thông báo trong ứng dụng đi qua NotificationService; email giao dịch dùng các task bên
+# dưới.
 
 
 @celery_app.task(

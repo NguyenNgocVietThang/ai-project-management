@@ -52,9 +52,8 @@ export default function TasksPage() {
   const actions = useTaskActions(projectId)
   const t = useTranslations('tasks')
   const tCommon = useTranslations('common')
-  // KeyboardSensor: nếu không có nó, kéo-thả là thao tác chỉ dùng được bằng chuột
-  // và không có đường nào khác để đổi trạng thái từ bảng Kanban. Với sensor này,
-  // tay cầm kéo nhận focus, Space nhấc thẻ lên, mũi tên di chuyển, Space đặt xuống.
+  // KeyboardSensor để kéo-thả dùng được bằng bàn phím: Space nhấc thẻ, mũi tên di chuyển, Space đặt
+  // xuống.
   const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor))
   const tasks = query.data?.items || []
   const canCreate = Boolean(project.data?.capabilities.can_update || project.data?.current_user_role === 'BA')

@@ -6,10 +6,8 @@ from redis.asyncio import Redis
 
 from app.core.config import settings
 
-# Moi nguoi goi Redis o day deu soft-fail (thu hoi token, khoa dang nhap, ve
-# WebSocket, publish pub/sub). Nhung soft-fail chi co y nghia neu loi den NHANH:
-# khong co timeout, mot Redis khong phan hoi se khien moi lan dang nhap treo cho
-# den khi TCP tu bo - bien mot su co cache thanh su co toan he thong.
+# Mọi nơi gọi Redis đều soft-fail (thu hồi token, khoá đăng nhập, vé WebSocket, pub/sub) nên
+# cần timeout ngắn; nếu không một Redis treo sẽ làm treo mọi lần đăng nhập.
 CONNECT_TIMEOUT_SECONDS = 2
 OPERATION_TIMEOUT_SECONDS = 2
 

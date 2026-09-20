@@ -41,9 +41,8 @@ celery_app.conf.update(
     },
 )
 
-# Cần một tiến trình `celery -A app.workers.celery_app beat` chạy riêng
-# (xem service celery-beat trong docker-compose.yml) — chỉ mình worker sẽ
-# không bao giờ kích hoạt các task theo lịch.
+# Cần chạy riêng `celery -A app.workers.celery_app beat` (service celery-beat trong
+# docker-compose.yml); worker một mình không kích hoạt task theo lịch.
 celery_app.conf.beat_schedule = {
     "sweep-task-dates-daily": {
         "task": "notifications.sweep_task_dates",

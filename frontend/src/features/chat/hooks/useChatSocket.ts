@@ -22,9 +22,7 @@ export function useChatSocket(projectId: number, onMessage: (message: ChatMessag
     if (!projectId || !accessToken) return
 
     const client = connectWebSocket({
-      // Vé mới cho mỗi lần kết nối. Trước đây URL được tính một lần với access
-      // token nhúng sẵn, nên sau khi token hết hạn socket quay vòng vô hạn với
-      // một credential đã chết.
+      // Lấy vé mới cho mỗi lần kết nối; URL cố định mang access token sẽ chết khi token hết hạn.
       buildUrl: async () => {
         if (!useAuthStore.getState().accessToken) return null
         const ticket = await authService.webSocketTicket()

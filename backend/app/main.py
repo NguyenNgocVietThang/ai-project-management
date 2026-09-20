@@ -106,9 +106,8 @@ async def security_headers(request: Request, call_next):
 # Từ chối các request mang Host header mà chúng ta không phục vụ.
 app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.ALLOWED_HOSTS)
 
-# Rate limiting — bản thân limiter được gắn theo từng route qua decorator trong
-# app/api/v1/endpoints/*; đoạn này đăng ký handler 429 và hook app.state mà
-# slowapi dùng để tra cứu limiter.
+# Limiter gắn theo route bằng decorator ở app/api/v1/endpoints/*; đoạn này chỉ đăng ký
+# handler 429 và hook app.state cho slowapi.
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
 
@@ -119,9 +118,8 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    # Response header bị ẩn khỏi JS cross-origin trừ khi được liệt kê ở đây. Nếu
-    # thiếu, SPA sẽ nhận 429 mà không giải thích được, vì không đọc được cần chờ
-    # bao lâu.
+    # Header bị ẩn khỏi JS cross-origin nếu không liệt kê ở đây; thiếu thì SPA không đọc
+    # được thời gian chờ khi nhận 429.
     expose_headers=["Retry-After"],
 )
 

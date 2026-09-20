@@ -19,9 +19,8 @@ import {
 import { formatMoney } from '@/lib/format'
 import type { ProjectDashboardStats } from '../types/dashboard.types'
 
-// Toàn bộ recharts (~400KB) chỉ được import ở đây, và trang overview nạp component
-// này qua next/dynamic — nên thư viện nằm ở một chunk riêng tải sau lần vẽ đầu
-// tiên, thay vì nằm trong bundle chính của route.
+// recharts (~400KB) chỉ import ở đây và trang overview nạp qua next/dynamic, nên nằm ở chunk riêng
+// tải sau lần vẽ đầu.
 
 function ChartTooltip({
   active,

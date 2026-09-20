@@ -111,9 +111,8 @@ class AuthService:
         )
 
     async def authenticate(self, email: str, password: str) -> User:
-        # Kiểm tra khoá tài khoản trước cả khi tra cứu user: nếu không, mỗi lần thử
-        # trong lúc đang bị khoá vẫn tốn một lần so khớp bcrypt, biến chính cơ chế
-        # bảo vệ thành một kênh khuếch đại tải.
+        # Kiểm tra khoá tài khoản trước khi tra user để lượt thử trong lúc bị khoá không tốn
+        # thêm một lần so khớp bcrypt.
         locked_for = await seconds_until_unlocked(email)
         if locked_for:
             raise UnauthorizedException(
@@ -122,9 +121,8 @@ class AuthService:
 
         user = await self.users.get_by_email(email)
         if not user:
-            # Vẫn tính là một lần thất bại. Nếu chỉ đếm khi tài khoản tồn tại thì
-            # tốc độ phản hồi khác nhau giữa email có thật và không có thật sẽ tự nó
-            # là một kênh liệt kê tài khoản.
+            # Vẫn tính là một lần thất bại; nếu không, thời gian phản hồi khác nhau giữa
+            # email có thật và không có thật sẽ lộ ra tài khoản tồn tại.
             await record_login_failure(email)
             # Không ghi audit: không có tài khoản nào để quy trách nhiệm, và việc ghi lại
             # địa chỉ được thử sẽ tạo ra một danh bạ các phỏng đoán.
@@ -139,10 +137,9 @@ class AuthService:
                 user_id=user.id,
                 description="Failed password authentication",
             )
-            # Commit trước khi raise: get_db() sẽ rollback session trên bất kỳ
-            # exception nào, điều này sẽ loại bỏ đúng những bản ghi mà một cuộc
-            # điều tra brute-force cần. Bản ghi audit là thay đổi đang chờ duy nhất ở đây
-            # (mọi thứ phía trên nó đều là thao tác đọc), nên commit riêng nó là an toàn.
+            # Commit trước khi raise vì get_db() rollback khi có exception, sẽ mất bản ghi
+            # audit cần cho điều tra brute-force. Phía trên chỉ có thao tác đọc nên commit
+            # riêng bản ghi này là an toàn.
             await self.db.commit()
             await record_login_failure(email)
             raise UnauthorizedException("Incorrect email or password")

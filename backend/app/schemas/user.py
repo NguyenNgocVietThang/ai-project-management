@@ -69,11 +69,9 @@ OAuthProvider = Literal["google", "facebook"]
 
 
 class UserResponse(UserBase):
-    # Ghi đè UserBase.email (EmailStr): response phải phản ánh nguyên trạng dữ liệu đã lưu,
-    # bao gồm cả các địa chỉ tổng hợp như "deleted_<id>_<hex>@deleted.invalid" do
-    # quá trình ẩn danh của UserService.deactivate_account ghi ra — EmailStr từ chối
-    # TLD ".invalid" được dành riêng (RFC 2606) và sẽ gây lỗi 500 với bất kỳ tài khoản
-    # nào đã bị vô hiệu hóa/ẩn danh.
+    # Ghi đè UserBase.email (EmailStr): tài khoản đã ẩn danh có email dạng
+    # `deleted_<id>_<hex>@deleted.invalid`, EmailStr từ chối TLD `.invalid` (RFC 2606) và
+    # gây lỗi 500 khi trả response.
     email: str
     id: int
     is_active: bool

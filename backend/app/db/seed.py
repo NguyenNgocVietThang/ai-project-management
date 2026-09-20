@@ -15,9 +15,8 @@ import sys
 
 sys.path.insert(0, ".")
 
-# Mật khẩu của admin khởi tạo lấy từ biến môi trường. Trước đây nó là chuỗi
-# "Admin@123456", được in trong README — điều đó có nghĩa mọi lần triển khai
-# chạy seed đều kèm một tài khoản superuser mà ai cũng biết mật khẩu.
+# Mật khẩu admin lấy từ biến môi trường, không dùng chuỗi cố định để tránh một tài khoản
+# superuser ai cũng biết mật khẩu.
 SEED_ADMIN_EMAIL = os.getenv("SEED_ADMIN_EMAIL", "admin@example.com")
 SEED_ADMIN_USERNAME = os.getenv("SEED_ADMIN_USERNAME", "admin")
 
@@ -200,7 +199,7 @@ async def seed(db):
     await db.execute(insert(user_roles), [{"user_id": admin.id, "role_id": role_map["Admin"].id}])
 
     await db.commit()
-    print("\n✅ Seeded:")
+    print("\nSeeded:")
     print(f"   - {len(PERMISSIONS)} permissions")
     print(f"   - {len(ROLES)} roles")
     print(f"   - 1 admin user: {SEED_ADMIN_EMAIL}")
@@ -218,7 +217,7 @@ async def main():
 
     async with AsyncSessionLocal() as db:
         await seed(db)
-    print("\n🎉 Database seeded successfully!")
+    print("\nDatabase seeded successfully.")
 
 
 if __name__ == "__main__":

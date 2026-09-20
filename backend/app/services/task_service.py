@@ -529,11 +529,8 @@ class TaskService:
                 results.append(await self._response(loaded, user, context.role, context.is_admin))
         else:
             update_data = TaskUpdate(**data.model_dump(exclude={"task_ids", "status"}, exclude_none=True))
-            # `self.update()` tính lại CPM toàn dự án VÀ phát thông báo cho cả nhóm
-            # ở mỗi lần gọi. Chạy nó trong vòng lặp biến một lần sửa hàng loạt 50
-            # task thành 50 lần tính lại toàn dự án và 50 × số-thành-viên thông báo.
-            # Nhánh status ngay phía trên đã làm đúng: áp dụng tất cả, rồi tính lại
-            # một lần. Nhánh này giờ theo cùng cách.
+            # `self.update()` tính lại CPM toàn dự án và thông báo cho cả nhóm ở mỗi lần
+            # gọi; áp dụng tất cả thay đổi rồi tính lại một lần, như nhánh status phía trên.
             for task_id in data.task_ids:
                 results.append(
                     await self.update(task_id, update_data, user, defer_recalculation=True)
@@ -555,9 +552,7 @@ class TaskService:
         await recalculate_project(self.db, project_id)
 
     async def list_subtasks(self, task_id: int, user: User):
-        # Cùng allowlist với danh sách task. Trước đây hàm này chỉ kiểm tra tư cách
-        # thành viên, nên vai trò Customer — bị chặn khỏi danh sách task — vẫn đọc
-        # được subtask, tức là vẫn thấy chính những công việc đó.
+        # Dùng cùng allowlist với danh sách task để vai trò Customer không đọc được subtask.
         _, context = await get_task_context(self.db, task_id, user)
         _require_task_reader(context)
         return [SubtaskResponse.model_validate(item) for item in (await self.db.scalars(select(Subtask).where(Subtask.task_id == task_id).order_by(Subtask.id))).all()]

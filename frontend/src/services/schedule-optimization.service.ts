@@ -1,6 +1,4 @@
 // SOP-AI-003: service gọi API tối ưu lịch trình bằng AI.
-// Không import/sửa services/ai.service.ts (thuộc phạm vi orchestrator quản lý) —
-// dùng thẳng `api` để tránh xung đột merge.
 import { api } from '@/services/api'
 import type {
   ScheduleOptimizationJobResponse,

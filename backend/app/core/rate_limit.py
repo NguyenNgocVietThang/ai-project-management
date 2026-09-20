@@ -36,9 +36,8 @@ OAUTH_CALLBACK_LIMIT = "10/minute"
 # Vé WebSocket rẻ nhưng được xin lại ở mỗi lần kết nối lại; hạn mức này đủ rộng
 # cho việc chuyển tab và mạng chập chờn, đủ chặt để một vòng lặp kết nối lại bị lộ.
 WS_TICKET_LIMIT = "60/minute"
-# Chat qua WebSocket đã có budget riêng theo từng socket (10 tin/10 giây, xem
-# app/api/ws/chat.py). Đường REST dự phòng thì không có gì, nên client chỉ cần đổi
-# sang nó là spam thoải mái — hạn mức này khớp với budget của socket.
+# Chat WebSocket đã có budget riêng theo socket (10 tin/10 giây, xem app/api/ws/chat.py);
+# hạn mức của đường REST dự phòng khớp với budget đó.
 CHAT_POST_LIMIT = "60/minute"
 # Ghi hàng loạt: mỗi lần gọi có thể chạm tới hàng trăm task và kéo theo một lần
 # tính lại lịch trình toàn dự án.
@@ -62,10 +61,9 @@ limiter = Limiter(
     key_func=client_key,
     storage_uri=settings.REDIS_URL,
     strategy="fixed-window",
-    # Tắt vì slowapi chèn các header X-RateLimit-* của nó bằng cách sửa đổi giá trị
-    # mà endpoint trả về, điều này chỉ hoạt động với handler trả về một Response
-    # object — của chúng ta trả về Pydantic model. Đường 429 vẫn mang
-    # Retry-After, được thêm bởi rate_limit_exceeded_handler bên dưới.
+    # Tắt vì slowapi chèn header X-RateLimit-* bằng cách sửa giá trị endpoint trả về, chỉ
+    # chạy với handler trả Response (ở đây là Pydantic model). Đường 429 vẫn có Retry-After
+    # từ rate_limit_exceeded_handler.
     headers_enabled=False,
     # Redis sập phải suy giảm về đếm cục bộ, không bao giờ thành lỗi 500 khi
     # thử login — bus WS cũng đã coi Redis là soft-fail vì lý do tương tự.

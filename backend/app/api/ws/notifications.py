@@ -29,8 +29,7 @@ async def notifications_ws(
     )
     try:
         while True:
-            # Client không bao giờ cần gửi gì có ý nghĩa ở đây — dòng này giữ
-            # vòng lặp sống để ta phát hiện ngắt kết nối qua exception
+            # Client không gửi gì có ý nghĩa; dòng này giữ vòng lặp sống để bắt
             # WebSocketDisconnect bên dưới.
             await websocket.receive_text()
     except WebSocketDisconnect:

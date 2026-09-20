@@ -18,9 +18,8 @@ const REQUEST_TIMEOUT_MS = 20_000
 export const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: REQUEST_TIMEOUT_MS,
-  // Backend đặt cookie httpOnly (ràng buộc luồng OAuth, và refresh token) mà
-  // trình duyệt sẽ bỏ qua trên request cross-origin nếu không có cờ này —
-  // frontend và API nằm ở origin khác nhau cả khi phát triển lẫn khi triển khai.
+  // Cookie httpOnly (OAuth, refresh token) bị trình duyệt bỏ qua ở request cross-origin nếu thiếu
+  // cờ này; frontend và API khác origin.
   withCredentials: true,
 })
 
@@ -88,9 +87,8 @@ api.interceptors.response.use(
       } catch (refreshError) {
         authStore.getState().clear()
         if (typeof window !== 'undefined') {
-          // Điều hướng thẳng thay vì router.replace: phiên đã chết, nên tải lại
-          // hoàn toàn là điều mong muốn — nó dọn sạch mọi state còn sót trong bộ
-          // nhớ. Giữ lại đường dẫn hiện tại để quay về sau khi đăng nhập lại.
+          // Điều hướng thẳng thay vì router.replace để tải lại hoàn toàn và dọn state; giữ đường
+          // dẫn hiện tại để quay lại sau khi đăng nhập.
           const from = encodeURIComponent(window.location.pathname + window.location.search)
           window.location.href = `/login?from=${from}`
         }

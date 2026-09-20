@@ -69,11 +69,9 @@ async def recalculate_project(
         try:
             result = compute_cpm_for_project(tasks, dependencies)
         except ValueError:
-            # Chu trình trong đồ thị phụ thuộc. add_dependency đã kiểm tra trước khi
-            # ghi, nhưng kiểm tra đó không có khoá, nên hai request đồng thời vẫn có
-            # thể tạo ra chu trình. Nếu để lỗi này nổi lên, MỌI thao tác ghi trên dự
-            # án sẽ trả 500 vĩnh viễn — kể cả thao tác xoá dependency vốn là cách
-            # duy nhất để thoát ra.
+            # Chu trình trong đồ thị phụ thuộc: add_dependency đã kiểm tra nhưng không có
+            # khoá nên hai request đồng thời vẫn có thể tạo ra. Không để lỗi nổi lên, nếu
+            # không mọi thao tác ghi trên dự án trả 500, kể cả xoá dependency.
             logger.exception(
                 "Cycle detected while recalculating project_id=%s; leaving previous "
                 "schedule values in place so the graph can still be repaired",
@@ -101,9 +99,7 @@ async def recalculate_project(
     completed = sum(task.status == TaskStatus.DONE for task in tasks)
     project.progress = round(completed / total * 100, 2) if total else 0.0
 
-    # Epic.story_points chua tung duoc tinh o dau: khong co schema ghi nao nhan no
-    # va khong service nao cong don tu task con, nen EpicResponse.story_points luon
-    # tra ve 0. Cong don o day, cung cho voi so lieu sprint.
+    # Cộng dồn Epic.story_points từ task con, cùng chỗ với số liệu sprint.
     epics = list(
         (await db.scalars(select(Epic).where(Epic.project_id == project_id))).all()
     )

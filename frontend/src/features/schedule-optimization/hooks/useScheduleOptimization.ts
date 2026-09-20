@@ -1,8 +1,7 @@
 'use client'
 
-// SOP-AI-003: mirror pattern của features/ai/hooks/useAIGenerator.ts (poll job
-// đang chạy nền bằng refetchInterval) nhưng viết bản riêng để không đụng file
-// dùng chung của pillar 1.
+// SOP-AI-003: poll job chạy nền bằng refetchInterval, cùng mẫu với
+// features/ai/hooks/useAIGenerator.ts.
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { scheduleOptimizationService } from '@/services/schedule-optimization.service'
 import type { ScheduleOptimizationJobStatus } from '@/types/schedule-optimization.types'

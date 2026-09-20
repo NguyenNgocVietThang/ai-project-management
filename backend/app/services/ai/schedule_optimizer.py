@@ -120,9 +120,8 @@ def _build_prompt(
         parts.append("Additional constraints supplied by the requesting user:")
         for key, value in constraints.items():
             if isinstance(value, str):
-                # Chuỗi tự do do người dùng nhập là input không tin cậy — phải rào lại
-                # trước khi nhúng vào prompt, giống mọi văn bản người dùng khác trong hệ
-                # thống (xem app/services/ai/parsing.py).
+                # Chuỗi tự do của người dùng là input không tin cậy, phải rào lại trước khi
+                # đưa vào prompt (xem app/services/ai/parsing.py).
                 parts.append(f"- {key}: {wrap_user_input(value)}")
             else:
                 parts.append(f"- {key}: {value!r}")
@@ -288,9 +287,8 @@ async def run_schedule_optimization(db, project_id: int, constraints: dict | Non
             }
         )
 
-    # Chỉ những leave đã APPROVED và có khả năng chồng lên khung thời gian dự án
-    # (early_start nhỏ nhất .. late_finish lớn nhất) mới có ý nghĩa để AI tránh —
-    # leave ngoài khung thời gian chỉ làm phình prompt vô ích.
+    # Chỉ leave APPROVED có khả năng chồng lên khung dự án (early_start nhỏ nhất ..
+    # late_finish lớn nhất) mới đưa vào prompt.
     project_earliest = min((dates[t.id]["early_start"] for t in tasks), default=anchor)
     project_latest = max((dates[t.id]["late_finish"] for t in tasks), default=anchor)
 

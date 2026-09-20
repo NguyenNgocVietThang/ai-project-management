@@ -28,9 +28,7 @@ export default function WBSPage() {
   const actions = useWBSActions(projectId)
   const [editor, setEditor] = useState<Editor | null>(null)
   const [deleting, setDeleting] = useState<Phase | null>(null)
-  // window.confirm không style được, không khớp với phần còn lại của giao diện, và
-  // ngay trong file này đã có một hộp thoại xác nhận được thiết kế đàng hoàng cho
-  // việc xoá phase. Dùng chung một kiểu cho tất cả.
+  // Dùng ConfirmDialog chung thay cho window.confirm để khớp giao diện.
   const [confirming, setConfirming] = useState<{ label: string; run: () => void } | null>(null)
   const t = useTranslations('wbs')
   const confirmDelete = (label: string, mutation: () => void) => setConfirming({ label, run: mutation })
