@@ -19,7 +19,7 @@ from typing import Any
 
 from fastapi import WebSocket
 
-from app.core.redis_client import get_redis
+from app.core.redis_client import get_redis, get_redis_pubsub
 
 logger = logging.getLogger(__name__)
 
@@ -104,7 +104,7 @@ async def redis_listener() -> None:
     delay = 1
     while True:
         try:
-            redis = get_redis()
+            redis = get_redis_pubsub()
             pubsub = redis.pubsub()
             await pubsub.psubscribe(f"{REDIS_CHANNEL_PREFIX}*")
             delay = 1  # kết nối thành công — reset backoff

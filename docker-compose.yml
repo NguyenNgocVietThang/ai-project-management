@@ -159,6 +159,10 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
+      # Cache build của Next.js (.next) cũng cần nằm trên filesystem native của container:
+      # nếu để nó đi qua bind-mount Windows/WSL2 phía trên, mỗi lần ghi cache trong lúc
+      # compile sẽ rất chậm và khiến trang load "treo" hàng chục giây tới vài phút.
+      - /app/.next
     command: npm run dev -- --hostname 0.0.0.0
 
 volumes:
