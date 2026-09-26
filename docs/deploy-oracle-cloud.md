@@ -1,113 +1,83 @@
-# Kế hoạch deploy môi trường thử nghiệm lên Oracle Cloud Always Free
+# Triển khai bản thử nghiệm trên Oracle Cloud Always Free
 
-Mục tiêu: chạy toàn bộ stack hiện có (`docker-compose.yml`) trên 1 VM Always Free của Oracle Cloud, phục vụ môi trường thử nghiệm 1-2 người dùng, không tốn chi phí, không lo tranh chấp RAM với máy cá nhân.
+Mục tiêu: chạy stack production cho 1–2 người dùng trên một VM Ampere A1, với HTTPS và một tên miền. Dùng `docker-compose.prod.yml`; `docker-compose.yml` chỉ dành cho phát triển vì có hot reload và mật khẩu mặc định.
 
-## Bối cảnh và lý do chọn phương án này
+## Điều kiện trước khi bắt đầu
 
-- Máy dev local từng bị `ERR_CONNECTION_RESET` do RAM cạn kiệt khi Docker phải chạy song song với nhiều ứng dụng khác trên Windows.
-- Các nền tảng PaaS free phổ biến (Render, Fly.io, Railway) không còn phù hợp: Render free tier không hỗ trợ background worker (Celery), Fly.io đã bỏ free tier, Railway chỉ còn trial ngắn hạn.
-- Oracle Cloud Always Free cung cấp 1 VM ARM (2 OCPU, 12GB RAM) miễn phí vĩnh viễn, đủ để chạy nguyên `docker-compose.yml` hiện tại mà không cần tách service ra nhiều nền tảng.
+- Tài khoản Oracle Cloud đã xác minh, có thể tạo VM trong **home region**.
+- Tên miền hoặc tên miền con do bạn quản lý. Tạo bản ghi A trỏ tới IP public của VM. Google OAuth không cho phép callback dùng IP public hay HTTP; URL callback phải là `https://<tên-miền>/api/v1/oauth/google/callback`.
+- Google OAuth Client ID/Secret và xKiro API key hiện có. Không đưa các giá trị này vào Git, log hoặc ảnh chụp màn hình.
+- Giữ private SSH key trên máy quản trị, không đưa vào repository. Giới hạn quyền truy cập SSH theo IP của bạn nếu có thể.
 
-## Điều kiện tiên quyết
+Oracle Always Free hiện cho tổng cộng **2 OCPU và 12 GB RAM** của `VM.Standard.A1.Flex` trong home region. Kiểm tra nhãn **Always Free-eligible** và giá ước tính trên màn hình tạo VM trước khi xác nhận. Dung lượng boot volume cũng tính vào hạn mức block storage.
 
-- Tài khoản Oracle Cloud đã xác minh (cần thẻ tín dụng để đăng ký, không bị trừ phí nếu ở trong hạn mức Always Free).
-- Domain hoặc chỉ dùng IP public của VM (tùy nhu cầu, không bắt buộc domain cho môi trường thử nghiệm).
-- Google OAuth Client ID/Secret thật đã có sẵn (đã cấu hình ở bước trước).
+## 1. Tạo máy và mạng
 
-## Giai đoạn 1: Tạo VM trên Oracle Cloud
+1. Vào **Compute → Instances → Create instance**, chọn Ubuntu 24.04 ARM64 và `VM.Standard.A1.Flex`, 2 OCPU/12 GB RAM. Bật public IPv4 và thêm SSH public key.
+2. Trong NSG hoặc Security List, chỉ mở TCP `80` và `443` từ Internet. Mở TCP `22` từ IP quản trị; nếu IP thay đổi, cập nhật rule khi cần. Không mở `3000`, `8000`, `5432`, `6379`, `9000` hoặc `9001` ra Internet.
+3. Ghi IP public và tạo bản ghi DNS A cho tên miền. Kiểm tra DNS đã phân giải tới IP này trước khi chạy Caddy. Nếu truy cập không được, kiểm tra cả rule mạng OCI lẫn firewall trên Ubuntu.
 
-1. Đăng nhập Oracle Cloud Console, vào **Compute → Instances → Create Instance**.
-2. Chọn shape **VM.Standard.A1.Flex** (Ampere ARM, nằm trong Always Free) với cấu hình tối đa được phép: 2 OCPU, 12GB RAM.
-3. Chọn image **Ubuntu 24.04 (ARM64)**.
-4. Tạo hoặc chọn SSH key pair, tải về private key để SSH vào VM sau này.
-5. Trong phần **Networking**, mở các port cần thiết ở Security List / Network Security Group:
-   - `22` (SSH)
-   - `3000` (frontend)
-   - `8000` (backend API)
-   - `9000-9001` (MinIO, nếu cần truy cập console từ ngoài)
-6. Ghi lại địa chỉ IP public của VM sau khi tạo xong.
+## 2. Cài Docker và lấy mã nguồn
 
-## Giai đoạn 2: Cài đặt môi trường trên VM
+SSH vào VM bằng key đã tải khi tạo máy:
 
-1. SSH vào VM:
-   ```bash
-   ssh -i <đường-dẫn-private-key> ubuntu@<IP-public-VM>
-   ```
-2. Cập nhật hệ thống:
-   ```bash
-   sudo apt update && sudo apt upgrade -y
-   ```
-3. Cài Docker Engine + Docker Compose plugin (bản chính thức hỗ trợ ARM64):
-   ```bash
-   curl -fsSL https://get.docker.com | sudo sh
-   sudo usermod -aG docker $USER
-   ```
-   Đăng xuất và SSH lại để nhóm quyền `docker` có hiệu lực.
-4. Kiểm tra Docker chạy được trên ARM:
-   ```bash
-   docker run --rm hello-world
-   ```
+```bash
+ssh -i /path/to/private-key ubuntu@<IP-public>
+```
 
-## Giai đoạn 3: Đưa mã nguồn lên VM
+Cập nhật Ubuntu, cài Docker Engine và Compose plugin từ hướng dẫn chính thức cho Ubuntu, rồi kiểm tra `docker compose version` và `docker run --rm hello-world`. Thêm user `ubuntu` vào nhóm `docker` nếu muốn chạy không cần `sudo`, sau đó đăng xuất và SSH lại. Quyền trong nhóm `docker` tương đương quyền quản trị máy; chỉ cấp cho user quản trị.
 
-1. Cài Git nếu chưa có: `sudo apt install -y git`.
-2. Clone repository:
-   ```bash
-   git clone <URL-repo-của-bạn>
-   cd "AI Project Planning & Portfolio Management system"
-   ```
-3. Tạo file `backend/.env` từ `backend/.env.example`, điền giá trị thật:
-   - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` (giá trị thật đã có).
-   - `GOOGLE_REDIRECT_URI` đổi từ `http://localhost:8000/...` sang `http://<IP-public-VM>:8000/api/v1/oauth/google/callback`.
-   - `FRONTEND_URL` đổi sang `http://<IP-public-VM>:3000`.
-   - `SECRET_KEY` đặt giá trị ngẫu nhiên mạnh (tối thiểu 32 ký tự), không dùng placeholder mặc định.
-   - `SEED_ADMIN_PASSWORD` đặt sẵn mật khẩu admin mong muốn để tránh phải đọc log seed.
-4. Cập nhật **Authorized redirect URIs** trong Google Cloud Console thêm URL production mới (`http://<IP-public-VM>:8000/api/v1/oauth/google/callback`).
+```bash
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y git
+git clone https://github.com/NguyenNgocVietThang/ai-project-management.git
+cd ai-project-management
+```
 
-## Giai đoạn 4: Build và chạy stack
+Nếu repository là private, dùng phương thức Git được cấp quyền riêng cho VM. Không sao chép token vào câu lệnh lưu trong shell history.
 
-1. Build image cho kiến trúc ARM64 (lần đầu sẽ lâu hơn do build lại toàn bộ):
-   ```bash
-   docker compose build
-   ```
-2. Khởi động toàn bộ stack:
-   ```bash
-   docker compose up -d
-   ```
-3. Kiểm tra tất cả container đang healthy:
-   ```bash
-   docker compose ps
-   ```
-4. Seed dữ liệu ban đầu (roles, permissions, admin user):
-   ```bash
-   docker compose exec backend python -m app.db.seed
-   ```
-5. Truy cập thử từ trình duyệt: `http://<IP-public-VM>:3000`.
+## 3. Cấu hình bí mật và URL
 
-## Giai đoạn 5: Kiểm tra vận hành
+Sao chép mẫu và sửa file `.env` ở **gốc repository** trên VM. File này được `.gitignore` loại trừ:
 
-- Kiểm tra log không có lỗi bất thường:
-  ```bash
-  docker compose logs -f backend
-  docker compose logs -f frontend
-  ```
-- Test luồng đăng nhập bằng tài khoản admin vừa seed.
-- Test đăng nhập Google OAuth với redirect URI mới.
-- Theo dõi tài nguyên VM trong vài ngày đầu:
-  ```bash
-  docker stats
-  free -h
-  ```
+```bash
+cp .env.production.example .env
+chmod 600 .env
+```
 
-## Việc cân nhắc thêm (không bắt buộc cho môi trường thử nghiệm)
+Đặt `APP_DOMAIN`, các URL HTTPS/WSS và `ALLOWED_HOSTS`/`CORS_ORIGINS` cùng một tên miền. Tạo giá trị ngẫu nhiên riêng cho `POSTGRES_PASSWORD`, `SECRET_KEY`, `MINIO_ROOT_USER` và `MINIO_ROOT_PASSWORD` (ví dụ `openssl rand -hex 32`). Điền xKiro key và Google OAuth ID/Secret thật. `GOOGLE_REDIRECT_URI` phải trùng chính xác với URI đã thêm vào **Authorized redirect URIs** của Google Cloud Console.
 
-- Cấu hình HTTPS bằng Caddy hoặc Nginx + Let's Encrypt nếu cần truy cập qua domain và kết nối an toàn hơn.
-- Cấu hình firewall `ufw` trên VM thay vì mở port tự do.
-- Lên lịch backup volume `postgres_data` định kỳ (ví dụ `pg_dump` + cron) vì đây là môi trường thử nghiệm, không có sẵn cơ chế backup tự động.
-- Giới hạn tài nguyên (`mem_limit`, `cpus`) cho từng service trong `docker-compose.yml` nếu muốn tránh 1 service ngốn hết RAM của VM 12GB.
+Frontend đóng gói `NEXT_PUBLIC_API_URL` và `NEXT_PUBLIC_WS_URL` lúc build; sau khi đổi tên miền phải build lại image frontend. Caddy tự lấy và gia hạn chứng chỉ HTTPS khi DNS và cổng 80/443 đã hoạt động.
 
-## Rủi ro và giới hạn đã biết
+## 4. Build, migrate và khởi động
 
-- Oracle vừa cắt giảm hạn mức Always Free ARM từ 24GB xuống 12GB RAM (giữa năm 2026) — cấu hình có thể tiếp tục thay đổi trong tương lai, cần theo dõi thông báo chính thức của Oracle.
-- Quy trình duyệt tài khoản Oracle Cloud đôi khi chậm hoặc bị từ chối không rõ lý do — nên có phương án dự phòng (ví dụ VPS trả phí thấp) nếu không tạo được tài khoản.
-- VM Always Free có thể bị Oracle thu hồi nếu không sử dụng trong thời gian dài — cần đăng nhập/sử dụng định kỳ.
+```bash
+docker compose -f docker-compose.prod.yml config --quiet
+docker compose -f docker-compose.prod.yml build
+docker compose -f docker-compose.prod.yml up -d postgres redis minio
+docker compose -f docker-compose.prod.yml run --rm backend alembic upgrade head
+docker compose -f docker-compose.prod.yml run --rm backend python -m app.db.seed
+docker compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml ps
+```
+
+Chỉ chạy lệnh `seed` **một lần** với cơ sở dữ liệu mới. Script tạo tài khoản `admin@example.com` và in mật khẩu ngẫu nhiên một lần; lưu mật khẩu đó an toàn và không chia sẻ log seed. Nếu muốn chọn email hoặc mật khẩu trước khi seed, truyền `SEED_ADMIN_EMAIL`/`SEED_ADMIN_PASSWORD` riêng cho lệnh `run` thay vì lưu chúng lâu dài trong `.env`.
+
+## 5. Kiểm tra sau triển khai
+
+```bash
+curl -fsS https://<tên-miền>/health
+docker compose -f docker-compose.prod.yml ps
+docker compose -f docker-compose.prod.yml logs --tail=100 backend frontend caddy celery-worker celery-beat
+```
+
+Mở `https://<tên-miền>`, đăng nhập admin, tạo một dữ liệu thử và kiểm tra Google OAuth. Kiểm tra WebSocket và tác vụ Celery nếu những tính năng đó được sử dụng. Theo dõi `docker stats`, `free -h` và dung lượng đĩa trong vài ngày đầu.
+
+Sao lưu Postgres và các volume quan trọng định kỳ. Trước mỗi lần cập nhật mã hoặc migration, ghi lại commit đang chạy và tạo backup database; có thể quay lại image của commit cũ nếu bản mới lỗi, nhưng migration dữ liệu cần phương án khôi phục riêng.
+
+## Nguồn đối chiếu
+
+- [Hạn mức Oracle Always Free](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm)
+- [Quy tắc Google OAuth redirect URI](https://developers.google.com/identity/protocols/oauth2/web-server#uri-validation)
+- [Cài Docker Engine trên Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
+- [Caddy Automatic HTTPS](https://caddyserver.com/docs/automatic-https)

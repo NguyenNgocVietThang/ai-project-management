@@ -12,6 +12,7 @@
 # Bắt buộc trong môi trường (hoặc file .env nằm cùng thư mục này):
 #   POSTGRES_PASSWORD  SECRET_KEY  MINIO_ROOT_USER  MINIO_ROOT_PASSWORD
 #   FRONTEND_URL  ALLOWED_HOSTS  NEXT_PUBLIC_API_URL  NEXT_PUBLIC_WS_URL
+#   APP_DOMAIN  CORS_ORIGINS  GOOGLE_REDIRECT_URI (nếu dùng Google OAuth)
 #
 # Cách dùng: docker compose -f docker-compose.prod.yml up -d
 
@@ -88,8 +89,10 @@ services:
       XKIRO_API_KEY: ${XKIRO_API_KEY:?XKIRO_API_KEY must be set}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI:-}
       FACEBOOK_APP_ID: ${FACEBOOK_APP_ID:-}
       FACEBOOK_APP_SECRET: ${FACEBOOK_APP_SECRET:-}
+      FACEBOOK_REDIRECT_URI: ${FACEBOOK_REDIRECT_URI:-}
     depends_on:
       postgres:
         condition: service_healthy
@@ -97,10 +100,7 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
-    # Mở cổng để reverse proxy (nginx/Caddy/Traefik) xử lý TLS có thể
-    # kết nối tới. Gán vào 127.0.0.1 nếu proxy chạy trên cùng máy chủ host.
-    ports:
-      - '8000:8000'
+    # Chỉ Caddy trên mạng Compose được truy cập backend.
 
   celery-worker:
     <<: *backend
@@ -119,6 +119,9 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       target: production
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:?NEXT_PUBLIC_API_URL must be set}
+        NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL:?NEXT_PUBLIC_WS_URL must be set}
     container_name: ai-project-frontend
     restart: unless-stopped
     environment:
@@ -127,13 +130,30 @@ services:
       NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL:?NEXT_PUBLIC_WS_URL must be set}
     depends_on:
       - backend
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: ai-project-caddy
+    restart: unless-stopped
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:?APP_DOMAIN must be set}
     ports:
-      - '3000:3000'
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - backend
+      - frontend
 
 volumes:
   postgres_data:
   redis_data:
   minio_data:
+  caddy_data:
+  caddy_config:
 
 networks:
   default:

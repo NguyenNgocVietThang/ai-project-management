@@ -16,6 +16,10 @@ CMD ["npm", "run", "dev"]
 # Giai đoạn biên dịch (Build stage)
 FROM base AS build
 COPY . .
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_WS_URL
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL} \
+    NEXT_PUBLIC_WS_URL=${NEXT_PUBLIC_WS_URL}
 RUN npm run build
 
 # Giai đoạn vận hành (Production stage)
