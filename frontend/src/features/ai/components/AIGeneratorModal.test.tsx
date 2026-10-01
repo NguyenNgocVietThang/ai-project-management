@@ -18,7 +18,7 @@ describe('AI generator recovery', () => {
     render(<QueryClientProvider client={client}><AIGeneratorModal open onClose={() => {}} /></QueryClientProvider>)
     const user = userEvent.setup()
     await user.type(screen.getByRole('textbox', { name: 'Project prompt' }), 'Build a team planning workspace')
-    await user.click(screen.getByRole('button', { name: 'Generate', exact: true }))
+    await user.click(screen.getByRole('button', { name: /^Generate$/ }))
     expect(await screen.findByRole('button', { name: 'Retry status check' })).toBeVisible()
     expect(screen.queryByText('Queued…')).not.toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Retry status check' }))
