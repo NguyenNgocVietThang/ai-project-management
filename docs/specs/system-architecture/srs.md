@@ -1,9 +1,9 @@
 # Đặc tả yêu cầu phần mềm (SRS)
 ## Hệ thống Lập kế hoạch Dự án và Quản lý Danh mục bằng AI
 
-**Version:** 2.2.2
-**Date:** 2026-09-16
-**Trạng thái:** Đối soát với mã nguồn thực tế — xem §6 (Phase 1–2 + Real-time + Admin/Audit đã hoàn thành; Phase 3–5 phần lớn mới ở mức model DB / hạ tầng).
+**Version:** 2.3.0
+**Date:** 2026-10-02
+**Trạng thái:** Đối soát với mã nguồn thực tế — xem §6 (Phase 1–3 + Real-time + Admin/Audit + 5 Trụ cột AI hoàn thành 100%; Phase 4–5 đang tiếp tục phát triển).
 
 ---
 
@@ -252,16 +252,17 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 
 ### REST Routers (`/api/v1/...`)
 
-**23 router đang mount & phục vụ thật:**
+**24 router đang mount & phục vụ thật:**
 - `/auth`, `/oauth`, `/users`, `/roles`, `/permissions`
 - `/portfolios`, `/projects`, `/phases`, `/sprints`, `/epics`, `/milestones`
 - `/tasks`, `/subtasks`, `/dependencies`, `/assignments`, `/worklogs`
+- `/change-requests`
 - `/projects/{id}/messages` (Chat REST API)
 - `/cpm` (chỉ đọc — engine chạy nội bộ từ Phase 2, endpoint chỉ phơi kết quả)
 - `/resource-leveling`, `/dashboards`, `/notifications`, `/audit`, `/ai`
 
-**9 router còn là stub `TODO`, bị comment trong `router.py`, CHƯA mount:**
-- `/leaves`, `/skills`, `/documents`, `/approvals`, `/change-requests`
+**8 router còn là stub `TODO`, bị comment trong `router.py`, CHƯA mount:**
+- `/leaves`, `/skills`, `/documents`, `/approvals`
 - `/gantt`, `/reports`, `/versions`, `/system`
 
 ### 2 WebSocket Endpoints (`/ws/...`)
@@ -274,7 +275,7 @@ Cả hai dùng vé một lần (single-use ticket, TTL 60 giây, cấp qua `POST
 
 ## 6. Trạng thái Triển khai (Trạng thái triển khai)
 
-> Đối soát với mã nguồn ngày 2026-09-16. API thực tế: **23 REST router + 2 WebSocket router** được mount; 234/234 unit test backend pass (`pytest tests/unit`), 28/28 unit test frontend pass trên 7 file (`vitest`).
+> Đối soát với mã nguồn ngày 2026-10-02. API thực tế: **24 REST router + 2 WebSocket router** được mount; 264/264 unit test backend pass (`pytest tests/unit`), 28/28 unit test frontend pass trên 7 file (`vitest`).
 
 - [x] **Core Auth & User Onboarding (Phase 1)**: Hoàn thành 100%.
 - [x] **Portfolio, Project Core & CPM Engine (Phase 2)**: Hoàn thành 100%. CPM chạy nội bộ (`utils/cpm.py` + `scheduling_service.py`); endpoint `/cpm` đã mount (chỉ đọc); `/gantt` **chưa mount** (còn stub).
@@ -282,13 +283,15 @@ Cả hai dùng vé một lần (single-use ticket, TTL 60 giây, cấp qua `POST
 - [x] **Hạ tầng Real-time WebSocket & Redis Pub/Sub**: Hoàn thành 100% (`ConnectionManager`, `redis_listener`).
 - [x] **Real-time Project Chat**: Hoàn thành 100% (Backend endpoints + WS + Frontend UI & unread badge).
 - [x] **Thông báo Real-time & Celery Beat Daily Sweep**: Hoàn thành 100% (WS Push + Beat 08:00 AM sweep).
-- [x] **AI Project Generator (SOP-AI-001)**: `BaseAIProvider` + `XkiroProvider` + `project_generator.py`, endpoint `/ai/generate-project` đã mount, Celery `ai_tasks.generate_project_task` sinh Project/Phase/Task/Dependency thật.
-- [~] **AI Impact/Schedule/Resource/Risk (SOP-AI-002 → 005)**: Celery `ai_tasks` cho 4 SOP còn lại **vẫn là stub** — chưa có tính năng nào chạy được.
-- [~] **Change Request, Approvals & Versioning**: **Chỉ có model DB**. Endpoint `change_requests`/`approvals`/`project_versions` là stub `TODO`, chưa mount, chưa có service/UI.
+- [x] **AI Project Generator (SOP-AI-001)**: Hoàn thành 100%. `BaseAIProvider` + `XkiroProvider` + `project_generator.py`, endpoint `/ai/generate-project` đã mount, Celery `ai_tasks.generate_project_task` sinh Project/Phase/Task/Dependency thật, modal UI `AIGeneratorModal`.
+- [x] **AI 4 Trụ cột còn lại (SOP-AI-002 → 005)**: Hoàn thành 100%. Cả 4 module AI (`impact_analyzer.py`, `schedule_optimizer.py`, `resource_recommender.py`, `risk_analyzer.py`) hoạt động thật qua Celery tasks, endpoint `/ai/impact-analysis`, `/ai/optimize-schedule`, `/ai/resource-recommendation`, `/ai/risk-analysis` đã mount; Celery Beat quét rủi ro 08:30 hàng ngày; UI tại `/projects/{id}/change-requests` và `/projects/{id}/ai-insights`.
+- [x] **Change Request CRUD tối giản**: Hoàn thành và đã mount (`change_requests.py`, `change_request_service.py`), tạo nền dữ liệu thật cho AI Impact Analysis. (Quy trình duyệt nhiều cấp qua `approvals.py` thuộc Phase 4 debt).
+- [~] **Approvals & Project Versioning/Rollback**: Chỉ model DB. Endpoint `approvals`/`project_versions` là stub `TODO`, chưa mount.
 - [ ] **Reports DOCX/XLSX**: `report_tasks.py` là stub trả về rỗng; endpoint `/reports` chưa mount.
-- [ ] **Document AI Parser** (`/documents`), **Investor Read-only Dashboard**, **Mobile polish**: chưa bắt đầu.
-- [x] **Docker Compose 7 Services**: Hoàn thành và đã cấu hình đầy đủ.
+- [ ] **Document AI Parser** (`/documents`), **Investor Read-only Dashboard**: chưa bắt đầu.
+- [x] **Mobile Responsive & Polish**: Hoàn thành cơ bản mobile navigation với modal focus trap, theme switcher (light/dark/system).
+- [x] **Docker Compose 7 Services Dev / 8 Services Prod (Caddy HTTPS)**: Hoàn thành cấu hình đầy đủ.
 
 ---
 
-*Cập nhật lần cuối: 2026-09-16 — Version 2.2.2 — Stack: Python FastAPI + Next.js 15*
+*Cập nhật lần cuối: 2026-10-02 — Version 2.3.0 — Stack: Python FastAPI + Next.js 15*

@@ -1,7 +1,7 @@
 # Lộ trình: Mô-đun AI tài liệu và hoàn thiện (Phase 5)
 
-> **Phiên bản:** 1.2 | **Cập nhật:** 2026-09-03  
-> **Trạng thái:** ~40% — Real-time Notification Push (`/ws/notifications`), Celery Beat daily sweep và Profile/Avatar đã chạy thật. Document AI Parser (endpoint `/documents` stub, chưa mount), Investor Dashboard, Mobile polish: CHƯA làm. 
+> **Phiên bản:** 1.3 | **Cập nhật:** 2026-10-02  
+> **Trạng thái:** ~50% — Real-time Notification Push (`/ws/notifications` qua vé dùng một lần), Celery Beat daily sweep, Profile/Avatar MinIO, và Mobile Responsive menu/theme polish đã chạy thật. Document AI Parser (`/documents` stub, chưa mount) và Investor Dashboard: CHƯA làm. 
 > **Mức độ ưu tiên:** High – Tự động hóa tài liệu, Cổng nhà đầu tư, Thông báo WebSocket & Tối ưu hóa hiệu năng  
 > **Điều kiện tiên quyết:** [x] Phase 1 (Auth & RBAC), Phase 2 (Project Core, CPM & Real-time Chat) đã hoàn thành
 
@@ -44,7 +44,7 @@ Module **Document AI & Polish (Phase 5)** hoàn thiện hệ sinh thái quản l
 | Investor Dashboard (Read-Only) | Portal | High | Chưa bắt đầu | Không có `InvestorService` | Chưa có |
 | Avatar Upload & Profile Settings | Core | Medium | Hoàn thành | `UserService` + MinIO (`/users`) | `profile/page.tsx`, `AvatarSection` |
 | Query Optimization & Redis Caching | Performance | High | Một phần | `selectinload` dùng rải rác; chưa có tầng cache Redis chủ động | Lazy charts (Recharts) |
-| Mobile & Tablet Responsive Polish | UI/UX | High | Chưa làm | — | Chưa có mobile navigation riêng |
+| Mobile & Tablet Responsive Polish | UI/UX | High | Hoàn thành cơ bản | — | Menu mobile dạng modal có focus trap, Escape, chuyển đổi theme light/dark/system, thẻ KPI responsive |
 
 ---
 
@@ -53,7 +53,7 @@ Module **Document AI & Polish (Phase 5)** hoàn thiện hệ sinh thái quản l
 ### GIAI ĐOẠN 5.1 – Real-time Notification Push & Celery Beat Daily Sweep (SOP-NOTI-001)
 > **Trạng thái:** Đã hoàn thành 
 - Backend:
-  - WebSocket `/ws/notifications?token=<JWT>` đẩy thông báo cá nhân theo kênh `ws:notif:user:{user_id}`.
+  - WebSocket `/ws/notifications?ticket=<ticket>` đẩy thông báo cá nhân theo kênh `ws:notif:user:{user_id}`, xác thực qua vé dùng một lần (single-use ticket, TTL 60s).
   - Choke point `NotificationService.push()` tự động flush và publish tới Redis Pub/Sub.
   - Celery Beat task `sweep_task_dates_task` chạy định kỳ lúc 08:00 AM (Asia/Ho_Chi_Minh) quét các task bắt đầu hôm nay và sắp đến hạn (1 ngày trước hạn).
 - Frontend:
@@ -70,8 +70,8 @@ Module **Document AI & Polish (Phase 5)** hoàn thiện hệ sinh thái quản l
 > **Trạng thái:** Hoàn thành — trang `profile/` (ProfileDetailsForm, AvatarSection, PasswordSection, LinkedAccountsSection, DangerZoneSection); backend `/users` + MinIO.
 
 ### GIAI ĐOẠN 5.5 – Performance Optimization & Mobile Responsiveness
-> **Trạng thái:** Một phần — có `selectinload` rải rác; CHƯA có tầng Redis caching chủ động, CHƯA polish mobile navigation.
+> **Trạng thái:** Một phần — tối ưu mobile navigation với modal focus trap, chuyển đổi theme light/dark/system mượt mà, cấu hình deploy production Caddy HTTPS; tầng Redis caching chủ động cho truy vấn phức tạp vẫn là kế hoạch tiếp theo.
 
 ---
 
-*Cập nhật lần cuối: 2026-09-03 — Phase 5 (Document AI & Polish) — đối soát với mã nguồn.*
+*Cập nhật lần cuối: 2026-10-02 — Phase 5 (Document AI & Polish) — đối soát với mã nguồn.*

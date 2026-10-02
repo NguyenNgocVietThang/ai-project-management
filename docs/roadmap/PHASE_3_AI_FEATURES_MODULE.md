@@ -1,6 +1,6 @@
 # Lộ trình: Mô-đun tính năng AI (Phase 3)
 
-> **Phiên bản:** 1.4 | **Cập nhật:** 2026-09-17  
+> **Phiên bản:** 1.5 | **Cập nhật:** 2026-10-02  
 > **Trạng thái:** 100% — Cả 5 trụ cột AI đã chạy thật đầu-cuối. SOP-AI-001 (AI Project Generator): endpoint `/ai/generate-project`, Celery task `generate_project_task` ghi Project/Phase/Task/Dependency thật, UI `AIGeneratorModal.tsx`. SOP-AI-002 (Impact Analysis): CRUD Change Request tối giản mới + `impact_analyzer.py` + `POST /ai/impact-analysis`, ghi bảng `impact_reports`, UI tại `/projects/{id}/change-requests`. SOP-AI-003 (Schedule Optimization): `schedule_optimizer.py` (chỉ đề xuất, không tự ghi đè lịch) + `POST /ai/optimize-schedule`, UI tại `/projects/{id}/ai-insights`. SOP-AI-004 (Resource Recommendation): `resource_recommender.py` (kết hợp chấm điểm định lượng + AI xếp hạng) + `POST /ai/resource-recommendation`, UI cùng trang `ai-insights`. SOP-AI-005 (Risk Analysis): `risk_analyzer.py` + `POST /ai/risk-analysis`, ghi bảng `risk_reports`, quét định kỳ qua Celery Beat (`ai.sweep_active_projects_for_risk`, 08:30 hằng ngày), UI `RiskWidget` tại `ai-insights`.
 > **Mức độ ưu tiên:** Critical – Lớp trí tuệ nhân tạo cốt lõi của hệ thống  
 > **Điều kiện tiên quyết:** [x] Phase 1 (Auth & RBAC) & Phase 2 (Portfolio, Project Core, CPM & Real-time Chat) đã hoàn thành
@@ -29,8 +29,8 @@ Module **AI Features (Phase 3)** tích hợp trí tuệ nhân tạo vào toàn b
 | Model Router theo loại tác vụ AI (`AITaskType` -> model xKiro) | Đã có | `backend/app/services/ai/model_router.py` |
 | AI Project Generator Engine (`generate_project_from_prompt`) | Đã có, đã nối endpoint + worker | `backend/app/services/ai/project_generator.py`, gọi từ `workers/ai_tasks.py` |
 | `AIService` điều phối vòng đời `AIRequest` (queue + poll trạng thái) | Đã có | `backend/app/services/ai_service.py` |
-| Celery Worker + Redis Broker | Đã có | `backend/app/workers/celery_app.py` & `ai_tasks.py` (`generate_project_task` chạy thật; 4 task còn lại vẫn là stub `TODO`) |
-| Database Models: `ai_requests`, `ai_outputs` | Đã migrate, đang dùng thật | Ghi nhận job AI Project Generator; chưa có model `risk_reports` |
+| Celery Worker + Redis Broker | Đã có | `backend/app/workers/celery_app.py` & `ai_tasks.py` (cả 5 task AI chạy thật: `generate_project_task`, `impact_analysis_task`, `optimize_schedule_task`, `resource_recommendation_task`, `risk_analysis_task`; Celery Beat quét rủi ro lúc 08:30) |
+| Database Models: `ai_requests`, `ai_outputs`, `risk_reports`, `impact_reports` | Đã migrate, đang dùng thật | Ghi nhận job AI, lưu trữ phân tích tác động và báo cáo rủi ro |
 | CPM Engine (Topological Sort + Forward/Backward Pass) | Đã có | `app/utils/cpm.py` + `app/services/scheduling_service.py`, mount read-only tại `/api/v1/projects/{id}/cpm` (`endpoints/cpm.py`) |
 | User Skills & Leaves Schema | Đã migrate | `user_skills`, `skills`, `leaves` — endpoint `/leaves`, `/skills` vẫn chưa mount (Phase 2) |
 | AI API Keys cấu hình trong `.env` | Đã có | `XKIRO_API_KEY`, `XKIRO_BASE_URL`, các biến định tuyến model theo tác vụ (`XKIRO_MODEL_*`) |

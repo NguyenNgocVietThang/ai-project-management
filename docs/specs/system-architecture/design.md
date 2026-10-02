@@ -1,8 +1,8 @@
 # Thiết kế kiến trúc hệ thống
 ## Hệ thống Lập kế hoạch Dự án và Quản lý Danh mục bằng AI
 
-**Version:** 2.2.2
-**Date:** 2026-09-16
+**Version:** 2.3.0
+**Date:** 2026-10-02
 
 ---
 
@@ -43,7 +43,7 @@ Hệ thống **AI Project Planning & Portfolio Management** được thiết k�
 | Export XLSX | openpyxl | 3.1.5 |
 | HTTP Client | httpx | 0.27.2 |
 | Date Utils | python-dateutil, pytz | 2.9.0 / 2024.2 |
-| Kiểm thử | pytest, pytest-asyncio, httpx | — |
+| Kiểm thử | pytest, pytest-asyncio, httpx (264 unit tests backend, 28 Vitest frontend) | — |
 
 ### Lớp phía giao diện
 
@@ -66,19 +66,20 @@ Hệ thống **AI Project Planning & Portfolio Management** được thiết k�
 | Date | date-fns | ^2.30.0 |
 | CSS Utils | clsx + tailwind-merge | ^2.0.0 |
 
-### Infrastructure Layer (Docker Compose — 7 Services)
+### Infrastructure Layer (Docker Compose — 7 Services Dev / 8 Services Prod)
 
-| Service | Image / Tech | Port |
-|---|---|---|
-| `postgres` | postgres:16-alpine | 5432 |
-| `redis` | redis:7-alpine | 6379 |
-| `minio` | minio/minio:latest | 9000 (API), 9001 (Console) |
-| `backend` | ./backend Dockerfile (FastAPI) | 8000 |
-| `celery-worker` | ./backend Dockerfile | — |
-| `celery-beat` | ./backend Dockerfile | — |
-| `frontend` | ./frontend Dockerfile (Next.js) | 3000 |
+| Service | Image / Tech | Port | Môi trường |
+|---|---|---|---|
+| `postgres` | postgres:16-alpine | 5432 | Dev & Prod |
+| `redis` | redis:7-alpine | 6379 | Dev & Prod |
+| `minio` | minio/minio:latest | 9000 (API), 9001 (Console) | Dev & Prod |
+| `backend` | ./backend Dockerfile (FastAPI) | 8000 (Dev) / Nội bộ (Prod) | Dev & Prod |
+| `celery-worker` | ./backend Dockerfile | — | Dev & Prod |
+| `celery-beat` | ./backend Dockerfile | — | Dev & Prod |
+| `frontend` | ./frontend Dockerfile (Next.js) | 3000 (Dev) / Nội bộ (Prod) | Dev & Prod |
+| `caddy` | caddy:2-alpine | 80, 443 | Prod (`docker-compose.prod.yml`) |
 
-> Network: `ai-project-network`. Volumes: `postgres_data`, `redis_data`, `minio_data`.
+> Network: `ai-project-network`. Volumes: `postgres_data`, `redis_data`, `minio_data`. Hỗ trợ triển khai Production HTTPS tự động qua Caddy trên Oracle Cloud VM (xem [`docs/deploy-oracle-cloud.md`](../../deploy-oracle-cloud.md)).
 
 ---
 
@@ -92,7 +93,7 @@ HTTP / WS Request
      ▼
 ┌────────────────────────────────────────────────────────┐
 │ 1. ENDPOINTS & WS LAYER (app/api/v1/ & app/api/ws/)    │
-│    - 23 REST Routers mounted + 2 WebSocket Routers     │
+│    - 24 REST Routers mounted + 2 WebSocket Routers     │
 │    - Kiểm tra RBAC (require_roles, require_permissions)│
 │    - Xác thực WS handshake via vé một lần (ticket)     │
 │    - Trả về Pydantic DTO schemas                       │
@@ -130,15 +131,14 @@ backend/
 │   ├── main.py                 # FastAPI entrypoint + lifespan + CORS + WS Router mount
 │   ├── api/
 │   │   ├── v1/
-│   │   │   ├── router.py       # Mount 23 REST routers (+9 stub bị comment) → api_router
-│   │   │   └── endpoints/      # 32 file (23 hiện thực, 9 stub TODO)
+│   │   │   ├── router.py       # Mount 24 REST routers (+8 stub bị comment) → api_router
+│   │   │   └── endpoints/      # 32 file (24 hiện thực, 8 stub TODO)
 │   │   │       ├── auth.py, oauth.py, users.py, roles.py, permissions.py
 │   │   │       ├── portfolios.py, projects.py, phases.py, sprints.py, epics.py, milestones.py
 │   │   │       ├── tasks.py, subtasks.py, dependencies.py, assignments.py, worklogs.py
-│   │   │       ├── chat.py, cpm.py, resource_leveling.py, dashboards.py
-│   │   │       ├── notifications.py, audit_timeline.py, ai.py   (23 file trên — đã mount)
-│   │   │       ├── leaves.py, skills.py, documents.py, approvals.py, change_requests.py
-│   │   │       ├── gantt.py, reports.py, project_versions.py, system.py   (9 file trên — stub, chưa mount)
+│   │   │       ├── chat.py, change_requests.py, cpm.py, resource_leveling.py, dashboards.py
+│   │   │       ├── notifications.py, audit_timeline.py, ai.py   (24 file trên — đã mount)
+│   │   │       └── leaves.py, skills.py, documents.py, approvals.py, gantt.py, reports.py, project_versions.py, system.py   (8 file trên — stub, chưa mount)
 │   │   └── ws/
 │   │       ├── deps.py         # authenticate_ws (JWT validation via query param)
 │   │       ├── router.py       # ws_router mounted at app root /ws
@@ -164,24 +164,26 @@ backend/
 │   ├── schemas/                # Pydantic schema files (admin, auth, chat, project, task, etc.)
 │   ├── services/               # Business logic layer
 │   │   ├── admin_service.py, audit_service.py, auth_service.py, chat_service.py
-│   │   ├── scheduling_service.py (CPM), dashboard_service.py, notification_service.py, oauth_service.py
-│   │   ├── phase2_common.py, portfolio_service.py, project_service.py, resource_service.py
+│   │   ├── change_request_service.py, scheduling_service.py (CPM), dashboard_service.py
+│   │   ├── notification_service.py, oauth_service.py, phase2_common.py
+│   │   ├── portfolio_service.py, project_service.py, resource_service.py
 │   │   ├── role_service.py, task_service.py, user_service.py, wbs_service.py, storage_service.py
-│   │   └── ai/                 # base.py, xkiro_provider.py, model_router.py, project_generator.py (đã nối endpoint /ai)
+│   │   └── ai/                 # base.py, xkiro_provider.py, model_router.py, project_generator.py, impact_analyzer.py, schedule_optimizer.py, resource_recommender.py, risk_analyzer.py (5 trụ cột AI hoàn thành)
 │   ├── db/
 │   │   ├── session.py          # AsyncEngine + async_sessionmaker + get_db()
 │   │   ├── base.py             # Import tất cả models cho Alembic
 │   │   └── seed.py             # 7 Roles, 34 Permissions, 1 Admin Account
 │   ├── workers/                # Celery async tasks & Beat scheduler
-│   │   ├── celery_app.py       # Celery config + beat_schedule (daily task sweep)
+│   │   ├── celery_app.py       # Celery config + beat_schedule (daily task sweep 08:00 & risk sweep 08:30)
 │   │   ├── notification_tasks.py # sweep_task_dates_task (task start & due-soon)
-│   │   ├── ai_tasks.py, report_tasks.py, email_tasks.py
+│   │   ├── ai_tasks.py         # generate_project_task, impact_analysis_task, optimize_schedule_task, resource_recommendation_task, risk_analysis_task, sweep_active_projects_for_risk
+│   │   ├── report_tasks.py, email_tasks.py
 │   │   └── __init__.py
 │   └── utils/
 │       ├── cpm.py              # Pure Python CPM Algorithm (topological_sort, calculate_cpm)
 │       ├── date_utils.py, pagination.py, email.py
 ├── alembic/                    # Database migrations (async PostgreSQL)
-└── tests/unit/                 # Automated unit test suite (234/234 passing)
+└── tests/unit/                 # Automated unit test suite (264/264 passing)
 ```
 
 ---
@@ -199,12 +201,14 @@ frontend/src/
 │   │   ├── dashboard/page.tsx  # KPI overview & project health
 │   │   ├── portfolios/         # Portfolio list & detail views
 │   │   ├── projects/           # Projects list page
-│   │   │   └── [id]/           # Project Detail Shell (Overview, Tasks, WBS, Members, Chat, Settings)
+│   │   │   └── [id]/           # Project Detail Shell (Overview, Tasks, WBS, Members, Chat, Change Requests, AI Insights, Settings)
 │   │   │       ├── overview/page.tsx
 │   │   │       ├── tasks/page.tsx
 │   │   │       ├── wbs/page.tsx
 │   │   │       ├── members/page.tsx
 │   │   │       ├── chat/page.tsx
+│   │   │       ├── change-requests/page.tsx # Danh sách & chi tiết Change Request + AI Impact Analysis
+│   │   │       ├── ai-insights/page.tsx     # Risk Widget + Schedule Optimizer + Resource Recommender
 │   │   │       └── settings/page.tsx
 │   │   ├── admin/              # Admin Portal
 │   │   │   ├── users/page.tsx  # User list & status toggle
@@ -213,7 +217,9 @@ frontend/src/
 │   │   └── profile/page.tsx    # User profile & skills
 ├── features/                   # Feature-colocated modules
 │   ├── admin/                  # AdminUserList, RoleForm, AuditTimeline
+│   ├── ai/                     # AIGeneratorModal, useAIGenerator
 │   ├── auth/                   # LoginForm, RegisterForm, SocialLoginButtons
+│   ├── change-requests/        # ChangeRequestList, ChangeRequestDetail, ChangeRequestModal
 │   ├── chat/                   # ChatPanel, ChatMessageItem, useChatSocket, useChat
 │   ├── dashboard/              # KPI cards, EVA charts, ActivityFeed
 │   ├── notifications/          # NotificationBell, NotificationList, useNotifications
@@ -300,12 +306,17 @@ Hệ thống cung cấp 2 native FastAPI `WebSocket` endpoints được mount t�
 
 ## Celery Beat và tác vụ theo lịch
 
-Hệ thống thiết lập tiến trình `celery-beat` riêng biệt trong `docker-compose.yml`:
-- **Task**: `sweep-task-dates-daily` (`app/workers/notification_tasks.py`)
-- **Tần suất**: Chạy định kỳ lúc 08:00 AM hàng ngày (Múi giờ Asia/Ho_Chi_Minh).
-- **Nghiệp vụ**:
-  1. Quét các task bắt đầu hôm nay (`start_date == today`, trạng thái TODO, chưa gửi thông báo) → Gửi thông báo fan-out tới toàn bộ nhóm dự án và cập nhật `last_start_notified_at`.
-  2. Quét các task sắp đến hạn (`due_date == today + 1 day`, chưa DONE, chưa gửi thông báo) → Gửi thông báo fan-out tới nhóm dự án và cập nhật `last_due_soon_notified_at`.
+Hệ thống thiết lập tiến trình `celery-beat` riêng biệt trong `docker-compose.yml` (và `docker-compose.prod.yml`):
+1. **Quét hạn công việc hàng ngày**:
+   - **Task**: `sweep-task-dates-daily` (`app/workers/notification_tasks.py::sweep_task_dates_task`)
+   - **Tần suất**: Chạy định kỳ lúc 08:00 AM hàng ngày (Múi giờ `Asia/Ho_Chi_Minh`).
+   - **Nghiệp vụ**:
+     - Quét các task bắt đầu hôm nay (`start_date == today`, trạng thái TODO, chưa gửi thông báo) → Gửi thông báo fan-out tới toàn bộ nhóm dự án và cập nhật `last_start_notified_at`.
+     - Quét các task sắp đến hạn (`due_date == today + 1 day`, chưa DONE, chưa gửi thông báo) → Gửi thông báo fan-out tới nhóm dự án và cập nhật `last_due_soon_notified_at`.
+2. **Quét rủi ro dự án định kỳ bằng AI**:
+   - **Task**: `sweep-risk-analysis-daily` (`app/workers/ai_tasks.py::sweep_active_projects_for_risk`)
+   - **Tần suất**: Chạy định kỳ lúc 08:30 AM hàng ngày (Múi giờ `Asia/Ho_Chi_Minh`).
+   - **Nghiệp vụ**: Tự động xếp hàng job `risk_analysis_task` cho mọi dự án đang ở trạng thái `ACTIVE`, phát hiện sớm nguy cơ trễ hạn, quá tải nguồn lực hoặc vượt ngân sách.
 
 ---
 
@@ -318,8 +329,9 @@ Hệ thống thiết lập tiến trình `celery-beat` riêng biệt trong `dock
 | 2.1 | 2026-08-13 | Đã hoàn thành Auth & User Onboarding Module (Login, Register, Google & Facebook OAuth, Password recovery, Email verification, Edge JWT Guard, Auth Services & Store). Cập nhật tài liệu sát thực tế. |
 | 2.2 | 2026-08-22 | Đã hoàn thành Admin panel (users, roles, permissions, audit timeline), Notification triggers (task start/due-soon/change fan-out qua Celery Beat daily sweep), và Real-time Project Chat. Bổ sung Domain 8 (Chat) với 2 bảng `chat_messages` và `chat_read_states` (tổng 34 tables), Redis Pub/Sub bridge. |
 | 2.2.1 | 2026-09-03 | Đối soát tài liệu với mã nguồn thực tế: **21/32 REST router được mount** (11 router `leaves/skills/documents/approvals/change_requests/gantt/cpm/reports/versions/ai/system` vẫn là stub `TODO`, chưa mount); `workers/ai_tasks.py` và `report_tasks.py` là stub; CPM chạy nội bộ qua `utils/cpm.py` + `scheduling_service.py`; 123/123 unit test pass. Model DB đủ 34 bảng nhưng business logic Phase 3–5 phần lớn chưa hiện thực. |
-| 2.2.2 | 2026-09-16 | Sửa các sai lệch phát hiện khi đối soát lại với mã nguồn: thực tế **23/32 REST router được mount** (bản 2.2.1 liệt kê nhầm `/cpm` và `/ai` vào nhóm stub — cả hai đã mount thật; chỉ còn 9 router stub: `leaves/skills/documents/approvals/change_requests/gantt/reports/versions/system`). Xác thực WebSocket dùng **vé dùng một lần** (`app/core/ws_tickets.py`), không phải JWT trên query string như tài liệu cũ mô tả. Thư viện JWT backend đã đổi từ `python-jose` sang `PyJWT` (vá CVE-2024-33663/33664). Cập nhật số liệu test lên 234/234 (backend) và 28/28 trên 7 file (frontend). Sửa version Next.js (^15.5.25) và Recharts (^2.15.4), bỏ dòng "TanStack Table" (không có trong mã nguồn), bổ sung next-intl (i18n) và ThemeProvider (dark mode) vào bảng công nghệ Frontend. |
+| 2.2.2 | 2026-09-16 | Sửa các sai lệch phát hiện khi đối soát lại với mã nguồn: thực tế **23/32 REST router được mount**... |
+| 2.3.0 | 2026-10-02 | Hoàn thành toàn diện Phase 3 (AI Features) với 5/5 trụ cột: AI Project Generator, AI Impact Analysis, AI Schedule Optimization, AI Resource Recommendation, AI Risk Analysis. Mount thêm `change_requests` router (nâng tổng số lên **24/32 REST router đang hoạt động**, chỉ còn 8 stub). Thêm 2 route frontend mới (`change-requests`, `ai-insights`). Thêm Celery Beat risk sweep (08:30 hàng ngày). Bổ sung tài liệu và cấu hình deploy Oracle Cloud Always Free với Caddy HTTPS (`docker-compose.prod.yml`). Cập nhật bộ unit test backend lên 264/264 passing. |
 
 ---
 
-*Cập nhật lần cuối: 2026-09-16 — Version 2.2.2 — Stack: Python FastAPI + Next.js 15*
+*Cập nhật lần cuối: 2026-10-02 — Version 2.3.0 — Stack: Python FastAPI + Next.js 15*

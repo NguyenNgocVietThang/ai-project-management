@@ -1,8 +1,8 @@
 # Tài liệu yêu cầu nghiệp vụ (BRD)
 ## Hệ thống Lập kế hoạch Dự án và Quản lý Danh mục bằng AI
 
-**Version:** 2.2
-**Date:** 2026-08-22
+**Version:** 2.3
+**Date:** 2026-10-02
 
 ---
 
@@ -69,22 +69,23 @@ Hệ thống hỗ trợ 7 vai trò riêng biệt với các quyền hạn cụ t
 - Hệ thống chạy `Resource Leveling` để phát hiện và cảnh báo nếu nhân sự bị quá tải (>8h/ngày).
 
 ### 4.3 Quản lý yêu cầu thay đổi (Change Request Workflow - SOP-CR-001)
-- **Customer / PM** tạo CR.
-- **BA** và **PO** lần lượt xem xét và phê duyệt về mặt nghiệp vụ.
-- **AI** chạy `Phân tích tác động` (SOP-AI-002) tính toán mức ảnh hưởng về chi phí, rủi ro, tiến độ.
-- **PM** đánh giá báo cáo AI. Nếu đồng ý, AI chạy tiếp `Schedule Optimization` (SOP-AI-003) để vẽ lại lịch trình tối ưu.
-- PM xác nhận bản lịch trình mới → Hệ thống tự động snapshot một bản `Project Version` cũ và apply thay đổi vào dự án chính thức.
+- **Customer / PM** tạo CR (Trạng thái hiện tại: CRUD tạo, danh sách, chi tiết và chuyển DRAFT → SUBMITTED đã hoàn thành).
+- **BA** và **PO** xem xét và phê duyệt về mặt nghiệp vụ (Quy trình duyệt nhiều bước qua bảng `approvals` thuộc Phase 4).
+- **AI** chạy `Phân tích tác động` (SOP-AI-002) tính toán mức ảnh hưởng về chi phí, rủi ro, tiến độ (Đã hoàn thành và tích hợp trực tiếp trên trang Change Request).
+- **PM** đánh giá báo cáo AI. Nếu đồng ý, AI chạy tiếp `Schedule Optimization` (SOP-AI-003) để đề xuất lịch trình tối ưu (Đã hoàn thành trên trang AI Insights).
+- PM xác nhận bản lịch trình mới → Hệ thống snapshot `Project Version` cũ và apply thay đổi (Phase 4).
 
 ### 4.4 Quy trình Tracking và Tính toán CPM (SOP-PM-002 & SOP-PM-003)
 - Thành viên cập nhật thời gian làm việc hàng ngày qua Timesheet.
 - Mọi thay đổi về thời gian hoặc quan hệ phụ thuộc sẽ kích hoạt tính toán lại đường găng CPM (Topological Sort + Forward/Backward pass).
-- Hệ thống tự động cập nhật ES, EF, LS, LF, Float và vẽ lại đường găng đỏ trên Gantt Chart.
+- Hệ thống tự động cập nhật ES, EF, LS, LF, Float và vẽ lại đường găng đỏ trên Gantt Chart (Thuật toán CPM đã hoàn thành và mount endpoint read-only; giao diện Gantt tương tác thuộc Phase 4).
 
-### 4.5 Giao tiếp Real-time & Giám sát Lịch trình (SOP-CHAT-001 & SOP-NOTI-001)
+### 4.5 Giao tiếp Real-time & Giám sát Lịch trình (SOP-CHAT-001, SOP-NOTI-001 & SOP-AI-005)
 - Thành viên dự án trao đổi trực tiếp trong phòng Chat dự án theo thời gian thực qua WebSocket.
 - Khi có thay đổi công việc, hệ thống tự động gửi thông báo fan-out tới toàn bộ nhóm dự án qua WebSocket và Email.
 - Celery Beat quét định kỳ hàng ngày lúc 08:00 AM gửi thông báo nhắc nhở các công việc bắt đầu trong ngày và sắp đến hạn.
+- Celery Beat quét rủi ro định kỳ hàng ngày lúc 08:30 AM (SOP-AI-005) tự động đánh giá sức khỏe và nguy cơ của mọi dự án đang hoạt động.
 
 ---
 
-*Cập nhật lần cuối: 2026-08-22 — Version 2.2*
+*Cập nhật lần cuối: 2026-10-02 — Version 2.3*

@@ -48,7 +48,7 @@ Xây dựng một **web application quản lý dự án và danh mục đầu t�
 - **Phân tích tác động thay đổi (Phân tích tác động bằng AI)** và tối ưu lịch (Schedule Optimization) khi phát sinh Change Request.
 - **Dashboard & Báo cáo đa chiều**: Gantt Chart tương tác, Burndown, Burnup, Velocity, Earned Value Analysis (EVA, CPI, SPI), xuất file DOCX/XLSX.
 
-### Trạng thái triển khai thực tế (cập nhật 2026-09-18)
+### Trạng thái triển khai thực tế (cập nhật 2026-10-02)
 
 | Nhóm chức năng | Trạng thái | Ghi chú |
 |---|---|---|
@@ -64,7 +64,8 @@ Xây dựng một **web application quản lý dự án và danh mục đầu t�
 | Reports DOCX/XLSX | Chỉ scaffold | `report_tasks.py` là stub trả về rỗng, endpoint `/reports` chưa mount |
 | Documents / AI Document Parser | Chỉ model DB | endpoint `/documents` là stub, chưa mount |
 | Leaves / Skills catalog | Chỉ model DB | endpoint là stub, chưa mount |
-| Investor Read-only Dashboard, Mobile polish | Chưa làm | — |
+| Mobile Responsive & UI Polish | Hoàn thành cơ bản | Menu mobile modal với focus trap, chuyển theme light/dark/system, thẻ KPI responsive |
+| Investor Read-only Dashboard | Chưa làm | — |
 
 > **API thực tế đang phục vụ:** 24 REST router (`/api/v1/...`) + 2 WebSocket router (`/ws/...`). 8 router còn lại (`leaves, skills, documents, approvals, gantt, reports, project_versions, system`) vẫn là stub `TODO: Implement`, bị comment trong [`router.py`](./backend/app/api/v1/router.py) và **không** được mount.
 
@@ -758,9 +759,9 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
   - [x] **Real-time Notification Push qua WebSocket (`/ws/notifications`)**.
   - [x] **Tiến trình Celery Beat chạy theo lịch trong Docker Compose**.
   - [x] Profile & Avatar MinIO (frontend + backend).
+  - [x] Mobile navigation & UI fine-tuning polish (menu modal focus trap, theme switcher, responsive layout).
   - [ ] Document upload & AI parser (endpoint `/documents` là stub, chưa mount).
   - [ ] Investor Read-Only Dashboard view.
-  - [ ] Mobile navigation & UI fine-tuning polish.
 
 ---
 
@@ -772,11 +773,11 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
 | **BRD** | [docs/specs/system-architecture/brd.md](./docs/specs/system-architecture/brd.md) | Business Requirements Document — Yêu cầu nghiệp vụ |
 | **SRS** | [docs/specs/system-architecture/srs.md](./docs/specs/system-architecture/srs.md) | Software Requirements Specification — Đặc tả chức năng chi tiết |
 | Thiết kế kiến trúc | [docs/specs/system-architecture/design.md](./docs/specs/system-architecture/design.md) | Tài liệu thiết kế kiến trúc hệ thống tổng thể |
+| **Triển khai Production** | [docs/deploy-oracle-cloud.md](./docs/deploy-oracle-cloud.md) | Hướng dẫn triển khai production trên Oracle Cloud Always Free VM với Caddy HTTPS |
 | **Sequence Diagrams** | [docs/specs/system-architecture/Sequence SOP/](./docs/specs/system-architecture/Sequence%20SOP/) | Chuỗi Sequence Diagrams PlantUML cho từng SOP |
 | **Interactive ERD** | [docs/diagrams/erd_ai_project_management.html](./docs/diagrams/erd_ai_project_management.html) | Sơ đồ tương tác cấu trúc 34 bảng Database |
 | **Roadmap từng Phase** | [docs/roadmap/](./docs/roadmap/) | PHASE_1_AUTH_MODULE → PHASE_5_DOCUMENT_AI_POLISH_MODULE |
 | **Audit & Findings** | [docs/audits/](./docs/audits/) | Biên bản rà soát kiến trúc và ghi nhận hệ thống theo mốc thời gian |
-| **Archive kế hoạch đã xong** | [docs/archive/](./docs/archive/) | Plan/todo của các giai đoạn đã hoàn thành, lưu lại để tham chiếu |
 
 ---
 
@@ -786,4 +787,4 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
 - **Giấy phép:** [MIT License](./LICENSE)
 
 ---
-*Cập nhật toàn diện hệ thống: 2026-09-18 (đối soát README với mã nguồn thực tế: 24/32 REST router đang mount + 2 WebSocket router; Phase 1–3 hoàn thành, Phase 4–5 đang phát triển).*
+*Cập nhật toàn diện hệ thống: 2026-10-02 (đối soát README với mã nguồn thực tế: 24/32 REST router đang mount + 2 WebSocket router; Phase 1–3 hoàn thành 100%, Phase 4–5 đang phát triển).*
