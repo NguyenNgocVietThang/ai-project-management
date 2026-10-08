@@ -65,7 +65,7 @@ class OAuthConnectResponse(BaseModel):
     authorization_url: str
 
 
-OAuthProvider = Literal["google", "facebook"]
+OAuthProvider = Literal["google"]
 
 
 class UserResponse(UserBase):
@@ -84,7 +84,6 @@ class UserResponse(UserBase):
     hourly_rate: float | None = None
     has_password: bool
     google_connected: bool
-    facebook_connected: bool
     roles: list[RoleSummary] = []
     last_login: datetime | None = None
 

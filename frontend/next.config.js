@@ -19,13 +19,9 @@ const wsOrigin = originOf(WS_URL)
 
 // Ảnh đại diện của social-login. OAuthService lưu URL avatar tuyệt đối của
 // provider trên user (xem backend app/services/oauth_service.py), và
-// components/common/Avatar.tsx render nguyên trạng, nên các origin này phải
-// được cho phép, nếu không mọi user Google/Facebook sẽ hiển thị ảnh hỏng.
-const avatarOrigins = [
-  'https://lh3.googleusercontent.com',
-  'https://platform-lookaside.fbsbx.com',
-  'https://*.fbcdn.net',
-].join(' ')
+// components/common/Avatar.tsx render nguyên trạng, nên origin này phải
+// được cho phép, nếu không mọi user Google sẽ hiển thị ảnh hỏng.
+const avatarOrigins = 'https://lh3.googleusercontent.com'
 
 // 'unsafe-inline' / 'unsafe-eval' trong script-src: App Router khởi động qua
 // các inline script và, ở môi trường dev, dùng HMR dựa trên eval. Siết chặt
@@ -72,8 +68,6 @@ const nextConfig = {
     // no khong the gioi han theo duong dan - `remotePatterns` thi co the.
     remotePatterns: [
       { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
-      { protocol: 'https', hostname: 'platform-lookaside.fbsbx.com' },
-      { protocol: 'https', hostname: '*.fbcdn.net' },
     ],
   },
   env: {

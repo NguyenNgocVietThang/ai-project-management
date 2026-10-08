@@ -218,26 +218,15 @@ class UserService:
         if provider == "google":
             if not user.google_id:
                 raise BadRequestException("Google account is not connected")
-            if not user.hashed_password and not user.facebook_id:
+            if not user.hashed_password:
                 raise BadRequestException("Cannot disconnect the last sign-in method")
             user.google_id = None
-        elif provider == "facebook":
-            if not user.facebook_id:
-                raise BadRequestException("Facebook account is not connected")
-            if not user.hashed_password and not user.google_id:
-                raise BadRequestException("Cannot disconnect the last sign-in method")
-            user.facebook_id = None
         else:
             raise BadRequestException("Unsupported OAuth provider")
 
         if user.auth_provider == provider:
-            user.auth_provider = (
-                "local"
-                if user.hashed_password
-                else "google"
-                if user.google_id
-                else "facebook"
-            )
+            # Đã chặn ở trên: không có mật khẩu thì không được gỡ phương thức cuối.
+            user.auth_provider = "local"
         await self.db.flush()
         await self.db.refresh(user)
         self._audit(
@@ -284,7 +273,6 @@ class UserService:
         user.avatar_storage_key = None
         user.hashed_password = None
         user.google_id = None
-        user.facebook_id = None
         user.auth_provider = "deleted"
         user.password_reset_token_hash = None
         user.password_reset_expires_at = None

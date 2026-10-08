@@ -249,7 +249,7 @@ AI Project Planning & Portfolio Management system/
 │   │   │   ├── scheduling_service.py         # Critical Path Method engine (dùng utils/cpm.py)
 │   │   │   ├── dashboard_service.py          # KPIs, EVA, Burndown metrics
 │   │   │   ├── notification_service.py       # Notification push & WS publish
-│   │   │   ├── oauth_service.py              # Google & Facebook OAuth 2.0
+│   │   │   ├── oauth_service.py              # Google OAuth 2.0
 │   │   │   ├── phase2_common.py              # get_project_context, notify_project_team, add_audit
 │   │   │   ├── portfolio_service.py, project_service.py, task_service.py, wbs_service.py
 │   │   │   ├── resource_service.py, role_service.py, user_service.py, storage_service.py
@@ -485,7 +485,7 @@ async def publish(channel: str, message: dict):
 | STT | Endpoint Prefix | Router File | Mô tả chức năng |
 |---|---|---|---|
 | 1 | `/auth` | `auth.py` | Đăng ký, đăng nhập, cấp token, đổi mật khẩu, xác thực email, cấp vé WebSocket (`POST /auth/ws-ticket`) |
-| 2 | `/oauth` | `oauth.py` | Google & Facebook OAuth 2.0 Social Login |
+| 2 | `/oauth` | `oauth.py` | Google OAuth 2.0 Social Login |
 | 3 | `/users` | `users.py` | CRUD người dùng, xem & cập nhật hồ sơ cá nhân |
 | 4 | `/roles` | `roles.py` | Quản lý vai trò (Role CRUD) và gán quyền |
 | 5 | `/permissions` | `permissions.py` | Danh sách 34 permissions hệ thống |
@@ -674,9 +674,6 @@ EMAIL_FROM_NAME="AI Project Management"
 GOOGLE_CLIENT_ID=your-google-client-id
 GOOGLE_CLIENT_SECRET=your-google-client-secret
 GOOGLE_REDIRECT_URI=http://localhost:8000/api/v1/oauth/google/callback
-FACEBOOK_APP_ID=your-facebook-app-id
-FACEBOOK_APP_SECRET=your-facebook-app-secret
-FACEBOOK_REDIRECT_URI=http://localhost:8000/api/v1/oauth/facebook/callback
 FRONTEND_URL=http://localhost:3000
 ```
 
@@ -722,7 +719,7 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
 - [x] **Phase 1 — Core Auth & User Onboarding** *(Hoàn thành)*
   - [x] Xác thực JWT Access + Refresh Token, mã hóa bcrypt, Edge Middleware route guard.
   - [x] Đăng ký, đăng nhập, quên/đổi mật khẩu, xác thực email qua SMTP.
-  - [x] Social Login Google & Facebook OAuth 2.0.
+  - [x] Social Login Google OAuth 2.0.
   - [x] Quản lý hồ sơ người dùng & Avatar MinIO.
   - [x] Quản trị Admin: Quản lý người dùng (`/admin/users`), phân quyền Roles & 34 Permissions (`/admin/roles`).
 

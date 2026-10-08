@@ -97,10 +97,6 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_SECRET: str = ""
     GOOGLE_REDIRECT_URI: str = "http://localhost:8000/api/v1/oauth/google/callback"
 
-    FACEBOOK_APP_ID: str = ""
-    FACEBOOK_APP_SECRET: str = ""
-    FACEBOOK_REDIRECT_URI: str = "http://localhost:8000/api/v1/oauth/facebook/callback"
-
     @model_validator(mode="after")
     def _reject_insecure_defaults(self) -> "Settings":
         """Từ chối khởi động ngoài môi trường development nếu vẫn dùng các secret placeholder được ship sẵn.

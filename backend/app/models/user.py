@@ -30,9 +30,6 @@ class User(Base):
     google_id: Mapped[str | None] = mapped_column(
         String(255), unique=True, index=True, nullable=True
     )
-    facebook_id: Mapped[str | None] = mapped_column(
-        String(255), unique=True, index=True, nullable=True
-    )
     auth_provider: Mapped[str] = mapped_column(String(50), default="local", nullable=False)
     auth_version: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
 
@@ -102,10 +99,6 @@ class User(Base):
     @property
     def google_connected(self) -> bool:
         return bool(self.google_id)
-
-    @property
-    def facebook_connected(self) -> bool:
-        return bool(self.facebook_id)
 
     def __repr__(self) -> str:
         return f"<User id={self.id} email={self.email}>"

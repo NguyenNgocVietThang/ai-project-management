@@ -57,7 +57,6 @@ export interface User {
   hourly_rate: number | null
   has_password: boolean
   google_connected: boolean
-  facebook_connected: boolean
   roles: RoleSummary[]
   last_login: string | null
 }
@@ -79,7 +78,7 @@ export interface DeleteAccountRequest {
   username: string
 }
 
-export type OAuthProvider = 'google' | 'facebook'
+export type OAuthProvider = 'google'
 
 export interface OAuthConnectResponse {
   authorization_url: string

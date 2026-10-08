@@ -25,7 +25,6 @@ def _service_with_existing(existing: User | None) -> OAuthService:
 
     service.users = SimpleNamespace(
         get_by_google_id=AsyncMock(return_value=None),
-        get_by_facebook_id=AsyncMock(return_value=None),
         get_by_email=AsyncMock(return_value=existing),
         get_by_username=AsyncMock(return_value=None),
         create=AsyncMock(side_effect=create_user),
@@ -62,25 +61,6 @@ async def test_unverified_provider_email_cannot_take_over_a_local_account():
 
 
 @pytest.mark.asyncio
-async def test_facebook_never_asserts_verification_so_it_cannot_merge():
-    """Graph API không công bố trạng thái xác minh, nên luồng Facebook không bao giờ gộp."""
-    victim = _victim()
-    service = _service_with_existing(victim)
-
-    with pytest.raises(ConflictException):
-        await service._get_or_create_social_user(
-            email="admin@company.com",
-            full_name="Attacker",
-            avatar_url=None,
-            provider="facebook",
-            provider_id="attacker-identity",
-            email_provider_verified=False,
-        )
-
-    assert victim.facebook_id is None
-
-
-@pytest.mark.asyncio
 async def test_new_account_from_unverified_email_is_not_marked_verified():
     service = _service_with_existing(None)
 
@@ -88,8 +68,8 @@ async def test_new_account_from_unverified_email_is_not_marked_verified():
         email="someone@example.com",
         full_name="Someone",
         avatar_url=None,
-        provider="facebook",
-        provider_id="fb-1",
+        provider="google",
+        provider_id="g-1",
         email_provider_verified=False,
     )
 
@@ -104,8 +84,8 @@ async def test_identity_without_email_is_never_treated_as_verified():
         email=None,
         full_name="No Email",
         avatar_url=None,
-        provider="facebook",
-        provider_id="fb-2",
+        provider="google",
+        provider_id="g-2",
         email_provider_verified=True,
     )
 

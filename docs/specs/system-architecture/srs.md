@@ -85,7 +85,7 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 | AUTH-01 | Đăng ký & Đăng nhập sử dụng JWT (Access Token expire 30 phút + Refresh Token expire 7 ngày). Access Token chỉ lưu trong bộ nhớ phía client (không ghi localStorage); Refresh Token nằm trong cookie `httpOnly` do server đặt (`app/core/auth_cookies.py`). Cờ `has-session` (không chứa bí mật) đồng bộ cho Next.js Edge Middleware biết có phiên đăng nhập hay không. |
 | AUTH-02 | Mã hóa mật khẩu bằng bcrypt (passlib). |
 | AUTH-03 | Phân quyền theo mô hình RBAC: 34 Permissions gán cho 7 Roles, Role gán cho User. |
-| AUTH-04 | Social Login OAuth 2.0 (Google, Facebook) tự động liên kết tài khoản theo email. |
+| AUTH-04 | Social Login OAuth 2.0 (Google) tự động liên kết tài khoản theo email. |
 | AUTH-05 | Quên mật khẩu & Đặt lại mật khẩu an toàn qua Email xác thực dùng token một lần (TTL 1 giờ). |
 | AUTH-06 | Xác thực tài khoản qua Email (Email Verification) kích hoạt cờ `email_verified`. |
 | AUTH-07 | Endpoint `/api/v1/auth/me` trả về thông tin người dùng kèm danh sách `roles` và `permissions`. |

@@ -22,10 +22,6 @@ class UserRepository(BaseRepository[User]):
         result = await self.db.execute(select(User).where(User.google_id == google_id))
         return result.scalar_one_or_none()
 
-    async def get_by_facebook_id(self, facebook_id: str) -> User | None:
-        result = await self.db.execute(select(User).where(User.facebook_id == facebook_id))
-        return result.scalar_one_or_none()
-
     async def get_by_password_reset_token_hash_for_update(
         self, token_hash: str
     ) -> User | None:

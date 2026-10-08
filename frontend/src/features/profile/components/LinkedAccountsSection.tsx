@@ -17,7 +17,6 @@ interface LinkedAccountsSectionProps {
 
 const providers: { id: OAuthProvider; label: string }[] = [
   { id: 'google', label: 'Google' },
-  { id: 'facebook', label: 'Facebook' },
 ]
 
 export function LinkedAccountsSection({
@@ -37,7 +36,7 @@ export function LinkedAccountsSection({
         {error && <Alert>{error}</Alert>}
         {successMessage && <Alert variant="success">{successMessage}</Alert>}
         {providers.map((provider) => {
-          const connected = provider.id === 'google' ? user.google_connected : user.facebook_connected
+          const connected = user.google_connected
           return (
             <div
               key={provider.id}

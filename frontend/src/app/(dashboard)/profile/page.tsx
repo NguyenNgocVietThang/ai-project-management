@@ -34,7 +34,7 @@ function ProfilePageContent() {
   const linkedProvider = searchParams.get('linked')
 
   useEffect(() => {
-    if (linkedProvider !== 'google' && linkedProvider !== 'facebook') return
+    if (linkedProvider !== 'google') return
     authService
       .me()
       .then((updated) => {
@@ -126,10 +126,7 @@ function ProfilePageContent() {
     await deleteMutation.mutateAsync(values)
   }
 
-  const linkedSuccess =
-    linkedProvider === 'google' || linkedProvider === 'facebook'
-      ? `${linkedProvider === 'google' ? 'Google' : 'Facebook'} account connected.`
-      : null
+  const linkedSuccess = linkedProvider === 'google' ? 'Google account connected.' : null
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 pb-10">

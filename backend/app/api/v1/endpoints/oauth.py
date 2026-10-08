@@ -21,7 +21,6 @@ router = APIRouter()
 async def get_oauth_providers():
     return {
         "google": bool(settings.GOOGLE_CLIENT_ID),
-        "facebook": bool(settings.FACEBOOK_APP_ID),
     }
 
 
@@ -41,12 +40,6 @@ async def _start(provider: str, oauth_service: OAuthServiceDep) -> RedirectRespo
 @limiter.limit(OAUTH_START_LIMIT)
 async def google_login(request: Request, oauth_service: OAuthServiceDep):
     return await _start("google", oauth_service)
-
-
-@router.get("/facebook/login")
-@limiter.limit(OAUTH_START_LIMIT)
-async def facebook_login(request: Request, oauth_service: OAuthServiceDep):
-    return await _start("facebook", oauth_service)
 
 
 async def _handle_callback(
@@ -118,18 +111,4 @@ async def google_callback(
 ):
     return await _handle_callback(
         "google", oauth_service, code, state, error, request.cookies.get(STATE_COOKIE_NAME)
-    )
-
-
-@router.get("/facebook/callback")
-@limiter.limit(OAUTH_CALLBACK_LIMIT)
-async def facebook_callback(
-    request: Request,
-    oauth_service: OAuthServiceDep,
-    code: str | None = Query(None),
-    state: str | None = Query(None),
-    error: str | None = Query(None),
-):
-    return await _handle_callback(
-        "facebook", oauth_service, code, state, error, request.cookies.get(STATE_COOKIE_NAME)
     )

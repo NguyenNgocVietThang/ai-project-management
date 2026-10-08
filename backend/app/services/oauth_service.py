@@ -29,7 +29,7 @@ from app.models.user import User
 from app.repositories.user_repository import UserRepository
 from app.schemas.auth import TokenResponse
 
-SUPPORTED_PROVIDERS = {"google", "facebook"}
+SUPPORTED_PROVIDERS = {"google"}
 STATE_MAX_AGE_SECONDS = 15 * 60
 
 
@@ -56,15 +56,14 @@ class OAuthService:
 
         Trả về `(state, browser_secret, code_challenge)`. `state` đi trên URL tới
         provider; `browser_secret` phải được đặt vào cookie httpOnly và được trình
-        ra ở callback; `code_challenge` là phần PKCE (chỉ Google, provider kia
-        không hỗ trợ).
+        ra ở callback; `code_challenge` là phần PKCE của Google.
         """
         if provider not in SUPPORTED_PROVIDERS or mode not in {"login", "link"}:
             raise BadRequestException("Unsupported OAuth request")
         if mode == "link" and user_id is None:
             raise BadRequestException("A user is required to link an OAuth account")
 
-        verifier = new_code_verifier() if provider == "google" else None
+        verifier = new_code_verifier()
         try:
             state, browser_secret = await issue_state(
                 {
@@ -80,7 +79,7 @@ class OAuthService:
             raise BadRequestException(
                 "Sign-in is temporarily unavailable. Please try again."
             ) from exc
-        return state, browser_secret, code_challenge_for(verifier) if verifier else None
+        return state, browser_secret, code_challenge_for(verifier)
 
     async def consume_flow(
         self, state: str, browser_secret: str | None, expected_provider: str
@@ -119,8 +118,6 @@ class OAuthService:
     ) -> str:
         if provider == "google":
             return self.get_google_auth_url(state, code_challenge)
-        if provider == "facebook":
-            return self.get_facebook_auth_url(state)
         raise BadRequestException("Unsupported OAuth provider")
 
     def get_google_auth_url(self, state: str, code_challenge: str | None = None) -> str:
@@ -188,70 +185,11 @@ class OAuthService:
                 "avatar_url": profile.get("picture"),
             }
 
-    def get_facebook_auth_url(self, state: str) -> str:
-        if not settings.FACEBOOK_APP_ID:
-            raise BadRequestException("Facebook OAuth App ID is not configured on the server")
-        query = urlencode(
-            {
-                "client_id": settings.FACEBOOK_APP_ID,
-                "redirect_uri": settings.FACEBOOK_REDIRECT_URI,
-                "state": state,
-                "scope": "email,public_profile",
-            }
-        )
-        return f"https://www.facebook.com/v19.0/dialog/oauth?{query}"
-
-    async def fetch_facebook_user(self, code: str) -> dict[str, Any]:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            token_response = await client.get(
-                "https://graph.facebook.com/v19.0/oauth/access_token",
-                params={
-                    "client_id": settings.FACEBOOK_APP_ID,
-                    "client_secret": settings.FACEBOOK_APP_SECRET,
-                    "redirect_uri": settings.FACEBOOK_REDIRECT_URI,
-                    "code": code,
-                },
-            )
-            if token_response.status_code != 200:
-                raise UnauthorizedException("Failed to exchange authorization code with Facebook")
-
-            access_token = token_response.json().get("access_token")
-            if not access_token:
-                raise UnauthorizedException("No access token returned from Facebook")
-
-            user_response = await client.get(
-                "https://graph.facebook.com/v19.0/me",
-                params={
-                    "fields": "id,name,email,picture.type(large)",
-                    "access_token": access_token,
-                },
-            )
-            if user_response.status_code != 200:
-                raise UnauthorizedException("Failed to fetch user profile from Facebook")
-
-            profile = user_response.json()
-            provider_id = profile.get("id")
-            if not provider_id:
-                raise UnauthorizedException("Facebook did not return a user identifier")
-            picture = profile.get("picture", {}).get("data", {}).get("url")
-            return {
-                "id": provider_id,
-                "email": profile.get("email"),
-                # Graph API không cho biết trạng thái xác minh email nên không tự động gộp
-                # vào tài khoản local có sẵn; người dùng vẫn đăng nhập được và có thể liên
-                # kết từ trang hồ sơ.
-                "email_verified": False,
-                "full_name": profile.get("name") or "Facebook User",
-                "avatar_url": picture,
-            }
-
     async def fetch_provider_user(
         self, provider: str, code: str, code_verifier: str | None = None
     ) -> dict[str, Any]:
         if provider == "google":
             return await self.fetch_google_user(code, code_verifier)
-        if provider == "facebook":
-            return await self.fetch_facebook_user(code)
         raise BadRequestException("Unsupported OAuth provider")
 
     async def _get_or_create_social_user(
@@ -271,11 +209,7 @@ class OAuthService:
         ai tạo được một identity mang email của nạn nhân đều chiếm được tài khoản đó
         (kể cả tài khoản Admin) ngay ở lần đăng nhập đầu tiên.
         """
-        user = (
-            await self.users.get_by_google_id(provider_id)
-            if provider == "google"
-            else await self.users.get_by_facebook_id(provider_id)
-        )
+        user = await self.users.get_by_google_id(provider_id)
         if user:
             if user.is_active is False:
                 raise UnauthorizedException("Account is inactive")
@@ -302,10 +236,7 @@ class OAuthService:
                         "An account with this email already exists. Sign in with your "
                         "password and link this provider from your profile settings."
                     )
-                if provider == "google":
-                    user.google_id = provider_id
-                else:
-                    user.facebook_id = provider_id
+                user.google_id = provider_id
                 if avatar_url and not user.avatar_url:
                     user.avatar_url = avatar_url
                 user.email_verified = True
@@ -338,8 +269,7 @@ class OAuthService:
                 hashed_password=None,
                 avatar_url=avatar_url,
                 auth_provider=provider,
-                google_id=provider_id if provider == "google" else None,
-                facebook_id=provider_id if provider == "facebook" else None,
+                google_id=provider_id,
                 is_active=True,
                 email_verified=bool(email) and email_provider_verified,
             )
@@ -357,18 +287,11 @@ class OAuthService:
             raise UnauthorizedException("Account is inactive")
 
         provider_id = user_info["id"]
-        existing = (
-            await self.users.get_by_google_id(provider_id)
-            if state.provider == "google"
-            else await self.users.get_by_facebook_id(provider_id)
-        )
+        existing = await self.users.get_by_google_id(provider_id)
         if existing and existing.id != user.id:
             raise ConflictException("This social account is already linked to another user")
 
-        if state.provider == "google":
-            user.google_id = provider_id
-        else:
-            user.facebook_id = provider_id
+        user.google_id = provider_id
         if user_info.get("avatar_url") and not user.avatar_url:
             user.avatar_url = user_info["avatar_url"]
         if user_info.get("email") == user.email and user_info.get("email_verified"):

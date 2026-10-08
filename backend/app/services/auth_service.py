@@ -129,7 +129,7 @@ class AuthService:
             raise UnauthorizedException("Incorrect email or password")
         if user.hashed_password is None:
             raise BadRequestException(
-                "This account uses social login. Please sign in with Google or Facebook."
+                "This account uses social login. Please sign in with Google."
             )
         if not verify_password(password, user.hashed_password):
             self._audit(

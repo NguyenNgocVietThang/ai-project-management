@@ -154,7 +154,6 @@ async def test_valid_token_changes_password_and_cannot_be_replayed():
         password_reset_expires_at=datetime.now(UTC) + timedelta(minutes=30),
         auth_provider="local",
         google_id=None,
-        facebook_id=None,
     )
     service, db = build_service(user)
     service.users.get_by_password_reset_token_hash_for_update.side_effect = [user, None]
@@ -185,7 +184,6 @@ async def test_social_only_user_can_add_password_without_losing_provider_link():
         password_reset_expires_at=datetime.now(UTC) + timedelta(minutes=30),
         auth_provider="google",
         google_id="google-123",
-        facebook_id=None,
     )
     service, _ = build_service(user)
 

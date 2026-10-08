@@ -32,7 +32,6 @@ def build_user(**overrides):
         "avatar_storage_key": None,
         "hashed_password": None,
         "google_id": "google-7",
-        "facebook_id": None,
         "auth_provider": "google",
         "auth_version": 0,
         "password_reset_token_hash": None,
@@ -203,7 +202,7 @@ async def test_avatar_upload_rejects_mime_and_reports_storage_outage():
 
 @pytest.mark.asyncio
 async def test_disconnect_blocks_last_sign_in_method():
-    user = build_user(hashed_password=None, google_id="google-7", facebook_id=None)
+    user = build_user(hashed_password=None, google_id="google-7")
     service, _, _ = build_service(user)
 
     with pytest.raises(HTTPException) as error:
@@ -300,7 +299,7 @@ async def test_oauth_state_is_rejected_for_a_different_provider():
     with patch("app.core.oauth_state_store.get_redis", return_value=FakeRedis()):
         state, secret, _ = await service.start_flow("google", mode="link", user_id=7)
         with pytest.raises(HTTPException):
-            await service.consume_flow(state, secret, "facebook")
+            await service.consume_flow(state, secret, "other-provider")
 
 
 @pytest.mark.asyncio
