@@ -2,6 +2,8 @@
 # Thứ tự import có nghĩa: Base trước, Association tables trước khi models dùng secondary.
 
 from app.models.ai_output import AIOutput  # noqa: F401
+from app.models.job import Job  # noqa: F401
+from app.models.security_state import SecurityState  # noqa: F401
 
 # ─── Domain 6: Miền AI ───────────────────────────────────────────────────────
 from app.models.ai_request import AIRequest  # noqa: F401

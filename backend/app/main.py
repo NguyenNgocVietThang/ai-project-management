@@ -32,17 +32,38 @@ async def lifespan(app: FastAPI):
     # Khởi động
     logger.info("Starting %s v%s", settings.APP_NAME, settings.APP_VERSION)
     listener_task = asyncio.create_task(redis_listener())
-    yield
-    # Tắt ứng dụng
-    listener_task.cancel()
+    from app.core.job_runner import JobRunner
+    from app.db.session import AsyncSessionLocal
+    from app.services.ai.durable_jobs import AI_HANDLERS, mirror_ai_status
+    from app.services.cron_service import CRON_HANDLERS, catchup_loop
+    from app.services.durable_handlers import HANDLERS
+    runner = JobRunner(AsyncSessionLocal, {**AI_HANDLERS, **HANDLERS, **CRON_HANDLERS}, concurrency=settings.JOB_CONCURRENCY, poll_interval=settings.JOB_POLL_SECONDS, lease_seconds=settings.JOB_LEASE_SECONDS, task_timeout=settings.JOB_TIMEOUT_SECONDS, shutdown_timeout=settings.JOB_SHUTDOWN_TIMEOUT_SECONDS, on_transition=mirror_ai_status)
+    stop = asyncio.Event()
+    catchup_task = None
+    if settings.JOBS_ENABLED:
+        runner.start()
+        catchup_task = asyncio.create_task(catchup_loop(AsyncSessionLocal, stop))
     try:
-        await listener_task
-    except asyncio.CancelledError:
-        pass
-    # close_redis() vốn được định nghĩa nhưng chưa từng được gọi ở đâu, nên
-    # connection pool bị bỏ lại khi tắt ứng dụng.
-    await close_redis()
-    logger.info("Shutdown complete")
+        yield
+    finally:
+        stop.set()
+        if catchup_task is not None:
+            catchup_task.cancel()
+            try:
+                await catchup_task
+            except asyncio.CancelledError:
+                pass
+        await runner.stop()
+        listener_task.cancel()
+        try:
+            await listener_task
+        except asyncio.CancelledError:
+            pass
+        await close_redis()
+        from app.db.session import engine, security_engine
+        await engine.dispose()
+        await security_engine.dispose()
+        logger.info("Shutdown complete")
 
 
 # Trang tài liệu tương tác liệt kê mọi route, schema và giá trị enum — hữu ích khi
@@ -145,17 +166,17 @@ async def health_check():
 
     try:
         async with AsyncSessionLocal() as db:
-            await db.execute(text("SELECT 1"))
+            await asyncio.wait_for(db.execute(text("SELECT 1")), timeout=5)
         checks["database"] = "ok"
     except Exception:
-        logger.exception("health check: database unreachable")
+        logger.warning("health check: database unreachable")
         checks["database"] = "unavailable"
 
     try:
-        await get_redis().ping()
+        await asyncio.wait_for(get_redis().ping(), timeout=3)
         checks["redis"] = "ok"
     except Exception:
-        logger.warning("health check: redis unreachable", exc_info=True)
+        logger.warning("health check: redis unreachable")
         # Redis là soft-fail ở mọi nơi khác trong ứng dụng (thu hồi token, khoá
         # đăng nhập, vé WS, pub/sub), nên nó suy giảm chứ không làm hỏng.
         checks["redis"] = "degraded"

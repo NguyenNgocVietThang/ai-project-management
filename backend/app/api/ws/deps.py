@@ -15,6 +15,7 @@ from collections.abc import Awaitable, Callable
 from app.core.ws_tickets import redeem as redeem_ticket
 from app.db.session import AsyncSessionLocal
 from app.models.user import User
+from app.services.security_state_service import database_enabled
 
 logger = logging.getLogger(__name__)
 
@@ -106,6 +107,9 @@ async def enforce_connection_validity(
                 await _close_unauthorized(websocket, "access to this channel was revoked")
                 return
         except Exception:
+            if database_enabled():
+                await _close_unauthorized(websocket, "authorization is temporarily unavailable")
+                return
             # Một sự cố DB tạm thời không được đăng xuất người dùng; thử lại ở tick kế tiếp.
             logger.warning("ws re-authorisation check failed, will retry", exc_info=True)
 

@@ -142,7 +142,7 @@ async def get_avatar(
         content=data,
         media_type=content_type,
         headers={
-            "Cache-Control": "public, max-age=31536000, immutable",
+            "Cache-Control": "private, no-store",
             "ETag": f'"{storage_key}"',
         },
     )

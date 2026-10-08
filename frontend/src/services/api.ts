@@ -13,7 +13,7 @@ export const WS_BASE_URL = process.env.NEXT_PUBLIC_WS_URL ?? 'ws://localhost:800
 /** Không request nào được phép treo vô hạn. Nếu không có mốc này, một backend
  *  không phản hồi khiến giao diện kẹt ở spinner mãi mãi — không lỗi, không toast,
  *  không có gì để người dùng làm ngoài việc tải lại trang. */
-const REQUEST_TIMEOUT_MS = 20_000
+const REQUEST_TIMEOUT_MS = 90_000 // Render Free cold start can take about a minute.
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
@@ -61,9 +61,13 @@ export async function bootstrapSession(): Promise<boolean> {
   try {
     await refreshAccessToken()
     return true
-  } catch {
-    authStore.getState().clear()
-    return false
+  } catch (error) {
+    if (axios.isAxiosError(error) && [401, 403].includes(error.response?.status ?? 0)) {
+      authStore.getState().clear()
+      return false
+    }
+    // Sleep, network loss and database outages do not invalidate the cookie.
+    throw error
   }
 }
 
@@ -85,6 +89,9 @@ api.interceptors.response.use(
         }
         return api(originalRequest)
       } catch (refreshError) {
+        if (!axios.isAxiosError(refreshError) || ![401, 403].includes(refreshError.response?.status ?? 0)) {
+          return Promise.reject(refreshError)
+        }
         authStore.getState().clear()
         if (typeof window !== 'undefined') {
           // Điều hướng thẳng thay vì router.replace để tải lại hoàn toàn và dọn state; giữ đường

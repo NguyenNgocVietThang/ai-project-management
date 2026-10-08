@@ -16,7 +16,7 @@ export function Avatar({ name, src, className }: AvatarProps) {
     .join('')
 
   if (src) {
-    const resolved = /^https?:\/\//.test(src) ? src : `${new URL(API_BASE_URL).origin}${src}`
+    const resolved = /^https?:\/\//.test(src) || API_BASE_URL.startsWith('/') ? src : `${new URL(API_BASE_URL).origin}${src}`
     return <Image src={resolved} alt="" width={40} height={40} unoptimized className={cn('h-10 w-10 rounded-full object-cover', className)} />
   }
 

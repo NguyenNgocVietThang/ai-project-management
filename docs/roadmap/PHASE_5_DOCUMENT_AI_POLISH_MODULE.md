@@ -70,7 +70,7 @@ Module **Document AI & Polish (Phase 5)** hoàn thiện hệ sinh thái quản l
 > **Trạng thái:** Hoàn thành — trang `profile/` (ProfileDetailsForm, AvatarSection, PasswordSection, LinkedAccountsSection, DangerZoneSection); backend `/users` + MinIO.
 
 ### GIAI ĐOẠN 5.5 – Performance Optimization & Mobile Responsiveness
-> **Trạng thái:** Một phần — tối ưu mobile navigation với modal focus trap, chuyển đổi theme light/dark/system mượt mà, cấu hình deploy production Caddy HTTPS; tầng Redis caching chủ động cho truy vấn phức tạp vẫn là kế hoạch tiếp theo.
+> **Trạng thái:** Một phần — tối ưu mobile navigation với modal focus trap, chuyển đổi theme light/dark/system mượt mà, cấu hình deploy production Render + Supabase; tầng Redis caching chủ động cho truy vấn phức tạp vẫn là kế hoạch tiếp theo.
 
 ---
 

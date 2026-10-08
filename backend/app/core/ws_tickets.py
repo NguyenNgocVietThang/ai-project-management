@@ -25,6 +25,7 @@ import secrets
 from typing import Any
 
 from app.core.redis_client import get_redis
+from app.services import security_state_service as durable_state
 
 TICKET_KEY_PREFIX = "auth:ws_ticket:"
 # Đủ cho một lần điều hướng và bắt tay, đủ ngắn để vé lọt vào log gần như chắc
@@ -39,6 +40,11 @@ def _key(ticket: str) -> str:
 async def issue(user_id: int, auth_version: int) -> str:
     """Cấp một vé cho `user_id`. Ném lỗi nếu không kết nối được tới store."""
     ticket = secrets.token_urlsafe(32)
+    if durable_state.database_enabled():
+        await durable_state.put("ws-ticket", _key(ticket),
+                                {"user_id": user_id, "auth_version": auth_version},
+                                TICKET_TTL_SECONDS)
+        return ticket
     await get_redis().set(
         _key(ticket),
         json.dumps({"user_id": user_id, "auth_version": auth_version}),
@@ -56,6 +62,9 @@ async def redeem(ticket: str) -> dict[str, Any] | None:
     """
     if not ticket:
         return None
+    if durable_state.database_enabled():
+        payload = await durable_state.take("ws-ticket", _key(ticket))
+        return payload if isinstance(payload, dict) else None
     raw = await get_redis().getdel(_key(ticket))
     if not raw:
         return None

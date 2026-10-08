@@ -4,12 +4,30 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 from app.core.config import settings
 
+connect_args = {
+    **({"ssl": True} if settings.DATABASE_SSL else {}),
+    **({"prepared_statement_cache_size": 0, "statement_cache_size": 0} if settings.DATABASE_DISABLE_PREPARED_STATEMENTS else {}),
+}
+
 engine = create_async_engine(
     settings.DATABASE_URL,
     pool_size=settings.DATABASE_POOL_SIZE,
     max_overflow=settings.DATABASE_MAX_OVERFLOW,
-    echo=settings.APP_ENV == "development",
+    echo=False,  # SQL bind parameters may contain reset links and document text.
+    pool_pre_ping=True,
+    pool_recycle=300,
+    connect_args=connect_args,
     future=True,
+)
+
+# Auth state must progress even when every application connection is held by
+# authenticated requests waiting for a rate-limit/revocation operation.
+security_engine = create_async_engine(
+    settings.DATABASE_URL, pool_size=1, max_overflow=0, pool_timeout=4,
+    echo=False, pool_pre_ping=True, pool_recycle=300, connect_args=connect_args,
+)
+SecuritySessionLocal = async_sessionmaker(
+    security_engine, expire_on_commit=False, autoflush=False,
 )
 
 AsyncSessionLocal = async_sessionmaker(

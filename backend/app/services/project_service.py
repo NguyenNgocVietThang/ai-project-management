@@ -1,7 +1,7 @@
-import asyncio
 import builtins
 import logging
-from datetime import UTC, date, datetime
+import uuid
+from datetime import UTC, date, datetime, timedelta
 from typing import Annotated
 
 from fastapi import Depends
@@ -36,9 +36,9 @@ from app.schemas.project import (
     RoleSummary,
     UserSummary,
 )
+from app.services.job_service import enqueue
 from app.services.phase2_common import is_admin as _is_admin
 from app.services.phase2_common import json_value as _json_value
-from app.workers.email_tasks import send_project_invitation_email_task
 
 logger = logging.getLogger(__name__)
 PROJECT_ROLES = {"PM", "BA", "PO", "Member", "Customer"}
@@ -304,33 +304,13 @@ class ProjectService:
             new_values={"user_id": member.id, "role_id": role.id, "role": role.name},
             description=f"Added {member.full_name} as {role.name}",
         )
-        try:
-            await asyncio.wait_for(
-                asyncio.to_thread(
-                    send_project_invitation_email_task.apply_async,
-                    args=[
-                        member.email,
-                        inviter.full_name,
-                        project.name,
-                        role.name,
-                        f"{settings.FRONTEND_URL.rstrip('/')}/projects/{project.id}/overview",
-                    ],
-                    retry=False,
-                ),
-                timeout=2.0,
-            )
-        except TimeoutError:
-            logger.warning(
-                "Timed out enqueueing project invitation for project_id=%s user_id=%s",
-                project.id,
-                member.id,
-            )
-        except Exception:
-            logger.exception(
-                "Failed to enqueue project invitation for project_id=%s user_id=%s",
-                project.id,
-                member.id,
-            )
+        await enqueue(self.db, "email.invite", {
+            "user_id": member.id, "inviter_name": inviter.full_name,
+            "project_name": project.name, "role_name": role.name,
+            "link": f"{settings.FRONTEND_URL.rstrip('/')}/projects/{project.id}/overview",
+        }, f"email:invite:{project.id}:{member.id}:{uuid.uuid4().hex}",
+            owner_id=member.id, project_id=project.id,
+            expires_at=datetime.now(UTC) + timedelta(hours=23))
         row = await self.repo.get_member(project_id, member.id)
         return ProjectMemberResponse(
             user=UserSummary.model_validate(row[0]),

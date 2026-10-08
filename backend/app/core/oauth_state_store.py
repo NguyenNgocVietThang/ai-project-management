@@ -28,6 +28,7 @@ from typing import Any
 
 from app.core.config import settings
 from app.core.redis_client import get_redis
+from app.services import security_state_service as durable_state
 
 STATE_KEY_PREFIX = "auth:oauth_state:"
 # Đủ dài cho một vòng chuyển hướng tới provider kèm màn hình chọn tài khoản,
@@ -73,6 +74,9 @@ async def issue(payload: dict[str, Any]) -> tuple[str, str]:
     """
     state = secrets.token_urlsafe(32)
     browser_secret = secrets.token_urlsafe(32)
+    if durable_state.database_enabled():
+        await durable_state.put("oauth-state", _key(state, browser_secret), payload, STATE_TTL_SECONDS)
+        return state, browser_secret
     await get_redis().set(
         _key(state, browser_secret),
         json.dumps(payload),
@@ -92,6 +96,9 @@ async def consume(state: str, browser_secret: str | None) -> dict[str, Any] | No
     """
     if not state or not browser_secret:
         return None
+    if durable_state.database_enabled():
+        payload = await durable_state.take("oauth-state", _key(state, browser_secret))
+        return payload if isinstance(payload, dict) else None
     raw = await get_redis().getdel(_key(state, browser_secret))
     if not raw:
         return None

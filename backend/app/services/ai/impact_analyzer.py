@@ -222,6 +222,9 @@ async def run_impact_analysis(db: AsyncSession, change_request_id: int) -> Impac
     cpm_summary = _summarize_cpm(tasks, dependencies)
     task_brief = [{"id": task.id, "name": task.name} for task in tasks]
 
+    from app.services.ai.job_context import active_ai_context
+    if active_ai_context.get() is not None:
+        await db.commit()  # Release read transaction before the provider call.
     raw = await generate_impact_analysis(change_request, project, task_brief, cpm_summary)
     validated = _validate_ai_output(raw, valid_task_ids=set(task_ids))
 

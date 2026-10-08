@@ -32,7 +32,7 @@ def extract_token(link: str) -> str:
 
 
 @pytest.mark.asyncio
-async def test_registration_stores_hashed_token_and_survives_queue_failure(caplog):
+async def test_registration_keeps_hash_but_aborts_on_outbox_failure(caplog):
     db = AsyncMock()
     service = AuthService(db)
 
@@ -56,18 +56,21 @@ async def test_registration_stores_hashed_token_and_survives_queue_failure(caplo
     with (
         patch("app.services.auth_service.secrets.token_urlsafe", return_value="secret-token"),
         patch(
-            "app.services.auth_service.send_email_verification_task.delay",
+            "app.services.auth_service.enqueue",
             side_effect=RuntimeError("broker unavailable"),
         ),
         caplog.at_level(logging.ERROR),
     ):
-        user = await service.register(request)
+        with pytest.raises(HTTPException) as error:
+            await service.register(request)
+        assert error.value.status_code == 503
+        user = service.users.create.call_args.args[0]
 
     assert user.email_verified is False
     assert user.email_verification_token_hash == hashlib.sha256(b"secret-token").hexdigest()
     assert started_at + timedelta(hours=23, minutes=59) < user.email_verification_expires_at
     assert user.email_verification_expires_at <= started_at + timedelta(hours=24, seconds=2)
-    assert "user_id=17" in caplog.text
+    assert "user_id=17" not in caplog.text
     assert request.email not in caplog.text
     assert "secret-token" not in caplog.text
 
@@ -140,14 +143,14 @@ async def test_resend_replaces_old_token_and_queues_new_link():
 
     with (
         patch("app.services.auth_service.secrets.token_urlsafe", return_value="new-token"),
-        patch("app.services.auth_service.send_email_verification_task.delay") as enqueue,
+        patch("app.services.auth_service.enqueue") as enqueue,
     ):
         sent = await service.resend_email_verification(user.id)
 
     assert sent is True
     assert user.email_verification_token_hash != old_hash
     assert user.email_verification_token_hash == hashlib.sha256(b"new-token").hexdigest()
-    assert extract_token(enqueue.call_args.args[1]) == "new-token"
+    assert extract_token(enqueue.call_args.args[2]["link"]) == "new-token"
     db.flush.assert_awaited_once()
 
 
@@ -165,7 +168,7 @@ async def test_resend_enforces_sixty_second_cooldown():
     service, _ = build_service(user)
 
     with (
-        patch("app.services.auth_service.send_email_verification_task.delay") as enqueue,
+        patch("app.services.auth_service.enqueue") as enqueue,
         pytest.raises(HTTPException) as error,
     ):
         await service.resend_email_verification(user.id)
@@ -180,7 +183,7 @@ async def test_resend_skips_already_verified_account():
     user = SimpleNamespace(id=9, email_verified=True)
     service, db = build_service(user)
 
-    with patch("app.services.auth_service.send_email_verification_task.delay") as enqueue:
+    with patch("app.services.auth_service.enqueue") as enqueue:
         sent = await service.resend_email_verification(user.id)
 
     assert sent is False
@@ -202,7 +205,7 @@ async def test_resend_queue_failure_returns_retryable_error_without_sensitive_lo
     with (
         patch("app.services.auth_service.secrets.token_urlsafe", return_value="secret-token"),
         patch(
-            "app.services.auth_service.send_email_verification_task.delay",
+            "app.services.auth_service.enqueue",
             side_effect=RuntimeError("broker unavailable"),
         ),
         caplog.at_level(logging.ERROR),
@@ -212,7 +215,7 @@ async def test_resend_queue_failure_returns_retryable_error_without_sensitive_lo
 
     assert error.value.status_code == 503
     assert "try again" in error.value.detail.lower()
-    assert "user_id=23" in caplog.text
+    assert "user_id=23" not in caplog.text
     assert user.email not in caplog.text
     assert "secret-token" not in caplog.text
 

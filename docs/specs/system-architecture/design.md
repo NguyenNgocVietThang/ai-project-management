@@ -77,9 +77,8 @@ Hệ thống **AI Project Planning & Portfolio Management** được thiết k�
 | `celery-worker` | ./backend Dockerfile | — | Dev & Prod |
 | `celery-beat` | ./backend Dockerfile | — | Dev & Prod |
 | `frontend` | ./frontend Dockerfile (Next.js) | 3000 (Dev) / Nội bộ (Prod) | Dev & Prod |
-| `caddy` | caddy:2-alpine | 80, 443 | Prod (`docker-compose.prod.yml`) |
 
-> Network: `ai-project-network`. Volumes: `postgres_data`, `redis_data`, `minio_data`. Hỗ trợ triển khai Production HTTPS tự động qua Caddy trên Oracle Cloud VM (xem [`docs/deploy-oracle-cloud.md`](../../deploy-oracle-cloud.md)).
+> Network: `ai-project-network`. Volumes: `postgres_data`, `redis_data`, `minio_data`. Triển khai Production trên Render + Supabase Free Tier (xem [`docs/deploy-render-supabase.md`](../../deploy-render-supabase.md)).
 
 ---
 
@@ -306,7 +305,7 @@ Hệ thống cung cấp 2 native FastAPI `WebSocket` endpoints được mount t�
 
 ## Celery Beat và tác vụ theo lịch
 
-Hệ thống thiết lập tiến trình `celery-beat` riêng biệt trong `docker-compose.yml` (và `docker-compose.prod.yml`):
+Hệ thống thiết lập tiến trình `celery-beat` riêng biệt trong `docker-compose.yml`:
 1. **Quét hạn công việc hàng ngày**:
    - **Task**: `sweep-task-dates-daily` (`app/workers/notification_tasks.py::sweep_task_dates_task`)
    - **Tần suất**: Chạy định kỳ lúc 08:00 AM hàng ngày (Múi giờ `Asia/Ho_Chi_Minh`).
@@ -330,7 +329,7 @@ Hệ thống thiết lập tiến trình `celery-beat` riêng biệt trong `dock
 | 2.2 | 2026-08-22 | Đã hoàn thành Admin panel (users, roles, permissions, audit timeline), Notification triggers (task start/due-soon/change fan-out qua Celery Beat daily sweep), và Real-time Project Chat. Bổ sung Domain 8 (Chat) với 2 bảng `chat_messages` và `chat_read_states` (tổng 34 tables), Redis Pub/Sub bridge. |
 | 2.2.1 | 2026-09-03 | Đối soát tài liệu với mã nguồn thực tế: **21/32 REST router được mount** (11 router `leaves/skills/documents/approvals/change_requests/gantt/cpm/reports/versions/ai/system` vẫn là stub `TODO`, chưa mount); `workers/ai_tasks.py` và `report_tasks.py` là stub; CPM chạy nội bộ qua `utils/cpm.py` + `scheduling_service.py`; 123/123 unit test pass. Model DB đủ 34 bảng nhưng business logic Phase 3–5 phần lớn chưa hiện thực. |
 | 2.2.2 | 2026-09-16 | Sửa các sai lệch phát hiện khi đối soát lại với mã nguồn: thực tế **23/32 REST router được mount**... |
-| 2.3.0 | 2026-10-02 | Hoàn thành toàn diện Phase 3 (AI Features) với 5/5 trụ cột: AI Project Generator, AI Impact Analysis, AI Schedule Optimization, AI Resource Recommendation, AI Risk Analysis. Mount thêm `change_requests` router (nâng tổng số lên **24/32 REST router đang hoạt động**, chỉ còn 8 stub). Thêm 2 route frontend mới (`change-requests`, `ai-insights`). Thêm Celery Beat risk sweep (08:30 hàng ngày). Bổ sung tài liệu và cấu hình deploy Oracle Cloud Always Free với Caddy HTTPS (`docker-compose.prod.yml`). Cập nhật bộ unit test backend lên 264/264 passing. |
+| 2.3.0 | 2026-10-02 | Hoàn thành toàn diện Phase 3 (AI Features) với 5/5 trụ cột: AI Project Generator, AI Impact Analysis, AI Schedule Optimization, AI Resource Recommendation, AI Risk Analysis. Mount thêm `change_requests` router (nâng tổng số lên **24/32 REST router đang hoạt động**, chỉ còn 8 stub). Thêm 2 route frontend mới (`change-requests`, `ai-insights`). Thêm Celery Beat risk sweep (08:30 hàng ngày). Chuyển triển khai production sang Render + Supabase (Free Tier), thay thế Oracle Cloud Always Free. Cập nhật bộ unit test backend lên 264/264 passing. |
 
 ---
 

@@ -8,6 +8,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
  */
 describe('api client', () => {
   beforeEach(() => {
+    vi.restoreAllMocks()
     vi.resetModules()
   })
 
@@ -50,17 +51,43 @@ describe('api client', () => {
   })
 
   it('gọi refresh mà không gửi refresh token trong body', async () => {
-    const apiModule = await import('./api')
     const axios = (await import('axios')).default
-    const post = vi.fn().mockResolvedValue({ data: { access_token: 'new', token_type: 'bearer' } })
-    vi.spyOn(axios, 'create').mockReturnValue({ post } as never)
-
-    // bootstrapSession dùng chính đường refresh đó.
+    const create = axios.create.bind(axios)
+    const requests: { url?: string; data?: unknown }[] = []
+    vi.spyOn(axios, 'create').mockImplementation((config) => {
+      const client = create(config)
+      client.defaults.adapter = async (request) => {
+        requests.push({ url: request.url, data: request.data })
+        return { data: { access_token: 'new', token_type: 'bearer' }, status: 200, statusText: 'OK', headers: {}, config: request }
+      }
+      return client
+    })
+    const apiModule = await import('./api')
     await apiModule.bootstrapSession()
-
-    // Không kiểm tra được lời gọi trên instance đã tạo trước khi spy, nên chỉ
-    // khẳng định hợp đồng: bootstrap không bao giờ đọc một refresh token nào.
+    expect(requests).toEqual([{ url: '/auth/refresh', data: undefined }])
     const { useAuthStore } = await import('@/store/authStore')
     expect('refreshToken' in useAuthStore.getState()).toBe(false)
+  })
+
+  it.each([401, 503])('bootstrap xử lý mã %s đúng với cookie phiên', async (status) => {
+    const { default: axios, AxiosError } = await import('axios')
+    const create = axios.create.bind(axios)
+    vi.spyOn(axios, 'create').mockImplementation((config) => {
+      const client = create(config)
+      client.defaults.adapter = async (request) => {
+        throw new AxiosError('unavailable', 'ERR_BAD_RESPONSE', request, undefined, { data: {}, status, statusText: '', headers: {}, config: request })
+      }
+      return client
+    })
+    const apiModule = await import('./api')
+    const { useAuthStore } = await import('@/store/authStore')
+    useAuthStore.getState().setTokens({ access_token: 'existing', token_type: 'bearer' })
+    if (status === 401) {
+      expect(await apiModule.bootstrapSession()).toBe(false)
+      expect(useAuthStore.getState().accessToken).toBeNull()
+    } else {
+      await expect(apiModule.bootstrapSession()).rejects.toHaveProperty('response.status', 503)
+      expect(useAuthStore.getState().accessToken).toBe('existing')
+    }
   })
 })

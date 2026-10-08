@@ -40,10 +40,7 @@ from app.models.audit_log import AuditLog
 from app.models.user import User
 from app.repositories.user_repository import UserRepository
 from app.schemas.auth import RegisterRequest, ResetPasswordRequest, TokenResponse
-from app.workers.email_tasks import (
-    send_email_verification_task,
-    send_password_reset_email_task,
-)
+from app.services.job_service import enqueue
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +55,13 @@ class AuthService:
     def __init__(self, db: AsyncSession):
         self.db = db
         self.users = UserRepository(db)
+
+    async def _email_outbox(self, *args, **kwargs):
+        try:
+            return await enqueue(*args, **kwargs)
+        except Exception:
+            # Roll back the account/token transaction when its outbox fails.
+            raise ServiceUnavailableException("Unable to queue email right now. Please try again.") from None
 
     async def register(self, data: RegisterRequest) -> User:
         if await self.users.get_by_email(data.email):
@@ -76,14 +80,9 @@ class AuthService:
         raw_token = await self._replace_email_verification_token(user)
         verification_link = self._email_verification_link(raw_token)
 
-        try:
-            send_email_verification_task.delay(user.email, verification_link)
-        except Exception:
-            # Quá trình đăng ký vẫn thành công. Không ghi log địa chỉ người nhận hoặc đường link/token.
-            logger.exception(
-                "Failed to enqueue email verification for newly registered user_id=%s",
-                user.id,
-            )
+        await self._email_outbox(self.db, "email.verify", {"user_id": user.id, "link": verification_link},
+                      f"email:verify:{user.id}:{user.email_verification_token_hash}",
+                      owner_id=user.id, expires_at=user.email_verification_expires_at)
         return user
 
     def _audit(
@@ -174,12 +173,9 @@ class AuthService:
         query = urlencode({"token": raw_token})
         reset_link = f"{settings.FRONTEND_URL.rstrip('/')}/reset-password?{query}"
 
-        try:
-            send_password_reset_email_task.delay(user.email, reset_link)
-        except Exception:
-            # Endpoint cố tình không phụ thuộc vào email. Chi tiết vận hành chỉ nằm
-            # trong log server và không được để lộ reset token hoặc địa chỉ người nhận.
-            logger.exception("Failed to enqueue password reset email for user_id=%s", user.id)
+        await self._email_outbox(self.db, "email.reset", {"user_id": user.id, "link": reset_link},
+                      f"email:reset:{user.id}:{user.password_reset_token_hash}",
+                      owner_id=user.id, expires_at=user.password_reset_expires_at)
 
     async def reset_password(self, data: ResetPasswordRequest) -> None:
         token_hash = self._hash_reset_token(data.token)
@@ -257,16 +253,9 @@ class AuthService:
 
         raw_token = await self._replace_email_verification_token(user, now=now)
         verification_link = self._email_verification_link(raw_token)
-        try:
-            send_email_verification_task.delay(user.email, verification_link)
-        except Exception as exc:
-            logger.exception(
-                "Failed to enqueue resent email verification for user_id=%s",
-                user.id,
-            )
-            raise ServiceUnavailableException(
-                "Unable to send a verification email right now. Please try again."
-            ) from exc
+        await self._email_outbox(self.db, "email.verify", {"user_id": user.id, "link": verification_link},
+                      f"email:verify:{user.id}:{user.email_verification_token_hash}",
+                      owner_id=user.id, expires_at=user.email_verification_expires_at)
         return True
 
     async def _replace_email_verification_token(
@@ -335,7 +324,13 @@ class AuthService:
             raise UnauthorizedException("Invalid refresh token")
 
         jti = payload.get("jti")
-        if await is_revoked(jti):
+        if settings.SECURITY_STATE_BACKEND == "database":
+            await self.db.commit()  # Release the read connection before the durable claim.
+            from app.core.token_revocation import claim_revocation
+            reused = not await claim_revocation(jti, payload.get("exp"))
+        else:
+            reused = await is_revoked(jti)
+        if reused:
             user.auth_version = (user.auth_version or 0) + 1
             self._audit(
                 "REFRESH_TOKEN_REUSED",
@@ -347,7 +342,8 @@ class AuthService:
             await self.db.commit()  # lưu lại việc thu hồi dù chúng ta có raise
             raise UnauthorizedException("Invalid refresh token")
 
-        await revoke(jti, payload.get("exp"))
+        if settings.SECURITY_STATE_BACKEND != "database":
+            await revoke(jti, payload.get("exp"))
         self._audit("TOKEN_REFRESH", user_id=user.id, description="Refresh token rotated")
         return self.issue_tokens(user)
 

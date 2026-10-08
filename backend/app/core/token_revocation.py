@@ -1,4 +1,7 @@
-"""Danh sách thu hồi refresh-token, được hỗ trợ bởi Redis.
+"""Danh sách thu hồi token, dùng Redis hoặc Postgres theo chế độ triển khai.
+
+Database mode lưu tombstone bền vững và fail closed khi DB lỗi. Nhánh Redis
+bên dưới giữ hành vi development cũ; phần đánh đổi fail-open chỉ áp dụng nhánh đó.
 
 JWT là tự chứa: một khi đã phát hành, không gì ngăn được nó bị replay cho tới
 khi hết hạn. `User.auth_version` xử lý trường hợp cực đoan (đổi mật khẩu thu hồi
@@ -14,9 +17,11 @@ so với một refresh token đã bị thu hồi tồn tại tới khi tự hế
 vẫn có sẵn như một kill switch ngoài luồng không phụ thuộc Redis.
 """
 import logging
+import math
 import time
 
 from app.core.redis_client import get_redis
+from app.services import security_state_service as durable_state
 
 logger = logging.getLogger(__name__)
 
@@ -35,14 +40,18 @@ def _ttl_seconds(expires_at: int | None) -> int:
     """
     if not expires_at:
         return 86_400
-    remaining = int(expires_at - time.time())
+    # Round up so the tombstone cannot expire a fractional second before JWT exp.
+    remaining = math.ceil(expires_at - time.time())
     return remaining if remaining > 0 else 86_400
 
 
 async def revoke(jti: str, expires_at: int | None = None) -> bool:
-    """Đánh dấu `jti` không dùng được nữa. Trả về False nếu không kết nối được tới store."""
+    """Revoke idempotently; database failures raise 503, legacy Redis failures return False."""
     if not jti:
         return False
+    if durable_state.database_enabled():
+        await durable_state.put("revocation", _key(jti), {}, _ttl_seconds(expires_at))
+        return True
     try:
         await get_redis().set(_key(jti), "1", ex=_ttl_seconds(expires_at))
         return True
@@ -52,10 +61,11 @@ async def revoke(jti: str, expires_at: int | None = None) -> bool:
 
 
 async def is_revoked(jti: str | None) -> bool:
-    """`jti` đã bị thu hồi hay chưa. False khi không kết nối được tới store — xem
-    ghi chú fail-open trong docstring của module."""
+    """Lookup revocation; database failures reject, legacy Redis failures return False."""
     if not jti:
-        return False
+        return durable_state.database_enabled()
+    if durable_state.database_enabled():
+        return await durable_state.contains("revocation", _key(jti))
     try:
         return await get_redis().exists(_key(jti)) == 1
     except Exception:
@@ -65,4 +75,21 @@ async def is_revoked(jti: str | None) -> bool:
             jti,
             exc_info=True,
         )
+        return False
+
+
+async def claim_revocation(jti: str | None, expires_at: int | None = None) -> bool:
+    """Atomically rotate a refresh token once; False means missing/already used.
+
+    Database failures raise 503, so the caller must never issue new credentials
+    after an unsuccessful claim. Legacy revoke remains idempotent for logout.
+    """
+    if not jti:
+        return False
+    if durable_state.database_enabled():
+        return await durable_state.claim("revocation", _key(jti), _ttl_seconds(expires_at))
+    try:
+        return bool(await get_redis().set(_key(jti), "1", ex=_ttl_seconds(expires_at), nx=True))
+    except Exception:
+        logger.warning("Token rotation claim unavailable")
         return False

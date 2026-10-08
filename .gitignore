@@ -56,3 +56,7 @@ graphify-out/GRAPH_TREE.html
 graphify-out/wiki/
 graphify-out/obsidian/
 
+# Ephemeral local Postgres verification cluster (never ship data/logs).
+tasks/.postgres-test/
+tasks/.validation-libs/
+tasks/.render-validation.json

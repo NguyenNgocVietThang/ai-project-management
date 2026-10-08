@@ -295,6 +295,10 @@ async def run_risk_analysis(db: AsyncSession, project_id: int) -> RiskReport:
 
     signals = await _compute_signals(db, project, tasks, dependencies)
 
+    from app.services.ai.job_context import active_ai_context
+    if active_ai_context.get() is not None:
+        await db.commit()
+
     try:
         ai_result = await generate_risk_analysis(project, signals)
     except AIResponseError:

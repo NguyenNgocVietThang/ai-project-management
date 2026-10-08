@@ -19,6 +19,7 @@ interface AvatarSectionProps {
 function resolveAvatarUrl(value: string | null): string | null {
   if (!value) return null
   if (/^https?:\/\//.test(value) || value.startsWith('blob:')) return value
+  if (API_BASE_URL.startsWith('/')) return value
   const apiOrigin = new URL(API_BASE_URL).origin
   return `${apiOrigin}${value}`
 }

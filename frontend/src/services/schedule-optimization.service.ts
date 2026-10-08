@@ -17,8 +17,8 @@ export const scheduleOptimizationService = {
     return data
   },
 
-  async getJob(jobId: string): Promise<ScheduleOptimizationJobResult> {
-    const { data } = await api.get<ScheduleOptimizationJobResult>(`/ai/jobs/${jobId}`)
+  async getJob(jobId: string, signal?: AbortSignal): Promise<ScheduleOptimizationJobResult> {
+    const { data } = await api.get<ScheduleOptimizationJobResult>(`/ai/jobs/${jobId}`, { signal })
     return data
   },
 }

@@ -10,6 +10,7 @@ import { MainNav, MobileNav } from '@/components/layout/Navigation'
 import { LanguageToggle } from '@/components/layout/LanguageToggle'
 import { ThemeToggle } from '@/components/theme/ThemeToggle'
 import { EmailVerificationBanner } from '@/features/auth/components/EmailVerificationBanner'
+import { JobsPanel } from '@/features/jobs/components/JobsPanel'
 import { NotificationBell } from '@/features/notifications/components/NotificationBell'
 import { useNotificationSocket } from '@/features/notifications/hooks/useNotifications'
 import { useAuth } from '@/hooks/useAuth'
@@ -22,8 +23,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter()
   const [isClient, setIsClient] = useState(false)
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
+  const [sessionError, setSessionError] = useState(false)
+  const [sessionAttempt, setSessionAttempt] = useState(0)
   const t = useTranslations('nav')
   const ts = useTranslations('shell')
+  const tj = useTranslations('jobs')
   const pathname = usePathname()
   const section = pathname.split('/')[1]
   const sectionTitle = ['dashboard', 'projects', 'portfolios', 'admin', 'notifications', 'profile'].includes(section) ? t(section) : ts('workspace')
@@ -42,6 +46,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   // phải được lấy lại từ cookie refresh httpOnly trước khi render bất cứ thứ gì.
   useEffect(() => {
     let cancelled = false
+    setSessionError(false)
     if (useAuthStore.getState().accessToken) {
       setIsClient(true)
       useAuthStore.setState({ hasHydrated: true })
@@ -57,11 +62,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       setIsClient(true)
       useAuthStore.setState({ hasHydrated: true })
       if (!restored) router.replace('/login')
+    }).catch(() => {
+      if (cancelled) return
+      useAuthStore.setState({ hasHydrated: false })
+      setSessionError(true)
     })
     return () => {
       cancelled = true
     }
-  }, [router])
+  }, [router, sessionAttempt])
 
   useEffect(() => {
     if (hasHydrated && !isAuthenticated) {
@@ -74,6 +83,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   useNotificationSocket()
 
   if (!hasHydrated || !isClient || !isAuthenticated) {
+    if (sessionError) return <main className="flex min-h-dvh items-center justify-center bg-background p-6"><div className="max-w-md space-y-4 text-center"><p role="status" className="text-sm text-muted-foreground">{tj('connection')}</p><button type="button" onClick={() => setSessionAttempt(value => value + 1)} className="min-h-11 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">{tj('refresh')}</button></div></main>
     return <FullPageSpinner />
   }
 
@@ -123,6 +133,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             errorMessage={resendEmailVerificationError}
           />
         )}
+        <JobsPanel />
         {Children.toArray(children)}
       </main>
     </div>

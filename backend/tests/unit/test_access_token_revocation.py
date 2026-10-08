@@ -9,6 +9,7 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
 import pytest
+from sqlalchemy.ext.asyncio import AsyncSession
 
 import app.db.base  # noqa: F401 - đăng ký các quan hệ SQLAlchemy
 from app.core.dependencies import _user_from_token
@@ -47,7 +48,7 @@ async def test_a_token_that_was_never_revoked_still_works():
 async def test_logout_revokes_both_tokens():
     access = create_access_token({"sub": "5", "ver": 0})
     refresh = create_refresh_token({"sub": "5", "ver": 0})
-    service = AuthService(AsyncMock())
+    service = AuthService(AsyncMock(spec=AsyncSession))
 
     with patch("app.services.auth_service.revoke", AsyncMock(return_value=True)) as revoke:
         await service.logout(refresh, access)
@@ -61,7 +62,7 @@ async def test_logout_revokes_both_tokens():
 async def test_logout_without_an_access_token_still_revokes_the_refresh_token():
     """Client cũ không gửi header Authorization vẫn phải đăng xuất sạch phần làm được."""
     refresh = create_refresh_token({"sub": "5", "ver": 0})
-    service = AuthService(AsyncMock())
+    service = AuthService(AsyncMock(spec=AsyncSession))
 
     with patch("app.services.auth_service.revoke", AsyncMock(return_value=True)) as revoke:
         await service.logout(refresh, None)

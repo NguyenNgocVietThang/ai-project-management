@@ -49,7 +49,8 @@ class JsonFormatter(logging.Formatter):
             "request_id": getattr(record, "request_id", "-"),
         }
         if record.exc_info:
-            payload["exception"] = self.formatException(record.exc_info)
+            # DB/provider exceptions can embed SQL binds, reset links or tokens.
+            payload["exception_type"] = record.exc_info[0].__name__
         return json.dumps(payload, ensure_ascii=False, default=str)
 
 

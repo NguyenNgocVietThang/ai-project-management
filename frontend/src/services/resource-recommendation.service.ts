@@ -29,8 +29,8 @@ export const resourceRecommendationService = {
     return data
   },
 
-  async getJob(jobId: string): Promise<ResourceRecommendationResultResponse> {
-    const { data } = await api.get<ResourceRecommendationResultResponse>(`/ai/jobs/${jobId}`)
+  async getJob(jobId: string, signal?: AbortSignal): Promise<ResourceRecommendationResultResponse> {
+    const { data } = await api.get<ResourceRecommendationResultResponse>(`/ai/jobs/${jobId}`, { signal })
     return data
   },
 }

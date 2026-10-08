@@ -14,6 +14,7 @@ import { Spinner } from '@/components/common/Spinner'
 import { formatMoney } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { getApiErrorMessage } from '@/types/api.types'
+import { JobConnectionNotice } from '@/features/jobs/components/JobConnectionNotice'
 import {
   useRequestResourceRecommendation,
   useResourceRecommendationJob,
@@ -31,7 +32,7 @@ export function ResourceRecommendationPanel({ taskId, taskLabel, className }: Re
   const requestMutation = useRequestResourceRecommendation()
   const job = useResourceRecommendationJob(jobId)
 
-  const isRunning = jobId !== null && !job.isError && (job.data === undefined || job.data.status === 'PENDING' || job.data.status === 'PROCESSING')
+  const isRunning = jobId !== null && (job.data === undefined || job.data.status === 'PENDING' || job.data.status === 'PROCESSING')
   const isFailed = (jobId !== null && job.data?.status === 'FAILED') || requestMutation.isError
   const isCompleted = job.data?.status === 'COMPLETED' && job.data.result !== null
 
@@ -69,7 +70,8 @@ export function ResourceRecommendationPanel({ taskId, taskLabel, className }: Re
         </Alert>
       )}
 
-      {isRunning && (
+      {jobId && job.isError && <JobConnectionNotice error={job.error} />}
+      {isRunning && !job.isError && (
         <div className="flex flex-col items-center gap-3 py-6 text-center">
           <Spinner className="h-6 w-6 text-primary" />
           <p className="text-sm text-muted-foreground">

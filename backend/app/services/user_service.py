@@ -25,7 +25,7 @@ from app.models.user import User
 from app.repositories.user_repository import UserRepository
 from app.schemas.project import UserSearchResult
 from app.schemas.user import ChangePasswordRequest, DeleteAccountRequest, UserUpdate
-from app.services.storage_service import StorageService, StorageServiceDep
+from app.services.storage_service import StorageNotFoundError, StorageService, StorageServiceDep
 
 logger = logging.getLogger(__name__)
 
@@ -202,6 +202,8 @@ class UserService:
 
         try:
             data, content_type = await self.storage.get_bytes(user.avatar_storage_key)
+        except StorageNotFoundError:
+            raise NotFoundException("Avatar not found") from None
         except S3Error as exc:
             if exc.code in {"NoSuchKey", "NoSuchObject", "NoSuchBucket"}:
                 raise NotFoundException("Avatar not found") from exc

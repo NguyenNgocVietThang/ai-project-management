@@ -19,6 +19,7 @@ import json
 import secrets
 
 from app.core.redis_client import get_redis
+from app.services import security_state_service as durable_state
 
 EXCHANGE_KEY_PREFIX = "auth:oauth_exchange:"
 # Đủ dài cho một redirect và một lần tải trang, đủ ngắn để một mã bị lấy từ
@@ -37,6 +38,11 @@ async def issue(access_token: str, refresh_token: str) -> str:
     thay vì quay lại việc đặt token vào URL.
     """
     code = secrets.token_urlsafe(32)
+    if durable_state.database_enabled():
+        await durable_state.put("oauth-exchange", _key(code),
+                                {"access_token": access_token, "refresh_token": refresh_token},
+                                EXCHANGE_TTL_SECONDS)
+        return code
     await get_redis().set(
         _key(code),
         json.dumps({"access_token": access_token, "refresh_token": refresh_token}),
@@ -51,6 +57,12 @@ async def redeem(code: str) -> tuple[str, str] | None:
     lần đổi mã đồng thời không thể cùng thành công."""
     if not code:
         return None
+    if durable_state.database_enabled():
+        payload = await durable_state.take("oauth-exchange", _key(code))
+        if (not isinstance(payload, dict) or not isinstance(payload.get("access_token"), str)
+                or not isinstance(payload.get("refresh_token"), str)):
+            return None
+        return payload["access_token"], payload["refresh_token"]
     raw = await get_redis().getdel(_key(code))
     if not raw:
         return None

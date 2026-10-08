@@ -7,8 +7,8 @@ export const aiService = {
     return data
   },
 
-  async getJob(jobId: string): Promise<AIResultResponse> {
-    const { data } = await api.get<AIResultResponse>(`/ai/jobs/${jobId}`)
+  async getJob(jobId: string, signal?: AbortSignal): Promise<AIResultResponse> {
+    const { data } = await api.get<AIResultResponse>(`/ai/jobs/${jobId}`, { signal })
     return data
   },
 }

@@ -1,0 +1,96 @@
+# Blueprint creates ONLY Free web services and Free Key Value. No worker/Beat/DB plan.
+# Fill sync:false values in dashboard. FRONTEND/BACKEND URLs must use actual names.
+services:
+  - type: web
+    name: ai-project-backend
+    runtime: python
+    plan: free
+    region: singapore
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1 --no-access-log
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.10
+      - key: APP_ENV
+        value: production
+      - key: DEPLOYMENT_PROFILE
+        value: render_free
+      - key: APP_TIMEZONE
+        value: Asia/Ho_Chi_Minh
+      - key: JOBS_ENABLED
+        value: "true"
+      - key: JOB_CONCURRENCY
+        value: 1
+      - key: JOB_POLL_SECONDS
+        value: 5
+      - key: DATABASE_POOL_SIZE
+        value: 3
+      - key: DATABASE_MAX_OVERFLOW
+        value: 1
+      - key: DATABASE_SSL
+        value: "true"
+      - key: SECURITY_STATE_BACKEND
+        value: database
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: CRON_SECRET
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: ai-project-redis
+          property: connectionString
+      - key: EMAIL_PROVIDER
+        value: resend
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: STORAGE_PROVIDER
+        value: supabase
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: XKIRO_API_KEY
+        sync: false
+      - key: AI_DAILY_JOB_LIMIT
+        value: 20
+      # Add Google OAuth variables manually only when credentials are available.
+  - type: web
+    name: ai-project-frontend
+    runtime: node
+    plan: free
+    region: singapore
+    rootDir: frontend
+    buildCommand: npm ci --legacy-peer-deps && NODE_OPTIONS=--max-old-space-size=2048 npm run build
+    startCommand: npm run start -- -H 0.0.0.0 -p $PORT
+    envVars:
+      - key: NODE_VERSION
+        value: 22.22.0
+      - key: NODE_ENV
+        value: production
+      - key: NODE_OPTIONS
+        value: --max-old-space-size=320
+      - key: NEXT_PUBLIC_API_URL
+        value: /api/v1
+      - key: NEXT_PUBLIC_WS_URL
+        sync: false
+      - key: BACKEND_PROXY_ORIGIN
+        sync: false
+  - type: keyvalue
+    name: ai-project-redis
+    plan: free
+    region: singapore
+    ipAllowList: []
+    maxmemoryPolicy: allkeys-lru

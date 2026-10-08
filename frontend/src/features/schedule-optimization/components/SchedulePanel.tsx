@@ -13,6 +13,7 @@ import {
   useScheduleOptimizationJob,
 } from '@/features/schedule-optimization/hooks/useScheduleOptimization'
 import { getApiErrorMessage } from '@/types/api.types'
+import { JobConnectionNotice } from '@/features/jobs/components/JobConnectionNotice'
 import type { ScheduleSuggestion } from '@/types/schedule-optimization.types'
 
 const STATUS_LABEL: Record<string, string> = {
@@ -106,7 +107,7 @@ export function SchedulePanel({ projectId, tasks = [], className }: SchedulePane
 
       {jobId && job.isError && (
         <div className="space-y-3">
-          <Alert>{getApiErrorMessage(job.error)}</Alert>
+          <JobConnectionNotice error={job.error} />
           <Button type="button" variant="outline" className="sm:w-auto" isLoading={job.isFetching} onClick={() => void job.refetch()}>
             Thử kiểm tra lại
           </Button>

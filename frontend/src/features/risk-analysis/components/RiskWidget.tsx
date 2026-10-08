@@ -7,6 +7,7 @@ import { Button } from '@/components/common/Button'
 import { Spinner } from '@/components/common/Spinner'
 import { cn } from '@/lib/utils'
 import { getApiErrorMessage } from '@/types/api.types'
+import { JobConnectionNotice } from '@/features/jobs/components/JobConnectionNotice'
 import {
   RISK_LEVEL_COLOR,
   asRiskFactorList,
@@ -62,7 +63,7 @@ export function RiskWidget({ projectId }: { projectId: number }) {
   }
 
   const status = job.data?.status
-  const isRunning = jobId !== null && !job.isError && status !== 'COMPLETED' && status !== 'FAILED'
+  const isRunning = jobId !== null && status !== 'COMPLETED' && status !== 'FAILED'
   const parsed = status === 'COMPLETED' ? parseRiskResult(job.data?.result ?? null) : null
 
   return (
@@ -88,14 +89,14 @@ export function RiskWidget({ projectId }: { projectId: number }) {
 
       {jobId && job.isError && (
         <div className="space-y-3">
-          <Alert>{getApiErrorMessage(job.error)}</Alert>
+          <JobConnectionNotice error={job.error} />
           <Button type="button" variant="outline" onClick={() => void job.refetch()} isLoading={job.isFetching}>
             Thử kiểm tra lại
           </Button>
         </div>
       )}
 
-      {isRunning && (
+      {isRunning && !job.isError && (
         <div className="flex flex-col items-center gap-3 py-6 text-center">
           <Spinner className="h-6 w-6 text-primary" />
           <p className="text-sm text-muted-foreground">{STATUS_LABEL[status ?? 'PENDING']}</p>

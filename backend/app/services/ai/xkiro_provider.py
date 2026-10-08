@@ -21,6 +21,8 @@ class XkiroProvider(BaseAIProvider):
         self.client = AsyncOpenAI(
             api_key=settings.XKIRO_API_KEY,
             base_url=settings.XKIRO_BASE_URL,
+            max_retries=0,
+            timeout=settings.AI_HTTP_TIMEOUT_SECONDS,
         )
 
     async def generate_text(
@@ -29,18 +31,61 @@ class XkiroProvider(BaseAIProvider):
         system_prompt: str = "",
         task: AITaskType = AITaskType.CHAT_QUICK,
     ) -> str:
+        try:
+            return await self._generate_text(prompt, system_prompt, task)
+        finally:
+            # Providers are constructed per job: release sockets on every outcome.
+            await self.client.close()
+
+    async def _generate_text(self, prompt: str, system_prompt: str, task: AITaskType) -> str:
         model = resolve_model(task)
         messages = []
         if system_prompt:
             messages.append({"role": "system", "content": system_prompt})
         messages.append({"role": "user", "content": prompt})
 
-        response = await self.client.chat.completions.create(
-            model=model,
-            messages=messages,
-            temperature=0.7,
-        )
-        return response.choices[0].message.content
+        from openai import APIConnectionError, APIStatusError, APITimeoutError
+
+        from app.core.job_runner import AmbiguousJobError, PermanentJobError, RetryableJobError
+        from app.services.ai.job_context import active_ai_context, reserve_ai_call
+
+        context = active_ai_context.get()
+        if context is not None and context.job.staged_result is not None:
+            return context.job.staged_result["text"]
+        if not settings.XKIRO_API_KEY:
+            raise PermanentJobError("provider_rejected")
+        if context is not None:
+            await context.mark_dispatched(before_dispatch=reserve_ai_call)
+        try:
+            response = await self.client.chat.completions.create(
+                model=model,
+                messages=messages,
+                temperature=0.7,
+                max_tokens=settings.AI_MAX_OUTPUT_TOKENS,
+            )
+        except (APIConnectionError, APITimeoutError) as exc:
+            raise AmbiguousJobError() from exc
+        except APIStatusError as exc:
+            # 429 is a rejected call; no output to charge/replay. 5xx can be ambiguous.
+            if exc.status_code < 500:
+                if context is not None:
+                    async with context.session_factory() as db, db.begin():
+                        from app.services.job_service import JobService
+                        owned = await JobService.lock_owned(db, context.job_id, context.lease_token)
+                        owned.request_dispatched = False
+                    context.job.request_dispatched = False
+                if exc.status_code == 429:
+                    raise RetryableJobError("provider_error") from exc
+                raise PermanentJobError("provider_rejected") from exc
+            if exc.status_code >= 500:
+                raise AmbiguousJobError() from exc
+            raise PermanentJobError("provider_rejected") from exc
+        content = response.choices[0].message.content
+        if not isinstance(content, str) or len(content) > 200_000:
+            raise PermanentJobError("invalid_provider_response")
+        if context is not None:
+            await context.stage_result({"text": content})
+        return content
 
     async def generate_json(
         self,

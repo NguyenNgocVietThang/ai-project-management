@@ -4,6 +4,7 @@
 chu trình được kiểm thử — forward/backward pass, ES/EF/LS/LF, float và cả bốn loại
 quan hệ đều không có test nào.
 """
+
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
@@ -143,16 +144,23 @@ async def test_large_projects_recalculate_in_the_background():
     from app.services import scheduling_service
 
     db = AsyncMock()
+    db.info = {}
     db.get = AsyncMock(return_value=SimpleNamespace(id=1, start_date=None, progress=0.0))
     db.scalar = AsyncMock(return_value=5_000)
 
-    with patch(
-        "app.workers.scheduling_tasks.schedule_recalculation", AsyncMock(return_value=True)
-    ) as scheduled:
+    with patch("app.services.job_service.enqueue", AsyncMock()) as scheduled:
         await scheduling_service.recalculate_project(db, 1)
 
-    scheduled.assert_awaited_once_with(1)
+    scheduled.assert_awaited_once_with(
+        db,
+        kind="scheduling.cpm",
+        payload={"project_id": 1},
+        dedupe_key="cpm:1",
+        project_id=1,
+        coalesce=True,
+    )
     db.scalars.assert_not_awaited()
+    db.commit.assert_not_awaited()
 
 
 @pytest.mark.asyncio
@@ -162,16 +170,152 @@ async def test_the_worker_itself_never_re_enqueues():
     from app.services import scheduling_service
 
     db = AsyncMock()
+    db.info = {}
     db.get = AsyncMock(return_value=SimpleNamespace(id=1, start_date=None, progress=0.0))
     db.scalar = AsyncMock(return_value=5_000)
     db.scalars = AsyncMock(return_value=SimpleNamespace(all=lambda: []))
 
-    with patch(
-        "app.workers.scheduling_tasks.schedule_recalculation", AsyncMock()
-    ) as scheduled:
+    with patch("app.services.job_service.enqueue", AsyncMock()) as scheduled:
         await scheduling_service.recalculate_project(db, 1, force_sync=True)
 
     scheduled.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_real_large_project_coalesces_edits_and_runner_publishes_latest_schedule(
+    session,
+    engine,
+    make_user,
+    monkeypatch,
+):
+    import asyncio
+    from datetime import date, timedelta
+
+    from sqlalchemy import select
+    from sqlalchemy.ext.asyncio import async_sessionmaker
+
+    from app.core.config import settings
+    from app.core.job_runner import JobRunner
+    from app.models.job import Job
+    from app.models.project import Project
+    from app.models.task import Task, TaskStatus
+    from app.services.durable_handlers import run_cpm
+    from app.services.scheduling_service import recalculate_project
+
+    monkeypatch.setattr(settings, "CPM_SYNC_TASK_THRESHOLD", 300)
+    owner = await make_user()
+    anchor = date(2026, 10, 8)
+    project = Project(name="Large CPM", pm_id=owner.id, start_date=anchor)
+    session.add(project)
+    await session.flush()
+    tasks = [
+        Task(name=f"Task {index}", project_id=project.id, estimated_hours=8) for index in range(301)
+    ]
+    session.add_all(tasks)
+    await session.flush()
+
+    await recalculate_project(session, project.id)
+    assert all(task.early_start is None for task in tasks)
+    tasks[0].estimated_hours = 16
+    tasks[0].status = TaskStatus.DONE
+    await session.flush()
+    await recalculate_project(session, project.id)
+    jobs = (await session.scalars(select(Job))).all()
+    assert len(jobs) == 1
+    assert jobs[0].generation == 2
+    assert jobs[0].status == "queued"
+    assert tasks[0].early_finish is None
+    job_id, task_id, project_id = jobs[0].id, tasks[0].id, project.id
+    await session.commit()
+
+    factory = async_sessionmaker(engine, expire_on_commit=False)
+    runner = JobRunner(factory, {"scheduling.cpm": run_cpm})
+    assert await runner.poll_once() == 1
+    await asyncio.gather(*runner._active)
+    async with factory() as db:
+        first = await db.get(Task, task_id)
+        project = await db.get(Project, project_id)
+        job = await db.get(Job, job_id)
+        assert job.status == "succeeded"
+        assert first.early_start == anchor
+        assert first.early_finish == anchor + timedelta(days=2)
+        assert first.is_critical is True
+        assert project.progress == round(100 / 301, 2)
+        assert len((await db.scalars(select(Job))).all()) == 1
+
+
+@pytest.mark.asyncio
+async def test_real_small_project_keeps_synchronous_cpm_without_outbox(session, make_user):
+    from datetime import date, timedelta
+
+    from sqlalchemy import select
+
+    from app.models.job import Job
+    from app.models.project import Project
+    from app.models.task import Task
+    from app.services.scheduling_service import recalculate_project
+
+    owner = await make_user()
+    anchor = date(2026, 10, 8)
+    project = Project(name="Small CPM", pm_id=owner.id, start_date=anchor)
+    session.add(project)
+    await session.flush()
+    task = Task(name="Small task", project_id=project.id, estimated_hours=16)
+    session.add(task)
+    await session.flush()
+    await recalculate_project(session, project.id)
+    assert task.early_start == anchor
+    assert task.early_finish == anchor + timedelta(days=2)
+    assert (await session.scalars(select(Job))).all() == []
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("cap", ["tasks", "dependencies"])
+async def test_cpm_resource_cap_fails_visibly_before_calculating(
+    session, engine, make_user, monkeypatch, as_user, cap
+):
+    import asyncio
+
+    from sqlalchemy.ext.asyncio import async_sessionmaker
+
+    from app.core.config import settings
+    from app.core.job_runner import JobRunner
+    from app.models.dependency import Dependency
+    from app.models.project import Project
+    from app.models.task import Task
+    from app.services.durable_handlers import run_cpm
+    from app.services.job_service import enqueue
+
+    monkeypatch.setattr(settings, "CPM_MAX_TASKS", 2 if cap == "tasks" else 10)
+    monkeypatch.setattr(settings, "CPM_MAX_DEPENDENCIES", 1 if cap == "dependencies" else 10)
+    owner = await make_user()
+    project = Project(name="Bounded CPM", pm_id=owner.id)
+    session.add(project)
+    await session.flush()
+    tasks = [Task(project_id=project.id, name=f"Task {index}") for index in range(3)]
+    session.add_all(tasks)
+    await session.flush()
+    session.add_all([Dependency(predecessor_id=tasks[0].id, successor_id=tasks[1].id),
+                     Dependency(predecessor_id=tasks[1].id, successor_id=tasks[2].id)])
+    job = await enqueue(session, "scheduling.cpm", {"project_id": project.id},
+                        f"cpm-cap:{project.id}", project_id=project.id)
+    job_id = job.id
+    await session.commit()
+    runner = JobRunner(async_sessionmaker(engine, expire_on_commit=False), {"scheduling.cpm": run_cpm})
+    with patch("app.services.scheduling_service.recalculate_project", AsyncMock()) as calculate:
+        assert await runner.poll_once() == 1
+        await asyncio.gather(*runner._active)
+        calculate.assert_not_awaited()
+    await session.refresh(job)
+    assert job.status == "failed"
+    assert job.error_code == "resource_limit_exceeded"
+    assert job.attempts == 1
+    assert all(task.early_start is None for task in tasks)
+    async with as_user(owner) as http:
+        response = await http.get(f"/api/v1/jobs/{job_id}")
+        assert response.status_code == 200
+        assert response.json()["status"] == "failed"
+        assert response.json()["error_code"] == "resource_limit_exceeded"
 
 
 @pytest.mark.asyncio
@@ -183,15 +327,26 @@ async def test_the_cpm_endpoint_reports_float_and_the_critical_chain():
     from app.services.scheduling_service import SchedulingService
 
     tasks = [
-        SimpleNamespace(id=1, name="A", status=SimpleNamespace(value="TODO"),
-                        start_date=None, due_date=None, estimated_hours=None,
-                        project_id=1),
-        SimpleNamespace(id=2, name="B", status=SimpleNamespace(value="TODO"),
-                        start_date=None, due_date=None, estimated_hours=None,
-                        project_id=1),
+        SimpleNamespace(
+            id=1,
+            name="A",
+            status=SimpleNamespace(value="TODO"),
+            start_date=None,
+            due_date=None,
+            estimated_hours=None,
+            project_id=1,
+        ),
+        SimpleNamespace(
+            id=2,
+            name="B",
+            status=SimpleNamespace(value="TODO"),
+            start_date=None,
+            due_date=None,
+            estimated_hours=None,
+            project_id=1,
+        ),
     ]
-    dependency = SimpleNamespace(predecessor_id=1, successor_id=2,
-                                 dependency_type="FS", lag_days=0)
+    dependency = SimpleNamespace(predecessor_id=1, successor_id=2, dependency_type="FS", lag_days=0)
 
     db = AsyncMock()
     calls = {"n": 0}

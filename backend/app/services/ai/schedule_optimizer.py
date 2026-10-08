@@ -304,4 +304,7 @@ async def run_schedule_optimization(db, project_id: int, constraints: dict | Non
         ).all()
     )
 
+    from app.services.ai.job_context import active_ai_context
+    if active_ai_context.get() is not None:
+        await db.commit()
     return await generate_schedule_optimization(project, tasks_with_cpm, leaves, constraints)

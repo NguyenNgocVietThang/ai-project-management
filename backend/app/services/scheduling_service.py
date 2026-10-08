@@ -29,12 +29,14 @@ async def recalculate_project(
     Đây là thao tác toàn dự án — nạp mọi task và dependency rồi ghi lại sáu cột
     trên từng dòng — nhưng nó được gọi từ mọi thao tác ghi, kể cả những thao tác
     nhỏ như đổi tên một task. Với dự án lớn, chi phí đó không thuộc về vòng đời của
-    một request, nên trên CPM_SYNC_TASK_THRESHOLD nó được đẩy sang Celery và gộp
-    trùng (xem app/workers/scheduling_tasks.py).
+    một request, nên trên CPM_SYNC_TASK_THRESHOLD nó được đẩy sang Postgres jobs và gộp
+    trùng (xem services/durable_handlers.py).
 
     `force_sync` là đường mà chính worker dùng; nếu không thì nó sẽ tự đẩy việc
     sang chính mình mãi mãi.
     """
+    if isinstance(db.info, dict) and db.info.get("defer_cpm"):
+        return
     project = await db.get(Project, project_id)
     if project is None:
         return
@@ -44,9 +46,8 @@ async def recalculate_project(
             select(func.count()).select_from(Task).where(Task.project_id == project_id)
         )
         if (total or 0) > settings.CPM_SYNC_TASK_THRESHOLD:
-            from app.workers.scheduling_tasks import schedule_recalculation
-
-            await schedule_recalculation(project_id)
+            from app.services.job_service import enqueue
+            await enqueue(db, kind="scheduling.cpm", payload={"project_id": project_id}, dedupe_key=f"cpm:{project_id}", project_id=project_id, coalesce=True)
             return
 
     tasks = list(

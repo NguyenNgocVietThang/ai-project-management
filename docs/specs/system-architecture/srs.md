@@ -290,7 +290,7 @@ Cả hai dùng vé một lần (single-use ticket, TTL 60 giây, cấp qua `POST
 - [ ] **Reports DOCX/XLSX**: `report_tasks.py` là stub trả về rỗng; endpoint `/reports` chưa mount.
 - [ ] **Document AI Parser** (`/documents`), **Investor Read-only Dashboard**: chưa bắt đầu.
 - [x] **Mobile Responsive & Polish**: Hoàn thành cơ bản mobile navigation với modal focus trap, theme switcher (light/dark/system).
-- [x] **Docker Compose 7 Services Dev / 8 Services Prod (Caddy HTTPS)**: Hoàn thành cấu hình đầy đủ.
+- [x] **Docker Compose 7 Services Dev + Deploy Render + Supabase (Free Tier)**: Hoàn thành cấu hình đầy đủ.
 
 ---
 

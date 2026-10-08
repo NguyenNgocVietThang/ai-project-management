@@ -213,6 +213,9 @@ async def run_resource_recommendation(db: AsyncSession, task_id: int) -> dict[st
         raise NotFoundException("Task not found")
 
     candidates = await _candidate_stats(db, task.project_id, task)
+    from app.services.ai.job_context import active_ai_context
+    if active_ai_context.get() is not None:
+        await db.commit()
     result = await generate_resource_recommendation(task, candidates)
 
     stats_by_id = {candidate["user_id"]: candidate for candidate in candidates}

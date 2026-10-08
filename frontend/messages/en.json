@@ -1,4 +1,22 @@
 {
+  "jobs": {
+    "quotaExceeded": "The AI usage limit has been reached. Try again when your quota resets.",
+    "resourceLimitExceeded": "This project exceeds the processing size limit. Reduce its size before retrying.",
+    "outcomeUnknown": "The provider may have processed this request. Review the result before retrying.",
+    "errorCode": "Reason: {code}",
+    "title": "Recent work", "recent": "Latest 50", "active": "{count} active",
+    "description": "Queued work continues on the server. Reopen this list after reloading to check progress and results.",
+    "connection": "Connection interrupted. Status checks will resume automatically when connected; the work may still be running.",
+    "unavailable": "This work is no longer accessible. Refresh the list to check your current access.",
+    "loading": "Checking progress…", "pendingResult": "The result will appear when this work finishes.",
+    "empty": "No recent work yet.", "refresh": "Check progress", "viewResult": "View result", "hideResult": "Hide result",
+    "openFeature": "Open feature", "openProject": "Open project",
+    "queued": "Queued", "running": "Running", "succeeded": "Completed", "failed": "Failed",
+    "failedMessage": "This work could not finish. Open the feature to review it before starting another request.",
+    "generation": "AI project plan", "impact": "Change impact analysis", "optimization": "Schedule optimization",
+    "resources": "Assignee recommendations", "risk": "Risk analysis", "schedule": "Schedule calculation",
+    "email": "Email delivery", "background": "Background work"
+  },
   "common": {
     "appName": "AI Project Management",
     "save": "Save",

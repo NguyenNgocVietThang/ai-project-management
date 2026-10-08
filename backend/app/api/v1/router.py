@@ -11,6 +11,8 @@ from app.api.v1.endpoints import (
     dashboards,
     dependencies,
     epics,
+    internal_jobs,
+    jobs,
     milestones,
     notifications,
     oauth,
@@ -56,3 +58,5 @@ api_router.include_router(dashboards.router, prefix="/dashboards", tags=["Dashbo
 api_router.include_router(notifications.router, prefix="/notifications", tags=["Notifications"])
 api_router.include_router(audit_timeline.router, prefix="/audit", tags=["Audit"])
 api_router.include_router(ai.router, prefix="/ai", tags=["AI"])
+api_router.include_router(jobs.router, prefix="/jobs", tags=["Jobs"])
+api_router.include_router(internal_jobs.router, prefix="/internal/jobs", tags=["Internal"])

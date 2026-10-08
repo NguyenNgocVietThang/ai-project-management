@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { taskService } from '@/services/task.service'
 import type { AssignmentCreate, SubtaskCreate, Task, TaskCreate, TaskListParams, TaskStatus, TaskUpdate, WorklogCreate } from '@/types/task.types'
 import { projectKeys } from '@/features/projects/hooks/useProjects'
+import { durableJobKeys } from '@/features/jobs/hooks/useJobs'
 
 export const taskKeys = {
   all: ['tasks'] as const,
@@ -44,6 +45,7 @@ function useInvalidate() {
   const client = useQueryClient()
   return (projectId: number, taskId?: number) => {
     client.invalidateQueries({ queryKey: taskKeys.project(projectId) })
+    client.invalidateQueries({ queryKey: durableJobKeys.all })
     client.invalidateQueries({ queryKey: projectKeys.detail(projectId) })
     client.invalidateQueries({ queryKey: ['dashboard'] })
     client.invalidateQueries({ queryKey: ['timesheet', projectId] })

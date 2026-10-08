@@ -8,6 +8,7 @@ from urllib.parse import parse_qs, urlparse
 import pytest
 from fastapi import HTTPException, Request
 from pydantic import ValidationError
+from sqlalchemy.ext.asyncio import AsyncSession
 
 import app.db.base  # noqa: F401
 from app.api.v1.endpoints.auth import FORGOT_PASSWORD_MESSAGE, forgot_password
@@ -17,7 +18,7 @@ from app.services.auth_service import AuthService
 
 
 def build_service(user=None) -> tuple[AuthService, AsyncMock]:
-    db = AsyncMock()
+    db = AsyncMock(spec=AsyncSession)
     service = AuthService(db)
     service.users = SimpleNamespace(
         get_by_email=AsyncMock(return_value=user),
@@ -61,7 +62,7 @@ async def test_forgot_password_endpoint_always_returns_generic_message():
 async def test_unknown_email_is_not_queued_or_persisted():
     service, db = build_service(user=None)
 
-    with patch("app.services.auth_service.send_password_reset_email_task.delay") as enqueue:
+    with patch("app.services.auth_service.enqueue") as enqueue:
         await service.request_password_reset("missing@example.com")
 
     enqueue.assert_not_called()
@@ -79,10 +80,10 @@ async def test_reset_request_stores_only_hash_and_expires_in_one_hour():
     service, db = build_service(user)
     started_at = datetime.now(UTC)
 
-    with patch("app.services.auth_service.send_password_reset_email_task.delay") as enqueue:
+    with patch("app.services.auth_service.enqueue") as enqueue:
         await service.request_password_reset(user.email)
 
-    _, reset_link = enqueue.call_args.args
+    reset_link = enqueue.call_args.args[2]["link"]
     raw_token = extract_token(reset_link)
     assert raw_token not in user.password_reset_token_hash
     assert user.password_reset_token_hash == hashlib.sha256(raw_token.encode()).hexdigest()
@@ -106,20 +107,20 @@ async def test_new_request_invalidates_previous_token():
             "app.services.auth_service.secrets.token_urlsafe",
             side_effect=["first-token", "second-token"],
         ),
-        patch("app.services.auth_service.send_password_reset_email_task.delay") as enqueue,
+        patch("app.services.auth_service.enqueue") as enqueue,
     ):
         await service.request_password_reset(user.email)
         await service.request_password_reset(user.email)
 
-    first_link = enqueue.call_args_list[0].args[1]
-    second_link = enqueue.call_args_list[1].args[1]
+    first_link = enqueue.call_args_list[0].args[2]["link"]
+    second_link = enqueue.call_args_list[1].args[2]["link"]
     assert extract_token(first_link) == "first-token"
     assert extract_token(second_link) == "second-token"
     assert user.password_reset_token_hash == hashlib.sha256(b"second-token").hexdigest()
 
 
 @pytest.mark.asyncio
-async def test_queue_failure_is_hidden_and_does_not_log_sensitive_values(caplog):
+async def test_outbox_failure_aborts_transaction_without_sensitive_logs(caplog):
     user = SimpleNamespace(
         id=42,
         email="sensitive@example.com",
@@ -131,14 +132,16 @@ async def test_queue_failure_is_hidden_and_does_not_log_sensitive_values(caplog)
     with (
         patch("app.services.auth_service.secrets.token_urlsafe", return_value="secret-token"),
         patch(
-            "app.services.auth_service.send_password_reset_email_task.delay",
+            "app.services.auth_service.enqueue",
             side_effect=RuntimeError("broker unavailable"),
         ),
         caplog.at_level(logging.ERROR),
     ):
-        await service.request_password_reset(user.email)
+        with pytest.raises(HTTPException) as error:
+            await service.request_password_reset(user.email)
+        assert error.value.status_code == 503
 
-    assert "user_id=42" in caplog.text
+    assert "user_id=42" not in caplog.text
     assert user.email not in caplog.text
     assert "secret-token" not in caplog.text
 

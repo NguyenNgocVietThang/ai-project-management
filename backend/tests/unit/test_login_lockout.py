@@ -8,6 +8,7 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
 import pytest
+from sqlalchemy.ext.asyncio import AsyncSession
 
 import app.db.base  # noqa: F401 - đăng ký các quan hệ SQLAlchemy
 from app.core import login_throttle
@@ -118,7 +119,7 @@ async def test_a_wrong_password_is_counted_against_the_account():
         hashed_password=hash_password("CorrectHorse12"),
         is_active=True,
     )
-    db = AsyncMock()
+    db = AsyncMock(spec=AsyncSession)
     service = AuthService(db)
     service.users = SimpleNamespace(get_by_email=AsyncMock(return_value=user))
 

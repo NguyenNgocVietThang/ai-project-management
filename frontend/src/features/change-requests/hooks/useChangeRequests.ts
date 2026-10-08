@@ -6,10 +6,10 @@ import { changeRequestService, type ChangeRequestCreateInput } from '@/services/
 import type {
   ImpactAnalysisJobResponse,
   ImpactAnalysisJobResult,
-  ImpactAnalysisJobStatus,
 } from '@/types/change-request.types'
 
-const IN_PROGRESS: ImpactAnalysisJobStatus[] = ['PENDING', 'PROCESSING']
+import { useJobPollingOptions, useCancelPausedJobQuery } from '@/features/jobs/hooks/jobPolling'
+import { durableJobKeys } from '@/features/jobs/hooks/useJobs'
 
 export const changeRequestKeys = {
   all: ['change-requests'] as const,
@@ -65,7 +65,9 @@ export function useSubmitChangeRequest() {
  * xung đột merge.
  */
 export function useRunImpactAnalysis() {
+  const client = useQueryClient()
   return useMutation({
+    onSuccess: () => { void client.invalidateQueries({ queryKey: durableJobKeys.all }) },
     mutationFn: async (changeRequestId: number) => {
       const { data } = await api.post<ImpactAnalysisJobResponse>('/ai/impact-analysis', {
         change_request_id: changeRequestId,
@@ -78,18 +80,15 @@ export function useRunImpactAnalysis() {
 /** Bản poll cục bộ của useAIJob (xem features/ai/hooks/useAIGenerator.ts) — nhân
  * bản thay vì import để feature này không phụ thuộc file ai chung. */
 export function useImpactAnalysisJob(jobId: string | null) {
+  const { ownerId, ...options } = useJobPollingOptions(jobId !== null)
+  const queryKey = [...changeRequestKeys.job(jobId ?? ''), ownerId]
+  useCancelPausedJobQuery(queryKey, options.enabled)
   return useQuery({
-    queryKey: changeRequestKeys.job(jobId ?? ''),
-    queryFn: async () => {
-      const { data } = await api.get<ImpactAnalysisJobResult>(`/ai/jobs/${jobId}`)
+    ...options,
+    queryKey,
+    queryFn: async ({ signal }) => {
+      const { data } = await api.get<ImpactAnalysisJobResult>(`/ai/jobs/${jobId}`, { signal })
       return data
     },
-    enabled: jobId !== null,
-    refetchInterval: (query) =>
-      query.state.status === 'error'
-        ? false
-        : !query.state.data || IN_PROGRESS.includes(query.state.data.status)
-          ? 2_000
-          : false,
   })
 }

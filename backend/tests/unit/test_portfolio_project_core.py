@@ -192,7 +192,7 @@ async def test_project_update_rejects_invalid_partial_date_range():
 
 
 @pytest.mark.asyncio
-async def test_add_member_validates_role_and_survives_email_enqueue_failure():
+async def test_add_member_validates_role_and_enqueues_transactional_invitation():
     service = ProjectService(db())
     item = project()
     inviter = user(1)
@@ -208,8 +208,8 @@ async def test_add_member_validates_role_and_survives_email_enqueue_failure():
     )
 
     with patch(
-        "app.services.project_service.send_project_invitation_email_task.apply_async",
-        side_effect=RuntimeError("broker unavailable"),
+        "app.services.project_service.enqueue",
+        new_callable=AsyncMock,
     ):
         result = await service.add_member(
             item.id,

@@ -23,6 +23,46 @@ def test_a_fully_configured_production_environment_starts():
     Settings(**SAFE)
 
 
+FREE_SAFE = {
+    **SAFE,
+    "DEPLOYMENT_PROFILE": "render_free",
+    "JOBS_ENABLED": True,
+    "EMAIL_PROVIDER": "resend",
+    "RESEND_API_KEY": "local-mock-provider-key",
+    "EMAIL_FROM": "demo@example.com",
+    "STORAGE_PROVIDER": "supabase",
+    "SUPABASE_URL": "https://demo.supabase.co",
+    "SUPABASE_SERVICE_ROLE_KEY": "local-mock-storage-key",
+    "SECURITY_STATE_BACKEND": "database",
+    "DATABASE_SSL": True,
+    "CRON_SECRET": "c" * 40,
+    "XKIRO_API_KEY": "local-mock-ai-key",
+}
+
+
+def test_render_free_settings_accept_complete_local_mock_credentials():
+    # Instantiation validates configuration only and performs no provider request.
+    configured = Settings(_env_file=None, **FREE_SAFE)
+    assert configured.SECURITY_STATE_BACKEND == "database"
+    assert configured.JOBS_ENABLED is True
+
+
+@pytest.mark.parametrize("override, expected", [
+    ({"JOBS_ENABLED": False}, "durable job runner"),
+    ({"EMAIL_PROVIDER": "smtp"}, "HTTPS"),
+    ({"STORAGE_PROVIDER": "minio"}, "Supabase"),
+    ({"SECURITY_STATE_BACKEND": "redis"}, "durable authentication"),
+    ({"DATABASE_SSL": False}, "TLS"),
+    ({"CRON_SECRET": "short"}, "CRON_SECRET"),
+    ({"XKIRO_API_KEY": ""}, "XKIRO_API_KEY"),
+    ({"SUPABASE_SERVICE_ROLE_KEY": ""}, "SUPABASE_SERVICE_ROLE_KEY"),
+    ({"RESEND_API_KEY": ""}, "RESEND_API_KEY"),
+])
+def test_render_free_refuses_missing_operational_requirements(override, expected):
+    with pytest.raises(ValueError, match=expected):
+        Settings(_env_file=None, **{**FREE_SAFE, **override})
+
+
 def test_development_is_never_blocked():
     """Một bản clone mới phải chạy được ngay mà không cần cấu hình gì."""
     Settings(APP_ENV="development")

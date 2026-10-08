@@ -1,5 +1,7 @@
 # Hệ thống Lập kế hoạch Dự án và Quản lý Danh mục bằng AI
 
+Demo **Render Free + Supabase Free** dùng Next.js Node server và FastAPI ngủ theo lưu lượng; 750 giờ web là tổng dùng chung của workspace. AI, email và CPM lớn dùng jobs/outbox bền vững trong Postgres, Supabase Cron thay Beat, Resend HTTPS thay SMTP, avatar lưu trong bucket Supabase riêng tư. Xem [hướng dẫn triển khai và vận hành](docs/deploy-render-supabase.md), [số đo tài nguyên](docs/free-compute-audit.md) và [checklist nghiệm thu](tasks/todo.md). Cloud chưa được triển khai vì chưa có tài khoản và sender; xuất báo cáo và phân tích tài liệu vẫn là TODO.
+
 > **Hệ thống quản lý dự án & danh mục thông minh tích hợp AI — tương đương MS Project với lớp AI tự động phân tích, đề xuất và tối ưu hóa kế hoạch, hỗ trợ Real-time Project Chat và WebSocket Notifications.**
 
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI_0.115-009688?logo=fastapi)](https://fastapi.tiangolo.com)
@@ -770,7 +772,7 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
 | **BRD** | [docs/specs/system-architecture/brd.md](./docs/specs/system-architecture/brd.md) | Business Requirements Document — Yêu cầu nghiệp vụ |
 | **SRS** | [docs/specs/system-architecture/srs.md](./docs/specs/system-architecture/srs.md) | Software Requirements Specification — Đặc tả chức năng chi tiết |
 | Thiết kế kiến trúc | [docs/specs/system-architecture/design.md](./docs/specs/system-architecture/design.md) | Tài liệu thiết kế kiến trúc hệ thống tổng thể |
-| **Triển khai Production** | [docs/deploy-oracle-cloud.md](./docs/deploy-oracle-cloud.md) | Hướng dẫn triển khai production trên Oracle Cloud Always Free VM với Caddy HTTPS |
+| **Triển khai Production** | [docs/deploy-render-supabase.md](./docs/deploy-render-supabase.md) | Hướng dẫn triển khai production trên Render + Supabase (Free Tier) |
 | **Sequence Diagrams** | [docs/specs/system-architecture/Sequence SOP/](./docs/specs/system-architecture/Sequence%20SOP/) | Chuỗi Sequence Diagrams PlantUML cho từng SOP |
 | **Interactive ERD** | [docs/diagrams/erd_ai_project_management.html](./docs/diagrams/erd_ai_project_management.html) | Sơ đồ tương tác cấu trúc 34 bảng Database |
 | **Roadmap từng Phase** | [docs/roadmap/](./docs/roadmap/) | PHASE_1_AUTH_MODULE → PHASE_5_DOCUMENT_AI_POLISH_MODULE |

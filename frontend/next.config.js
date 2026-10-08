@@ -4,6 +4,15 @@ const isDev = process.env.NODE_ENV !== 'production'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/api/v1'
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL ?? 'ws://localhost:8000'
+// API proxy preserves first-party httpOnly cookies across distinct Render sites.
+// This origin is server-only and is fixed at build time by Next rewrites.
+const backendOrigin = process.env.BACKEND_PROXY_ORIGIN
+if (backendOrigin) {
+  const url = new URL(backendOrigin)
+  if (!['https:', ...(isDev ? ['http:'] : [])].includes(url.protocol) || url.username || url.password || url.search || url.hash || url.pathname !== '/') {
+    throw new Error('BACKEND_PROXY_ORIGIN must be a bare HTTPS origin')
+  }
+}
 
 /** Origin của một URL, hoặc '' nếu không thể phân tích (giữ cho CSP không trở nên không hợp lệ). */
 function originOf(value) {
@@ -63,6 +72,10 @@ const withNextIntl = require("next-intl/plugin")("./src/i18n/request.ts")
 const nextConfig = {
   reactStrictMode: true,
   outputFileTracingRoot: __dirname,
+  experimental: { proxyTimeout: 120_000 },
+  async rewrites() {
+    return backendOrigin ? [{ source: '/api/v1/:path*', destination: `${backendOrigin.replace(/\/$/, '')}/api/v1/:path*` }] : []
+  },
   images: {
     // remotePatterns chu khong phai domains: `domains` da deprecated o Next 15, va
     // no khong the gioi han theo duong dan - `remotePatterns` thi co the.

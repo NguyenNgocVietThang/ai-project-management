@@ -10,7 +10,8 @@ một ngân sách bất kể chúng đến từ đâu. Thời gian khoá tăng d
 để một người dùng gõ nhầm mật khẩu chỉ phải chờ vài giây, còn một cuộc tấn công
 kéo dài thì nhanh chóng trở nên vô ích.
 
-Đánh đổi về tính khả dụng giống hệt token_revocation: Redis không dùng được thì
+Database mode giữ counter/khóa trong Postgres và fail closed khi DB lỗi.
+Nhánh Redis development giữ đánh đổi cũ: Redis không dùng được thì
 hệ thống fail OPEN. Fail closed sẽ khoá toàn bộ người dùng khỏi ứng dụng trong một
 cú gián đoạn cache — biến sự cố cache thành sự cố toàn hệ thống, trong khi rate
 limit theo IP vẫn còn đó như một lớp phòng thủ thứ hai.
@@ -19,6 +20,7 @@ import hashlib
 import logging
 
 from app.core.redis_client import get_redis
+from app.services import security_state_service as durable_state
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +51,8 @@ async def seconds_until_unlocked(email: str) -> int | None:
     """Số giây còn phải chờ, hoặc None nếu tài khoản không bị khoá."""
     if not email:
         return None
+    if durable_state.database_enabled():
+        return await durable_state.ttl("login-lock", _identity_key(LOCK_KEY_PREFIX, email))
     try:
         ttl = await get_redis().ttl(_identity_key(LOCK_KEY_PREFIX, email))
     except Exception:
@@ -60,6 +64,13 @@ async def seconds_until_unlocked(email: str) -> int | None:
 async def record_failure(email: str) -> None:
     """Đếm một lần đăng nhập sai và khoá tài khoản khi vượt ngưỡng."""
     if not email:
+        return
+    if durable_state.database_enabled():
+        await durable_state.record_login_failure(
+            _identity_key(FAILURE_KEY_PREFIX, email), _identity_key(LOCK_KEY_PREFIX, email),
+            FAILURE_WINDOW_SECONDS,
+            FAILURE_THRESHOLD, LOCK_STEPS_SECONDS,
+        )
         return
     try:
         redis = get_redis()
@@ -80,6 +91,12 @@ async def record_failure(email: str) -> None:
 async def clear(email: str) -> None:
     """Xoá lịch sử thất bại sau khi đăng nhập thành công hoặc đặt lại mật khẩu."""
     if not email:
+        return
+    if durable_state.database_enabled():
+        await durable_state.clear([
+            ("login-failures", _identity_key(FAILURE_KEY_PREFIX, email)),
+            ("login-lock", _identity_key(LOCK_KEY_PREFIX, email)),
+        ])
         return
     try:
         await get_redis().delete(

@@ -28,8 +28,8 @@ export const riskReportService = {
     return data
   },
 
-  async getJob(jobId: string): Promise<RiskAnalysisResultResponse> {
-    const { data } = await api.get<RiskAnalysisResultResponse>(`/ai/jobs/${jobId}`)
+  async getJob(jobId: string, signal?: AbortSignal): Promise<RiskAnalysisResultResponse> {
+    const { data } = await api.get<RiskAnalysisResultResponse>(`/ai/jobs/${jobId}`, { signal })
     return data
   },
 }

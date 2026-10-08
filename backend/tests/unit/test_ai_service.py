@@ -2,7 +2,7 @@
 hướng người dùng tới project vừa được AI tạo ra sau khi job COMPLETED.
 """
 from types import SimpleNamespace
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
@@ -10,6 +10,13 @@ import app.db.base  # noqa: F401 - đăng ký các quan hệ SQLAlchemy
 from app.core.exceptions import ForbiddenException, NotFoundException
 from app.models.ai_request import AIRequestStatus
 from app.services.ai_service import AIService
+
+
+@pytest.fixture(autouse=True)
+def authorized_project_context():
+    # These unit tests isolate response formatting; HTTP integration tests exercise RBAC.
+    with patch("app.services.ai_service.get_project_context", AsyncMock()) as context:
+        yield context
 
 
 def ai_request(**overrides):

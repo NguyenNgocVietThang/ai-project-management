@@ -1,4 +1,22 @@
 {
+  "jobs": {
+    "quotaExceeded": "Đã hết hạn mức sử dụng AI. Hãy thử lại khi hạn mức được đặt lại.",
+    "resourceLimitExceeded": "Dự án vượt giới hạn kích thước xử lý. Hãy giảm kích thước trước khi thử lại.",
+    "outcomeUnknown": "Nhà cung cấp có thể đã xử lý yêu cầu này. Hãy kiểm tra kết quả trước khi thử lại.",
+    "errorCode": "Lý do: {code}",
+    "title": "Xử lý gần đây", "recent": "50 mục mới nhất", "active": "{count} đang xử lý",
+    "description": "Yêu cầu đang chờ được lưu trên máy chủ. Mở lại danh sách sau khi tải lại trang để xem tiến độ và kết quả.",
+    "connection": "Kết nối bị gián đoạn. Tiến độ sẽ được kiểm tra lại khi có kết nối; yêu cầu có thể vẫn đang chạy.",
+    "unavailable": "Bạn không còn quyền xem yêu cầu này. Tải lại danh sách để kiểm tra quyền hiện tại.",
+    "loading": "Đang kiểm tra tiến độ…", "pendingResult": "Kết quả sẽ xuất hiện khi xử lý hoàn tất.",
+    "empty": "Chưa có yêu cầu gần đây.", "refresh": "Kiểm tra tiến độ", "viewResult": "Xem kết quả", "hideResult": "Ẩn kết quả",
+    "openFeature": "Mở chức năng", "openProject": "Mở dự án",
+    "queued": "Đang chờ", "running": "Đang xử lý", "succeeded": "Hoàn tất", "failed": "Thất bại",
+    "failedMessage": "Chưa xử lý xong yêu cầu này. Mở chức năng để kiểm tra trước khi gửi yêu cầu mới.",
+    "generation": "Lập dự án bằng AI", "impact": "Phân tích tác động thay đổi", "optimization": "Tối ưu lịch trình",
+    "resources": "Đề xuất nhân sự", "risk": "Phân tích rủi ro", "schedule": "Tính lại lịch trình",
+    "email": "Gửi email", "background": "Xử lý nền"
+  },
   "common": {
     "appName": "Quản lý dự án AI",
     "save": "Lưu",

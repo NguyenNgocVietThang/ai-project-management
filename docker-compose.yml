@@ -1,7 +1,7 @@
 version: '3.8'
 
 # Môi trường Development. Tệp này mount trực tiếp cây mã nguồn và chạy uvicorn/next với
-# hot reload, do đó KHÔNG dùng cho triển khai production — vui lòng xem docker-compose.prod.yml.
+# hot reload, do đó KHÔNG dùng cho triển khai production — vui lòng xem docs/deploy-render-supabase.md.
 # Các thông tin bảo mật (SECRET_KEY, SMTP, OAuth, AI keys) được đọc từ
 # backend/.env (được gitignore); sao chép backend/.env.example để tạo tệp này.
 
@@ -93,6 +93,7 @@ services:
   # ─── Celery Worker ────────────────────────────────────────────
 
   celery-worker:
+    profiles: [legacy-celery]
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -115,6 +116,7 @@ services:
   # ─── Celery Beat (các tác vụ định kỳ, ví dụ: quét thông báo hạn công việc hàng ngày) ──
 
   celery-beat:
+    profiles: [legacy-celery]
     build:
       context: ./backend
       dockerfile: Dockerfile
