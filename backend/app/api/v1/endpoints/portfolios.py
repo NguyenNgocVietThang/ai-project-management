@@ -21,6 +21,7 @@ from app.services.portfolio_service import PortfolioServiceDep
 router = APIRouter()
 
 
+@router.get("", include_in_schema=False, response_model=PaginatedResponse[PortfolioResponse])
 @router.get("/", response_model=PaginatedResponse[PortfolioResponse])
 async def list_portfolios(
     service: PortfolioServiceDep,
@@ -46,6 +47,7 @@ async def list_portfolios(
     )
 
 
+@router.post("", include_in_schema=False, response_model=PortfolioResponse, status_code=status.HTTP_201_CREATED)
 @router.post("/", response_model=PortfolioResponse, status_code=status.HTTP_201_CREATED)
 async def create_portfolio(
     body: PortfolioCreate,

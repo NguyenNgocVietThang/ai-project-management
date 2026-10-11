@@ -23,6 +23,7 @@ from app.services.project_service import ProjectServiceDep
 router = APIRouter()
 
 
+@router.get("", include_in_schema=False, response_model=PaginatedResponse[ProjectSummaryResponse])
 @router.get("/", response_model=PaginatedResponse[ProjectSummaryResponse])
 async def list_projects(
     service: ProjectServiceDep,
@@ -56,6 +57,7 @@ async def list_projects(
     )
 
 
+@router.post("", include_in_schema=False, response_model=ProjectResponse, status_code=status.HTTP_201_CREATED)
 @router.post("/", response_model=ProjectResponse, status_code=status.HTTP_201_CREATED)
 async def create_project(
     body: ProjectCreate,

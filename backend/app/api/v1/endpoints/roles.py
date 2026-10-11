@@ -24,6 +24,7 @@ PROJECT_ROLES = ("PM", "BA", "PO", "Member", "Customer")
 RequireAdmin = Annotated[User, Depends(require_roles("Admin"))]
 
 
+@router.get("", include_in_schema=False, response_model=list[RoleDetailResponse] | list[RoleOptionResponse])
 @router.get("/", response_model=list[RoleDetailResponse] | list[RoleOptionResponse])
 async def list_roles(
     current_user: CurrentUser,
@@ -57,6 +58,7 @@ async def list_roles(
     return responses
 
 
+@router.post("", include_in_schema=False, response_model=RoleDetailResponse, status_code=status.HTTP_201_CREATED)
 @router.post("/", response_model=RoleDetailResponse, status_code=status.HTTP_201_CREATED)
 async def create_role(
     body: RoleCreate,

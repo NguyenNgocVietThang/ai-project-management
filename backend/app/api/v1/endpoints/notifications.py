@@ -23,6 +23,7 @@ from app.services.notification_service import NotificationServiceDep
 router = APIRouter()
 
 
+@router.get("", include_in_schema=False, response_model=NotificationListResponse)
 @router.get("/", response_model=NotificationListResponse)
 async def list_notifications(
     service: NotificationServiceDep,

@@ -12,6 +12,7 @@ from app.services.audit_service import AuditServiceDep
 router = APIRouter()
 
 
+@router.get("", include_in_schema=False, response_model=PaginatedResponse[AuditLogResponse])
 @router.get("/", response_model=PaginatedResponse[AuditLogResponse])
 async def list_audit_logs(
     audit_service: AuditServiceDep,

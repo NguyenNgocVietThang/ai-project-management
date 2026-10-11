@@ -73,6 +73,9 @@ const nextConfig = {
   reactStrictMode: true,
   outputFileTracingRoot: __dirname,
   experimental: { proxyTimeout: 120_000 },
+  // Không để Next tự cắt dấu '/' cuối (308) trên đường dẫn API: nếu không, request
+  // `/api/v1/portfolios/` bị đổi thành `/api/v1/portfolios` rồi proxy sang FastAPI.
+  skipTrailingSlashRedirect: true,
   async rewrites() {
     return backendOrigin ? [{ source: '/api/v1/:path*', destination: `${backendOrigin.replace(/\/$/, '')}/api/v1/:path*` }] : []
   },

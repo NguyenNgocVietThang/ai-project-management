@@ -13,6 +13,7 @@ from app.schemas.admin import PermissionResponse
 router = APIRouter()
 
 
+@router.get("", include_in_schema=False, response_model=list[PermissionResponse])
 @router.get("/", response_model=list[PermissionResponse])
 async def list_permissions(
     current_user: Annotated[User, Depends(require_roles("Admin"))],

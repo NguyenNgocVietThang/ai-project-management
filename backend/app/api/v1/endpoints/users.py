@@ -28,6 +28,7 @@ router = APIRouter()
 # `/me`, `/search` bên dưới (converter mặc định khớp cả "me" và gây 422).
 
 
+@router.get("", include_in_schema=False, response_model=PaginatedResponse[AdminUserResponse])
 @router.get("/", response_model=PaginatedResponse[AdminUserResponse])
 async def list_users(
     admin_service: AdminUserServiceDep,
@@ -43,6 +44,7 @@ async def list_users(
     )
 
 
+@router.post("", include_in_schema=False, response_model=AdminUserResponse, status_code=status.HTTP_201_CREATED)
 @router.post("/", response_model=AdminUserResponse, status_code=status.HTTP_201_CREATED)
 async def create_user(
     body: AdminUserCreate,
