@@ -13,8 +13,9 @@ Mỗi task: không quá 5 tệp, để hệ thống ở trạng thái chạy đ�
 ### C1: Model và migration hồ sơ yêu cầu
 **Mô tả:** Bảng `requirement_briefs` (ý tưởng gốc, danh sách mục JSON có trạng thái `clear/missing/assumed/skipped`, giá trị, nguồn, lịch sử hỏi đáp, số lượt, status `clarifying/ready/consumed`, owner, `project_id` nullable). Schema Pydantic và validator cho danh sách mục cố định.
 **Tiêu chí:**
-- [ ] Migration lên/xuống/lên trên PostgreSQL test
-- [ ] Validator từ chối mục lạ, trạng thái lạ; mục `clear` nguồn `user` không bị ghi đè bởi nguồn AI
+- [x] Migration lên/xuống/lên trên PostgreSQL test (migr.py cycle, một head `20261012_requirement_briefs`)
+- [x] Validator từ chối mục lạ, trạng thái lạ; mục `clear` nguồn `user` không bị ghi đè bởi nguồn AI
+Bằng chứng C1: test_requirement_brief_schema.py 39 passed; pytest toàn bộ 521 passed / 21 skipped.
 **Xác minh:** unit test schema/validator; pytest toàn bộ.
 **Phụ thuộc:** Không. **Tệp:** `models/requirement_brief.py`, `db/base.py`, migration, `schemas/requirement_brief.py`, test. **Quy mô:** M
 

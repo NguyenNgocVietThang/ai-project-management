@@ -44,6 +44,7 @@ from app.models.phase import Phase  # noqa: F401
 from app.models.portfolio import Portfolio  # noqa: F401
 from app.models.project import Project  # noqa: F401
 from app.models.project_version import ProjectVersion  # noqa: F401
+from app.models.requirement_brief import RequirementBrief  # noqa: F401
 from app.models.risk_report import RiskReport  # noqa: F401
 from app.models.role import Role  # noqa: F401
 from app.models.skill import Skill  # noqa: F401
