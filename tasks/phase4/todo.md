@@ -157,20 +157,20 @@ Bằng chứng D1: `pytest backend/tests/unit/test_docx_renderer.py` 15 passed; 
 
 ### G1: Cap cho endpoint đọc CPM
 **Mô tả:** Đếm task/dependency bằng COUNT trước khi nạp; vượt `CPM_MAX_TASKS`/`CPM_MAX_DEPENDENCIES` trả lỗi `resource_limit_exceeded` rõ ràng.
-**Tiêu chí:** [ ] Vượt cap không nạp task; [ ] trong cap trả như cũ
+**Tiêu chí:** [x] Vượt cap không nạp task (422 `resource_limit_exceeded`); [x] trong cap trả như cũ. Bằng chứng: test_cpm_scheduling.py 22 passed
 **Xác minh:** test trong `tests/unit/test_cpm_scheduling.py`.
 **Phụ thuộc:** Không (có thể làm sớm vì là rủi ro OOM). **Tệp:** `scheduling_service.py`, test. **Quy mô:** S
 
 ### G2: Kiểu, service, hook `useCPM`
-**Tiêu chí:** [ ] 409 hiển thị được; [ ] tải lại khi task/dependency đổi hoặc job `scheduling.cpm` xong
+**Tiêu chí:** [x] 409 hiển thị được; [x] tải lại khi task/dependency đổi hoặc job `scheduling.cpm` xong. Bằng chứng: useCPM.test.tsx 6 test
 **Phụ thuộc:** G1. **Tệp:** `types/cpm.types.ts`, `services/cpm.service.ts`, `features/gantt/hooks/useCPM.ts`, test. **Quy mô:** M
 
 ### G3: Hàm bố cục Gantt thuần
-**Tiêu chí:** [ ] Mốc 0 ngày dạng kim cương; [ ] task thiếu ngày tách nhóm riêng; [ ] trục từ `anchor_date` tới `anchor + project_duration_days`
+**Tiêu chí:** [x] Mốc 0 ngày dạng kim cương; [x] task thiếu ngày tách nhóm riêng; [x] trục từ `anchor_date` tới `anchor + project_duration_days`
 **Phụ thuộc:** G2. **Tệp:** `features/gantt/lib/layout.ts`, test. **Quy mô:** S
 
 ### G4: Component GanttChart SVG
-**Tiêu chí:** [ ] Đường găng có nhãn, không chỉ dựa màu, có `aria-label`; [ ] zoom ngày/tuần/tháng, light/dark; [ ] 2000 task không treo (ảo hóa hàng)
+**Tiêu chí:** [x] Đường găng có nhãn, không chỉ dựa màu, có `aria-label`; [x] zoom ngày/tuần/tháng, light/dark (token theme); [x] 2000 task không treo (ảo hóa hàng). Bằng chứng: vitest 15 tệp / 71 test, type-check, lint đạt
 **Phụ thuộc:** G3. **Tệp:** `components/gantt/GanttChart.tsx`, test. **Quy mô:** M
 
 ### G5: Trang Gantt, tab điều hướng, EN/VI
