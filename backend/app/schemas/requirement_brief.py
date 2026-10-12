@@ -269,3 +269,81 @@ class RequirementBriefRead(BaseModel):
     pending_job_id: int | None = None
     created_at: datetime
     updated_at: datetime
+
+
+# ----- Schema request/response cho API hồ sơ yêu cầu (C3) -----
+
+
+class RequirementAnswerRequest(BaseModel):
+    """Trả lời câu hỏi mở mới nhất, tùy chọn sửa mục trực tiếp, rồi enqueue lượt kế.
+
+    `answer` bỏ trống nghĩa là chỉ chạy lại lượt AI (ví dụ lượt trước thất bại).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    answer: str | None = Field(default=None, max_length=MAX_ANSWER_LENGTH)
+    item_updates: list["RequirementItemPatch"] = Field(default_factory=list, max_length=len(REQUIREMENT_ITEM_KEYS))
+
+
+class RequirementItemPatch(BaseModel):
+    """Người dùng sửa/xác nhận một mục (nguồn `user`); `key` chỉ dùng trong answer."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    key: ItemKey | None = None
+    status: Literal["clear", "missing", "skipped"]
+    value: str | None = Field(default=None, max_length=MAX_ITEM_VALUE_LENGTH)
+
+
+RequirementAnswerRequest.model_rebuild()
+
+
+class AssumptionAcceptRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    # Bỏ trống: dùng nguyên giả định AI đề xuất.
+    value: str | None = Field(default=None, max_length=MAX_ITEM_VALUE_LENGTH)
+
+
+class PendingTurn(BaseModel):
+    job_id: int
+    status: str
+
+
+class ItemCounts(BaseModel):
+    clear: int
+    missing: int
+    assumed: int
+    skipped: int
+    total: int
+    # Số mục đã có kết luận (khác `missing`), ví dụ 4/7.
+    resolved: int
+
+
+class RequirementBriefDetail(RequirementBriefRead):
+    pending_turn: PendingTurn | None = None
+    max_turns: int
+    turns_remaining: int
+    item_counts: ItemCounts
+    open_question: str | None = None
+    can_finalize: bool
+
+
+class RequirementBriefSummary(BaseModel):
+    id: int
+    idea: str
+    status: BriefStatus
+    turn_count: int
+    project_id: int | None = None
+    item_counts: ItemCounts
+    created_at: datetime
+    updated_at: datetime
+
+
+class RequirementBriefTurnResponse(BaseModel):
+    """Phản hồi khi tạo hồ sơ/trả lời: hồ sơ hiện tại và job để poll qua `/jobs/{id}`."""
+
+    brief: RequirementBriefDetail
+    job_id: int
+    ai_request_id: int

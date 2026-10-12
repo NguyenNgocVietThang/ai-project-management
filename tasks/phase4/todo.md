@@ -32,9 +32,10 @@ Bằng chứng C2: 29 test mới (parse + job); pytest 558/21 SQLite, 562/16 Pos
 ### C3: API hồ sơ yêu cầu
 **Mô tả:** Tạo hồ sơ từ ý tưởng (enqueue lượt đầu), gửi câu trả lời, chấp nhận/từ chối giả định, "Bỏ qua, tạo luôn", đọc hồ sơ. Chỉ owner truy cập.
 **Tiêu chí:**
-- [ ] Người khác owner nhận 404/403
-- [ ] Trả lời khi đang có lượt AI chạy bị từ chối 409, không tạo hai job
-- [ ] Bỏ qua chuyển mục `missing` thành `skipped`, status `ready`
+- [x] Người khác owner nhận 404/403 (404 `brief_not_found`)
+- [x] Trả lời khi đang có lượt AI chạy bị từ chối 409, không tạo hai job
+- [x] Bỏ qua chuyển mục `missing` thành `skipped`, status `ready`
+Bằng chứng C3: test_requirement_briefs_api.py 8 passed; pytest 575/23 SQLite, 581/16 Postgres (1 lỗi môi trường có sẵn).
 **Xác minh:** test endpoint; pytest.
 **Phụ thuộc:** C2. **Tệp:** `endpoints/requirement_briefs.py`, `services/requirement_brief_service.py`, `api/v1/router.py`, test. **Quy mô:** M
 

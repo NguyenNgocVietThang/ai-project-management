@@ -20,6 +20,7 @@ from app.api.v1.endpoints import (
     phases,
     portfolios,
     projects,
+    requirement_briefs,
     resource_leveling,
     roles,
     sprints,
@@ -60,3 +61,4 @@ api_router.include_router(audit_timeline.router, prefix="/audit", tags=["Audit"]
 api_router.include_router(ai.router, prefix="/ai", tags=["AI"])
 api_router.include_router(jobs.router, prefix="/jobs", tags=["Jobs"])
 api_router.include_router(internal_jobs.router, prefix="/internal/jobs", tags=["Internal"])
+api_router.include_router(requirement_briefs.router, prefix="/requirement-briefs", tags=["Requirement Briefs"])

@@ -21,3 +21,4 @@ Nhánh: `feature/phase4-workflow-reporting` (tạo từ `main` ngày 2026-10-12)
 - 2026-10-13: C2 xong. `services/ai/requirement_clarifier.py`, nhánh REQUIREMENT_CLARIFY trong `durable_jobs.py`; trần 12 lượt (409 `clarify_turn_limit`), quota 429; hồ sơ không tự chuyển `ready` (output có `complete`).
 - 2026-10-13: A1 xong. Migration `20261013_approval_chain` (approver_id nullable, required_role, CANCELLED, unique (cr, step)). Submit tạo 3 bước BA/PO/PM, CR ở SUBMITTED; thiếu vai trò 422.
 - 2026-10-13: G6 xong. Xóa stub Gantt, cập nhật router comment, README, roadmap. Pytest 558/21.
+- 2026-10-13: C3 xong. API `/requirement-briefs` (tạo, đọc, trả lời, giả định, sửa mục, skip, finalize); không tự finalize.
