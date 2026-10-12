@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/banner.svg" alt="AI Project Planning và Portfolio Management System" width="100%">
+</p>
+
 # Hệ thống Lập kế hoạch Dự án và Quản lý Danh mục bằng AI
 
 Demo **Render Free + Supabase Free** dùng Next.js Node server và FastAPI ngủ theo lưu lượng; 750 giờ web là tổng dùng chung của workspace. AI, email và CPM lớn dùng jobs/outbox bền vững trong Postgres, Supabase Cron thay Beat, Resend HTTPS thay SMTP, avatar lưu trong bucket Supabase riêng tư. Xem [hướng dẫn triển khai và vận hành](docs/deploy-render-supabase.md), [số đo tài nguyên](docs/free-compute-audit.md) và [checklist nghiệm thu](tasks/todo.md). Cloud chưa được triển khai vì chưa có tài khoản và sender; xuất báo cáo và phân tích tài liệu vẫn là TODO.
@@ -74,6 +78,10 @@ Xây dựng một **web application quản lý dự án và danh mục đầu t�
 ---
 
 ## 2. Kiến trúc hệ thống
+
+<p align="center">
+  <img src="docs/assets/architecture.svg" alt="Sơ đồ kiến trúc hệ thống dạng isometric" width="100%">
+</p>
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
