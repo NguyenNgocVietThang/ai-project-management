@@ -1,7 +1,7 @@
-# Graph Report - AI Project Planning & Portfolio Management system  (2026-10-11)
+# Graph Report - AI Project Planning & Portfolio Management system  (2026-10-12)
 
 ## Corpus Check
-- 482 files · ~262,574 words
+- 482 files · ~271,905 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 30 file(s) not represented in the graph (top: (none) 12, .puml 10, .example 3)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a299a9bc`
+- Built from commit: `07fe9167`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -30,20 +30,21 @@
 - TaskService
 - react
 - test_ai_service.py
-- security.py
+- auth_service.py
 - XkiroProvider
 - projects/page.tsx
 - useTasks.ts
 - test_ws_hardening.py
 - users.py
 - test_cloud_adapters.py
+- tasks/page.tsx
 - useNotifications.ts
 - test_login_lockout.py
 - test_risk_analyzer.py
 - ConnectionManager
 - get_critical_path
 - compilerOptions
-- auth_service.py
+- devDependencies
 - api.ts
 - wbs.py
 - useAuthStore
@@ -60,7 +61,7 @@
 - oauth.py
 - AdminUserService
 - Button
-- tasks/page.tsx
+- test_durable_jobs_postgres.py
 - admin.py
 - env.py
 - list_projects
@@ -70,11 +71,11 @@
 - test_reported_metrics_are_real.py
 - test_user_profile_settings.py
 - dependencies
-- devDependencies
+- ChatMessage
 - JobRunner
 - FastAPI
 - Task
-- scheduling_tasks.py
+- Chi tiết các Giai đoạn
 - StorageService
 - Thiết kế kiến trúc hệ thống
 - Job
@@ -91,7 +92,7 @@
 - endpoints/ai.py
 - typing
 - test_resource_warnings.py
-- test_durable_jobs_postgres.py
+- scheduling_tasks.py
 - AGENTS.md
 - ChatService
 - BadRequestException
@@ -126,15 +127,15 @@
 - job_runner.py
 - Rà soát code và nâng cấp giao diện — 2026-09-15
 - fixture
-- Chi tiết các Giai đoạn
-- playwright
 - scripts
+- playwright
+- BurndownChart.tsx
 - audit/page.tsx
 - Kế hoạch: Render Free + Supabase Free
 - vitest.config.mts
 - DependencyCreate
 - .__init__
-- ChatMessage
+- Email and private storage adapters
 - AuditService
 - test_project_scoping.py
 - .eslintrc.json
@@ -148,15 +149,15 @@
 - useNotificationSocket
 - Durable jobs verification
 - 11. Cài đặt và Chạy hệ thống
-- BurndownChart.tsx
 - 3. Ngăn xếp công nghệ
 - tailwind.config.ts
 - get_current_active_superuser
 - ApprovalStatus
 - DocumentType
 - resource-recommendation.service.ts
-- EmailStatus
+- security.py
 - schedule-optimization.types.ts
+- EmailStatus
 - AIService
 - resource_leveling
 - Đặc tả yêu cầu phần mềm (SRS)
@@ -164,7 +165,6 @@
 - Rà soát cuối: Render Free + Supabase Free
 - Backend local verification — 2026-10-09
 - Tiến độ — tasks/plan.md
-- Email and private storage adapters
 
 ## God Nodes (most connected - your core abstractions)
 1. `User` - 231 edges
@@ -251,9 +251,9 @@ Nodes (47): OAuthCallbackContent(), OAuthCallbackPage(), VerificationState, Veri
 Cohesion: 0.38
 Nodes (9): ai_request(), authorized_project_context(), db(), test_admin_can_view_another_users_job(), test_completed_job_returns_project_id_and_output(), test_missing_job_raises_not_found(), test_other_users_job_is_forbidden_unless_admin(), test_pending_job_has_no_project_id_yet() (+1 more)
 
-### Community 14 - "security.py"
-Cohesion: 0.10
-Nodes (21): _user_from_token(), create_access_token(), create_refresh_token(), decode_token(), _utcnow(), test_a_refresh_token_passed_as_an_access_token_is_not_revoked_as_one(), test_a_token_that_was_never_revoked_still_works(), test_logout_revokes_both_tokens() (+13 more)
+### Community 14 - "auth_service.py"
+Cohesion: 0.09
+Nodes (20): ServiceUnavailableException, TooManyRequestsException, hash_password(), verify_password(), ResetPasswordRequest, AuthService, get_auth_service(), build_request() (+12 more)
 
 ### Community 15 - "XkiroProvider"
 Cohesion: 0.10
@@ -279,6 +279,10 @@ Nodes (15): connect_social_account(), create_user(), deactivate_account(), deact
 Cohesion: 0.15
 Nodes (19): client(), email_settings(), storage_settings(), test_email_idempotency_conflict_is_classified(), test_email_transport_timeout_hides_secrets_and_retains_retry_key(), test_minio_compatibility_releases_download_connection(), test_resend_errors_are_sanitized_and_classified(), test_resend_missing_key_fails_explicitly() (+11 more)
 
+### Community 21 - "tasks/page.tsx"
+Cohesion: 0.15
+Nodes (23): Field(), KanbanColumn(), Select(), SprintView(), STATUSES, TaskCard(), TaskCreateModal(), TasksPage() (+15 more)
+
 ### Community 22 - "useNotifications.ts"
 Cohesion: 0.16
 Nodes (19): NotificationsPage(), NotificationBell(), NotificationItem(), Props, TYPE_META, NotificationPanel(), Props, NOTIFICATION_KEYS (+11 more)
@@ -299,9 +303,9 @@ Nodes (8): ConnectionManager, fake_ws(), FakeWebSocket, test_broadcast_local_dro
 Cohesion: 0.06
 Nodes (30): compilerOptions, allowImportingTsExtensions, allowJs, esModuleInterop, incremental, isolatedModules, jsx, lib (+22 more)
 
-### Community 28 - "auth_service.py"
-Cohesion: 0.09
-Nodes (20): ServiceUnavailableException, TooManyRequestsException, hash_password(), verify_password(), ResetPasswordRequest, AuthService, get_auth_service(), build_request() (+12 more)
+### Community 28 - "devDependencies"
+Cohesion: 0.10
+Nodes (20): devDependencies, autoprefixer, eslint, eslint-config-next, jsdom, postcss, tailwindcss, @testing-library/dom (+12 more)
 
 ### Community 29 - "api.ts"
 Cohesion: 0.08
@@ -363,9 +367,9 @@ Nodes (19): AdminUserCreate, AdminUserUpdate, AdminUserService, build_db(), buil
 Cohesion: 0.09
 Nodes (45): Metric(), PortfolioDetailPage(), PortfoliosPage(), ProjectSettingsPage(), Button, ConfirmDialog(), ConfirmDialogProps, Modal() (+37 more)
 
-### Community 45 - "tasks/page.tsx"
+### Community 45 - "test_durable_jobs_postgres.py"
 Cohesion: 0.15
-Nodes (23): Field(), KanbanColumn(), Select(), SprintView(), STATUSES, TaskCard(), TaskCreateModal(), TasksPage() (+15 more)
+Nodes (5): postgres_factory(), test_postgres_concurrent_ai_dispatch_reservations_enforce_daily_cap(), reserve(), test_postgres_concurrent_dedupe_and_skip_locked_claims(), test_postgres_jobs_migration_upgrade_downgrade()
 
 ### Community 46 - "admin.py"
 Cohesion: 0.11
@@ -403,9 +407,9 @@ Nodes (18): ChangePasswordRequest, avatar_bytes(), build_db(), build_service(), 
 Cohesion: 0.10
 Nodes (20): dependencies, axios, clsx, date-fns, @dnd-kit/core, @dnd-kit/sortable, @hookform/resolvers, js-cookie (+12 more)
 
-### Community 55 - "devDependencies"
-Cohesion: 0.10
-Nodes (20): devDependencies, autoprefixer, eslint, eslint-config-next, jsdom, postcss, tailwindcss, @testing-library/dom (+12 more)
+### Community 55 - "ChatMessage"
+Cohesion: 0.18
+Nodes (6): ChatMessage, _index_names(), test_audit_rows_can_be_filtered_by_project(), test_chat_history_index_matches_the_order_it_is_read_in(), test_the_daily_sweep_query_is_indexed(), test_the_gin_index_on_labels_is_declared_on_the_model()
 
 ### Community 56 - "JobRunner"
 Cohesion: 0.14
@@ -419,9 +423,9 @@ Nodes (6): create_change_request(), get_change_request(), list_change_requests()
 Cohesion: 0.06
 Nodes (31): set_current_project_id(), Dependency, Project, Task, Worklog, TaskRepository, CPMResponse, CPMTask (+23 more)
 
-### Community 59 - "scheduling_tasks.py"
-Cohesion: 0.31
-Nodes (4): _pending_key(), recalculate_project_task(), _recalculate_with_own_session(), schedule_recalculation()
+### Community 59 - "Chi tiết các Giai đoạn"
+Cohesion: 0.20
+Nodes (9): 5 Trụ cột chính:, Chi tiết các Giai đoạn, GIAI ĐOẠN 4.1 – Audit Timeline & Activity Stream (SOP-AUD-001), GIAI ĐOẠN 4.3 – Change Request & Multi-Level Approval Workflow (SOP-CR), GIAI ĐOẠN 4.4 – Project Versioning & Rollback System (SOP-PM-004), GIAI ĐOẠN 4.5 – Report Generation & Export (DOCX & XLSX) (SOP-RPT-001), Hiện trạng & Hạ tầng sẵn có, Lộ trình: Mô-đun quy trình và báo cáo (Phase 4) (+1 more)
 
 ### Community 60 - "StorageService"
 Cohesion: 0.22
@@ -487,9 +491,9 @@ Nodes (17): JobResponse, visible_jobs(), list_permissions(), get_db(), Permissio
 Cohesion: 0.32
 Nodes (9): _assignment(), _service(), test_a_reasonable_workload_raises_nothing(), test_concurrent_assignments_add_up(), test_each_overloaded_day_is_reported_separately(), test_hours_are_spread_across_the_assignment_window(), test_leave_takes_precedence_over_overload(), test_more_hours_than_a_day_holds_is_flagged() (+1 more)
 
-### Community 76 - "test_durable_jobs_postgres.py"
-Cohesion: 0.15
-Nodes (5): postgres_factory(), test_postgres_concurrent_ai_dispatch_reservations_enforce_daily_cap(), reserve(), test_postgres_concurrent_dedupe_and_skip_locked_claims(), test_postgres_jobs_migration_upgrade_downgrade()
+### Community 76 - "scheduling_tasks.py"
+Cohesion: 0.31
+Nodes (4): _pending_key(), recalculate_project_task(), _recalculate_with_own_session(), schedule_recalculation()
 
 ### Community 78 - "ChatService"
 Cohesion: 0.09
@@ -619,17 +623,17 @@ Nodes (7): Giao diện, Giới hạn môi trường và việc còn lại, Lỗi
 Cohesion: 0.18
 Nodes (8): as_user(), factory(), override_db(), _disable_rate_limiting(), event_loop(), make_user(), factory(), session()
 
-### Community 111 - "Chi tiết các Giai đoạn"
-Cohesion: 0.20
-Nodes (9): 5 Trụ cột chính:, Chi tiết các Giai đoạn, GIAI ĐOẠN 4.1 – Audit Timeline & Activity Stream (SOP-AUD-001), GIAI ĐOẠN 4.3 – Change Request & Multi-Level Approval Workflow (SOP-CR), GIAI ĐOẠN 4.4 – Project Versioning & Rollback System (SOP-PM-004), GIAI ĐOẠN 4.5 – Report Generation & Export (DOCX & XLSX) (SOP-RPT-001), Hiện trạng & Hạ tầng sẵn có, Lộ trình: Mô-đun quy trình và báo cáo (Phase 4) (+1 more)
+### Community 111 - "scripts"
+Cohesion: 0.25
+Nodes (8): scripts, build, dev, lint, start, test, test:watch, type-check
 
 ### Community 112 - "playwright"
 Cohesion: 0.50
 Nodes (3): npx, playwright, @executeautomation/playwright-mcp-server
 
-### Community 114 - "scripts"
-Cohesion: 0.25
-Nodes (8): scripts, build, dev, lint, start, test, test:watch, type-check
+### Community 114 - "BurndownChart.tsx"
+Cohesion: 0.47
+Nodes (5): Danh mục tính năng triển khai theo Phase, BurndownChart(), BurndownChartProps, formatDate(), BurndownPoint
 
 ### Community 115 - "audit/page.tsx"
 Cohesion: 0.25
@@ -643,9 +647,9 @@ Nodes (9): Cần xác định khi thực hiện, Hiện trạng đã xác minh, 
 Cohesion: 0.29
 Nodes (4): create_dependency(), delete_dependency(), list_dependencies(), DependencyCreate
 
-### Community 121 - "ChatMessage"
-Cohesion: 0.18
-Nodes (6): ChatMessage, _index_names(), test_audit_rows_can_be_filtered_by_project(), test_chat_history_index_matches_the_order_it_is_read_in(), test_the_daily_sweep_query_is_indexed(), test_the_gin_index_on_labels_is_declared_on_the_model()
+### Community 121 - "Email and private storage adapters"
+Cohesion: 0.50
+Nodes (3): Email and private storage adapters, Existing file flow and scope, Local verification
 
 ### Community 122 - "AuditService"
 Cohesion: 0.27
@@ -687,10 +691,6 @@ Nodes (4): Durable jobs verification, Evidence, Implemented contract, Operationa
 Cohesion: 0.29
 Nodes (7): 11. Cài đặt và Chạy hệ thống, 1. Khởi động Phía máy chủ (FastAPI), 2. Khởi động Celery Worker & Celery Beat, 3. Khởi động Phía giao diện (Next.js 15), Cách 1: Khởi chạy toàn bộ hệ thống bằng Docker Compose, Cách 2: Cài đặt và chạy thủ công (Local Development), Điều kiện tiên quyết
 
-### Community 148 - "BurndownChart.tsx"
-Cohesion: 0.47
-Nodes (5): Danh mục tính năng triển khai theo Phase, BurndownChart(), BurndownChartProps, formatDate(), BurndownPoint
-
 ### Community 150 - "3. Ngăn xếp công nghệ"
 Cohesion: 0.50
 Nodes (4): 3. Ngăn xếp công nghệ, Hạ tầng Docker (7 Dịch vụ trong `docker-compose.yml`), Phía giao diện (Next.js / React / TypeScript), Phía máy chủ (Python)
@@ -698,6 +698,10 @@ Nodes (4): 3. Ngăn xếp công nghệ, Hạ tầng Docker (7 Dịch vụ trong 
 ### Community 156 - "resource-recommendation.service.ts"
 Cohesion: 0.31
 Nodes (8): ResourceRecommendationJobResponse, ResourceRecommendationResultResponse, resourceRecommendationService, ResourceCandidate, ResourceRecommendationDisplayItem, ResourceRecommendationItem, ResourceRecommendationJobStatus, ResourceRecommendationResult
+
+### Community 157 - "security.py"
+Cohesion: 0.10
+Nodes (21): _user_from_token(), create_access_token(), create_refresh_token(), decode_token(), _utcnow(), test_a_refresh_token_passed_as_an_access_token_is_not_revoked_as_one(), test_a_token_that_was_never_revoked_still_works(), test_logout_revokes_both_tokens() (+13 more)
 
 ### Community 158 - "schedule-optimization.types.ts"
 Cohesion: 0.28
@@ -727,10 +731,6 @@ Nodes (4): Backend local verification — 2026-10-09, Contracts exercised, Datab
 Cohesion: 0.40
 Nodes (4): Kiểm thử, Quan hệ phụ thuộc rà soát, Quyết định và bằng chứng, Tiến độ — tasks/plan.md
 
-### Community 187 - "Email and private storage adapters"
-Cohesion: 0.50
-Nodes (3): Email and private storage adapters, Existing file flow and scope, Local verification
-
 ## Knowledge Gaps
 - **351 isolated node(s):** `npx`, `@executeautomation/playwright-mcp-server`, `extends`, `next/core-web-vitals`, `apiOrigin` (+346 more)
   These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1182 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
@@ -739,11 +739,11 @@ Nodes (3): Email and private storage adapters, Existing file flow and scope, Loc
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Danh mục tính năng đã triển khai` connect `formatStatus` to `User`, `ChatPanel.tsx`, `NotificationService`, `test_portfolio_project_core.py`, `NotificationType`, `ForbiddenException`, `LoadingState`, `TaskService`, `Button`, `tasks/page.tsx`, `ChatService`, `BadRequestException`, `projects/page.tsx`, `useNotificationSocket`, `DashboardService`, `useNotifications.ts`?**
+- **Why does `Danh mục tính năng đã triển khai` connect `formatStatus` to `User`, `ChatPanel.tsx`, `NotificationService`, `test_portfolio_project_core.py`, `NotificationType`, `ForbiddenException`, `LoadingState`, `TaskService`, `Button`, `ChatService`, `BadRequestException`, `projects/page.tsx`, `useNotificationSocket`, `DashboardService`, `tasks/page.tsx`, `useNotifications.ts`?**
   _High betweenness centrality (0.165) - this node is a cross-community bridge._
-- **Why does `User` connect `User` to `db/base.py`, `test_portfolio_project_core.py`, `durable_handlers.py`, `ForbiddenException`, `TaskService`, `security.py`, `test_ws_hardening.py`, `users.py`, `get_current_active_superuser`, `auth_service.py`, `wbs.py`, `AIService`, `user_service.py`, `enqueue`, `ProjectRepository`, `AdminUserService`, `env.py`, `DashboardService`, `FastAPI`, `Task`, `RoleService`, `endpoints/ai.py`, `typing`, `ChatService`, `BadRequestException`, `test_security_state.py`, `test_change_request_service.py`, `oauth_service.py`, `risk_analyzer.py`, `pytest`, `PaginatedResponse`, `fixture`?**
+- **Why does `User` connect `User` to `db/base.py`, `test_portfolio_project_core.py`, `durable_handlers.py`, `ForbiddenException`, `TaskService`, `auth_service.py`, `test_ws_hardening.py`, `users.py`, `get_current_active_superuser`, `security.py`, `wbs.py`, `AIService`, `user_service.py`, `enqueue`, `ProjectRepository`, `AdminUserService`, `env.py`, `DashboardService`, `FastAPI`, `Task`, `RoleService`, `endpoints/ai.py`, `typing`, `ChatService`, `BadRequestException`, `test_security_state.py`, `test_change_request_service.py`, `oauth_service.py`, `risk_analyzer.py`, `pytest`, `PaginatedResponse`, `fixture`?**
   _High betweenness centrality (0.111) - this node is a cross-community bridge._
-- **Why does `Danh mục tính năng đã triển khai` connect `Alert` to `RoleService`, `user_service.py`, `react`, `Settings`, `AuditService`, `auth_service.py`, `oauth_service.py`?**
+- **Why does `Danh mục tính năng đã triển khai` connect `Alert` to `RoleService`, `user_service.py`, `react`, `auth_service.py`, `Settings`, `AuditService`, `oauth_service.py`?**
   _High betweenness centrality (0.068) - this node is a cross-community bridge._
 - **Are the 56 inferred relationships involving `User` (e.g. with `generate_project()` and `list_audit_logs()`) actually correct?**
   _`User` has 56 INFERRED edges - model-reasoned connections that need verification._
