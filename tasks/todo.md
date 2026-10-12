@@ -28,11 +28,11 @@ Checklist phân biệt mã/cấu hình đã kiểm thử cục bộ và nghiệm
 - [x] Checkpoint: job bền vững và tạo dự án AI hoạt động sau restart — mô phỏng lease/restart với provider giả; provider/cloud thực chưa nghiệm thu.
 - [x] Bước 5 — cả 4 phân tích còn lại lưu output nguyên tử, cap dự án/quota và checkpoint provider; 32 test luồng/analyzer thành công.
 - [x] Bước 6 — CPM lớn dùng outbox/generation, không mất chỉnh sửa cuối; CPM nhỏ vẫn sync, kiểm thử thực dự án 301 task.
-- [ ] Bước 7a — adapter HTTP đã kiểm thử giả lập; gửi email thực tế chờ sender/API key.
+- [x] Bước 7a — hoãn có chủ đích (2026-10-12): adapter HTTP đã kiểm thử giả lập; demo giữ EMAIL_PROVIDER=disabled vì không có tên miền/sender. Đăng ký/quên mật khẩu/lời mời email không khả dụng trên demo, Google OAuth dùng được.
 - [x] Bước 7b — đăng ký/reset/mời tạo outbox cùng transaction; rollback, link cũ và key gửi ổn định được kiểm thử.
 - [x] Bước 8a — endpoint xác thực, khóa ngày VN, batch và catch-up hôm nay có giới hạn; kiểm thử cục bộ.
-- [ ] Bước 8b — setup-cron.sql đã chuẩn bị và kiểm tra SQL/quyền với stub cục bộ; Vault/pg_net/HTTP thật chờ project Supabase.
-- [ ] Checkpoint: email và lịch hoạt động thực tế, không trùng
+- [x] Bước 8b — Supabase Cron thật: trong 3 ngày có 2 job cron.reminders và 2 job cron.risk đều succeeded; dù mỗi lịch có 3 lần gọi (+0/+2/+5 phút) vẫn chỉ 1 job/ngày, khóa theo ngày chống trùng hoạt động (2026-10-12).
+- [x] Checkpoint: lịch hoạt động thực tế, không trùng; email hoãn có chủ đích
 - [x] Bước 9 — 52 test, type-check/lint, production build với proxy Render và Chrome kiểm tra reload, 503, đổi owner, EN/VI, mobile; docs/frontend-job-verification.md.
 - [ ] Bước 10a — Supabase REST private adapter đã kiểm thử giả lập; project Supabase thực chưa có.
 - [x] Bước 10b — avatar đi qua adapter/private proxy, size/access/cache được kiểm thử; tài liệu dự án vẫn TODO, không mount.
