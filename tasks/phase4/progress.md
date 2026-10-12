@@ -17,3 +17,4 @@ Nhánh: `feature/phase4-workflow-reporting` (tạo từ `main` ngày 2026-10-12)
 - 2026-10-12: D1 xong. `services/documents/templates.py`, `docx_renderer.py` (SRS/BRD, TOC field, bảng yêu cầu, mục giả định từ hồ sơ, ảnh BPMN hoặc bảng bước dự phòng). Test 15 passed. Điều phối viên bỏ một `noqa` thừa. Chưa mở thử bằng Word/LibreOffice.
 - 2026-10-13: C1 xong. Bảng `requirement_briefs` (RLS trên Postgres), schema và `apply_item_updates`. Migration cycle đạt. Pytest 521/21. Người dùng yêu cầu: hoàn tất thì tự gộp vào `main` và commit (không push).
 - 2026-10-13: G1-G4 xong. CPM đọc áp cap (422 resource_limit_exceeded), useCPM theo dõi job, layout thuần, GanttChart SVG ảo hóa. Vitest 71 passed; pytest CPM 22 passed. Migration enum AIRequest (`20261013_ai_request_types_phase4`) do điều phối viên viết, cycle đạt.
+- 2026-10-13: G5 xong. Trang `projects/[id]/gantt`, tab Gantt, namespace i18n `gantt` (25 key). Vitest 77 passed, build đạt.

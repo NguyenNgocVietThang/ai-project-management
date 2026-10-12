@@ -174,7 +174,7 @@ Bằng chứng D1: `pytest backend/tests/unit/test_docx_renderer.py` 15 passed; 
 **Phụ thuộc:** G3. **Tệp:** `components/gantt/GanttChart.tsx`, test. **Quy mô:** M
 
 ### G5: Trang Gantt, tab điều hướng, EN/VI
-**Tiêu chí:** [ ] Tab hoạt động; [ ] empty/error (vòng phụ thuộc) có hướng dẫn; [ ] đủ chuỗi EN/VI
+**Tiêu chí:** [x] Tab hoạt động; [x] empty/error (vòng phụ thuộc) có hướng dẫn; [x] đủ chuỗi EN/VI. Bằng chứng: vitest 16 tệp / 77 test, type-check, lint, build đạt; 390px chờ kiểm tra trình duyệt ở checkpoint
 **Phụ thuộc:** G4. **Tệp:** `projects/[id]/gantt/page.tsx`, `layout.tsx`, `messages/*.json`. **Quy mô:** M
 
 ### G6: Dọn stub Gantt và cập nhật tài liệu

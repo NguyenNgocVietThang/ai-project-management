@@ -238,5 +238,31 @@
     "emailInvalid": "Enter a valid email address",
     "passwordRequired": "Password is required",
     "resetSuccess": "Your password has been reset. You can now sign in."
+  },
+  "gantt": {
+    "title": "Schedule",
+    "loading": "Loading schedule...",
+    "chart": "Project Gantt chart",
+    "zoom": "Zoom level",
+    "zoomDay": "Day",
+    "zoomWeek": "Week",
+    "zoomMonth": "Month",
+    "task": "Task",
+    "critical": "Critical",
+    "nonCritical": "Has float",
+    "milestone": "Milestone",
+    "float": "Float",
+    "floatDays": "Float {days} days",
+    "unscheduledTitle": "Not scheduled",
+    "unscheduledHint": "These tasks have no calculated dates yet.",
+    "empty": "No tasks to schedule yet.",
+    "emptyHint": "Add tasks and dependencies to see the schedule.",
+    "errorCycle": "Dependencies form a loop, so the critical path cannot be calculated. Remove one dependency in the loop.",
+    "errorLimit": "This project exceeds the size limit for schedule analysis.",
+    "errorLimitHint": "Reduce the number of tasks or dependencies, or split the project.",
+    "recalculating": "Schedule is being recalculated...",
+    "errorGeneric": "Could not load the schedule.",
+    "retry": "Try again",
+    "goToTasks": "Open tasks"
   }
 }

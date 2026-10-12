@@ -238,5 +238,31 @@
     "emailInvalid": "Địa chỉ email không hợp lệ",
     "passwordRequired": "Vui lòng nhập mật khẩu",
     "resetSuccess": "Đã đặt lại mật khẩu. Bạn có thể đăng nhập."
+  },
+  "gantt": {
+    "title": "Lịch dự án",
+    "loading": "Đang tải lịch...",
+    "chart": "Biểu đồ Gantt dự án",
+    "zoom": "Mức thu phóng",
+    "zoomDay": "Ngày",
+    "zoomWeek": "Tuần",
+    "zoomMonth": "Tháng",
+    "task": "Công việc",
+    "critical": "Đường găng",
+    "nonCritical": "Có dự trữ",
+    "milestone": "Mốc",
+    "float": "Dự trữ",
+    "floatDays": "Dự trữ {days} ngày",
+    "unscheduledTitle": "Chưa có lịch",
+    "unscheduledHint": "Các công việc này chưa có ngày được tính.",
+    "empty": "Chưa có công việc để lập lịch.",
+    "emptyHint": "Hãy thêm công việc và phụ thuộc để xem lịch.",
+    "errorCycle": "Phụ thuộc tạo thành vòng nên không tính được đường găng. Hãy xóa một phụ thuộc trong vòng.",
+    "errorLimit": "Dự án vượt giới hạn kích thước để phân tích lịch.",
+    "errorLimitHint": "Hãy giảm số công việc hoặc phụ thuộc, hoặc tách dự án.",
+    "recalculating": "Đang tính lại lịch...",
+    "errorGeneric": "Không tải được lịch.",
+    "retry": "Thử lại",
+    "goToTasks": "Mở danh sách công việc"
   }
 }
