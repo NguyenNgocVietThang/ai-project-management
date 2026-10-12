@@ -7,6 +7,7 @@ from typing import Annotated
 
 from fastapi import Depends
 from sqlalchemy import and_, exists, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import (
@@ -100,7 +101,12 @@ class ChangeRequestService:
                 )
             )
         item.status = CRStatus.SUBMITTED
-        await self.db.flush()
+        try:
+            await self.db.flush()
+        except IntegrityError as error:
+            # Hai submit đua nhau: cả hai qua kiểm tra trên, ràng buộc unique chặn người sau.
+            # Trả 409 thay vì 500; get_db sẽ rollback transaction hỏng.
+            raise ConflictException("Approval chain already exists for this change request") from error
         add_audit(
             self.db, user.id, "UPDATE", "ChangeRequest", item.id,
             old_values={"status": old_status}, new_values={"status": item.status},

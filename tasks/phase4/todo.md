@@ -106,9 +106,10 @@ Bằng chứng A1: migration `20261013_approval_chain` cycle đạt, một head;
 ### A2: Quyết định bước duyệt
 **Mô tả:** Endpoint approve/reject (lý do bắt buộc khi từ chối) chỉ cho bước hiện hành và đúng vai trò dự án; khóa hàng; audit log; thông báo in-app cho vai trò kế tiếp. Duyệt bước PM chuyển CR APPROVED.
 **Tiêu chí:**
-- [ ] Sai vai trò hoặc sai bước bị 403/409
-- [ ] Hai người cùng vai trò duyệt đồng thời chỉ một thành công
-- [ ] Từ chối kết thúc CR, các bước sau bị hủy
+- [x] Sai vai trò hoặc sai bước bị 403/409
+- [x] Hai người cùng vai trò duyệt đồng thời chỉ một thành công (test PostgreSQL hai session thật)
+- [x] Từ chối kết thúc CR, các bước sau bị hủy
+Bằng chứng A2: test_approval_decisions.py + test_approval_postgres.py 11 passed (Postgres); pytest 575/23 SQLite.
 **Xác minh:** test service + concurrency PostgreSQL.
 **Phụ thuộc:** A1. **Tệp:** `services/approval_service.py`, `endpoints/approvals.py` (thay stub), `router.py`, test. **Quy mô:** M
 

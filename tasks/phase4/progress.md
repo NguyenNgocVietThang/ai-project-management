@@ -22,3 +22,4 @@ Nhánh: `feature/phase4-workflow-reporting` (tạo từ `main` ngày 2026-10-12)
 - 2026-10-13: A1 xong. Migration `20261013_approval_chain` (approver_id nullable, required_role, CANCELLED, unique (cr, step)). Submit tạo 3 bước BA/PO/PM, CR ở SUBMITTED; thiếu vai trò 422.
 - 2026-10-13: G6 xong. Xóa stub Gantt, cập nhật router comment, README, roadmap. Pytest 558/21.
 - 2026-10-13: C3 xong. API `/requirement-briefs` (tạo, đọc, trả lời, giả định, sửa mục, skip, finalize); không tự finalize.
+- 2026-10-13: A2 xong. `approval_service`, endpoint `/change-requests/{id}/approvals` (mount bởi điều phối viên), khóa hàng CR, audit, thông báo in-app. Admin hệ thống chỉ xem, không quyết định (chờ người dùng duyệt). Móc `on_change_request_approved` cho V1.
