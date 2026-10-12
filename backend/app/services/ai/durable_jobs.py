@@ -20,6 +20,8 @@ TYPE_MODELS = {
     AIRequestType.SCHEDULE_OPTIMIZE: AITaskType.SCHEDULE_OPTIMIZATION,
     AIRequestType.RESOURCE_RECOMMEND: AITaskType.RESOURCE_RECOMMENDATION,
     AIRequestType.RISK_ANALYSIS: AITaskType.RISK_ANALYSIS,
+    # Hỏi làm rõ hồ sơ yêu cầu dùng lại model của sinh dự án.
+    AIRequestType.REQUIREMENT_CLARIFY: AITaskType.PROJECT_GENERATION,
 }
 
 
@@ -92,6 +94,22 @@ async def run_ai(ctx):
                 from app.services.ai.risk_analyzer import run_risk_analysis
                 report = await run_risk_analysis(db, input_data["project_id"])
                 result = RiskReportResponse.model_validate(report).model_dump(mode="json")
+            elif request_type == AIRequestType.REQUIREMENT_CLARIFY:
+                from app.models.requirement_brief import RequirementBrief
+                from app.services.ai.parsing import AIResponseError
+                from app.services.ai.requirement_clarifier import (
+                    build_brief_snapshot,
+                    run_requirement_clarification,
+                )
+                brief = await db.get(RequirementBrief, input_data.get("brief_id"))
+                if brief is None or brief.owner_id != request.user_id or brief.status != "clarifying":
+                    raise PermanentJobError("invalid_payload")
+                snapshot = build_brief_snapshot(brief)
+                try:
+                    result = await run_requirement_clarification(snapshot)
+                except AIResponseError as exc:
+                    # Output sai schema hoặc nhiều câu hỏi: lỗi provider, không ghi hồ sơ.
+                    raise PermanentJobError("invalid_provider_response") from exc
             else:
                 raise PermanentJobError("handler_missing")
         finally:
@@ -140,6 +158,18 @@ async def run_ai(ctx):
             await db.flush()
             from app.schemas.risk_report import RiskReportResponse
             final_result = RiskReportResponse.model_validate(report).model_dump(mode="json")
+        elif request_type == AIRequestType.REQUIREMENT_CLARIFY:
+            from app.services.ai.requirement_clarifier import apply_clarify_result
+            try:
+                applied = await apply_clarify_result(db, request=request, brief_id=input_data["brief_id"], result=result)
+            except (LookupError, PermissionError) as exc:
+                raise PermanentJobError("invalid_payload") from exc
+            except ValueError as exc:
+                raise PermanentJobError("invalid_provider_response") from exc
+            if applied is None:
+                # Lượt này đã được áp (retry/restart): không áp lần hai.
+                return
+            final_result = applied
         db.add(AIOutput(ai_request_id=request_id, output_json=final_result, model_name=resolve_model(TYPE_MODELS[request_type])))
         request.status = AIRequestStatus.COMPLETED
         request.completed_at = datetime.now(UTC)
