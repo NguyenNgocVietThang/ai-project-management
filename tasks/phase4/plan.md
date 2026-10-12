@@ -65,3 +65,58 @@ Tệp riêng trong `tasks/phase4/` vì `tasks/plan.md` và `tasks/todo.md` (Rend
 - Người tạo CR có được duyệt bước của chính vai trò mình không? Mặc định đề xuất: được, để demo với ít tài khoản; ghi chú trong tài liệu.
 - Ngôn ngữ tài liệu: mặc định tiếng Việt, có tùy chọn tiếng Anh theo locale người dùng?
 - Ngữ nghĩa rollback chi tiết cho task đã có worklog (chốt ở V0).
+
+## Mặc định đã áp dụng cho câu hỏi mở (2026-10-12, chờ người dùng duyệt)
+
+- Người tạo CR được quyết định bước duyệt của vai trò mình (phục vụ demo ít tài khoản). Ghi chú trong tài liệu người dùng và roadmap.
+- Tài liệu SRS/BRD sinh bằng tiếng Việt mặc định; endpoint nhận tham số `language` với giá trị `vi` hoặc `en`.
+
+## V0: Ngữ nghĩa snapshot và rollback (2026-10-12, chờ người dùng duyệt)
+
+Trạng thái: điều phối viên viết theo quy tắc thận trọng; chờ người dùng duyệt. V1 và V3 thực hiện theo bảng dưới đây.
+
+### Khóa ngoại liên quan (đã đối chiếu model)
+
+- `tasks`: `project_id` (CASCADE), `phase_id`, `sprint_id`, `epic_id`, `assignee_id` (SET NULL).
+- `dependencies`: `predecessor_id`, `successor_id` -> `tasks` (CASCADE).
+- `worklogs`, `comments`, `subtasks`, `assignments`: `task_id` -> `tasks` (CASCADE). Xóa cứng task sẽ kéo theo xóa các bản ghi này, nên rollback không được xóa cứng task có dữ liệu loại này.
+- `sprints.phase_id` (SET NULL); `phases`, `sprints`, `epics`, `milestones`: `project_id` (CASCADE).
+- `project_versions.change_request_id` (SET NULL).
+- `TaskStatus` hiện không có giá trị hủy; V3 thêm cột `tasks.archived_at` (nullable, qua migration) thay vì đổi enum.
+
+### Phạm vi snapshot
+
+| Thực thể | Có trong snapshot | Trường lưu |
+|---|---|---|
+| Phase | Có | id, name, description, status, thứ tự, start/end |
+| Sprint | Có | id, name, status, phase_id, start/end, mục tiêu |
+| Epic | Có | id, name, description, status |
+| Milestone | Có | id, name, description, status, due_date |
+| Task | Có | id, name, description, status, priority, story_points, estimated_hours, progress, start_date, due_date, phase_id, sprint_id, epic_id, assignee_id |
+| Dependency | Có | predecessor_id, successor_id, dependency_type, lag_days |
+| Worklog, Comment, Subtask, Assignment | Không | Không lưu; không bao giờ bị rollback xóa |
+| Chat, file, thông báo, audit log | Không | Không lưu |
+
+Trường CPM (ES/EF/LS/LF, float, is_critical) không lưu; sau rollback tính lại qua job CPM hiện có. Snapshot có `schema_version` để đọc được khi model đổi.
+
+### Quy tắc rollback theo từng ca
+
+| Ca | Xử lý |
+|---|---|
+| Task có trong snapshot và đang tồn tại | Khôi phục giá trị các trường trong snapshot; nếu đang `archived_at` thì bỏ lưu trữ |
+| Task không có trong snapshot nhưng đang tồn tại, có worklog/comment/subtask/assignment | Không xóa cứng; đặt `archived_at = now()`; danh sách task, CPM, dashboard, Gantt, báo cáo bỏ qua task đã lưu trữ |
+| Task không có trong snapshot, không có dữ liệu phụ thuộc | Xóa cứng |
+| Task có trong snapshot nhưng đã bị xóa | Tạo lại với ID mới; ghi ánh xạ `id_map` (ID cũ -> ID mới) trong phiên bản rollback |
+| Dependency | Đưa tập dependency về đúng snapshot (xóa cạnh thừa, tạo cạnh thiếu), ID task dịch qua `id_map`; cạnh trỏ tới task lưu trữ bị bỏ |
+| Phase/Sprint/Epic/Milestone có trong snapshot | Khôi phục trường; bị xóa thì tạo lại với ID mới, ghi `id_map` |
+| Phase/Sprint/Epic/Milestone không có trong snapshot | Xóa cứng (khóa ngoại từ task là SET NULL, không mất dữ liệu phụ thuộc) |
+| Worklog | Không bao giờ bị rollback xóa hay sửa |
+| Assignee trong snapshot không còn là thành viên dự án | Đặt `assignee_id = NULL`, ghi cảnh báo trong phiên bản rollback |
+
+### Giao dịch và lịch sử
+
+- Trước rollback: tạo snapshot hiện trạng ("trước khi khôi phục về vX") trong cùng transaction.
+- Toàn bộ khôi phục chạy trong một transaction; lỗi thì rollback DB, không để dữ liệu nửa vời.
+- Sau khôi phục: tạo phiên bản mới "khôi phục về vX" chứa snapshot kết quả và `id_map`; enqueue job CPM; ghi audit log.
+- Đảo ngược rollback bằng cách rollback về phiên bản "trước khi khôi phục".
+- Cap phiên bản/dự án (mặc định 50): khi đầy, xóa phiên bản cũ nhất không phải baseline; baseline thủ công vượt cap thì trả 409.

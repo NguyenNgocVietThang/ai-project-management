@@ -118,8 +118,8 @@ Mỗi task: không quá 5 tệp, để hệ thống ở trạng thái chạy đ�
 ### V0: Spike ngữ nghĩa snapshot/rollback
 **Mô tả:** Liệt kê bảng/khóa ngoại chịu ảnh hưởng (task, dependency, phase, sprint, epic, milestone, assignment, worklog, comment, subtask). Chốt phạm vi snapshot, quy tắc task bị xóa/được thêm khi rollback, xử lý worklog. Ghi kết quả vào plan.md; không code sản phẩm.
 **Tiêu chí:**
-- [ ] Bảng quyết định cho từng loại thực thể
-- [ ] Người dùng duyệt quy tắc
+- [x] Bảng quyết định cho từng loại thực thể (plan.md mục V0, 2026-10-12)
+- [ ] Người dùng duyệt quy tắc (chờ người dùng duyệt; V1/V3 tiến hành theo quy tắc mặc định)
 **Phụ thuộc:** Không. **Tệp:** `tasks/phase4/plan.md`. **Quy mô:** XS
 
 ### V1: Tạo snapshot và baseline
