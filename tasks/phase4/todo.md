@@ -61,8 +61,9 @@ Mỗi task: không quá 5 tệp, để hệ thống ở trạng thái chạy đ�
 ### D1: Mẫu tài liệu và dựng DOCX
 **Mô tả:** Định nghĩa mẫu SRS và BRD (danh sách mục bắt buộc, kiểu nội dung: đoạn văn, bảng, danh sách). Renderer python-docx thuần từ JSON nội dung + mục "Giả định và vấn đề mở" sinh từ hồ sơ. Không gọi AI.
 **Tiêu chí:**
-- [ ] DOCX mở được, có mục lục/tiêu đề đúng cấp, bảng yêu cầu chức năng
-- [ ] Mục giả định liệt kê đúng các mục `assumed/skipped`
+- [x] DOCX mở được, có mục lục/tiêu đề đúng cấp, bảng yêu cầu chức năng (đọc lại bằng python-docx; chưa mở thử bằng Word/LibreOffice vì máy không cài)
+- [x] Mục giả định liệt kê đúng các mục `assumed/skipped`
+Bằng chứng D1: `pytest backend/tests/unit/test_docx_renderer.py` 15 passed; pytest toàn bộ đạt.
 **Xác minh:** unit test đọc lại DOCX bằng python-docx; mở thử bằng Word/LibreOffice.
 **Phụ thuộc:** C1. **Tệp:** `services/documents/templates.py`, `services/documents/docx_renderer.py`, test. **Quy mô:** M
 
@@ -185,14 +186,14 @@ Mỗi task: không quá 5 tệp, để hệ thống ở trạng thái chạy đ�
 
 ## Lát 4: XLSX
 
-- [ ] X1: Renderer openpyxl thuần (sheet Task, Đường găng, CR + lịch sử duyệt, EVA/Burndown) với test đọc lại file. M
+- [x] X1: Renderer openpyxl thuần (sheet Task, Đường găng, CR + lịch sử duyệt, EVA/Burndown) với test đọc lại file. M (test_xlsx_renderer.py 14 passed; EVA chưa có nguồn số liệu, X2 xử lý)
 - [ ] X2: Job `report.xlsx` + lưu bucket private + endpoint tải kiểm tra quyền; thay `workers/report_tasks.py` và `endpoints/reports.py` stub. M
 - [ ] X3: Nút xuất XLSX ở trang dự án, trạng thái qua JobsPanel. S
 - [ ] Checkpoint: XLSX đúng số liệu với API dashboard/CPM; người ngoài dự án bị từ chối.
 
 ## Lát 5: BPMN
 
-- [ ] B1: Schema JSON quy trình (lane, task, gateway, event, flow) và validator (flow trỏ node tồn tại, có start/end). S
+- [x] B1: Schema JSON quy trình (lane, task, gateway, event, flow) và validator (flow trỏ node tồn tại, có start/end). S (test_bpmn_schema.py 40 passed)
 - [ ] B2: Job AI sinh quy trình từ hồ sơ yêu cầu; dữ liệu thiếu thì quay lại vòng hỏi làm rõ. M
 - [ ] B3: Bố cục swimlane thuần + SVG xem trên frontend. M
 - [ ] B4: Xuất PNG phía server và chèn vào SRS/BRD; lỗi vẽ thì dùng bảng các bước. M

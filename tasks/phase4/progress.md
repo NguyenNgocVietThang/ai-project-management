@@ -12,3 +12,6 @@ Nhánh: `feature/phase4-workflow-reporting` (tạo từ `main` ngày 2026-10-12)
 ## Nhật ký
 
 - 2026-10-12: V0 viết vào `plan.md` theo quy tắc thận trọng, chờ người dùng duyệt. Ghi hai mặc định cho câu hỏi mở.
+- 2026-10-12: B1 xong. `schemas/bpmn.py` (ProcessModel, validator đồ thị, trần 12 lane/80 node/150 flow, `process_steps_table`, `parse_process_model`). Test 40 passed. Nhánh gateway thiếu nhãn chỉ là cảnh báo.
+- 2026-10-12: X1 xong. `services/reports/xlsx_renderer.py` 4 sheet, chống formula injection bằng kiểu chuỗi. Test 14 passed. EVA chưa có nguồn số liệu trong dashboard_service.
+- 2026-10-12: D1 xong. `services/documents/templates.py`, `docx_renderer.py` (SRS/BRD, TOC field, bảng yêu cầu, mục giả định từ hồ sơ, ảnh BPMN hoặc bảng bước dự phòng). Test 15 passed. Điều phối viên bỏ một `noqa` thừa. Chưa mở thử bằng Word/LibreOffice.
