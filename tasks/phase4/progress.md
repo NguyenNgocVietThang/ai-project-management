@@ -18,3 +18,6 @@ Nhánh: `feature/phase4-workflow-reporting` (tạo từ `main` ngày 2026-10-12)
 - 2026-10-13: C1 xong. Bảng `requirement_briefs` (RLS trên Postgres), schema và `apply_item_updates`. Migration cycle đạt. Pytest 521/21. Người dùng yêu cầu: hoàn tất thì tự gộp vào `main` và commit (không push).
 - 2026-10-13: G1-G4 xong. CPM đọc áp cap (422 resource_limit_exceeded), useCPM theo dõi job, layout thuần, GanttChart SVG ảo hóa. Vitest 71 passed; pytest CPM 22 passed. Migration enum AIRequest (`20261013_ai_request_types_phase4`) do điều phối viên viết, cycle đạt.
 - 2026-10-13: G5 xong. Trang `projects/[id]/gantt`, tab Gantt, namespace i18n `gantt` (25 key). Vitest 77 passed, build đạt.
+- 2026-10-13: C2 xong. `services/ai/requirement_clarifier.py`, nhánh REQUIREMENT_CLARIFY trong `durable_jobs.py`; trần 12 lượt (409 `clarify_turn_limit`), quota 429; hồ sơ không tự chuyển `ready` (output có `complete`).
+- 2026-10-13: A1 xong. Migration `20261013_approval_chain` (approver_id nullable, required_role, CANCELLED, unique (cr, step)). Submit tạo 3 bước BA/PO/PM, CR ở SUBMITTED; thiếu vai trò 422.
+- 2026-10-13: G6 xong. Xóa stub Gantt, cập nhật router comment, README, roadmap. Pytest 558/21.

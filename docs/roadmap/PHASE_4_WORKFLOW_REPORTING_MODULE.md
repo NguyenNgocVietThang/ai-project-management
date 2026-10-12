@@ -40,7 +40,7 @@ Module **Workflow & Reporting (Phase 4)** thiết lập cơ chế kiểm soát c
 |---|---|---|---|---|---|
 | Audit Timeline & Activity Feed | Security | Medium | Hoàn thành | `AuditService` + `audit_timeline.py` | `/admin/audit`, `AuditTimeline` |
 | Real-time WebSocket Infra & Chat | SOP-CHAT-001 | High | Hoàn thành | `ws_manager.py` + `chat_service.py` | `ChatPanel`, `/projects/[id]/chat` |
-| Interactive Gantt Chart & CPM | SOP-PM-003 | Critical | CPM đã mount (chỉ đọc); Gantt chưa làm | `utils/cpm.py` + `scheduling_service.py` chạy thật, endpoint `GET /projects/{id}/cpm` (`endpoints/cpm.py`) đã mount; `gantt.py` vẫn là stub `TODO` chưa mount | Chưa có `GanttChart` |
+| Interactive Gantt Chart & CPM | SOP-PM-003 | Critical | Gantt chỉ đọc hoàn thành | `GET /projects/{id}/cpm` có cap kích thước; stub `gantt.py` đã xóa | `GanttChart` SVG (đường găng có nhãn, zoom ngày/tuần/tháng, ảo hóa hàng), trang `/projects/{id}/gantt`; kéo thả ngoài phạm vi |
 | Change Request CRUD & Submit | SOP-CR | High | Hoàn thành | `change_request_service.py` + `endpoints/change_requests.py` (đã mount) | `features/change-requests/**` (`/projects/{id}/change-requests`) |
 | Multi-Level Approval Workflow Engine | SOP-CR | Critical | Chưa triển khai | `approvals.py` là stub `TODO`, chưa mount; quy trình BA → PO → PM chưa có UI | Chưa có |
 | Project Versioning & Diff/Rollback | SOP-PM-004 | High | Chỉ model DB | `project_versions.py` là stub; không có `versioning_service` | Chưa có |

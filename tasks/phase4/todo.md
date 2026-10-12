@@ -22,9 +22,10 @@ Bằng chứng C1: test_requirement_brief_schema.py 39 passed; pytest toàn bộ
 ### C2: Job hỏi làm rõ (`ai.clarify`)
 **Mô tả:** Analyzer gọi provider với hồ sơ hiện tại, nhận JSON: đánh giá mục, đúng một câu hỏi kế tiếp, đề xuất giả định tùy chọn. Validate, áp cập nhật nguyên tử theo request ID; tính quota như các AI khác; trần lượt.
 **Tiêu chí:**
-- [ ] Output sai schema hoặc nhiều câu hỏi bị coi là lỗi provider, không ghi hồ sơ
-- [ ] Retry/restart không áp một lượt hai lần
-- [ ] Hết quota hoặc vượt trần lượt trả lỗi rõ ràng, hồ sơ giữ nguyên
+- [x] Output sai schema hoặc nhiều câu hỏi bị coi là lỗi provider, không ghi hồ sơ
+- [x] Retry/restart không áp một lượt hai lần
+- [x] Hết quota hoặc vượt trần lượt trả lỗi rõ ràng, hồ sơ giữ nguyên
+Bằng chứng C2: 29 test mới (parse + job); pytest 558/21 SQLite, 562/16 Postgres (1 lỗi môi trường có sẵn).
 **Xác minh:** test với provider giả (đúng, sai schema, timeout, gọi lặp).
 **Phụ thuộc:** C1. **Tệp:** `services/ai/requirement_clarifier.py`, `services/durable_handlers.py`, `models/ai_request.py` (enum), test. **Quy mô:** M
 
@@ -95,8 +96,9 @@ Bằng chứng D1: `pytest backend/tests/unit/test_docx_renderer.py` 15 passed; 
 ### A1: Tạo chuỗi duyệt khi submit CR
 **Mô tả:** Submit tạo 3 Approval (BA, PO, PM) cùng transaction; chặn submit nếu dự án thiếu thành viên vai trò nào. Ràng buộc unique (cr, step) qua migration.
 **Tiêu chí:**
-- [ ] Submit lặp không tạo bước trùng
-- [ ] Thiếu vai trò trả lỗi nêu rõ vai trò còn thiếu
+- [x] Submit lặp không tạo bước trùng
+- [x] Thiếu vai trò trả lỗi nêu rõ vai trò còn thiếu (422 `missing_roles: ...`)
+Bằng chứng A1: migration `20261013_approval_chain` cycle đạt, một head; test_change_request_service.py 14 passed.
 **Xác minh:** test service; migration lên/xuống.
 **Phụ thuộc:** Không. **Tệp:** `change_request_service.py`, `models/approval.py`, migration, test. **Quy mô:** M
 
@@ -178,7 +180,7 @@ Bằng chứng D1: `pytest backend/tests/unit/test_docx_renderer.py` 15 passed; 
 **Phụ thuộc:** G4. **Tệp:** `projects/[id]/gantt/page.tsx`, `layout.tsx`, `messages/*.json`. **Quy mô:** M
 
 ### G6: Dọn stub Gantt và cập nhật tài liệu
-**Tiêu chí:** [ ] Không còn import stub; [ ] roadmap ghi Gantt chỉ đọc hoàn thành
+**Tiêu chí:** [x] Không còn import stub (xóa `endpoints/gantt.py`, `schemas/gantt.py`); [x] roadmap ghi Gantt chỉ đọc hoàn thành
 **Phụ thuộc:** G5. **Tệp:** `endpoints/gantt.py`, `schemas/gantt.py`, `router.py`, roadmap, README. **Quy mô:** S
 
 ### Checkpoint: Lát 3

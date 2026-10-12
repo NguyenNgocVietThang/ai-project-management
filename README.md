@@ -60,7 +60,7 @@ Xây dựng một **web application quản lý dự án và danh mục đầu t�
 |---|---|---|
 | Auth, RBAC, Admin Portal, OAuth, Profile | Chạy thật + test | Phase 1 hoàn thành |
 | Portfolio / Project / WBS / Task / Dependency / Assignment / WorkLog | Chạy thật + test | Phase 2 hoàn thành |
-| CPM Engine | Chạy thật + test | `app/utils/cpm.py` + `scheduling_service.py`; endpoint `GET /projects/{id}/cpm` đã mount (chỉ đọc). `/gantt` vẫn là stub (Phase 4) |
+| CPM Engine | Chạy thật + test | `app/utils/cpm.py` + `scheduling_service.py`; endpoint `GET /projects/{id}/cpm` đã mount (chỉ đọc, áp `CPM_MAX_TASKS`/`CPM_MAX_DEPENDENCIES`). Trang Gantt chỉ đọc `/projects/{id}/gantt` vẽ SVG từ dữ liệu CPM (Phase 4); stub `/gantt` đã xóa |
 | Real-time Chat + Notification Push + Celery Beat daily sweep | Chạy thật + test | Phase 2/5 hoàn thành |
 | Dashboard KPI / EVA / Burndown | Chạy thật | endpoint `/dashboards` đã mount |
 | AI Project Generator | Chạy thật + UI | `POST /ai/generate-project` + Celery sinh Project/Phase/Task/Dependency thật; UI `AIGeneratorModal.tsx` |
@@ -73,7 +73,7 @@ Xây dựng một **web application quản lý dự án và danh mục đầu t�
 | Mobile Responsive & UI Polish | Hoàn thành cơ bản | Menu mobile modal với focus trap, chuyển theme light/dark/system, thẻ KPI responsive |
 | Investor Read-only Dashboard | Chưa làm | — |
 
-> **API thực tế đang phục vụ:** 24 REST router (`/api/v1/...`) + 2 WebSocket router (`/ws/...`). 8 router còn lại (`leaves, skills, documents, approvals, gantt, reports, project_versions, system`) vẫn là stub `TODO: Implement`, bị comment trong [`router.py`](./backend/app/api/v1/router.py) và **không** được mount.
+> **API thực tế đang phục vụ:** 24 REST router (`/api/v1/...`) + 2 WebSocket router (`/ws/...`). 7 router còn lại (`leaves, skills, documents, approvals, reports, project_versions, system`) vẫn là stub `TODO: Implement`, bị comment trong [`router.py`](./backend/app/api/v1/router.py) và **không** được mount.
 
 ---
 
@@ -518,8 +518,8 @@ async def publish(channel: str, message: dict):
 | 22 | `/projects/{id}/cpm` | `cpm.py` | Phân tích đường găng (CPM) của dự án — chỉ đọc (`GET`), engine tính toán chạy nội bộ ở mọi thao tác ghi task/dependency |
 | 23 | `/ai` | `ai.py` | `POST /ai/generate-project` (AI Project Generator, xếp hàng qua Celery) & `GET /ai/jobs/{job_id}` |
 
-**9 router còn là stub `TODO: Implement` — bị comment trong `router.py`, CHƯA mount:**
-`/leaves` · `/skills` · `/documents` · `/approvals` · `/change-requests` · `/gantt` · `/reports` · `/versions` · `/system`
+**Các router còn là stub `TODO: Implement` — bị comment trong `router.py`, CHƯA mount:**
+`/leaves` · `/skills` · `/documents` · `/approvals` · `/reports` · `/versions` · `/system`
 > Các file này tồn tại trong `api/v1/endpoints/` nhưng chỉ trả về placeholder và không có dependency auth. Xem chú thích trong [`router.py`](./backend/app/api/v1/router.py).
 
 ### Danh mục WebSocket Endpoints (`/ws/...`)
@@ -741,7 +741,7 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
   - [x] **Real-time Project Chat (`/projects/[id]/chat`, `/ws/chat/{id}`)** với lịch sử tin nhắn và unread badge.
   - [x] **Notification triggers & Celery Beat daily sweep** (thông báo task bắt đầu và sắp đến hạn lúc 08:00 AM).
   - [x] Endpoint `/cpm` công khai (`GET /projects/{id}/cpm`, chỉ đọc).
-  - [ ] Endpoint `/gantt` + UI Gantt (thuộc Phase 4).
+  - [x] UI Gantt chỉ đọc (Phase 4): trang `/projects/{id}/gantt` dùng `GET /projects/{id}/cpm`, không cần endpoint `/gantt` riêng.
 
 - [x] **Phase 3 — Mô-đun tính năng AI** *(Hoàn thành 5/5 trụ cột AI)*
   - [x] Tầng trừu tượng hóa AI Provider (`BaseAIProvider`, `XkiroProvider`).
