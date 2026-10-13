@@ -14,6 +14,7 @@ const KIND_LABEL: Record<string, string> = {
   'ai.project_generate': 'generation', 'ai.impact_analysis': 'impact',
   'ai.schedule_optimize': 'optimization', 'ai.resource_recommend': 'resources',
   'ai.risk_analysis': 'risk', 'scheduling.cpm': 'schedule',
+  'document.generate': 'document',
 }
 
 const FAILURE_LABEL: Record<string, string> = {
@@ -28,6 +29,7 @@ function featureLink(job: DurableJob): string | null {
   const base = `/projects/${job.project_id}`
   if (job.kind === 'ai.impact_analysis') return `${base}/change-requests`
   if (job.kind === 'scheduling.cpm') return `${base}/tasks`
+  if (job.kind === 'document.generate') return `${base}/documents`
   return job.kind.startsWith('ai.') ? `${base}/ai-insights` : `${base}/overview`
 }
 

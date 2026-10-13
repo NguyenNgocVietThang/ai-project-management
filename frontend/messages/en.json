@@ -30,7 +30,8 @@
     "risk": "Risk analysis",
     "schedule": "Schedule calculation",
     "email": "Email delivery",
-    "background": "Background work"
+    "background": "Background work",
+    "document": "SRS/BRD document"
   },
   "common": {
     "appName": "AI Project Management",
@@ -100,7 +101,8 @@
     "backToProjects": "Back to projects",
     "standalone": "Standalone project",
     "notFound": "Project not found or access denied.",
-    "versions": "Versions"
+    "versions": "Versions",
+    "documents": "Documents"
   },
   "tasks": {
     "title": "Tasks",
@@ -437,6 +439,52 @@
       "milestones": "Milestones",
       "tasks": "Tasks",
       "dependencies": "Dependencies"
+    }
+  },
+  "documents": {
+    "title": "Documents",
+    "subtitle": "Generate SRS and BRD documents from the project requirement brief and download them as DOCX.",
+    "loading": "Loading documents…",
+    "loadError": "Could not load documents.",
+    "generateTitle": "Generate a document",
+    "language": "Document language",
+    "languages": {
+      "vi": "Vietnamese",
+      "en": "English"
+    },
+    "generateSrs": "Generate SRS",
+    "generateBrd": "Generate BRD",
+    "generateError": "Could not start document generation.",
+    "jobsHint": "Generation runs in the background. Track it in Recent work; reloading the page keeps the progress.",
+    "queuedNotice": "Generation queued as job #{id}.",
+    "emptyTitle": "No documents yet",
+    "emptyDescription": "Generate an SRS or BRD to see it here.",
+    "listTitle": "Generated documents",
+    "docTitle": "{type} v{version}",
+    "status": {
+      "queued": "Queued",
+      "generating": "Generating",
+      "needs_clarification": "Needs clarification",
+      "ready": "Ready",
+      "failed": "Failed"
+    },
+    "progress": "{done} of {total} section groups written",
+    "progressLabel": "Generation progress",
+    "failed": "Generation failed. You can request it again; finished sections are kept.",
+    "failedWithCode": "Generation failed (reason: {code}). You can request it again; finished sections are kept.",
+    "missingTitle": "The requirement brief is missing these items:",
+    "clarifyHint": "Answer the clarification questions for these items, then generate the document again.",
+    "openClarifier": "Continue clarifying requirements",
+    "noBrief": "This project has no requirement brief. Documents are generated from the brief created when the project is generated with AI; create a project with AI to start a brief.",
+    "warnings": "{count, plural, one {# warning} other {# warnings}}",
+    "download": "Download DOCX",
+    "downloadFor": "Download {type} v{version}",
+    "downloadError": "Could not download the document.",
+    "errors": {
+      "document_generation_pending": "This document is already being generated. Wait for it to finish.",
+      "ai_quota_exceeded": "The AI usage limit has been reached. Try again when your quota resets.",
+      "document_not_ready": "The document is not ready yet.",
+      "forbidden": "You do not have access to this action or document."
     }
   }
 }

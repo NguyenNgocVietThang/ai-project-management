@@ -85,8 +85,9 @@ Bằng chứng D2: migration `20261013_generated_documents` cycle đạt; test_d
 ### D3: API và UI tài liệu
 **Mô tả:** Endpoint yêu cầu sinh SRS/BRD, danh sách tài liệu đã sinh, tải về qua proxy kiểm tra quyền dự án. Trang/tab "Tài liệu" trong dự án; nếu cần làm rõ thì dẫn sang luồng hỏi.
 **Tiêu chí:**
-- [ ] Người ngoài dự án không tải được (403/404)
-- [ ] Trạng thái job hiển thị qua JobsPanel, refresh khôi phục
+- [x] Người ngoài dự án không tải được (403/404)
+- [x] Trạng thái job hiển thị qua JobsPanel, refresh khôi phục
+Bằng chứng D3: test_documents_api.py 7 passed; vitest 22 tệp / 112 test; type-check, lint, build đạt.
 **Xác minh:** test endpoint + vitest; build; trình duyệt.
 **Phụ thuộc:** D2. **Tệp:** `endpoints/documents.py` (thay stub), service/hook/page frontend, i18n. **Quy mô:** M
 

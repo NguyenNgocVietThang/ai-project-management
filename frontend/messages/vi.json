@@ -30,7 +30,8 @@
     "risk": "Phân tích rủi ro",
     "schedule": "Tính lại lịch trình",
     "email": "Gửi email",
-    "background": "Xử lý nền"
+    "background": "Xử lý nền",
+    "document": "Tài liệu SRS/BRD"
   },
   "common": {
     "appName": "Quản lý dự án AI",
@@ -100,7 +101,8 @@
     "backToProjects": "Quay lại danh sách dự án",
     "standalone": "Dự án độc lập",
     "notFound": "Không tìm thấy dự án hoặc bạn không có quyền truy cập.",
-    "versions": "Phiên bản"
+    "versions": "Phiên bản",
+    "documents": "Tài liệu"
   },
   "tasks": {
     "title": "Công việc",
@@ -437,6 +439,52 @@
       "milestones": "Mốc",
       "tasks": "Công việc",
       "dependencies": "Phụ thuộc"
+    }
+  },
+  "documents": {
+    "title": "Tài liệu",
+    "subtitle": "Sinh tài liệu SRS và BRD từ hồ sơ yêu cầu của dự án và tải về dạng DOCX.",
+    "loading": "Đang tải tài liệu…",
+    "loadError": "Không tải được danh sách tài liệu.",
+    "generateTitle": "Sinh tài liệu",
+    "language": "Ngôn ngữ tài liệu",
+    "languages": {
+      "vi": "Tiếng Việt",
+      "en": "Tiếng Anh"
+    },
+    "generateSrs": "Sinh SRS",
+    "generateBrd": "Sinh BRD",
+    "generateError": "Không bắt đầu sinh tài liệu được.",
+    "jobsHint": "Việc sinh chạy nền. Theo dõi trong mục Công việc gần đây; tải lại trang vẫn giữ tiến độ.",
+    "queuedNotice": "Đã xếp hàng sinh tài liệu, công việc #{id}.",
+    "emptyTitle": "Chưa có tài liệu",
+    "emptyDescription": "Sinh SRS hoặc BRD để xem tại đây.",
+    "listTitle": "Tài liệu đã sinh",
+    "docTitle": "{type} v{version}",
+    "status": {
+      "queued": "Đang chờ",
+      "generating": "Đang sinh",
+      "needs_clarification": "Cần làm rõ",
+      "ready": "Sẵn sàng",
+      "failed": "Thất bại"
+    },
+    "progress": "Đã viết {done}/{total} nhóm mục",
+    "progressLabel": "Tiến độ sinh tài liệu",
+    "failed": "Sinh tài liệu thất bại. Có thể yêu cầu lại; các phần đã xong được giữ.",
+    "failedWithCode": "Sinh tài liệu thất bại (lý do: {code}). Có thể yêu cầu lại; các phần đã xong được giữ.",
+    "missingTitle": "Hồ sơ yêu cầu còn thiếu các mục:",
+    "clarifyHint": "Trả lời câu hỏi làm rõ cho các mục này rồi sinh lại tài liệu.",
+    "openClarifier": "Tiếp tục làm rõ yêu cầu",
+    "noBrief": "Dự án chưa có hồ sơ yêu cầu. Tài liệu được sinh từ hồ sơ tạo khi sinh dự án bằng AI; hãy tạo dự án bằng AI để bắt đầu hồ sơ.",
+    "warnings": "{count} cảnh báo",
+    "download": "Tải DOCX",
+    "downloadFor": "Tải {type} v{version}",
+    "downloadError": "Không tải được tài liệu.",
+    "errors": {
+      "document_generation_pending": "Tài liệu này đang được sinh. Hãy chờ hoàn tất.",
+      "ai_quota_exceeded": "Đã hết hạn mức dùng AI. Thử lại khi hạn mức được làm mới.",
+      "document_not_ready": "Tài liệu chưa sẵn sàng.",
+      "forbidden": "Bạn không có quyền với thao tác hoặc tài liệu này."
     }
   }
 }

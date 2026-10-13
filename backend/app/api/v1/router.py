@@ -11,6 +11,7 @@ from app.api.v1.endpoints import (
     cpm,
     dashboards,
     dependencies,
+    documents,
     epics,
     internal_jobs,
     jobs,
@@ -34,7 +35,7 @@ from app.api.v1.endpoints import (
 
 api_router = APIRouter()
 
-# Chưa mount: leaves, skills, documents, reports,
+# Chưa mount: leaves, skills, reports,
 # system. Gantt không có router riêng: frontend vẽ từ `GET /projects/{id}/cpm`. Các endpoint này vẫn là stub `TODO: Implement` không có auth; chỉ mount khi đã
 # có triển khai thật và dependency phân quyền.
 api_router.include_router(auth.router, prefix="/auth", tags=["Auth"])
@@ -58,6 +59,7 @@ api_router.include_router(chat.router, tags=["Chat"])
 api_router.include_router(change_requests.router, tags=["Change Requests"])
 api_router.include_router(approvals.router, tags=["Approvals"])
 api_router.include_router(cpm.router, tags=["CPM"])
+api_router.include_router(documents.router, tags=["Documents"])
 api_router.include_router(resource_leveling.router, tags=["Resource Leveling"])
 api_router.include_router(dashboards.router, prefix="/dashboards", tags=["Dashboards"])
 api_router.include_router(notifications.router, prefix="/notifications", tags=["Notifications"])
