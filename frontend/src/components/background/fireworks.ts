@@ -560,8 +560,8 @@ export function createFireworks(canvas: HTMLCanvasElement, options: FireworksOpt
     if (destroyed) return
     const shape = pick(SHAPES)
     const palette = pick(PALETTES)
-    // Tên lửa chỉ khi điểm bấm đủ cao so với đáy màn hình; nổ vẫn xảy ra trong ~250ms.
-    const withRocket = Math.random() < 0.65 && y < height * 0.8 && rockets.length < MAX_ROCKETS
+    // Luôn phóng tên lửa trước khi nổ, trừ khi đã đạt giới hạn tên lửa đang bay.
+    const withRocket = rockets.length < MAX_ROCKETS
     if (withRocket) {
       const mode = options.getMode()
       rockets.push({
