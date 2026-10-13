@@ -264,5 +264,41 @@
     "errorGeneric": "Không tải được lịch.",
     "retry": "Thử lại",
     "goToTasks": "Mở danh sách công việc"
+  },
+  "approvals": {
+    "title": "Dòng thời gian duyệt",
+    "loading": "Đang tải các bước duyệt…",
+    "empty": "Chưa có bước duyệt. Hãy gửi yêu cầu thay đổi để bắt đầu duyệt.",
+    "stepLabel": "Bước {order}: {role}",
+    "role": {
+      "BA": "Chuyên viên phân tích nghiệp vụ",
+      "PO": "Chủ sản phẩm",
+      "PM": "Quản lý dự án"
+    },
+    "status": {
+      "PENDING": "Đang chờ",
+      "APPROVED": "Đã duyệt",
+      "REJECTED": "Đã từ chối",
+      "CANCELLED": "Đã hủy"
+    },
+    "decidedBy": "Bởi {name}",
+    "commentLabel": "Ghi chú",
+    "reasonLabel": "Lý do",
+    "approve": "Duyệt",
+    "reject": "Từ chối",
+    "approveTitle": "Duyệt bước này",
+    "rejectTitle": "Từ chối bước này",
+    "commentOptional": "Ghi chú (tùy chọn)",
+    "reasonRequired": "Lý do (bắt buộc)",
+    "reasonMissing": "Vui lòng nhập lý do từ chối.",
+    "cancel": "Hủy",
+    "confirmApprove": "Xác nhận duyệt",
+    "confirmReject": "Xác nhận từ chối",
+    "errorForbidden": "Bạn không có vai trò cần thiết để quyết định bước này.",
+    "errorConflict": "Bước này không thể quyết định nữa. Có thể bước đã được quyết định hoặc yêu cầu thay đổi không còn ở trạng thái duyệt. Dòng thời gian đã được làm mới.",
+    "errorNotFound": "Không tìm thấy yêu cầu thay đổi hoặc bước duyệt.",
+    "errorGeneric": "Không thể thực hiện thao tác. Vui lòng thử lại.",
+    "missingRoles": "Không thể gửi: dự án chưa có thành viên với vai trò {roles}. Hãy thêm họ vào dự án trước.",
+    "backToList": "Quay lại danh sách yêu cầu thay đổi"
   }
 }

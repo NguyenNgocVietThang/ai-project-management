@@ -116,8 +116,9 @@ Bằng chứng A2: test_approval_decisions.py + test_approval_postgres.py 11 pas
 ### A3: UI dòng thời gian duyệt
 **Mô tả:** Trên trang CR: các bước, người quyết định, thời gian, lý do; nút duyệt/từ chối hiện theo quyền. EN/VI.
 **Tiêu chí:**
-- [ ] Người không đủ quyền không thấy nút
-- [ ] Trạng thái cập nhật sau khi quyết định không cần reload
+- [x] Người không đủ quyền không thấy nút
+- [x] Trạng thái cập nhật sau khi quyết định không cần reload
+Bằng chứng A3: vitest 17 tệp / 82 test, type-check, lint, build đạt; kiểm tra 3 tài khoản vai trò trên trình duyệt chờ checkpoint.
 **Xác minh:** vitest; build; trình duyệt với 3 tài khoản vai trò.
 **Phụ thuộc:** A2. **Tệp:** `features/change-requests/**`, i18n. **Quy mô:** M
 

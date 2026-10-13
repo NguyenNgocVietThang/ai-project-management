@@ -264,5 +264,41 @@
     "errorGeneric": "Could not load the schedule.",
     "retry": "Try again",
     "goToTasks": "Open tasks"
+  },
+  "approvals": {
+    "title": "Approval timeline",
+    "loading": "Loading approval steps…",
+    "empty": "No approval steps yet. Submit the change request to start the review.",
+    "stepLabel": "Step {order}: {role}",
+    "role": {
+      "BA": "Business Analyst",
+      "PO": "Product Owner",
+      "PM": "Project Manager"
+    },
+    "status": {
+      "PENDING": "Pending",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
+      "CANCELLED": "Cancelled"
+    },
+    "decidedBy": "By {name}",
+    "commentLabel": "Note",
+    "reasonLabel": "Reason",
+    "approve": "Approve",
+    "reject": "Reject",
+    "approveTitle": "Approve this step",
+    "rejectTitle": "Reject this step",
+    "commentOptional": "Note (optional)",
+    "reasonRequired": "Reason (required)",
+    "reasonMissing": "Please enter a reason for rejecting.",
+    "cancel": "Cancel",
+    "confirmApprove": "Confirm approval",
+    "confirmReject": "Confirm rejection",
+    "errorForbidden": "You do not have the role required to decide this step.",
+    "errorConflict": "This step can no longer be decided. It may already be decided or the change request is not under review. The timeline has been refreshed.",
+    "errorNotFound": "The change request or approval step was not found.",
+    "errorGeneric": "Could not complete the action. Please try again.",
+    "missingRoles": "Cannot submit: the project has no member with the role(s) {roles}. Add them to the project first.",
+    "backToList": "Back to change requests"
   }
 }
