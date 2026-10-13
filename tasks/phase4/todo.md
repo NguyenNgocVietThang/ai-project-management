@@ -153,9 +153,10 @@ Bằng chứng V2: test_version_diff.py + test_project_versions.py 13 passed; vi
 ### V3: Rollback
 **Mô tả:** PM rollback về phiên bản chọn: snapshot hiện trạng trước, khôi phục theo quy tắc V0 trong một transaction, tạo phiên bản "khôi phục về vX", enqueue tính lại CPM, audit log. UI xác nhận có hiển thị diff sẽ áp dụng.
 **Tiêu chí:**
-- [ ] Rollback lỗi giữa chừng không để dữ liệu nửa vời
-- [ ] Rollback có thể đảo ngược bằng cách rollback về bản trước rollback
-- [ ] Không mất worklog theo quy tắc V0
+- [x] Rollback lỗi giữa chừng không để dữ liệu nửa vời
+- [x] Rollback có thể đảo ngược bằng cách rollback về bản trước rollback
+- [x] Không mất worklog theo quy tắc V0
+Bằng chứng V3: migration `20261013_task_archived_at` cycle đạt; test_version_rollback.py 9 passed (Postgres); vitest 20 tệp / 103 test; type-check, lint, build đạt.
 **Xác minh:** test PostgreSQL; trình duyệt.
 **Phụ thuộc:** V2. **Tệp:** `versioning_service.py`, endpoint, frontend, test. **Quy mô:** M
 

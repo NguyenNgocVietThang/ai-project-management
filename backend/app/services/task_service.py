@@ -219,7 +219,7 @@ class TaskService:
     ):
         context = await get_project_context(self.db, project_id, user)
         _require_task_reader(context)
-        filters = [Task.project_id == project_id]
+        filters = [Task.project_id == project_id, Task.archived_at.is_(None)]
         if search:
             pattern = f"%{search.strip()}%"
             filters.append(or_(Task.name.ilike(pattern), Task.description.ilike(pattern)))

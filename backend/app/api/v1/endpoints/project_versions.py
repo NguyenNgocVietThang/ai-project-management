@@ -105,3 +105,28 @@ async def diff_versions(
     else:
         raise UnprocessableException("target must be a version id or 'current'")
     return await service.diff_versions(project_id, base_id, target_id, current_user)
+
+
+class RollbackSummary(BaseModel):
+    pre_rollback_version_id: int
+    target_version_id: int
+    target_version_number: int
+    changes: dict[str, int]
+    total_changes: int
+    id_map: dict[str, dict[str, int]]
+    warnings: list[dict[str, Any]]
+
+
+class RollbackResponse(BaseModel):
+    version: ProjectVersionResponse
+    summary: RollbackSummary
+
+
+@router.post(
+    "/projects/{project_id}/versions/{version_id}/rollback", response_model=RollbackResponse
+)
+async def rollback_version(
+    project_id: int, version_id: int, service: VersioningServiceDep, current_user: CurrentVerifiedUser
+):
+    """Khôi phục dự án về phiên bản `version_id` (chỉ PM/admin), trả phiên bản mới và tóm tắt."""
+    return await service.rollback(project_id, version_id, current_user)

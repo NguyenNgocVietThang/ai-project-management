@@ -43,6 +43,18 @@ const messages = {
     "changeValue": "{old} -> {new}",
     "dependencyLabel": "{predecessor} -> {successor}",
     "lagDays": "lag {days} d",
+    "rollback": "Restore",
+    "rollbackFor": "Restore v{number}",
+    "rollbackTitle": "Restore version v{number}?",
+    "rollbackDescription": "Current plan is saved as a version first, so you can undo this restore.",
+    "rollbackChangesHeading": "Changes since v{number} that will be undone:",
+    "rollbackConfirm": "Restore to v{number}",
+    "rollbackCancel": "Cancel",
+    "rollbackClose": "Close",
+    "rollbackDone": "Restored. New version v{number} created ({changes} changes).",
+    "rollbackWarnings": "{count, plural, one {# warning} other {# warnings}}",
+    "warningAssigneeNotMember": "Task {task}: previous assignee is no longer a project member, left unassigned.",
+    "rollbackError": "Could not restore this version.",
     "kind": {
       "added": "Added",
       "removed": "Removed",
@@ -71,6 +83,7 @@ const mocks = vi.hoisted(() => ({
   useProjectVersions: vi.fn(),
   useVersionDiff: vi.fn(),
   useCreateBaseline: vi.fn(),
+  useRollbackVersion: vi.fn(),
 }))
 vi.mock('next/navigation', () => ({ useParams: () => ({ id: '7' }), notFound: vi.fn() }))
 vi.mock('@/features/projects/hooks/useProjects', () => ({ useProjectDetail: mocks.useProjectDetail }))
@@ -78,6 +91,7 @@ vi.mock('@/features/versions/hooks/useVersions', () => ({
   useProjectVersions: mocks.useProjectVersions,
   useVersionDiff: mocks.useVersionDiff,
   useCreateBaseline: mocks.useCreateBaseline,
+  useRollbackVersion: mocks.useRollbackVersion,
 }))
 
 function version(id: number, over: Partial<ProjectVersion> = {}): ProjectVersion {
@@ -117,6 +131,7 @@ function setup({ canUpdate = false, diffData = undefined as VersionDiff | undefi
   mocks.useProjectVersions.mockReturnValue({ isLoading: false, isError: false, data: [version(2, { is_baseline: true, change_request_id: 4, kind: 'change_request_approved' }), version(1)] })
   mocks.useVersionDiff.mockReturnValue({ isLoading: false, isError: false, data: diffData })
   mocks.useCreateBaseline.mockReturnValue({ mutateAsync: vi.fn(), isPending: false, isError: false })
+  mocks.useRollbackVersion.mockReturnValue({ mutate: vi.fn(), isPending: false, isError: false, data: undefined })
   return render(<NextIntlClientProvider locale="en" messages={messages}><VersionsPage /></NextIntlClientProvider>)
 }
 
@@ -169,5 +184,17 @@ describe('trang phiên bản', () => {
     expect(screen.getByText('2026-01-10 -> 2026-01-20')).toBeInTheDocument()
     expect(screen.getByText(/Design -> Build \(FS, lag 2 d\)/)).toBeInTheDocument()
     expect(screen.getByText('1 added, 1 removed, 2 changed')).toBeInTheDocument()
+  })
+
+  it('nút khôi phục chỉ hiện với PM', () => {
+    setup()
+    expect(screen.queryByRole('button', { name: 'Restore v1' })).not.toBeInTheDocument()
+  })
+
+  it('PM mở dialog khôi phục với diff phiên bản so với hiện trạng', async () => {
+    setup({ canUpdate: true, diffData: diff })
+    await userEvent.click(screen.getByRole('button', { name: 'Restore v1' }))
+    expect(screen.getByRole('dialog', { name: 'Restore version v1?' })).toBeInTheDocument()
+    expect(mocks.useVersionDiff).toHaveBeenCalledWith(7, 1, 'current')
   })
 })

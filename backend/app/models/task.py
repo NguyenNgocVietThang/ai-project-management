@@ -52,6 +52,8 @@ class Task(Base):
         Index("ix_tasks_epic", "epic_id"),
         Index("ix_tasks_start_notify", "start_date", "last_start_notified_at"),
         Index("ix_tasks_due_notify", "due_date", "last_due_soon_notified_at"),
+        # Lọc task chưa lưu trữ theo dự án (V3 rollback): danh sách, CPM, dashboard, WBS.
+        Index("ix_tasks_project_archived", "project_id", "archived_at"),
     )
 
     # ─── Thông tin cơ bản ───────────────────────────────────────────────────
@@ -82,6 +84,11 @@ class Task(Base):
     # ─── Idempotency cho thông báo theo lịch (đặt bởi lượt quét Celery Beat hằng ngày) ─
     last_start_notified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     last_due_soon_notified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    # ─── Lưu trữ (V3 rollback) ───────────────────────────────────────────────
+    # Task không có trong snapshot nhưng còn worklog/comment/subtask/assignment không bị xóa
+    # cứng khi rollback mà được đặt archived_at; các truy vấn hiển thị/tính toán bỏ qua chúng.
+    archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     # ─── Các trường CPM (tính toán bởi CPM engine) ──────────────────────────
     early_start: Mapped[date | None] = mapped_column(Date, nullable=True)  # ES

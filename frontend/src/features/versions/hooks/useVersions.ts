@@ -2,10 +2,12 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { DiffTarget } from '@/features/versions/types'
+import { taskKeys } from '@/features/tasks/hooks/useTasks'
 import { versionService } from '@/features/versions/versions'
 
 export const versionKeys = {
   all: ['project-versions'] as const,
+  project: (projectId: number) => [...versionKeys.all, projectId] as const,
   list: (projectId: number) => [...versionKeys.all, projectId, 'list'] as const,
   diff: (projectId: number, baseId: number, target: DiffTarget) => [...versionKeys.all, projectId, 'diff', baseId, target] as const,
 }
@@ -36,6 +38,21 @@ export function useCreateBaseline(projectId: number) {
     mutationFn: (body: { label: string; description: string | null }) => versionService.createBaseline(projectId, body),
     onSuccess: () => {
       void client.invalidateQueries({ queryKey: versionKeys.list(projectId) })
+    },
+  })
+}
+
+/**
+ * Khôi phục về phiên bản. Sau khi xong làm mới danh sách/diff phiên bản và mọi truy vấn task
+ * của dự án; khóa CPM nằm dưới taskKeys.project nên cũng được làm mới.
+ */
+export function useRollbackVersion(projectId: number) {
+  const client = useQueryClient()
+  return useMutation({
+    mutationFn: (versionId: number) => versionService.rollback(projectId, versionId),
+    onSuccess: () => {
+      void client.invalidateQueries({ queryKey: versionKeys.project(projectId) })
+      void client.invalidateQueries({ queryKey: taskKeys.project(projectId) })
     },
   })
 }

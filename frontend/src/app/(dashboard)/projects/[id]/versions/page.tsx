@@ -7,9 +7,10 @@ import { Input } from '@/components/common/Input'
 import { EmptyState, ErrorState, LoadingState } from '@/components/common/PageState'
 import { useNumericParam } from '@/hooks/useNumericParam'
 import { useProjectDetail } from '@/features/projects/hooks/useProjects'
+import { RollbackDialog } from '@/features/versions/components/RollbackDialog'
 import { VersionDiffView } from '@/features/versions/components/VersionDiffView'
 import { useCreateBaseline, useProjectVersions, useVersionDiff } from '@/features/versions/hooks/useVersions'
-import type { DiffTarget } from '@/features/versions/types'
+import type { DiffTarget, ProjectVersion } from '@/features/versions/types'
 import { getApiErrorMessage } from '@/types/api.types'
 
 const KNOWN_KINDS = ['manual_baseline', 'change_request_approved', 'pre_rollback', 'rollback'] as const
@@ -28,8 +29,9 @@ export default function VersionsPage() {
   const [baseId, setBaseId] = useState<number | null>(null)
   const [target, setTarget] = useState<DiffTarget | null>(null)
   const [label, setLabel] = useState('')
+  const [rollbackTarget, setRollbackTarget] = useState<ProjectVersion | null>(null)
   const diff = useVersionDiff(projectId, baseId, target)
-  // Backend chỉ cho PM của dự án (hoặc admin) tạo baseline; can_update cùng ngữ nghĩa PM/admin.
+  // Backend chỉ cho PM của dự án (hoặc admin) tạo baseline và khôi phục; can_update cùng ngữ nghĩa PM/admin.
   const canCreateBaseline = Boolean(project.data?.capabilities.can_update)
 
   if (versions.isLoading) return <LoadingState label={t('loading')} />
@@ -90,6 +92,9 @@ export default function VersionsPage() {
                   <div className="mt-2 flex flex-wrap gap-2">
                     <Button type="button" variant={baseId === version.id ? 'default' : 'outline'} className="w-auto px-3 text-xs" aria-pressed={baseId === version.id} aria-label={t('setBaseFor', { number: version.version_number })} onClick={() => setBaseId(version.id)}>{t('setBase')}</Button>
                     <Button type="button" variant={target === version.id ? 'default' : 'outline'} className="w-auto px-3 text-xs" aria-pressed={target === version.id} aria-label={t('setTargetFor', { number: version.version_number })} onClick={() => setTarget(version.id)}>{t('setTarget')}</Button>
+                    {canCreateBaseline && (
+                      <Button type="button" variant="outline" className="w-auto px-3 text-xs" aria-label={t('rollbackFor', { number: version.version_number })} onClick={() => setRollbackTarget(version)}>{t('rollback')}</Button>
+                    )}
                   </div>
                 </li>
               ))}
@@ -115,6 +120,10 @@ export default function VersionsPage() {
             ) : null}
           </section>
         </div>
+      )}
+
+      {rollbackTarget && (
+        <RollbackDialog projectId={projectId} version={rollbackTarget} onClose={() => setRollbackTarget(null)} />
       )}
     </div>
   )

@@ -63,3 +63,25 @@ export interface VersionDiff {
 
 /** `current` = so với hiện trạng dự án. */
 export type DiffTarget = number | 'current'
+
+/** Cảnh báo khi rollback, ví dụ assignee không còn là thành viên dự án. */
+export interface RollbackWarning {
+  code: string
+  task_id?: number
+  task_name?: string | null
+  assignee_id?: number
+}
+
+/** Kết quả rollback (V3): phiên bản mới và tóm tắt thay đổi. */
+export interface RollbackResult {
+  version: ProjectVersion
+  summary: {
+    pre_rollback_version_id: number
+    target_version_id: number
+    target_version_number: number
+    changes: Record<string, number>
+    total_changes: number
+    id_map: Record<string, Record<string, number>>
+    warnings: RollbackWarning[]
+  }
+}
