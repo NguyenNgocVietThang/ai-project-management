@@ -4,110 +4,6 @@
   "graph": {},
   "nodes": [
     {
-      "id": "frontend_src_components_background_fireworks_fireworksengine",
-      "label": "FireworksEngine",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "fireworksengine",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L17"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks_fireworksmode",
-      "label": "FireworksMode",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "fireworksmode",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L11"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks_fireworksoptions",
-      "label": "FireworksOptions",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "fireworksoptions",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L13"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks_hue",
-      "label": "Hue",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "hue",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L66"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks_particle",
-      "label": "Particle",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "particle",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L99"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks_rocket",
-      "label": "Rocket",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "rocket",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L139"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks_shape",
-      "label": "Shape",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "shape",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L62"
-    },
-    {
-      "id": "frontend_src_components_background_usefireworkspreference_fireworkspreference",
-      "label": "FireworksPreference",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "fireworkspreference",
-      "source_file": "frontend/src/components/background/useFireworksPreference.ts",
-      "source_location": "L21"
-    },
-    {
       "id": "frontend_src_app_auth_login_page_loginpageprops",
       "label": "LoginPageProps",
       "_callable": true,
@@ -3332,6 +3228,97 @@
       "source_location": "L66"
     },
     {
+      "id": "frontend_src_components_background_fireworks_fireworksengine",
+      "label": "FireworksEngine",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 225,
+      "community_name": "fireworks.ts",
+      "file_type": "code",
+      "norm_label": "fireworksengine",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L17"
+    },
+    {
+      "id": "frontend_src_components_background_fireworks_fireworksoptions",
+      "label": "FireworksOptions",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 225,
+      "community_name": "fireworks.ts",
+      "file_type": "code",
+      "norm_label": "fireworksoptions",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L13"
+    },
+    {
+      "id": "frontend_src_components_background_fireworks_hue",
+      "label": "Hue",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 225,
+      "community_name": "fireworks.ts",
+      "file_type": "code",
+      "norm_label": "hue",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L66"
+    },
+    {
+      "id": "frontend_src_components_background_fireworks_rocket",
+      "label": "Rocket",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 225,
+      "community_name": "fireworks.ts",
+      "file_type": "code",
+      "norm_label": "rocket",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L139"
+    },
+    {
+      "id": "frontend_src_components_background_fireworks_shape",
+      "label": "Shape",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 225,
+      "community_name": "fireworks.ts",
+      "file_type": "code",
+      "norm_label": "shape",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L62"
+    },
+    {
+      "id": "frontend_src_components_theme_themeprovider_themecontextvalue",
+      "label": "ThemeContextValue",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 226,
+      "community_name": "ThemeProvider.tsx",
+      "file_type": "code",
+      "norm_label": "themecontextvalue",
+      "source_file": "frontend/src/components/theme/ThemeProvider.tsx",
+      "source_location": "L9"
+    },
+    {
+      "id": "frontend_src_components_theme_themeprovider_themepreference",
+      "label": "ThemePreference",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 226,
+      "community_name": "ThemeProvider.tsx",
+      "file_type": "code",
+      "norm_label": "themepreference",
+      "source_file": "frontend/src/components/theme/ThemeProvider.tsx",
+      "source_location": "L5"
+    },
+    {
       "id": "backend_app_core_exceptions_conflictexception",
       "label": "ConflictException",
       "_callable": true,
@@ -3408,6 +3395,45 @@
       "norm_label": "resourceservice",
       "source_file": "backend/app/services/resource_service.py",
       "source_location": "L46"
+    },
+    {
+      "id": "frontend_src_components_background_fireworks_fireworksmode",
+      "label": "FireworksMode",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 228,
+      "community_name": "AppBackground.tsx",
+      "file_type": "code",
+      "norm_label": "fireworksmode",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L11"
+    },
+    {
+      "id": "frontend_src_components_background_usefireworkspreference_fireworkspreference",
+      "label": "FireworksPreference",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 228,
+      "community_name": "AppBackground.tsx",
+      "file_type": "code",
+      "norm_label": "fireworkspreference",
+      "source_file": "frontend/src/components/background/useFireworksPreference.ts",
+      "source_location": "L21"
+    },
+    {
+      "id": "frontend_src_components_background_fireworks_particle",
+      "label": "Particle",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 229,
+      "community_name": "acquire",
+      "file_type": "code",
+      "norm_label": "particle",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L99"
     },
     {
       "id": "frontend_src_features_notifications_components_notificationitem_props",
@@ -5397,32 +5423,6 @@
       "norm_label": "durablejobstatus",
       "source_file": "frontend/src/types/job.types.ts",
       "source_location": "L1"
-    },
-    {
-      "id": "frontend_src_components_theme_themeprovider_themecontextvalue",
-      "label": "ThemeContextValue",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "ThemeProvider.tsx",
-      "file_type": "code",
-      "norm_label": "themecontextvalue",
-      "source_file": "frontend/src/components/theme/ThemeProvider.tsx",
-      "source_location": "L9"
-    },
-    {
-      "id": "frontend_src_components_theme_themeprovider_themepreference",
-      "label": "ThemePreference",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "ThemeProvider.tsx",
-      "file_type": "code",
-      "norm_label": "themepreference",
-      "source_file": "frontend/src/components/theme/ThemeProvider.tsx",
-      "source_location": "L5"
     },
     {
       "id": "frontend_src_components_background_fireworkstoggle_fireworkstoggleprops",
@@ -7986,48 +7986,12 @@
       "source_location": "L58"
     },
     {
-      "id": "frontend_src_components_background_appbackground_appbackground",
-      "label": "AppBackground()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "appbackground()",
-      "source_file": "frontend/src/components/background/AppBackground.tsx",
-      "source_location": "L25"
-    },
-    {
-      "id": "frontend_src_components_background_appbackground_currentmode",
-      "label": "currentMode()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "currentmode()",
-      "source_file": "frontend/src/components/background/AppBackground.tsx",
-      "source_location": "L15"
-    },
-    {
-      "id": "frontend_src_components_background_appbackground_hastextselection",
-      "label": "hasTextSelection()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "hastextselection()",
-      "source_file": "frontend/src/components/background/AppBackground.tsx",
-      "source_location": "L20"
-    },
-    {
       "id": "frontend_src_components_background_fireworks_colorsfor",
       "label": "colorsFor()",
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "make_user",
+      "community_name": "createFireworks",
       "file_type": "code",
       "norm_label": "colorsfor()",
       "source_file": "frontend/src/components/background/fireworks.ts",
@@ -8039,23 +8003,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "make_user",
+      "community_name": "createFireworks",
       "file_type": "code",
       "norm_label": "createfireworks()",
       "source_file": "frontend/src/components/background/fireworks.ts",
       "source_location": "L177"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks_createfireworks_acquire",
-      "label": "acquire()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "acquire()",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L197"
     },
     {
       "id": "frontend_src_components_background_fireworks_createfireworks_basespeed",
@@ -8063,7 +8015,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "make_user",
+      "community_name": "createFireworks",
       "file_type": "code",
       "norm_label": "basespeed()",
       "source_file": "frontend/src/components/background/fireworks.ts",
@@ -8075,7 +8027,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "make_user",
+      "community_name": "createFireworks",
       "file_type": "code",
       "norm_label": "burst()",
       "source_file": "frontend/src/components/background/fireworks.ts",
@@ -8087,7 +8039,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "make_user",
+      "community_name": "createFireworks",
       "file_type": "code",
       "norm_label": "crackleburst()",
       "source_file": "frontend/src/components/background/fireworks.ts",
@@ -8099,7 +8051,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "make_user",
+      "community_name": "createFireworks",
       "file_type": "code",
       "norm_label": "destroy()",
       "source_file": "frontend/src/components/background/fireworks.ts",
@@ -8111,7 +8063,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "make_user",
+      "community_name": "createFireworks",
       "file_type": "code",
       "norm_label": "draw()",
       "source_file": "frontend/src/components/background/fireworks.ts",
@@ -8123,7 +8075,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "make_user",
+      "community_name": "createFireworks",
       "file_type": "code",
       "norm_label": "explode()",
       "source_file": "frontend/src/components/background/fireworks.ts",
@@ -8135,7 +8087,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "make_user",
+      "community_name": "createFireworks",
       "file_type": "code",
       "norm_label": "flash()",
       "source_file": "frontend/src/components/background/fireworks.ts",
@@ -8147,7 +8099,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "make_user",
+      "community_name": "createFireworks",
       "file_type": "code",
       "norm_label": "frame()",
       "source_file": "frontend/src/components/background/fireworks.ts",
@@ -8159,7 +8111,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "make_user",
+      "community_name": "createFireworks",
       "file_type": "code",
       "norm_label": "onvisibilitychange()",
       "source_file": "frontend/src/components/background/fireworks.ts",
@@ -8171,7 +8123,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "make_user",
+      "community_name": "createFireworks",
       "file_type": "code",
       "norm_label": "release()",
       "source_file": "frontend/src/components/background/fireworks.ts",
@@ -8183,7 +8135,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "make_user",
+      "community_name": "createFireworks",
       "file_type": "code",
       "norm_label": "resize()",
       "source_file": "frontend/src/components/background/fireworks.ts",
@@ -8195,7 +8147,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "make_user",
+      "community_name": "createFireworks",
       "file_type": "code",
       "norm_label": "spawn()",
       "source_file": "frontend/src/components/background/fireworks.ts",
@@ -8207,7 +8159,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "make_user",
+      "community_name": "createFireworks",
       "file_type": "code",
       "norm_label": "start()",
       "source_file": "frontend/src/components/background/fireworks.ts",
@@ -8219,7 +8171,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "make_user",
+      "community_name": "createFireworks",
       "file_type": "code",
       "norm_label": "stop()",
       "source_file": "frontend/src/components/background/fireworks.ts",
@@ -8231,7 +8183,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "make_user",
+      "community_name": "createFireworks",
       "file_type": "code",
       "norm_label": "update()",
       "source_file": "frontend/src/components/background/fireworks.ts",
@@ -8243,47 +8195,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "make_user",
+      "community_name": "createFireworks",
       "file_type": "code",
       "norm_label": "easeoutcubic()",
       "source_file": "frontend/src/components/background/fireworks.ts",
       "source_location": "L156"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks_isinteractivetarget",
-      "label": "isInteractiveTarget()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "isinteractivetarget()",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L45"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks_particle_pushtrail",
-      "label": ".pushTrail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": ".pushtrail()",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L130"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks_particle_reset",
-      "label": ".reset()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": ".reset()",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L120"
     },
     {
       "id": "frontend_src_components_background_fireworks_pick",
@@ -8291,7 +8207,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "make_user",
+      "community_name": "createFireworks",
       "file_type": "code",
       "norm_label": "pick()",
       "source_file": "frontend/src/components/background/fireworks.ts",
@@ -8303,35 +8219,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "make_user",
+      "community_name": "createFireworks",
       "file_type": "code",
       "norm_label": "rand()",
       "source_file": "frontend/src/components/background/fireworks.ts",
       "source_location": "L154"
-    },
-    {
-      "id": "frontend_src_components_background_usefireworkspreference_readfireworkspreference",
-      "label": "readFireworksPreference()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "readfireworkspreference()",
-      "source_file": "frontend/src/components/background/useFireworksPreference.ts",
-      "source_location": "L12"
-    },
-    {
-      "id": "frontend_src_components_background_usefireworkspreference_usefireworkspreference",
-      "label": "useFireworksPreference()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "usefireworkspreference()",
-      "source_file": "frontend/src/components/background/useFireworksPreference.ts",
-      "source_location": "L31"
     },
     {
       "id": "frontend_src_app_auth_forgot_password_page_forgotpasswordpage",
@@ -20406,6 +20298,90 @@
       "source_location": "L105"
     },
     {
+      "id": "frontend_src_components_theme_themeprovider_apply",
+      "label": "apply()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 226,
+      "community_name": "ThemeProvider.tsx",
+      "file_type": "code",
+      "norm_label": "apply()",
+      "source_file": "frontend/src/components/theme/ThemeProvider.tsx",
+      "source_location": "L35"
+    },
+    {
+      "id": "frontend_src_components_theme_themeprovider_systemprefersdark",
+      "label": "systemPrefersDark()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 226,
+      "community_name": "ThemeProvider.tsx",
+      "file_type": "code",
+      "norm_label": "systemprefersdark()",
+      "source_file": "frontend/src/components/theme/ThemeProvider.tsx",
+      "source_location": "L31"
+    },
+    {
+      "id": "frontend_src_components_theme_themeprovider_test_status",
+      "label": "Status()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 226,
+      "community_name": "ThemeProvider.tsx",
+      "file_type": "code",
+      "norm_label": "status()",
+      "source_file": "frontend/src/components/theme/ThemeProvider.test.tsx",
+      "source_location": "L8"
+    },
+    {
+      "id": "frontend_src_components_theme_themeprovider_test_theme",
+      "label": "Theme()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 226,
+      "community_name": "ThemeProvider.tsx",
+      "file_type": "code",
+      "norm_label": "theme()",
+      "source_file": "frontend/src/components/theme/ThemeProvider.test.tsx",
+      "source_location": "L9"
+    },
+    {
+      "id": "frontend_src_components_theme_themeprovider_themeprovider",
+      "label": "ThemeProvider()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 226,
+      "community_name": "ThemeProvider.tsx",
+      "file_type": "code",
+      "norm_label": "themeprovider()",
+      "source_file": "frontend/src/components/theme/ThemeProvider.tsx",
+      "source_location": "L43"
+    },
+    {
+      "id": "frontend_src_components_theme_themeprovider_usetheme",
+      "label": "useTheme()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 226,
+      "community_name": "ThemeProvider.tsx",
+      "file_type": "code",
+      "norm_label": "usetheme()",
+      "source_file": "frontend/src/components/theme/ThemeProvider.tsx",
+      "source_location": "L96"
+    },
+    {
+      "id": "frontend_src_components_theme_themetoggle_themetoggle",
+      "label": "ThemeToggle()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 226,
+      "community_name": "ThemeProvider.tsx",
+      "file_type": "code",
+      "norm_label": "themetoggle()",
+      "source_file": "frontend/src/components/theme/ThemeToggle.tsx",
+      "source_location": "L13"
+    },
+    {
       "id": "backend_app_core_dependencies_get_current_active_superuser",
       "label": "get_current_active_superuser()",
       "_callable": true,
@@ -21184,6 +21160,114 @@
       "norm_label": "test_customer_role_cannot_read_project_work_items()",
       "source_file": "backend/tests/unit/test_route_exposure.py",
       "source_location": "L67"
+    },
+    {
+      "id": "frontend_src_components_background_appbackground_appbackground",
+      "label": "AppBackground()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 228,
+      "community_name": "AppBackground.tsx",
+      "file_type": "code",
+      "norm_label": "appbackground()",
+      "source_file": "frontend/src/components/background/AppBackground.tsx",
+      "source_location": "L22"
+    },
+    {
+      "id": "frontend_src_components_background_appbackground_currentmode",
+      "label": "currentMode()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 228,
+      "community_name": "AppBackground.tsx",
+      "file_type": "code",
+      "norm_label": "currentmode()",
+      "source_file": "frontend/src/components/background/AppBackground.tsx",
+      "source_location": "L12"
+    },
+    {
+      "id": "frontend_src_components_background_appbackground_hastextselection",
+      "label": "hasTextSelection()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 228,
+      "community_name": "AppBackground.tsx",
+      "file_type": "code",
+      "norm_label": "hastextselection()",
+      "source_file": "frontend/src/components/background/AppBackground.tsx",
+      "source_location": "L17"
+    },
+    {
+      "id": "frontend_src_components_background_fireworks_isinteractivetarget",
+      "label": "isInteractiveTarget()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 228,
+      "community_name": "AppBackground.tsx",
+      "file_type": "code",
+      "norm_label": "isinteractivetarget()",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L45"
+    },
+    {
+      "id": "frontend_src_components_background_usefireworkspreference_readfireworkspreference",
+      "label": "readFireworksPreference()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 228,
+      "community_name": "AppBackground.tsx",
+      "file_type": "code",
+      "norm_label": "readfireworkspreference()",
+      "source_file": "frontend/src/components/background/useFireworksPreference.ts",
+      "source_location": "L12"
+    },
+    {
+      "id": "frontend_src_components_background_usefireworkspreference_usefireworkspreference",
+      "label": "useFireworksPreference()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 228,
+      "community_name": "AppBackground.tsx",
+      "file_type": "code",
+      "norm_label": "usefireworkspreference()",
+      "source_file": "frontend/src/components/background/useFireworksPreference.ts",
+      "source_location": "L31"
+    },
+    {
+      "id": "frontend_src_components_background_fireworks_createfireworks_acquire",
+      "label": "acquire()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 229,
+      "community_name": "acquire",
+      "file_type": "code",
+      "norm_label": "acquire()",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L197"
+    },
+    {
+      "id": "frontend_src_components_background_fireworks_particle_pushtrail",
+      "label": ".pushTrail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 229,
+      "community_name": "acquire",
+      "file_type": "code",
+      "norm_label": ".pushtrail()",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L130"
+    },
+    {
+      "id": "frontend_src_components_background_fireworks_particle_reset",
+      "label": ".reset()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 229,
+      "community_name": "acquire",
+      "file_type": "code",
+      "norm_label": ".reset()",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L120"
     },
     {
       "id": "frontend_src_app_dashboard_notifications_page_notificationspage",
@@ -26987,7 +27071,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 48,
-      "community_name": "ThemeProvider.tsx",
+      "community_name": "providers.tsx",
       "file_type": "code",
       "norm_label": "rootlayout()",
       "source_file": "frontend/src/app/layout.tsx",
@@ -26999,11 +27083,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 48,
-      "community_name": "ThemeProvider.tsx",
+      "community_name": "providers.tsx",
       "file_type": "code",
       "norm_label": "providers()",
       "source_file": "frontend/src/app/providers.tsx",
-      "source_location": "L14"
+      "source_location": "L15"
     },
     {
       "id": "frontend_src_app_providers_themedtoaster",
@@ -27011,95 +27095,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 48,
-      "community_name": "ThemeProvider.tsx",
+      "community_name": "providers.tsx",
       "file_type": "code",
       "norm_label": "themedtoaster()",
       "source_file": "frontend/src/app/providers.tsx",
-      "source_location": "L9"
-    },
-    {
-      "id": "frontend_src_components_theme_themeprovider_apply",
-      "label": "apply()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "ThemeProvider.tsx",
-      "file_type": "code",
-      "norm_label": "apply()",
-      "source_file": "frontend/src/components/theme/ThemeProvider.tsx",
-      "source_location": "L35"
-    },
-    {
-      "id": "frontend_src_components_theme_themeprovider_systemprefersdark",
-      "label": "systemPrefersDark()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "ThemeProvider.tsx",
-      "file_type": "code",
-      "norm_label": "systemprefersdark()",
-      "source_file": "frontend/src/components/theme/ThemeProvider.tsx",
-      "source_location": "L31"
-    },
-    {
-      "id": "frontend_src_components_theme_themeprovider_test_status",
-      "label": "Status()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "ThemeProvider.tsx",
-      "file_type": "code",
-      "norm_label": "status()",
-      "source_file": "frontend/src/components/theme/ThemeProvider.test.tsx",
-      "source_location": "L8"
-    },
-    {
-      "id": "frontend_src_components_theme_themeprovider_test_theme",
-      "label": "Theme()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "ThemeProvider.tsx",
-      "file_type": "code",
-      "norm_label": "theme()",
-      "source_file": "frontend/src/components/theme/ThemeProvider.test.tsx",
-      "source_location": "L9"
-    },
-    {
-      "id": "frontend_src_components_theme_themeprovider_themeprovider",
-      "label": "ThemeProvider()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "ThemeProvider.tsx",
-      "file_type": "code",
-      "norm_label": "themeprovider()",
-      "source_file": "frontend/src/components/theme/ThemeProvider.tsx",
-      "source_location": "L43"
-    },
-    {
-      "id": "frontend_src_components_theme_themeprovider_usetheme",
-      "label": "useTheme()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "ThemeProvider.tsx",
-      "file_type": "code",
-      "norm_label": "usetheme()",
-      "source_file": "frontend/src/components/theme/ThemeProvider.tsx",
-      "source_location": "L96"
-    },
-    {
-      "id": "frontend_src_components_theme_themetoggle_themetoggle",
-      "label": "ThemeToggle()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "ThemeProvider.tsx",
-      "file_type": "code",
-      "norm_label": "themetoggle()",
-      "source_file": "frontend/src/components/theme/ThemeToggle.tsx",
-      "source_location": "L13"
+      "source_location": "L10"
     },
     {
       "id": "frontend_src_lib_notify_notifyerror",
@@ -27107,7 +27107,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 48,
-      "community_name": "ThemeProvider.tsx",
+      "community_name": "providers.tsx",
       "file_type": "code",
       "norm_label": "notifyerror()",
       "source_file": "frontend/src/lib/notify.ts",
@@ -27119,7 +27119,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 48,
-      "community_name": "ThemeProvider.tsx",
+      "community_name": "providers.tsx",
       "file_type": "code",
       "norm_label": "notifysuccess()",
       "source_file": "frontend/src/lib/notify.ts",
@@ -27135,7 +27135,7 @@
       "file_type": "code",
       "norm_label": "authlayout()",
       "source_file": "frontend/src/app/(auth)/layout.tsx",
-      "source_location": "L38"
+      "source_location": "L37"
     },
     {
       "id": "frontend_src_app_auth_layout_authloadingskeleton",
@@ -27147,7 +27147,7 @@
       "file_type": "code",
       "norm_label": "authloadingskeleton()",
       "source_file": "frontend/src/app/(auth)/layout.tsx",
-      "source_location": "L19"
+      "source_location": "L18"
     },
     {
       "id": "frontend_src_app_dashboard_admin_layout_adminlayout",
@@ -27171,7 +27171,7 @@
       "file_type": "code",
       "norm_label": "dashboardlayout()",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L26"
+      "source_location": "L25"
     },
     {
       "id": "frontend_src_components_background_fireworkstoggle_fireworkstoggle",
@@ -36124,182 +36124,6 @@
       "norm_label": "originof()",
       "source_file": "frontend/next.config.js",
       "source_location": "L18"
-    },
-    {
-      "id": "frontend_src_components_background_appbackground",
-      "label": "AppBackground.tsx",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "appbackground.tsx",
-      "source_file": "frontend/src/components/background/AppBackground.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks",
-      "label": "fireworks.ts",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "fireworks.ts",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks_amber",
-      "label": "AMBER",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "amber",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L72"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks_gold",
-      "label": "GOLD",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "gold",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L77"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks_interactive_selector",
-      "label": "INTERACTIVE_SELECTOR",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "interactive_selector",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L24"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks_lime",
-      "label": "LIME",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "lime",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L76"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks_noop_engine",
-      "label": "NOOP_ENGINE",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "noop_engine",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L175"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks_palettes",
-      "label": "PALETTES",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "palettes",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L80"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks_rose",
-      "label": "ROSE",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "rose",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L73"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks_shapes",
-      "label": "SHAPES",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "shapes",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L63"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks_sky",
-      "label": "SKY",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "sky",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L75"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks_teal",
-      "label": "TEAL",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "teal",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L71"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks_test",
-      "label": "fireworks.test.ts",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "fireworks.test.ts",
-      "source_file": "frontend/src/components/background/fireworks.test.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "frontend_src_components_background_fireworks_violet",
-      "label": "VIOLET",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "violet",
-      "source_file": "frontend/src/components/background/fireworks.ts",
-      "source_location": "L74"
-    },
-    {
-      "id": "frontend_src_components_background_usefireworkspreference",
-      "label": "useFireworksPreference.ts",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "usefireworkspreference.ts",
-      "source_file": "frontend/src/components/background/useFireworksPreference.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "frontend_src_components_background_usefireworkspreference_fireworks_storage_key",
-      "label": "FIREWORKS_STORAGE_KEY",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "make_user",
-      "file_type": "code",
-      "norm_label": "fireworks_storage_key",
-      "source_file": "frontend/src/components/background/useFireworksPreference.ts",
-      "source_location": "L5"
     },
     {
       "id": "frontend_src_app_auth_forgot_password_page",
@@ -47804,6 +47628,193 @@
       "source_location": "L1"
     },
     {
+      "id": "frontend_src_components_background_fireworks",
+      "label": "fireworks.ts",
+      "_origin": "ast",
+      "community": 225,
+      "community_name": "fireworks.ts",
+      "file_type": "code",
+      "norm_label": "fireworks.ts",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "frontend_src_components_background_fireworks_amber",
+      "label": "AMBER",
+      "_origin": "ast",
+      "community": 225,
+      "community_name": "fireworks.ts",
+      "file_type": "code",
+      "norm_label": "amber",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L72"
+    },
+    {
+      "id": "frontend_src_components_background_fireworks_gold",
+      "label": "GOLD",
+      "_origin": "ast",
+      "community": 225,
+      "community_name": "fireworks.ts",
+      "file_type": "code",
+      "norm_label": "gold",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L77"
+    },
+    {
+      "id": "frontend_src_components_background_fireworks_interactive_selector",
+      "label": "INTERACTIVE_SELECTOR",
+      "_origin": "ast",
+      "community": 225,
+      "community_name": "fireworks.ts",
+      "file_type": "code",
+      "norm_label": "interactive_selector",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L24"
+    },
+    {
+      "id": "frontend_src_components_background_fireworks_lime",
+      "label": "LIME",
+      "_origin": "ast",
+      "community": 225,
+      "community_name": "fireworks.ts",
+      "file_type": "code",
+      "norm_label": "lime",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L76"
+    },
+    {
+      "id": "frontend_src_components_background_fireworks_noop_engine",
+      "label": "NOOP_ENGINE",
+      "_origin": "ast",
+      "community": 225,
+      "community_name": "fireworks.ts",
+      "file_type": "code",
+      "norm_label": "noop_engine",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L175"
+    },
+    {
+      "id": "frontend_src_components_background_fireworks_palettes",
+      "label": "PALETTES",
+      "_origin": "ast",
+      "community": 225,
+      "community_name": "fireworks.ts",
+      "file_type": "code",
+      "norm_label": "palettes",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L80"
+    },
+    {
+      "id": "frontend_src_components_background_fireworks_rose",
+      "label": "ROSE",
+      "_origin": "ast",
+      "community": 225,
+      "community_name": "fireworks.ts",
+      "file_type": "code",
+      "norm_label": "rose",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L73"
+    },
+    {
+      "id": "frontend_src_components_background_fireworks_shapes",
+      "label": "SHAPES",
+      "_origin": "ast",
+      "community": 225,
+      "community_name": "fireworks.ts",
+      "file_type": "code",
+      "norm_label": "shapes",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L63"
+    },
+    {
+      "id": "frontend_src_components_background_fireworks_sky",
+      "label": "SKY",
+      "_origin": "ast",
+      "community": 225,
+      "community_name": "fireworks.ts",
+      "file_type": "code",
+      "norm_label": "sky",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L75"
+    },
+    {
+      "id": "frontend_src_components_background_fireworks_teal",
+      "label": "TEAL",
+      "_origin": "ast",
+      "community": 225,
+      "community_name": "fireworks.ts",
+      "file_type": "code",
+      "norm_label": "teal",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L71"
+    },
+    {
+      "id": "frontend_src_components_background_fireworks_violet",
+      "label": "VIOLET",
+      "_origin": "ast",
+      "community": 225,
+      "community_name": "fireworks.ts",
+      "file_type": "code",
+      "norm_label": "violet",
+      "source_file": "frontend/src/components/background/fireworks.ts",
+      "source_location": "L74"
+    },
+    {
+      "id": "frontend_src_components_theme_themeprovider",
+      "label": "ThemeProvider.tsx",
+      "_origin": "ast",
+      "community": 226,
+      "community_name": "ThemeProvider.tsx",
+      "file_type": "code",
+      "norm_label": "themeprovider.tsx",
+      "source_file": "frontend/src/components/theme/ThemeProvider.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "frontend_src_components_theme_themeprovider_test",
+      "label": "ThemeProvider.test.tsx",
+      "_origin": "ast",
+      "community": 226,
+      "community_name": "ThemeProvider.tsx",
+      "file_type": "code",
+      "norm_label": "themeprovider.test.tsx",
+      "source_file": "frontend/src/components/theme/ThemeProvider.test.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "frontend_src_components_theme_themeprovider_themecontext",
+      "label": "ThemeContext",
+      "_origin": "ast",
+      "community": 226,
+      "community_name": "ThemeProvider.tsx",
+      "file_type": "code",
+      "norm_label": "themecontext",
+      "source_file": "frontend/src/components/theme/ThemeProvider.tsx",
+      "source_location": "L15"
+    },
+    {
+      "id": "frontend_src_components_theme_themetoggle",
+      "label": "ThemeToggle.tsx",
+      "_origin": "ast",
+      "community": 226,
+      "community_name": "ThemeProvider.tsx",
+      "file_type": "code",
+      "norm_label": "themetoggle.tsx",
+      "source_file": "frontend/src/components/theme/ThemeToggle.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "frontend_src_components_theme_themetoggle_options",
+      "label": "OPTIONS",
+      "_origin": "ast",
+      "community": 226,
+      "community_name": "ThemeProvider.tsx",
+      "file_type": "code",
+      "norm_label": "options",
+      "source_file": "frontend/src/components/theme/ThemeToggle.tsx",
+      "source_location": "L7"
+    },
+    {
       "id": "backend_app_core_dependencies_py_currentuser",
       "label": "CurrentUser",
       "_origin": "ast",
@@ -47967,6 +47978,50 @@
       "norm_label": "customer bi chan khoi danh sach task; subtask va \u0111o thi phu thuoc la hai \u0111uong...",
       "source_file": "backend/tests/unit/test_route_exposure.py",
       "source_location": "L68"
+    },
+    {
+      "id": "frontend_src_components_background_appbackground",
+      "label": "AppBackground.tsx",
+      "_origin": "ast",
+      "community": 228,
+      "community_name": "AppBackground.tsx",
+      "file_type": "code",
+      "norm_label": "appbackground.tsx",
+      "source_file": "frontend/src/components/background/AppBackground.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "frontend_src_components_background_fireworks_test",
+      "label": "fireworks.test.ts",
+      "_origin": "ast",
+      "community": 228,
+      "community_name": "AppBackground.tsx",
+      "file_type": "code",
+      "norm_label": "fireworks.test.ts",
+      "source_file": "frontend/src/components/background/fireworks.test.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "frontend_src_components_background_usefireworkspreference",
+      "label": "useFireworksPreference.ts",
+      "_origin": "ast",
+      "community": 228,
+      "community_name": "AppBackground.tsx",
+      "file_type": "code",
+      "norm_label": "usefireworkspreference.ts",
+      "source_file": "frontend/src/components/background/useFireworksPreference.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "frontend_src_components_background_usefireworkspreference_fireworks_storage_key",
+      "label": "FIREWORKS_STORAGE_KEY",
+      "_origin": "ast",
+      "community": 228,
+      "community_name": "AppBackground.tsx",
+      "file_type": "code",
+      "norm_label": "fireworks_storage_key",
+      "source_file": "frontend/src/components/background/useFireworksPreference.ts",
+      "source_location": "L5"
     },
     {
       "id": "frontend_src_app_dashboard_notifications_page",
@@ -53445,7 +53500,7 @@
       "label": "app/layout.tsx",
       "_origin": "ast",
       "community": 48,
-      "community_name": "ThemeProvider.tsx",
+      "community_name": "providers.tsx",
       "file_type": "code",
       "norm_label": "app/layout.tsx",
       "source_file": "frontend/src/app/layout.tsx",
@@ -53456,7 +53511,7 @@
       "label": "inter",
       "_origin": "ast",
       "community": 48,
-      "community_name": "ThemeProvider.tsx",
+      "community_name": "providers.tsx",
       "file_type": "code",
       "norm_label": "inter",
       "source_file": "frontend/src/app/layout.tsx",
@@ -53467,7 +53522,7 @@
       "label": "metadata",
       "_origin": "ast",
       "community": 48,
-      "community_name": "ThemeProvider.tsx",
+      "community_name": "providers.tsx",
       "file_type": "code",
       "norm_label": "metadata",
       "source_file": "frontend/src/app/layout.tsx",
@@ -53478,7 +53533,7 @@
       "label": "viewport",
       "_origin": "ast",
       "community": 48,
-      "community_name": "ThemeProvider.tsx",
+      "community_name": "providers.tsx",
       "file_type": "code",
       "norm_label": "viewport",
       "source_file": "frontend/src/app/layout.tsx",
@@ -53489,84 +53544,29 @@
       "label": "providers.tsx",
       "_origin": "ast",
       "community": 48,
-      "community_name": "ThemeProvider.tsx",
+      "community_name": "providers.tsx",
       "file_type": "code",
       "norm_label": "providers.tsx",
       "source_file": "frontend/src/app/providers.tsx",
       "source_location": "L1"
     },
     {
-      "id": "frontend_src_components_theme_themeprovider",
-      "label": "ThemeProvider.tsx",
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "ThemeProvider.tsx",
-      "file_type": "code",
-      "norm_label": "themeprovider.tsx",
-      "source_file": "frontend/src/components/theme/ThemeProvider.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "frontend_src_components_theme_themeprovider_test",
-      "label": "ThemeProvider.test.tsx",
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "ThemeProvider.tsx",
-      "file_type": "code",
-      "norm_label": "themeprovider.test.tsx",
-      "source_file": "frontend/src/components/theme/ThemeProvider.test.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "frontend_src_components_theme_themeprovider_themecontext",
-      "label": "ThemeContext",
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "ThemeProvider.tsx",
-      "file_type": "code",
-      "norm_label": "themecontext",
-      "source_file": "frontend/src/components/theme/ThemeProvider.tsx",
-      "source_location": "L15"
-    },
-    {
       "id": "frontend_src_components_theme_themeprovider_themeinitscript",
       "label": "themeInitScript",
       "_origin": "ast",
       "community": 48,
-      "community_name": "ThemeProvider.tsx",
+      "community_name": "providers.tsx",
       "file_type": "code",
       "norm_label": "themeinitscript",
       "source_file": "frontend/src/components/theme/ThemeProvider.tsx",
       "source_location": "L21"
     },
     {
-      "id": "frontend_src_components_theme_themetoggle",
-      "label": "ThemeToggle.tsx",
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "ThemeProvider.tsx",
-      "file_type": "code",
-      "norm_label": "themetoggle.tsx",
-      "source_file": "frontend/src/components/theme/ThemeToggle.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "frontend_src_components_theme_themetoggle_options",
-      "label": "OPTIONS",
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "ThemeProvider.tsx",
-      "file_type": "code",
-      "norm_label": "options",
-      "source_file": "frontend/src/components/theme/ThemeToggle.tsx",
-      "source_location": "L7"
-    },
-    {
       "id": "frontend_src_lib_notify",
       "label": "notify.ts",
       "_origin": "ast",
       "community": 48,
-      "community_name": "ThemeProvider.tsx",
+      "community_name": "providers.tsx",
       "file_type": "code",
       "norm_label": "notify.ts",
       "source_file": "frontend/src/lib/notify.ts",
@@ -53577,7 +53577,7 @@
       "label": "sonner",
       "_origin": "ast",
       "community": 48,
-      "community_name": "ThemeProvider.tsx",
+      "community_name": "providers.tsx",
       "file_type": "concept",
       "norm_label": "sonner",
       "source_file": "frontend/package.json",
@@ -53603,7 +53603,7 @@
       "file_type": "code",
       "norm_label": "step_icons",
       "source_file": "frontend/src/app/(auth)/layout.tsx",
-      "source_location": "L16"
+      "source_location": "L15"
     },
     {
       "id": "frontend_src_app_dashboard_admin_layout",
@@ -62600,6 +62600,18 @@
       "type": "external"
     },
     {
+      "id": "copy",
+      "label": "copy",
+      "_origin": "semantic",
+      "community": 14,
+      "community_name": "test_bpmn_schema.py",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "copy",
+      "source_file": "",
+      "type": "external"
+    },
+    {
       "id": "builtins",
       "label": "builtins",
       "_origin": "semantic",
@@ -62644,6 +62656,78 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "unittest_mock",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "docx",
+      "label": "docx",
+      "_origin": "semantic",
+      "community": 172,
+      "community_name": "docx_renderer.py",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "docx",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "docx_document",
+      "label": "docx_document",
+      "_origin": "semantic",
+      "community": 172,
+      "community_name": "docx_renderer.py",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "docx_document",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "docx_enum_text",
+      "label": "docx_enum_text",
+      "_origin": "semantic",
+      "community": 172,
+      "community_name": "docx_renderer.py",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "docx_enum_text",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "docx_oxml",
+      "label": "docx_oxml",
+      "_origin": "semantic",
+      "community": 172,
+      "community_name": "docx_renderer.py",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "docx_oxml",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "docx_oxml_ns",
+      "label": "docx_oxml_ns",
+      "_origin": "semantic",
+      "community": 172,
+      "community_name": "docx_renderer.py",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "docx_oxml_ns",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "docx_shared",
+      "label": "docx_shared",
+      "_origin": "semantic",
+      "community": 172,
+      "community_name": "docx_renderer.py",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "docx_shared",
       "source_file": "",
       "type": "external"
     },
@@ -62776,6 +62860,18 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "collections",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "datetime",
+      "label": "datetime",
+      "_origin": "semantic",
+      "community": 2,
+      "community_name": "sqlalchemy",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "datetime",
       "source_file": "",
       "type": "external"
     },
@@ -63008,6 +63104,18 @@
       "type": "external"
     },
     {
+      "id": "unicodedata",
+      "label": "unicodedata",
+      "_origin": "semantic",
+      "community": 24,
+      "community_name": "process_png.py",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "unicodedata",
+      "source_file": "",
+      "type": "external"
+    },
+    {
       "id": "frontend_messages_en",
       "label": "frontend_messages_en",
       "_origin": "semantic",
@@ -63016,6 +63124,30 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "frontend_messages_en",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "frontend_messages_vi",
+      "label": "frontend_messages_vi",
+      "_origin": "semantic",
+      "community": 33,
+      "community_name": "vitest",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "frontend_messages_vi",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "asyncio",
+      "label": "asyncio",
+      "_origin": "semantic",
+      "community": 38,
+      "community_name": "typing",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "asyncio",
       "source_file": "",
       "type": "external"
     },
@@ -63168,7 +63300,7 @@
       "label": "frontend_src_app_globals",
       "_origin": "semantic",
       "community": 48,
-      "community_name": "ThemeProvider.tsx",
+      "community_name": "providers.tsx",
       "external": true,
       "file_type": "concept",
       "norm_label": "frontend_src_app_globals",
@@ -63308,6 +63440,66 @@
       "type": "external"
     },
     {
+      "id": "openpyxl",
+      "label": "openpyxl",
+      "_origin": "semantic",
+      "community": 81,
+      "community_name": "xlsx_renderer.py",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "openpyxl",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "openpyxl_cell_cell",
+      "label": "openpyxl_cell_cell",
+      "_origin": "semantic",
+      "community": 81,
+      "community_name": "xlsx_renderer.py",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "openpyxl_cell_cell",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "openpyxl_styles",
+      "label": "openpyxl_styles",
+      "_origin": "semantic",
+      "community": 81,
+      "community_name": "xlsx_renderer.py",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "openpyxl_styles",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "openpyxl_utils",
+      "label": "openpyxl_utils",
+      "_origin": "semantic",
+      "community": 81,
+      "community_name": "xlsx_renderer.py",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "openpyxl_utils",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "openpyxl_worksheet_worksheet",
+      "label": "openpyxl_worksheet_worksheet",
+      "_origin": "semantic",
+      "community": 81,
+      "community_name": "xlsx_renderer.py",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "openpyxl_worksheet_worksheet",
+      "source_file": "",
+      "type": "external"
+    },
+    {
       "id": "sqlalchemy_orm_base",
       "label": "sqlalchemy_orm_base",
       "_origin": "semantic",
@@ -63316,6 +63508,30 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "sqlalchemy_orm_base",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "struct",
+      "label": "struct",
+      "_origin": "semantic",
+      "community": 88,
+      "community_name": "test_docx_renderer.py",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "struct",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "zlib",
+      "label": "zlib",
+      "_origin": "semantic",
+      "community": 88,
+      "community_name": "test_docx_renderer.py",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "zlib",
       "source_file": "",
       "type": "external"
     },
@@ -63448,204 +63664,6 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "time",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "copy",
-      "label": "copy",
-      "community": 14,
-      "community_name": "test_bpmn_schema.py",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "copy",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "docx",
-      "label": "docx",
-      "community": 172,
-      "community_name": "docx_renderer.py",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "docx",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "docx_document",
-      "label": "docx_document",
-      "community": 172,
-      "community_name": "docx_renderer.py",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "docx_document",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "docx_enum_text",
-      "label": "docx_enum_text",
-      "community": 172,
-      "community_name": "docx_renderer.py",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "docx_enum_text",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "docx_oxml",
-      "label": "docx_oxml",
-      "community": 172,
-      "community_name": "docx_renderer.py",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "docx_oxml",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "docx_oxml_ns",
-      "label": "docx_oxml_ns",
-      "community": 172,
-      "community_name": "docx_renderer.py",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "docx_oxml_ns",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "docx_shared",
-      "label": "docx_shared",
-      "community": 172,
-      "community_name": "docx_renderer.py",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "docx_shared",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "datetime",
-      "label": "datetime",
-      "community": 2,
-      "community_name": "sqlalchemy",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "datetime",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "unicodedata",
-      "label": "unicodedata",
-      "community": 24,
-      "community_name": "process_png.py",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "unicodedata",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "frontend_messages_vi",
-      "label": "frontend_messages_vi",
-      "community": 33,
-      "community_name": "vitest",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "frontend_messages_vi",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "asyncio",
-      "label": "asyncio",
-      "community": 38,
-      "community_name": "typing",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "asyncio",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "openpyxl",
-      "label": "openpyxl",
-      "community": 81,
-      "community_name": "xlsx_renderer.py",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "openpyxl",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "openpyxl_cell_cell",
-      "label": "openpyxl_cell_cell",
-      "community": 81,
-      "community_name": "xlsx_renderer.py",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "openpyxl_cell_cell",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "openpyxl_styles",
-      "label": "openpyxl_styles",
-      "community": 81,
-      "community_name": "xlsx_renderer.py",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "openpyxl_styles",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "openpyxl_utils",
-      "label": "openpyxl_utils",
-      "community": 81,
-      "community_name": "xlsx_renderer.py",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "openpyxl_utils",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "openpyxl_worksheet_worksheet",
-      "label": "openpyxl_worksheet_worksheet",
-      "community": 81,
-      "community_name": "xlsx_renderer.py",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "openpyxl_worksheet_worksheet",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "struct",
-      "label": "struct",
-      "community": 88,
-      "community_name": "test_docx_renderer.py",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "struct",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "zlib",
-      "label": "zlib",
-      "community": 88,
-      "community_name": "test_docx_renderer.py",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "zlib",
       "source_file": "",
       "type": "external"
     }
@@ -95064,7 +95082,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(auth)/layout.tsx",
-      "source_location": "L108",
+      "source_location": "L106",
       "weight": 1.0
     },
     {
@@ -95076,7 +95094,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(auth)/layout.tsx",
-      "source_location": "L109",
+      "source_location": "L107",
       "weight": 1.0
     },
     {
@@ -95088,7 +95106,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(auth)/layout.tsx",
-      "source_location": "L110",
+      "source_location": "L108",
       "weight": 1.0
     },
     {
@@ -95100,7 +95118,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(auth)/layout.tsx",
-      "source_location": "L44",
+      "source_location": "L43",
       "weight": 1.0
     },
     {
@@ -95112,19 +95130,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(auth)/layout.tsx",
-      "source_location": "L62",
-      "weight": 1.0
-    },
-    {
-      "source": "frontend_src_app_auth_layout_authlayout",
-      "target": "frontend_src_components_background_appbackground_appbackground",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "frontend/src/app/(auth)/layout.tsx",
-      "source_location": "L69",
+      "source_location": "L61",
       "weight": 1.0
     },
     {
@@ -95136,7 +95142,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(auth)/layout.tsx",
-      "source_location": "L77",
+      "source_location": "L75",
       "weight": 1.0
     },
     {
@@ -95148,7 +95154,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(auth)/layout.tsx",
-      "source_location": "L81",
+      "source_location": "L79",
       "weight": 1.0
     },
     {
@@ -95160,7 +95166,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(auth)/layout.tsx",
-      "source_location": "L82",
+      "source_location": "L80",
       "weight": 1.0
     },
     {
@@ -95172,7 +95178,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(auth)/layout.tsx",
-      "source_location": "L21",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -95184,7 +95190,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(auth)/layout.tsx",
-      "source_location": "L23",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -96269,18 +96275,6 @@
     },
     {
       "source": "frontend_src_app_dashboard_layout_dashboardlayout",
-      "target": "frontend_src_components_layout_brand_brand",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L102",
-      "weight": 1.0
-    },
-    {
-      "source": "frontend_src_app_dashboard_layout_dashboardlayout",
       "target": "frontend_src_components_layout_navigation_mainnav",
       "relation": "calls",
       "_origin": "ast",
@@ -96288,7 +96282,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L103",
+      "source_location": "L100",
       "weight": 1.0
     },
     {
@@ -96300,7 +96294,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L103",
+      "source_location": "L100",
       "weight": 1.0
     },
     {
@@ -96312,7 +96306,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L112",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -96324,7 +96318,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L112",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -96336,7 +96330,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L120",
+      "source_location": "L117",
       "weight": 1.0
     },
     {
@@ -96348,7 +96342,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L123",
+      "source_location": "L120",
       "weight": 1.0
     },
     {
@@ -96360,7 +96354,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L124",
+      "source_location": "L121",
       "weight": 1.0
     },
     {
@@ -96372,7 +96366,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L133",
+      "source_location": "L130",
       "weight": 1.0
     },
     {
@@ -96384,7 +96378,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L138",
+      "source_location": "L135",
       "weight": 1.0
     },
     {
@@ -96396,7 +96390,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L146",
+      "source_location": "L143",
       "weight": 1.0
     },
     {
@@ -96408,7 +96402,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L35",
+      "source_location": "L34",
       "weight": 1.0
     },
     {
@@ -96420,7 +96414,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L44",
+      "source_location": "L43",
       "weight": 1.0
     },
     {
@@ -96432,7 +96426,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L56",
+      "source_location": "L55",
       "weight": 1.0
     },
     {
@@ -96444,7 +96438,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L61",
+      "source_location": "L60",
       "weight": 1.0
     },
     {
@@ -96456,7 +96450,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L84",
+      "source_location": "L83",
       "weight": 1.0
     },
     {
@@ -96468,7 +96462,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L87",
+      "source_location": "L86",
       "weight": 1.0
     },
     {
@@ -96480,7 +96474,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L88",
+      "source_location": "L87",
       "weight": 1.0
     },
     {
@@ -96492,19 +96486,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L94",
+      "source_location": "L93",
       "weight": 1.0
     },
     {
       "source": "frontend_src_app_dashboard_layout_dashboardlayout",
-      "target": "frontend_src_components_background_appbackground_appbackground",
+      "target": "frontend_src_components_layout_brand_brand",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L97",
+      "source_location": "L99",
       "weight": 1.0
     },
     {
@@ -101244,7 +101238,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/providers.tsx",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -101256,7 +101250,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/providers.tsx",
-      "source_location": "L38",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_src_app_providers_providers",
+      "target": "frontend_src_components_background_appbackground_appbackground",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "frontend/src/app/providers.tsx",
+      "source_location": "L40",
       "weight": 1.0
     },
     {
@@ -101268,7 +101274,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/providers.tsx",
-      "source_location": "L40",
+      "source_location": "L42",
       "weight": 1.0
     },
     {
@@ -101280,7 +101286,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/app/providers.tsx",
-      "source_location": "L10",
+      "source_location": "L11",
       "weight": 1.0
     },
     {
@@ -101292,7 +101298,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/components/background/AppBackground.tsx",
-      "source_location": "L27",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -101304,7 +101310,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/components/background/AppBackground.tsx",
-      "source_location": "L33",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -101316,7 +101322,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/components/background/AppBackground.tsx",
-      "source_location": "L39",
+      "source_location": "L36",
       "weight": 1.0
     },
     {
@@ -101328,7 +101334,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "frontend/src/components/background/AppBackground.tsx",
-      "source_location": "L39",
+      "source_location": "L36",
       "weight": 1.0
     },
     {
@@ -144419,18 +144425,6 @@
     },
     {
       "source": "frontend_src_app_auth_layout",
-      "target": "frontend_src_components_background_appbackground_appbackground",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "frontend/src/app/(auth)/layout.tsx",
-      "source_location": "L13",
-      "weight": 1.0
-    },
-    {
-      "source": "frontend_src_app_auth_layout",
       "target": "frontend_src_components_background_fireworkstoggle_fireworkstoggle",
       "relation": "imports",
       "_origin": "ast",
@@ -144438,7 +144432,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "frontend/src/app/(auth)/layout.tsx",
-      "source_location": "L14",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -145595,7 +145589,7 @@
     },
     {
       "source": "frontend_src_app_dashboard_layout",
-      "target": "frontend_src_components_background_appbackground_appbackground",
+      "target": "frontend_src_components_background_fireworkstoggle_fireworkstoggle",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -145607,7 +145601,7 @@
     },
     {
       "source": "frontend_src_app_dashboard_layout",
-      "target": "frontend_src_components_background_fireworkstoggle_fireworkstoggle",
+      "target": "frontend_src_components_layout_navigation_mainnav",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -145619,18 +145613,6 @@
     },
     {
       "source": "frontend_src_app_dashboard_layout",
-      "target": "frontend_src_components_layout_navigation_mainnav",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L13",
-      "weight": 1.0
-    },
-    {
-      "source": "frontend_src_app_dashboard_layout",
       "target": "frontend_src_components_layout_navigation_mobilenav",
       "relation": "imports",
       "_origin": "ast",
@@ -145638,7 +145620,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L13",
+      "source_location": "L12",
       "weight": 1.0
     },
     {
@@ -145650,7 +145632,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L14",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -145662,7 +145644,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L15",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -145674,7 +145656,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L16",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -145686,7 +145668,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L17",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -145698,7 +145680,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L18",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -145710,7 +145692,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L19",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -145722,7 +145704,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L20",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -145734,7 +145716,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L21",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -145746,7 +145728,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L22",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -145758,7 +145740,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L23",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -145770,7 +145752,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L24",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -145782,7 +145764,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L24",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -150523,6 +150505,18 @@
       "context": "import",
       "source_file": "frontend/src/app/providers.tsx",
       "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_src_app_providers",
+      "target": "frontend_src_components_background_appbackground_appbackground",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "frontend/src/app/providers.tsx",
+      "source_location": "L8",
       "weight": 1.0
     },
     {
@@ -183480,18 +183474,6 @@
     },
     {
       "source": "frontend_src_app_auth_layout",
-      "target": "frontend_src_components_background_appbackground",
-      "relation": "imports_from",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "frontend/src/app/(auth)/layout.tsx",
-      "source_location": "L13",
-      "weight": 1.0
-    },
-    {
-      "source": "frontend_src_app_auth_layout",
       "target": "frontend_src_components_background_fireworkstoggle",
       "relation": "imports_from",
       "_origin": "ast",
@@ -183499,7 +183481,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "frontend/src/app/(auth)/layout.tsx",
-      "source_location": "L14",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -184781,7 +184763,7 @@
     },
     {
       "source": "frontend_src_app_dashboard_layout",
-      "target": "frontend_src_components_background_appbackground",
+      "target": "frontend_src_components_background_fireworkstoggle",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -184793,7 +184775,7 @@
     },
     {
       "source": "frontend_src_app_dashboard_layout",
-      "target": "frontend_src_components_background_fireworkstoggle",
+      "target": "frontend_src_components_layout_navigation",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -184805,7 +184787,7 @@
     },
     {
       "source": "frontend_src_app_dashboard_layout",
-      "target": "frontend_src_components_layout_navigation",
+      "target": "frontend_src_components_layout_languagetoggle",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -184817,7 +184799,7 @@
     },
     {
       "source": "frontend_src_app_dashboard_layout",
-      "target": "frontend_src_components_layout_languagetoggle",
+      "target": "frontend_src_components_theme_themetoggle",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -184829,7 +184811,7 @@
     },
     {
       "source": "frontend_src_app_dashboard_layout",
-      "target": "frontend_src_components_theme_themetoggle",
+      "target": "frontend_src_features_auth_components_emailverificationbanner",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -184841,7 +184823,7 @@
     },
     {
       "source": "frontend_src_app_dashboard_layout",
-      "target": "frontend_src_features_auth_components_emailverificationbanner",
+      "target": "frontend_src_features_jobs_components_jobspanel",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -184853,7 +184835,7 @@
     },
     {
       "source": "frontend_src_app_dashboard_layout",
-      "target": "frontend_src_features_jobs_components_jobspanel",
+      "target": "frontend_src_features_notifications_components_notificationbell",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -184865,7 +184847,7 @@
     },
     {
       "source": "frontend_src_app_dashboard_layout",
-      "target": "frontend_src_features_notifications_components_notificationbell",
+      "target": "frontend_src_features_notifications_hooks_usenotifications",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -184877,7 +184859,7 @@
     },
     {
       "source": "frontend_src_app_dashboard_layout",
-      "target": "frontend_src_features_notifications_hooks_usenotifications",
+      "target": "frontend_src_hooks_useauth",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -184901,7 +184883,7 @@
     },
     {
       "source": "frontend_src_app_dashboard_layout",
-      "target": "frontend_src_hooks_useauth",
+      "target": "frontend_src_components_layout_brand",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -184913,7 +184895,7 @@
     },
     {
       "source": "frontend_src_app_dashboard_layout",
-      "target": "frontend_src_components_layout_brand",
+      "target": "frontend_src_lib_rbac",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -184925,7 +184907,7 @@
     },
     {
       "source": "frontend_src_app_dashboard_layout",
-      "target": "frontend_src_lib_rbac",
+      "target": "frontend_src_services_api",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -184937,18 +184919,6 @@
     },
     {
       "source": "frontend_src_app_dashboard_layout",
-      "target": "frontend_src_services_api",
-      "relation": "imports_from",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L23",
-      "weight": 1.0
-    },
-    {
-      "source": "frontend_src_app_dashboard_layout",
       "target": "frontend_src_store_authstore",
       "relation": "imports_from",
       "_origin": "ast",
@@ -184956,7 +184926,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L24",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -189464,6 +189434,18 @@
       "context": "import",
       "source_file": "frontend/src/app/providers.tsx",
       "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_src_app_providers",
+      "target": "frontend_src_components_background_appbackground",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "frontend/src/app/providers.tsx",
+      "source_location": "L8",
       "weight": 1.0
     },
     {
@@ -232410,7 +232392,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "frontend/src/app/(auth)/layout.tsx",
-      "source_location": "L16",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -232421,7 +232403,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "frontend/src/app/(auth)/layout.tsx",
-      "source_location": "L19",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -232432,7 +232414,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "frontend/src/app/(auth)/layout.tsx",
-      "source_location": "L38",
+      "source_location": "L37",
       "weight": 1.0
     },
     {
@@ -232729,7 +232711,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "frontend/src/app/(dashboard)/layout.tsx",
-      "source_location": "L26",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -233636,24 +233618,24 @@
     },
     {
       "source": "frontend_src_app_providers",
-      "target": "frontend_src_app_providers_providers",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "frontend/src/app/providers.tsx",
-      "source_location": "L14",
-      "weight": 1.0
-    },
-    {
-      "source": "frontend_src_app_providers",
       "target": "frontend_src_app_providers_themedtoaster",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "frontend/src/app/providers.tsx",
-      "source_location": "L9",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_src_app_providers",
+      "target": "frontend_src_app_providers_providers",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/src/app/providers.tsx",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -233664,7 +233646,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "frontend/src/components/background/AppBackground.tsx",
-      "source_location": "L15",
+      "source_location": "L12",
       "weight": 1.0
     },
     {
@@ -233675,7 +233657,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "frontend/src/components/background/AppBackground.tsx",
-      "source_location": "L20",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -233686,7 +233668,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "frontend/src/components/background/AppBackground.tsx",
-      "source_location": "L25",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -260218,7 +260200,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "frontend/src/components/background/AppBackground.tsx",
-      "source_location": "L33",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -277359,5 +277341,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "11c9b01af7568bcb09e39394792571cc00bd3cf4"
+  "built_at_commit": "fd4fd452abc3a62c5d157db8f82902248b502dfd"
 }

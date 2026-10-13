@@ -1,22 +1,22 @@
 # Graph Report - AI Project Planning & Portfolio Management system  (2026-10-13)
 
 ## Corpus Check
-- 608 files · ~375,690 words
+- 608 files · ~556,704 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 30 file(s) not represented in the graph (top: (none) 12, .puml 10, .example 3)
 
 ## Summary
-- 5423 nodes · 18244 edges · 227 communities (170 shown, 57 thin omitted)
+- 5423 nodes · 18241 edges · 231 communities (173 shown, 58 thin omitted)
 - Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 1669 edges (avg confidence: 0.94)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `11c9b01a`
+- Built from commit: `fd4fd452`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- make_user
+- createFireworks
 - Button
 - sqlalchemy
 - test_requirement_clarify_job.py
@@ -64,7 +64,7 @@
 - test_cpm_scheduling.py
 - projects/page.tsx
 - useCPM.test.tsx
-- ThemeProvider.tsx
+- providers.tsx
 - (dashboard)/layout.tsx
 - api.ts
 - ai_tasks.py
@@ -201,7 +201,11 @@
 - 10. Đặc tả API và các điểm cuối WebSocket
 - 9. Thuật toán cốt lõi & Hạ tầng Real-time
 - list_jobs
+- fireworks.ts
+- ThemeProvider.tsx
 - User
+- AppBackground.tsx
+- acquire
 - test_version_rollback.py
 
 ## God Nodes (most connected - your core abstractions)
@@ -231,11 +235,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (227 total, 57 thin omitted)
+## Communities (231 total, 58 thin omitted)
 
-### Community 0 - "make_user"
-Cohesion: 0.07
-Nodes (47): AppBackground(), currentMode(), hasTextSelection(), AMBER, colorsFor(), createFireworks(), acquire(), baseSpeed() (+39 more)
+### Community 0 - "createFireworks"
+Cohesion: 0.23
+Nodes (20): colorsFor(), createFireworks(), baseSpeed(), burst(), crackleBurst(), destroy(), draw(), explode() (+12 more)
 
 ### Community 1 - "Button"
 Cohesion: 0.05
@@ -425,9 +429,9 @@ Nodes (24): ProjectMembersPage(), InitialProjectMember, useAddProjectMember(), u
 Cohesion: 0.15
 Nodes (14): CPM_JOB_KIND, cpmKeys, shouldRetry(), schedule, useCPM(), UseCPMResult, useReloadWhenCPMJobSucceeds(), classifyCPMError() (+6 more)
 
-### Community 48 - "ThemeProvider.tsx"
-Cohesion: 0.14
-Nodes (20): inter, metadata, RootLayout(), viewport, Providers(), ThemedToaster(), apply(), systemPrefersDark() (+12 more)
+### Community 48 - "providers.tsx"
+Cohesion: 0.21
+Nodes (9): inter, metadata, RootLayout(), viewport, Providers(), ThemedToaster(), themeInitScript, notifyError() (+1 more)
 
 ### Community 49 - "(dashboard)/layout.tsx"
 Cohesion: 0.09
@@ -905,9 +909,21 @@ Nodes (3): 9. Thuật toán cốt lõi & Hạ tầng Real-time, Thuật toán Cr
 Cohesion: 0.31
 Nodes (3): get_job(), list_jobs(), visible_jobs()
 
+### Community 225 - "fireworks.ts"
+Cohesion: 0.12
+Nodes (16): AMBER, FireworksEngine, FireworksOptions, GOLD, Hue, INTERACTIVE_SELECTOR, LIME, NOOP_ENGINE (+8 more)
+
+### Community 226 - "ThemeProvider.tsx"
+Cohesion: 0.27
+Nodes (11): apply(), systemPrefersDark(), Status(), Theme(), ThemeContext, ThemeContextValue, ThemePreference, ThemeProvider() (+3 more)
+
 ### Community 227 - "User"
 Cohesion: 0.07
 Nodes (16): get_current_active_superuser(), get_current_verified_user(), ConflictException, ForbiddenException, SubtaskStatus, User, ChangeRequestResponse, read_document_file() (+8 more)
+
+### Community 228 - "AppBackground.tsx"
+Cohesion: 0.30
+Nodes (9): AppBackground(), currentMode(), hasTextSelection(), FireworksMode, isInteractiveTarget(), FIREWORKS_STORAGE_KEY, FireworksPreference, readFireworksPreference() (+1 more)
 
 ### Community 231 - "test_version_rollback.py"
 Cohesion: 0.05
@@ -916,22 +932,22 @@ Nodes (52): delete_milestone(), Milestone, Phase, ProjectVersion, Sprint, _apply
 ## Knowledge Gaps
 - **545 isolated node(s):** `npx`, `@executeautomation/playwright-mcp-server`, `extends`, `next/core-web-vitals`, `apiOrigin` (+540 more)
   These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1669 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **57 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **58 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Danh mục tính năng đã triển khai` connect `api.ts` to `WBSService`, `DashboardService`, `Button`, `ProjectService`, `PortfolioService`, `User`, `ProjectOverviewCharts.tsx`, `wbs/page.tsx`, `Rà soát 2026-09-06`, `cn`, `getApiErrorMessage`, `useNotifications.ts`, `portfolios/[id]/page.tsx`, `task_service.py`, `TaskStatus`, `NotificationService`, `ChatService`?**
-  _High betweenness centrality (0.161) - this node is a cross-community bridge._
+  _High betweenness centrality (0.160) - this node is a cross-community bridge._
 - **Why does `User` connect `User` to `document_service.py`, `sqlalchemy`, `security.py`, `job_runner.py`, `test_change_request_service.py`, `AuthService`, `report_service.py`, `AIRequest`, `endpoints/ai.py`, `test_ws_hardening.py`, `require_permissions`, `test_approval_decisions.py`, `project_service.py`, `.get_user_summary`, `WBSService`, `ProcessModel`, `ProjectService`, `PortfolioService`, `typing`, `AIService`, `pytest`, `list_permissions`, `as_user`, `approvals.ts`, `ai_tasks.py`, `test_xlsx_report_job.py`, `Project`, `ChatService`, `wbs.py`, `AdminUserService`, `ProjectRepository`, `task_service.py`, `test_document_generation_job.py`, `oauth_service.py`, `user_service.py`, `test_security_state.py`, `RoleService`, `DashboardService`, `test_auth_email_verification.py`, `durable_jobs.py`, `test_version_rollback.py`, `list_portfolios`, `env.py`, `RequirementBrief`?**
-  _High betweenness centrality (0.111) - this node is a cross-community bridge._
+  _High betweenness centrality (0.112) - this node is a cross-community bridge._
 - **Why does `DashboardService` connect `DashboardService` to `sqlalchemy`, `User`, `Chi tiết các Giai đoạn đã hoàn thành`, `typing`, `Rà soát 2026-09-06`, `report_service.py`, `AuditLog`, `test_dashboard_metrics.py`, `api.ts`, `.__init__`, `test_xlsx_report_job.py`, `test_recent_activity_filters_by_visible_projects`, `.get_user_summary`, `dashboards.py`, `project_service.py`, `Project`, `TaskStatus`?**
-  _High betweenness centrality (0.053) - this node is a cross-community bridge._
+  _High betweenness centrality (0.050) - this node is a cross-community bridge._
 - **Are the 98 inferred relationships involving `User` (e.g. with `generate_project()` and `generate_project_from_brief()`) actually correct?**
   _`User` has 98 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `npx`, `@executeautomation/playwright-mcp-server`, `extends` to the rest of the system?**
   _545 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `make_user` be split into smaller, more focused modules?**
-  _Cohesion score 0.07184325108853411 - nodes in this community are weakly interconnected._
 - **Should `Button` be split into smaller, more focused modules?**
   _Cohesion score 0.05152057245080501 - nodes in this community are weakly interconnected._
+- **Should `sqlalchemy` be split into smaller, more focused modules?**
+  _Cohesion score 0.07747196738022426 - nodes in this community are weakly interconnected._
