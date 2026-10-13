@@ -1,10 +1,12 @@
 """Phiên bản dự án (V1): danh sách, chi tiết và tạo baseline thủ công."""
 from datetime import datetime
+from typing import Any
 
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
 from app.core.dependencies import CurrentUser, CurrentVerifiedUser
+from app.core.exceptions import UnprocessableException
 from app.services.versioning_service import VersioningServiceDep
 
 router = APIRouter()
@@ -59,3 +61,47 @@ async def create_baseline(
     return await service.create_baseline(
         project_id, current_user, label=body.label, description=body.description
     )
+
+
+class FieldChange(BaseModel):
+    field: str
+    old: Any = None
+    new: Any = None
+
+
+class EntityDiff(BaseModel):
+    # Mục added/removed: bản tóm tắt gọn (id, name; dependency kèm predecessor/successor);
+    # mục changed thêm danh sách `changes`.
+    added: list[dict[str, Any]]
+    removed: list[dict[str, Any]]
+    changed: list[dict[str, Any]]
+    truncated: bool
+
+
+class VersionDiffResponse(BaseModel):
+    project_id: int
+    base: ProjectVersionResponse
+    target: ProjectVersionResponse | None
+    target_is_current: bool
+    entities: dict[str, EntityDiff]
+    summary: dict[str, Any]
+    truncated: bool
+
+
+@router.get(
+    "/projects/{project_id}/versions/{base_id}/diff/{target}", response_model=VersionDiffResponse
+)
+async def diff_versions(
+    project_id: int, base_id: int, target: str, service: VersioningServiceDep, current_user: CurrentUser
+):
+    """So sánh phiên bản `base_id` với phiên bản `target` (số id) hoặc `current` (hiện trạng).
+
+    Chỉ trả diff đã cắt gọn, không trả snapshot đầy đủ.
+    """
+    if target == "current":
+        target_id = None
+    elif target.isdigit():
+        target_id = int(target)
+    else:
+        raise UnprocessableException("target must be a version id or 'current'")
+    return await service.diff_versions(project_id, base_id, target_id, current_user)

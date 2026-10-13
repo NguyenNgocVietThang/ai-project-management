@@ -143,8 +143,9 @@ Bằng chứng V1: test_project_versions.py 5 passed, test_project_versions_post
 ### V2: So sánh hai phiên bản
 **Mô tả:** Hàm diff thuần (thêm/xóa/sửa theo thực thể và trường); endpoint diff; UI danh sách phiên bản và màn hình so sánh.
 **Tiêu chí:**
-- [ ] Diff đúng với các ca thêm/xóa/sửa ngày/sửa dependency
-- [ ] Phiên bản lớn không trả toàn bộ snapshot ra client khi chỉ cần diff
+- [x] Diff đúng với các ca thêm/xóa/sửa ngày/sửa dependency
+- [x] Phiên bản lớn không trả toàn bộ snapshot ra client khi chỉ cần diff (chỉ tóm tắt, cắt 500 mục/nhóm)
+Bằng chứng V2: test_version_diff.py + test_project_versions.py 13 passed; vitest 19 tệp / 97 test; type-check, lint đạt.
 **Xác minh:** unit test diff; vitest; trình duyệt.
 **Phụ thuộc:** V1. **Tệp:** `utils/version_diff.py`, endpoint, frontend page/hook, test. **Quy mô:** M
 

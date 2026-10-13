@@ -27,3 +27,4 @@ Nhánh: `feature/phase4-workflow-reporting` (tạo từ `main` ngày 2026-10-12)
 - 2026-10-13: C4 xong. `POST /ai/generate-project-from-brief`, prompt chỉ dùng mục clear/assumed, mục skipped chỉ nêu tên; khóa hồ sơ trong apply, hồ sơ `consumed`.
 - 2026-10-13: V1 xong. `versioning_service` (snapshot schema_version 1 theo V0, cap 50), endpoint `/projects/{id}/versions`, baseline chỉ PM/admin, móc snapshot khi PM duyệt cuối. Lưu ý: cap toàn baseline làm bước PM duyệt nhận 409 (chờ người dùng duyệt).
 - 2026-10-13: C5 xong. RequirementClarifier thay nội dung AIGeneratorModal; namespace i18n `clarifier`; lưu id hồ sơ/job trong localStorage để khôi phục.
+- 2026-10-13: V2 xong. `utils/version_diff.py`, `GET /projects/{id}/versions/{a}/diff/{b|current}`, trang `/projects/[id]/versions`, tab Phiên bản. Điều phối viên thêm key i18n `versions` (json.dump làm nở vài dòng gộp, nội dung không đổi).

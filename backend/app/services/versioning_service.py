@@ -36,6 +36,7 @@ from app.services.phase2_common import (
     json_value,
     require_project_roles,
 )
+from app.utils.version_diff import diff_snapshots
 
 SNAPSHOT_SCHEMA_VERSION = 1
 # Số phiên bản tối đa mỗi dự án. Đề xuất chuyển thành settings PROJECT_VERSION_CAP.
@@ -211,6 +212,33 @@ class VersioningService:
         if include_snapshot:
             data["snapshot"] = version.snapshot
         return data
+
+    async def _load(self, project_id: int, version_id: int) -> ProjectVersion:
+        version = await self.db.get(ProjectVersion, version_id)
+        if version is None or version.project_id != project_id:
+            raise NotFoundException("Project version not found")
+        return version
+
+    async def diff_versions(
+        self, project_id: int, base_id: int, target_id: int | None, user: User
+    ) -> dict:
+        """So sánh hai phiên bản; `target_id=None` nghĩa là so với hiện trạng (không lưu)."""
+        await get_project_context(self.db, project_id, user)
+        base = await self._load(project_id, base_id)
+        if target_id is None:
+            target_snapshot = await build_snapshot(self.db, project_id, kind="current")
+            target_meta = None
+        else:
+            target = await self._load(project_id, target_id)
+            target_snapshot = target.snapshot or {}
+            target_meta = version_metadata(target)
+        return {
+            "project_id": project_id,
+            "base": version_metadata(base),
+            "target": target_meta,
+            "target_is_current": target_id is None,
+            **diff_snapshots(base.snapshot or {}, target_snapshot),
+        }
 
     async def create_baseline(
         self, project_id: int, user: User, *, label: str, description: str | None = None

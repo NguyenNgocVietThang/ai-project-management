@@ -3,7 +3,7 @@ import pytest
 import pytest_asyncio
 from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy import insert, select
+from sqlalchemy import func, insert, select
 
 import app.db.base  # noqa: F401 - đăng ký các quan hệ SQLAlchemy
 from app.api.v1.endpoints import project_versions as versions_endpoint
@@ -163,3 +163,46 @@ async def test_endpoints_permissions_and_contract(session, make_user, seed_roles
         assert (await client.get(f"{base}/999999")).status_code == 404
     async with http_as(users["Outsider"]) as client:
         assert (await client.get(base)).status_code == 403
+
+
+@pytest.mark.asyncio
+async def test_diff_endpoint(session, make_user, seed_roles, http_as):
+    project, users, (t1, t2) = await _setup(session, make_user, seed_roles)
+    v1 = await create_snapshot(session, project.id, users["PM"], label="v1")
+    t1.name = "A renamed"
+    session.add(Task(name="New", project_id=project.id))
+    dep = await session.scalar(select(Dependency))
+    dep.lag_days = 3
+    await session.flush()
+    v2 = await create_snapshot(session, project.id, users["PM"], label="v2")
+    await session.commit()
+    base = f"/api/v1/projects/{project.id}/versions"
+    async with http_as(users["Member"]) as client:
+        resp = await client.get(f"{base}/{v1.id}/diff/{v2.id}")
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["base"]["id"] == v1.id and body["target"]["id"] == v2.id
+        assert body["target_is_current"] is False
+        assert "snapshot" not in body or body.get("snapshot") is None
+        assert body["base"]["snapshot"] is None and body["target"]["snapshot"] is None
+        tasks = body["entities"]["tasks"]
+        assert [t["name"] for t in tasks["added"]] == ["New"]
+        assert tasks["changed"][0]["changes"] == [{"field": "name", "old": "A", "new": "A renamed"}]
+        deps = body["entities"]["dependencies"]["changed"]
+        assert deps[0]["changes"] == [{"field": "lag_days", "old": 0, "new": 3}]
+        assert body["summary"]["total"] == {"added": 1, "removed": 0, "changed": 2}
+
+        # So với hiện trạng: xóa task t2 sau v2.
+        await session.delete(dep)
+        await session.delete(t2)
+        await session.commit()
+        current = (await client.get(f"{base}/{v2.id}/diff/current")).json()
+        assert current["target"] is None and current["target_is_current"] is True
+        assert [t["id"] for t in current["entities"]["tasks"]["removed"]] == [t2.id]
+        assert len(current["entities"]["dependencies"]["removed"]) == 1
+        assert await session.scalar(select(func.count()).select_from(ProjectVersion)) == 2
+
+        assert (await client.get(f"{base}/{v1.id}/diff/abc")).status_code == 422
+        assert (await client.get(f"{base}/{v1.id}/diff/999999")).status_code == 404
+    async with http_as(users["Outsider"]) as client:
+        assert (await client.get(f"{base}/{v1.id}/diff/{v2.id}")).status_code == 403
