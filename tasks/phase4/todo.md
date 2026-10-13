@@ -52,9 +52,10 @@ Bằng chứng C4: test_project_from_brief_job.py 6 passed (5 lần chạy liên
 ### C5: UI hỏi làm rõ
 **Mô tả:** Thay `AIGeneratorModal` bằng luồng: nhập ý tưởng, chat từng câu, bảng tiến độ mục (ví dụ 4/7 rõ), nút chấp nhận/sửa giả định, "Bỏ qua, tạo luôn", tạo dự án. Theo dõi job theo cơ chế polling hiện có; tải lại trang khôi phục hồ sơ. EN/VI.
 **Tiêu chí:**
-- [ ] Refresh giữa chừng không mất hội thoại
-- [ ] Giả định hiển thị khác biệt rõ với mục người dùng xác nhận
-- [ ] 390px không tràn ngang
+- [x] Refresh giữa chừng không mất hội thoại (test mount lại từ id đã lưu)
+- [x] Giả định hiển thị khác biệt rõ với mục người dùng xác nhận (nhãn chữ + viền nét đứt)
+- [ ] 390px không tràn ngang (chờ kiểm tra trình duyệt ở checkpoint)
+Bằng chứng C5: AIGeneratorModal.test.tsx 9 passed; type-check, lint, build đạt.
 **Xác minh:** vitest; type-check, lint, build; kiểm tra trình duyệt với provider giả.
 **Phụ thuộc:** C3, C4. **Tệp:** `features/ai/components/RequirementClarifier.tsx`, hook + service, `AIGeneratorModal.tsx`, `messages/*.json`, test. **Quy mô:** M
 
