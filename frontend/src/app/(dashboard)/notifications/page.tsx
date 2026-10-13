@@ -1,10 +1,12 @@
 'use client'
 import { useTranslations } from 'next-intl'
 
-import { CheckCheck } from 'lucide-react'
+import { BellOff, CheckCheck, ListFilter } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/common/Button'
 import { EmptyState, ErrorState, LoadingState } from '@/components/common/PageState'
+import { Card } from '@/components/ui/Card'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { NotificationItem } from '@/features/notifications/components/NotificationItem'
 import {
   useDeleteNotification,
@@ -33,53 +35,72 @@ export default function NotificationsPage() {
   const markAllRead = useMarkAllRead()
   const remove = useDeleteNotification()
 
-  if (query.isLoading) return <LoadingState label="Loading notifications…" />
-  if (query.isError) return <ErrorState message={getApiErrorMessage(query.error)} />
-
   const data = query.data
   const totalPages = Math.max(1, data?.total_pages ?? 1)
+  const unreadCount = data?.unread_count ?? 0
 
   return (
-    <div className="space-y-6">
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">{t('title')}</h1>
-          <p className="text-sm text-muted-foreground">
-            {t('unreadOf', { unread: data?.unread_count ?? 0, total: data?.total ?? 0 })}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button
-            variant="outline"
-            className="w-auto"
-            aria-pressed={unreadOnly}
-            onClick={() => {
-              setUnreadOnly((current) => !current)
-              setPage(1)
-            }}
-          >
-            {unreadOnly ? t('showAll') : t('unreadOnly')}
-          </Button>
-          {(data?.unread_count ?? 0) > 0 && (
+    <div className="space-y-8">
+      <PageHeader
+        title={t('title')}
+        description={data ? t('unreadOf', { unread: unreadCount, total: data.total }) : undefined}
+        actions={
+          <>
             <Button
-              className="w-auto"
-              isLoading={markAllRead.isPending}
-              onClick={() => markAllRead.mutate()}
+              variant="outline"
+              fullWidth={false}
+              aria-pressed={unreadOnly}
+              onClick={() => {
+                setUnreadOnly((current) => !current)
+                setPage(1)
+              }}
             >
-              <CheckCheck className="h-4 w-4" aria-hidden="true" />
-              {t('markAllRead')}
+              <ListFilter className="h-4 w-4" aria-hidden="true" />
+              {unreadOnly ? t('showAll') : t('unreadOnly')}
             </Button>
-          )}
-        </div>
-      </header>
+            {unreadCount > 0 && (
+              <Button fullWidth={false} isLoading={markAllRead.isPending} onClick={() => markAllRead.mutate()}>
+                <CheckCheck className="h-4 w-4" aria-hidden="true" />
+                {t('markAllRead')}
+              </Button>
+            )}
+          </>
+        }
+      />
 
-      {!data || data.items.length === 0 ? (
+      {query.isLoading && <LoadingState variant="table" label={tCommon('loading')} />}
+      {query.isError && (
+        <ErrorState
+          message={getApiErrorMessage(query.error)}
+          onRetry={() => void query.refetch()}
+          retryLabel={tCommon('retry')}
+        />
+      )}
+
+      {data && data.items.length === 0 && (
         <EmptyState
+          icon={BellOff}
           title={unreadOnly ? t('nothingUnread') : t('empty')}
           description={t('emptyMessage')}
+          action={
+            unreadOnly ? (
+              <Button
+                variant="outline"
+                fullWidth={false}
+                onClick={() => {
+                  setUnreadOnly(false)
+                  setPage(1)
+                }}
+              >
+                {t('showAll')}
+              </Button>
+            ) : undefined
+          }
         />
-      ) : (
-        <div className="divide-y rounded-xl border bg-card">
+      )}
+
+      {data && data.items.length > 0 && (
+        <Card flush className="divide-y overflow-hidden">
           {data.items.map((item) => (
             <NotificationItem
               key={item.id}
@@ -88,28 +109,28 @@ export default function NotificationsPage() {
               onDelete={(id) => remove.mutate(id)}
             />
           ))}
-        </div>
+        </Card>
       )}
 
-      {totalPages > 1 && (
+      {data && totalPages > 1 && (
         <nav
-          className="flex items-center justify-between gap-3 text-sm"
+          className="flex items-center justify-between gap-3 text-body-sm"
           aria-label={t('pages')}
         >
           <Button
             variant="outline"
-            className="w-auto"
+            fullWidth={false}
             disabled={page <= 1}
             onClick={() => setPage((current) => Math.max(1, current - 1))}
           >
             {tCommon('previous')}
           </Button>
-          <span className="text-muted-foreground">
+          <span className="text-center text-muted-foreground">
             {tCommon('page', { page, total: totalPages })}
           </span>
           <Button
             variant="outline"
-            className="w-auto"
+            fullWidth={false}
             disabled={page >= totalPages}
             onClick={() => setPage((current) => current + 1)}
           >

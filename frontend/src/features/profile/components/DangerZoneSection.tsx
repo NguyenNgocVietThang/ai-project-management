@@ -40,7 +40,12 @@ export function DangerZoneSection({ username, onDelete, isLoading, error }: Dang
       description="Deactivating your account is permanent and signs you out everywhere."
     >
       {!isOpen ? (
-        <Button type="button" variant="outline" className="border-destructive text-destructive sm:w-auto" onClick={() => setIsOpen(true)}>
+        <Button
+          type="button"
+          variant="outline"
+          className="border-destructive/40 text-destructive hover:border-destructive hover:bg-destructive/10 hover:text-destructive sm:w-auto"
+          onClick={() => setIsOpen(true)}
+        >
           Deactivate account
         </Button>
       ) : (
@@ -56,7 +61,7 @@ export function DangerZoneSection({ username, onDelete, isLoading, error }: Dang
           className="max-w-xl space-y-4"
         >
           {error && <Alert>{error}</Alert>}
-          <p className="text-sm text-muted-foreground">
+          <p className="text-body-sm text-muted-foreground">
             Your project and audit history will remain, but personal details and sign-in methods will be removed.
             Type <strong className="text-foreground">{username}</strong> to confirm.
           </p>
@@ -70,18 +75,19 @@ export function DangerZoneSection({ username, onDelete, isLoading, error }: Dang
               {...register('username')}
             />
             {errors.username && (
-              <p id="delete-username-error" className="mt-1.5 text-sm text-destructive">
+              <p id="delete-username-error" className="mt-1 text-body-sm text-destructive">
                 {errors.username.message}
               </p>
             )}
           </div>
-          <div className="flex flex-col gap-2 sm:flex-row">
+          <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
             <Button type="button" variant="ghost" className="sm:w-auto" onClick={() => setIsOpen(false)}>
               Cancel
             </Button>
             <Button
               type="submit"
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 sm:w-auto"
+              variant="destructive"
+              className="sm:w-auto"
               isLoading={isLoading}
               disabled={confirmation !== username}
             >

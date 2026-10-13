@@ -1,10 +1,14 @@
 'use client'
 
 import { useQueryClient } from '@tanstack/react-query'
-import { Send } from 'lucide-react'
+import { MessageSquare, Send } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/common/Button'
-import { ErrorState, LoadingState } from '@/components/common/PageState'
+import { EmptyState, ErrorState } from '@/components/common/PageState'
+import { Badge } from '@/components/ui/Badge'
+import { Card } from '@/components/ui/Card'
+import { Skeleton, SkeletonRegion } from '@/components/ui/Skeleton'
+import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
 import { getApiErrorMessage } from '@/types/api.types'
 import { chatKeys, useChatHistory, useMarkChatRead, usePostChatMessage } from '../hooks/useChat'
@@ -71,39 +75,65 @@ export function ChatPanel({ projectId }: Props) {
     }
   }
 
-  if (history.isLoading) return <LoadingState label="Loading chat…" />
+  // Khung xương có dạng khung chat (đầu, vài bong bóng xen kẽ hai bên, ô nhập) để không nhảy bố cục.
+  if (history.isLoading) {
+    return (
+      <SkeletonRegion label="Loading chat…">
+        <Card flush className="flex h-[calc(100dvh-260px)] min-h-[420px] flex-col overflow-hidden">
+          <div className="flex items-center justify-between border-b px-4 py-3">
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-6 w-16 rounded-full" />
+          </div>
+          <div className="flex-1 space-y-4 p-4">
+            {[0, 1, 2, 3].map(i => (
+              <div key={i} className={cn('flex items-end gap-3', i % 2 === 1 && 'flex-row-reverse')}>
+                <Skeleton className="h-8 w-8 shrink-0 rounded-full" />
+                <Skeleton className={cn('h-12 rounded-2xl', i % 2 === 1 ? 'w-1/3' : 'w-1/2')} />
+              </div>
+            ))}
+          </div>
+          <div className="border-t p-3"><Skeleton className="h-11 w-full" /></div>
+        </Card>
+      </SkeletonRegion>
+    )
+  }
   if (history.isError) {
-    return <ErrorState message={getApiErrorMessage(history.error, 'Could not load chat history.')} />
+    return <ErrorState message={getApiErrorMessage(history.error, 'Could not load chat history.')} onRetry={() => void history.refetch()} />
   }
 
   return (
-    <div className="flex h-[calc(100vh-260px)] min-h-[420px] flex-col rounded-xl border">
-      <div className="flex items-center justify-between border-b px-4 py-3">
-        <h2 className="text-sm font-semibold">Project chat</h2>
-        <span
-          className={`flex items-center gap-1.5 text-xs ${isConnected ? 'text-emerald-600' : 'text-muted-foreground'}`}
-        >
-          <span className={`h-1.5 w-1.5 rounded-full ${isConnected ? 'bg-emerald-500' : 'bg-muted-foreground/50'}`} />
+    <Card flush className="flex h-[calc(100dvh-260px)] min-h-[420px] flex-col overflow-hidden">
+      {/* ===== Đầu khung chat: tiêu đề + trạng thái kết nối WebSocket ===== */}
+      <div className="flex items-center justify-between gap-3 border-b px-4 py-3">
+        <h2 className="text-h4">Project chat</h2>
+        <Badge tone={isConnected ? 'success' : 'neutral'} dot>
           {isConnected ? 'Live' : 'Connecting…'}
-        </span>
+        </Badge>
       </div>
 
+      {/* ===== Vùng tin nhắn: tự cuộn, ô nhập luôn nằm ở đáy khung ===== */}
       <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
         {history.hasNextPage && (
           <div className="flex justify-center pb-2">
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
+              fullWidth={false}
               onClick={() => history.fetchNextPage()}
               disabled={history.isFetchingNextPage}
-              className="text-xs text-muted-foreground hover:text-foreground disabled:opacity-50"
+              className="text-muted-foreground"
             >
               {history.isFetchingNextPage ? 'Loading…' : 'Load earlier messages'}
-            </button>
+            </Button>
           </div>
         )}
         {messages.length === 0 && (
-          <p className="py-8 text-center text-sm text-muted-foreground">
-            No messages yet — say hi to the team.
-          </p>
+          <EmptyState
+            icon={MessageSquare}
+            title="No messages yet"
+            description="Start the conversation and say hi to the team."
+            className="min-h-0 border-0 bg-transparent py-8"
+          />
         )}
         {messages.map((message) => (
           <ChatMessageItem key={message.id} message={message} isOwn={message.user_id === currentUserId} />
@@ -111,7 +141,7 @@ export function ChatPanel({ projectId }: Props) {
         <div ref={bottomRef} />
       </div>
 
-      <div className="flex items-end gap-2 border-t p-3">
+      <div className="sticky bottom-0 flex items-end gap-2 border-t bg-card p-3">
         <textarea
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
@@ -122,19 +152,21 @@ export function ChatPanel({ projectId }: Props) {
             }
           }}
           placeholder="Write a message…"
+          aria-label="Write a message"
           rows={1}
-          className="max-h-32 min-h-[44px] flex-1 resize-none rounded-md border border-input bg-background px-3 py-2.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="max-h-32 min-h-11 flex-1 resize-none rounded-lg border border-input bg-card px-3 py-2 text-body shadow-xs transition-[border-color,box-shadow] duration-150 placeholder:text-muted-foreground hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:text-body-sm"
         />
         <Button
           onClick={handleSend}
           disabled={!draft.trim()}
           isLoading={postMessage.isPending}
-          className="w-auto shrink-0 px-3"
+          size="icon"
+          fullWidth={false}
           aria-label="Send message"
         >
-          <Send className="h-4 w-4" />
+          {!postMessage.isPending && <Send className="h-4 w-4" aria-hidden="true" />}
         </Button>
       </div>
-    </div>
+    </Card>
   )
 }

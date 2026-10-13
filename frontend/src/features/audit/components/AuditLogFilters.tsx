@@ -1,7 +1,10 @@
 'use client'
 
+import { X } from 'lucide-react'
+import { Button } from '@/components/common/Button'
 import { Input } from '@/components/common/Input'
 import { Label } from '@/components/common/Label'
+import { Card } from '@/components/ui/Card'
 import type { AuditLogListParams } from '@/types/admin.types'
 
 export function AuditLogFilters({
@@ -11,8 +14,11 @@ export function AuditLogFilters({
   value: AuditLogListParams
   onChange: (value: AuditLogListParams) => void
 }) {
+  const hasFilters = Boolean(value.entity_type || value.action || value.date_from || value.date_to)
+
   return (
-    <div className="grid gap-3 rounded-xl border bg-card p-4 sm:grid-cols-4">
+    // Thanh bộ lọc: 1 cột trên mobile, 2 cột tablet, 4 trường + nút xoá trên desktop
+    <Card className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[repeat(4,minmax(0,1fr))_auto] xl:items-end">
       <div>
         <Label htmlFor="audit-entity-type">Entity type</Label>
         <Input
@@ -49,6 +55,16 @@ export function AuditLogFilters({
           onChange={(event) => onChange({ ...value, date_to: event.target.value || undefined })}
         />
       </div>
-    </div>
+      <Button
+        type="button"
+        variant="ghost"
+        className="sm:col-span-2 sm:w-auto sm:justify-self-end xl:col-span-1"
+        disabled={!hasFilters}
+        onClick={() => onChange({})}
+      >
+        <X className="h-4 w-4" aria-hidden="true" />
+        Clear filters
+      </Button>
+    </Card>
   )
 }

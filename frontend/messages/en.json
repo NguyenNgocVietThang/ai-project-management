@@ -73,7 +73,10 @@
     "notifications": "Notifications",
     "openNavigation": "Open navigation",
     "closeNavigation": "Close navigation",
-    "mainNavigation": "Main navigation"
+    "mainNavigation": "Main navigation",
+    "groupWorkspace": "Workspace",
+    "groupPersonal": "Personal",
+    "groupAdmin": "Administration"
   },
   "theme": {
     "label": "Colour theme",
@@ -205,7 +208,10 @@
     "skipContent": "Skip to content",
     "aiTitle": "Start with a clear plan",
     "aiDescription": "Turn your project brief into phases, tasks and dependencies with AI.",
-    "explore": "Explore projects"
+    "explore": "Explore projects",
+    "fireworks": "Fireworks on click",
+    "effects": "Effects",
+    "fireworksReducedMotion": "Disabled because reduced motion is on"
   },
   "home": {
     "eyebrow": "YOUR WORKSPACE, AT A GLANCE",
@@ -573,5 +579,11 @@
       "ai_quota_exceeded": "AI quota exceeded. Try again later.",
       "forbidden": "You do not have permission to generate the process."
     }
+  },
+  "breadcrumb": {
+    "label": "Breadcrumb",
+    "users": "Users",
+    "roles": "Roles",
+    "audit": "Audit log"
   }
 }

@@ -73,7 +73,10 @@
     "notifications": "Thông báo",
     "openNavigation": "Mở điều hướng",
     "closeNavigation": "Đóng điều hướng",
-    "mainNavigation": "Điều hướng chính"
+    "mainNavigation": "Điều hướng chính",
+    "groupWorkspace": "Không gian làm việc",
+    "groupPersonal": "Cá nhân",
+    "groupAdmin": "Quản trị"
   },
   "theme": {
     "label": "Giao diện màu",
@@ -205,7 +208,10 @@
     "skipContent": "Đến nội dung chính",
     "aiTitle": "Bắt đầu từ kế hoạch rõ ràng",
     "aiDescription": "Dùng AI để chuyển mô tả dự án thành giai đoạn, công việc và các quan hệ phụ thuộc.",
-    "explore": "Khám phá dự án"
+    "explore": "Khám phá dự án",
+    "fireworks": "Pháo hoa khi nhấp chuột",
+    "effects": "Hiệu ứng",
+    "fireworksReducedMotion": "Đã tắt do bật chế độ giảm chuyển động"
   },
   "home": {
     "eyebrow": "TỔNG QUAN KHÔNG GIAN LÀM VIỆC",
@@ -573,5 +579,11 @@
       "ai_quota_exceeded": "Đã vượt hạn mức AI. Thử lại sau.",
       "forbidden": "Bạn không có quyền sinh quy trình."
     }
+  },
+  "breadcrumb": {
+    "label": "Đường dẫn trang",
+    "users": "Người dùng",
+    "roles": "Vai trò",
+    "audit": "Nhật ký kiểm toán"
   }
 }

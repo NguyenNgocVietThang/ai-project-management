@@ -6,11 +6,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Alert } from '@/components/common/Alert'
-import { Button } from '@/components/common/Button'
+import { Button, buttonClasses } from '@/components/common/Button'
 import { Input } from '@/components/common/Input'
 import { Label } from '@/components/common/Label'
 import { getPasswordStrength, passwordSchema } from '@/features/auth/auth.validation'
 import { useAuth } from '@/hooks/useAuth'
+
+// Màu thanh độ mạnh mật khẩu theo token ngữ nghĩa (chỉ số = strength.score).
+const STRENGTH_TONES = ['bg-muted', 'bg-destructive', 'bg-warning', 'bg-success'] as const
 
 const resetPasswordSchema = z
   .object({
@@ -43,11 +46,11 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
   if (!token) {
     return (
-      <div className="space-y-5">
+      <div className="space-y-6">
         <Alert>This password reset link is missing its token.</Alert>
         <Link
           href="/forgot-password"
-          className="inline-flex min-h-[44px] w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className={buttonClasses({ size: 'lg', fullWidth: true })}
         >
           Request a new link
         </Link>
@@ -64,7 +67,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   })
 
   return (
-    <form onSubmit={onSubmit} noValidate className="space-y-5">
+    <form onSubmit={onSubmit} noValidate className="space-y-6">
       {resetPasswordError && <Alert>{resetPasswordError}</Alert>}
 
       <div>
@@ -74,28 +77,27 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           type="password"
           autoComplete="new-password"
           hasError={Boolean(errors.new_password)}
-          aria-describedby={errors.new_password ? 'new-password-error' : undefined}
           {...register('new_password', {
             onChange: (event) => setPasswordInput(event.target.value),
           })}
         />
+        {errors.new_password && (
+          <p id="new_password-error" className="mt-2 text-body-sm text-destructive">
+            {errors.new_password.message}
+          </p>
+        )}
         {passwordInput && (
           <div className="mt-2 space-y-1">
-            <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-muted">
+            <div className="flex h-2 w-full overflow-hidden rounded-full bg-muted" aria-hidden="true">
               <div
-                className={`h-full transition-all duration-300 ${strength.color}`}
+                className={`h-full rounded-full transition-[width] duration-300 ease-out-soft ${STRENGTH_TONES[strength.score] ?? 'bg-muted'}`}
                 style={{ width: `${(strength.score / 3) * 100}%` }}
               />
             </div>
-            <p className="text-xs text-muted-foreground">
-              Password strength: <span className="font-medium">{strength.label}</span>
+            <p className="text-caption text-muted-foreground">
+              Password strength: <span className="font-medium text-foreground">{strength.label}</span>
             </p>
           </div>
-        )}
-        {errors.new_password && (
-          <p id="new-password-error" className="mt-1.5 text-sm text-destructive">
-            {errors.new_password.message}
-          </p>
         )}
       </div>
 
@@ -106,22 +108,21 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           type="password"
           autoComplete="new-password"
           hasError={Boolean(errors.confirm_password)}
-          aria-describedby={errors.confirm_password ? 'confirm-password-error' : undefined}
           {...register('confirm_password')}
         />
         {errors.confirm_password && (
-          <p id="confirm-password-error" className="mt-1.5 text-sm text-destructive">
+          <p id="confirm_password-error" className="mt-2 text-body-sm text-destructive">
             {errors.confirm_password.message}
           </p>
         )}
       </div>
 
-      <Button type="submit" isLoading={isResettingPassword}>
+      <Button type="submit" size="lg" isLoading={isResettingPassword}>
         {isResettingPassword ? 'Resetting password…' : 'Reset password'}
       </Button>
 
-      <p className="text-center text-sm text-muted-foreground">
-        <Link href="/login" className="font-medium text-primary hover:underline">
+      <p className="text-center text-body-sm text-muted-foreground">
+        <Link href="/login" className="font-medium text-primary underline-offset-4 hover:underline">
           Back to sign in
         </Link>
       </p>

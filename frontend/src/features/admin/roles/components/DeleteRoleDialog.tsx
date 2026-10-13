@@ -21,7 +21,7 @@ export function DeleteRoleDialog({
   return (
     <Modal open={Boolean(role)} onClose={onClose} title="Delete role" className="max-w-lg">
       {error && <Alert className="mb-4">{error}</Alert>}
-      <p className="text-sm text-muted-foreground">
+      <p className="text-body-sm text-muted-foreground">
         Delete <strong className="text-foreground">{role?.name}</strong>? This cannot be undone.
       </p>
       <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">

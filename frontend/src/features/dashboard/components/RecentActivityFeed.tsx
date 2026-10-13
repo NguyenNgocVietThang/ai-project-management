@@ -7,15 +7,18 @@ import { formatDistanceToNow, parseISO } from 'date-fns'
 import { useLocale, useTranslations } from 'next-intl'
 import { vi, enUS } from 'date-fns/locale'
 import { Activity } from 'lucide-react'
+import { Card, CardTitle } from '@/components/ui/Card'
 import { formatStatus } from '@/lib/format'
+import { cn } from '@/lib/utils'
 import type { RecentActivityItem } from '@/features/dashboard/types/dashboard.types'
 
+// Loại thực thể -> màu chấm theo token ngữ nghĩa
 const ENTITY_COLOR: Record<string, string> = {
-  Task: 'bg-blue-500',
-  Project: 'bg-violet-500',
-  Phase: 'bg-emerald-500',
-  Sprint: 'bg-amber-500',
-  Milestone: 'bg-rose-500',
+  Task: 'bg-info',
+  Project: 'bg-primary',
+  Phase: 'bg-success',
+  Sprint: 'bg-warning',
+  Milestone: 'bg-destructive',
 }
 
 function timeAgo(dateStr: string, locale: string): string {
@@ -29,18 +32,18 @@ function timeAgo(dateStr: string, locale: string): string {
 function ActivityRow({ item }: { item: RecentActivityItem }) {
   const locale = useLocale()
   const t = useTranslations('home')
-  const color = ENTITY_COLOR[item.entity_type] ?? 'bg-gray-400'
+  const color = ENTITY_COLOR[item.entity_type] ?? 'bg-muted-foreground'
   return (
-    <div className="flex gap-3 py-2.5">
-      <div className="flex flex-col items-center">
-        <span className={`mt-1 h-2 w-2 shrink-0 rounded-full ${color}`} />
-        <span className="mt-1.5 w-px flex-1 bg-border" />
+    <div className="flex gap-3 py-2">
+      <div className="flex flex-col items-center" aria-hidden="true">
+        <span className={cn('mt-1 h-2 w-2 shrink-0 rounded-full', color)} />
+        <span className="mt-2 w-px flex-1 bg-border" />
       </div>
       <div className="min-w-0 pb-2">
-        <p className="text-sm text-foreground">
+        <p className="break-words text-body-sm text-foreground">
           {item.description || formatStatus(item.action)}
         </p>
-        <p className="mt-0.5 text-xs text-muted-foreground">
+        <p className="mt-1 text-caption text-muted-foreground">
           <span className="font-medium">{item.actor_name ?? t('system')}</span>
           {' · '}
           <span className="capitalize">{item.entity_type}</span>
@@ -59,20 +62,22 @@ interface RecentActivityFeedProps {
 export function RecentActivityFeed({ items }: RecentActivityFeedProps) {
   const t = useTranslations('home')
   return (
-    <section className="overflow-hidden rounded-2xl border bg-card">
-      <div className="flex items-center gap-2 border-b px-5 py-3.5">
-        <Activity className="h-4 w-4 text-primary" />
-        <h2 className="text-sm font-semibold">{t('activity')}</h2>
+    <Card as="section" flush className="overflow-hidden">
+      <div className="flex items-center gap-2 border-b px-4 py-4 sm:px-6">
+        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent">
+          <Activity className="h-4 w-4 text-accent-foreground" aria-hidden="true" />
+        </span>
+        <CardTitle>{t('activity')}</CardTitle>
       </div>
-      <div className="px-5">
+      <div className="px-4 py-2 sm:px-6">
         {items.length === 0 ? (
-          <p className="py-8 text-center text-sm text-muted-foreground">{t('noActivity')}</p>
+          <p className="py-8 text-center text-body-sm text-muted-foreground">{t('noActivity')}</p>
         ) : (
           items.map((item) => (
             <ActivityRow key={item.id} item={item} />
           ))
         )}
       </div>
-    </section>
+    </Card>
   )
 }

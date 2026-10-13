@@ -7,54 +7,58 @@
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { AlertTriangle, Flag } from 'lucide-react'
+import { Badge, type BadgeTone } from '@/components/ui/Badge'
+import { Card, CardTitle } from '@/components/ui/Card'
 import { formatDate, formatStatus } from '@/lib/format'
+import { cn } from '@/lib/utils'
 import type { MyTaskItem } from '@/features/dashboard/types/dashboard.types'
 
-const PRIORITY_COLOR: Record<string, string> = {
-  critical: 'text-red-500',
-  high: 'text-orange-500',
-  medium: 'text-amber-500',
-  low: 'text-blue-400',
+// Mức ưu tiên -> tông màu ngữ nghĩa của Badge
+const PRIORITY_TONE: Record<string, BadgeTone> = {
+  critical: 'danger',
+  high: 'warning',
+  medium: 'info',
+  low: 'neutral',
 }
 
+// Trạng thái task -> màu chấm tròn theo token
 const STATUS_DOT: Record<string, string> = {
-  todo: 'bg-gray-400',
-  in_progress: 'bg-blue-500',
-  in_review: 'bg-amber-500',
-  done: 'bg-emerald-500',
-  blocked: 'bg-red-500',
+  todo: 'bg-muted-foreground',
+  in_progress: 'bg-info',
+  in_review: 'bg-warning',
+  done: 'bg-success',
+  blocked: 'bg-destructive',
 }
 
 function TaskRow({ task }: { task: MyTaskItem }) {
   return (
     <Link
       href={`/projects/${task.project_id}/tasks`}
-      className="group flex items-start gap-3 rounded-lg p-2.5 transition-colors hover:bg-accent"
+      className="group flex min-h-11 items-start gap-3 rounded-lg p-3 transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       <span
-        className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${STATUS_DOT[task.status.toLowerCase()] ?? 'bg-gray-400'}`}
+        aria-hidden="true"
+        className={cn('mt-2 h-2 w-2 shrink-0 rounded-full', STATUS_DOT[task.status.toLowerCase()] ?? 'bg-muted-foreground')}
       />
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-foreground group-hover:text-primary">
+        <p className="truncate text-body-sm font-medium text-foreground transition-colors group-hover:text-primary">
           {task.name}
         </p>
-        <p className="mt-0.5 text-xs text-muted-foreground">{task.project_name}</p>
+        <p className="mt-1 truncate text-caption text-muted-foreground">{task.project_name}</p>
       </div>
       <div className="flex shrink-0 flex-col items-end gap-1">
-        <span
-          className={`flex items-center gap-0.5 text-xs font-medium ${PRIORITY_COLOR[task.priority.toLowerCase()] ?? 'text-muted-foreground'}`}
-        >
-          <Flag className="h-3 w-3" />
+        <Badge size="sm" tone={PRIORITY_TONE[task.priority.toLowerCase()] ?? 'neutral'}>
+          <Flag className="h-3 w-3" aria-hidden="true" />
           {formatStatus(task.priority)}
-        </span>
+        </Badge>
         {task.is_overdue && (
-          <span className="flex items-center gap-0.5 text-xs font-medium text-red-500">
-            <AlertTriangle className="h-3 w-3" />
+          <span className="flex items-center gap-1 text-caption font-medium text-destructive">
+            <AlertTriangle className="h-3 w-3" aria-hidden="true" />
             {task.due_date ? formatDate(task.due_date) : 'Overdue'}
           </span>
         )}
         {!task.is_overdue && task.due_date && (
-          <span className="text-xs text-muted-foreground">{formatDate(task.due_date)}</span>
+          <span className="text-caption text-muted-foreground">{formatDate(task.due_date)}</span>
         )}
       </div>
     </Link>
@@ -68,26 +72,24 @@ interface MyTasksListProps {
 export function MyTasksList({ tasks }: MyTasksListProps) {
   const t = useTranslations('home')
   return (
-    <section className="overflow-hidden rounded-2xl border bg-card">
-      <div className="flex items-center justify-between border-b px-5 py-3.5">
-        <h2 className="text-sm font-semibold">{t('myTasks')}</h2>
-        <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-          {tasks.length}
-        </span>
+    <Card as="section" flush className="overflow-hidden">
+      <div className="flex items-center justify-between gap-3 border-b px-4 py-4 sm:px-6">
+        <CardTitle>{t('myTasks')}</CardTitle>
+        <Badge tone="primary" size="sm" className="tabular-nums">{tasks.length}</Badge>
       </div>
       <div className="divide-y">
         {tasks.length === 0 ? (
-          <p className="p-8 text-center text-sm text-muted-foreground">
+          <p className="p-8 text-center text-body-sm text-muted-foreground">
             {t('noTasks')}
           </p>
         ) : (
           tasks.map((t) => (
-            <div key={t.id} className="px-3 py-1">
+            <div key={t.id} className="px-2 py-1 sm:px-3">
               <TaskRow task={t} />
             </div>
           ))
         )}
       </div>
-    </section>
+    </Card>
   )
 }

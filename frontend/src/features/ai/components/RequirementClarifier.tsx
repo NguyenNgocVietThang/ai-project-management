@@ -1,13 +1,14 @@
 'use client'
 
-import { CheckCircle2, HelpCircle, Lightbulb, MinusCircle, Pencil, Sparkles } from 'lucide-react'
+import { CheckCircle2, HelpCircle, Lightbulb, MinusCircle, Pencil, Send, Sparkles } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect, useId, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { Alert } from '@/components/common/Alert'
 import { Button } from '@/components/common/Button'
 import { Label } from '@/components/common/Label'
-import { Spinner } from '@/components/common/Spinner'
+import { Badge } from '@/components/ui/Badge'
+import { Skeleton, SkeletonRegion, SkeletonText } from '@/components/ui/Skeleton'
 import { cn } from '@/lib/utils'
 import { projectKeys } from '@/features/projects/hooks/useProjects'
 import { useAIJob } from '@/features/ai/hooks/useAIGenerator'
@@ -59,6 +60,14 @@ function ErrorNotice({ error }: { error: unknown }) {
   return <Alert>{known ? t(`errors.${known}`) : t('errors.generic')}</Alert>
 }
 
+// Ô nhập nhiều dòng cùng kiểu với Input (bo 8px, viền input, focus ring).
+const TEXTAREA_CLASSES =
+  'w-full rounded-lg border border-input bg-card px-3 py-2 text-body sm:text-body-sm shadow-xs transition-[border-color,box-shadow] duration-150 placeholder:text-muted-foreground hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background'
+
+// Bong bóng hội thoại: AI bên trái nền muted, người dùng bên phải nền accent.
+const AI_BUBBLE = 'max-w-[90%] break-words rounded-xl rounded-tl-sm bg-muted px-3 py-2 text-body-sm text-foreground'
+const USER_BUBBLE = 'ml-auto max-w-[90%] break-words rounded-xl rounded-tr-sm bg-accent px-3 py-2 text-body-sm text-accent-foreground'
+
 const STATUS_ICON = {
   clear: CheckCircle2,
   missing: HelpCircle,
@@ -101,30 +110,30 @@ function ItemRow({ briefId, itemKey, item, editable }: ItemRowProps) {
       data-testid={`item-${itemKey}`}
       data-status={item.status}
       className={cn(
-        'min-w-0 rounded-md p-3 text-sm',
-        isAssumption ? 'border-2 border-dashed border-amber-500 bg-amber-50/60 dark:bg-amber-950/30' : 'border',
+        'min-w-0 rounded-lg p-3 text-body-sm',
+        isAssumption ? 'border-2 border-dashed border-warning/60 bg-warning-soft' : 'border bg-card',
       )}
     >
       <div className="flex flex-wrap items-center gap-2">
-        <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
-        <span className="font-medium">{t(`items.${itemKey}`)}</span>
-        <span
-          className={cn(
-            'rounded px-1.5 py-0.5 text-xs font-semibold uppercase tracking-wide',
-            isAssumption && 'border border-dashed border-amber-600 text-amber-800 dark:text-amber-300',
-            userConfirmed && 'bg-primary text-primary-foreground',
-            !isAssumption && !userConfirmed && 'bg-muted text-muted-foreground',
-          )}
+        <Icon className={cn('h-4 w-4 shrink-0', userConfirmed ? 'text-success' : isAssumption ? 'text-warning' : 'text-muted-foreground')} aria-hidden="true" />
+        <span className="font-medium text-foreground">{t(`items.${itemKey}`)}</span>
+        {/* Nhãn trạng thái: giả định viền đứt, xác nhận màu success, còn lại trung tính. */}
+        <Badge
+          size="sm"
+          tone={isAssumption ? 'warning' : userConfirmed ? 'success' : 'neutral'}
+          className={cn('uppercase', isAssumption && 'border-dashed')}
         >
           {isAssumption
             ? item.source === 'ai_assumption_confirmed' ? t('status.assumedAccepted') : t('status.assumed')
             : t(`status.${item.status}`)}
-        </span>
+        </Badge>
         {editable && mode === 'view' && (
           <Button
             type="button"
             variant="ghost"
-            className="ml-auto w-auto min-h-[36px] px-2"
+            size="icon"
+            fullWidth={false}
+            className="-my-2 ml-auto"
             aria-label={t('editItem', { item: t(`items.${itemKey}`) })}
             onClick={() => { setDraft(item.value ?? ''); setMode('edit') }}
           >
@@ -133,40 +142,43 @@ function ItemRow({ briefId, itemKey, item, editable }: ItemRowProps) {
         )}
       </div>
       {item.value && mode === 'view' && (
-        <p className={cn('mt-1 break-words', isAssumption && 'italic')}>
+        <p className={cn('mt-2 break-words text-foreground', isAssumption && 'italic')}>
           {isAssumption && <span className="sr-only">{t('status.assumed')}: </span>}
           {item.value}
         </p>
       )}
       {proposal && mode === 'view' && editable && (
-        <div className="mt-2 rounded border border-dashed border-amber-500 p-2">
-          <p className="text-xs font-semibold uppercase">{t('proposal')}</p>
-          <p className="break-words italic">{proposal}</p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            <Button type="button" className="w-auto" disabled={busy}
+        <div className="mt-3 rounded-lg border border-dashed border-warning/60 bg-warning-soft p-3">
+          <p className="flex items-center gap-1.5 text-overline uppercase text-warning">
+            <Lightbulb className="h-4 w-4" aria-hidden="true" />
+            {t('proposal')}
+          </p>
+          <p className="mt-1 break-words italic text-foreground">{proposal}</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button type="button" size="sm" fullWidth={false} disabled={busy}
               onClick={() => actions.accept.mutate({ id: briefId, key: itemKey })}>{t('accept')}</Button>
-            <Button type="button" variant="outline" className="w-auto" disabled={busy}
+            <Button type="button" size="sm" variant="outline" fullWidth={false} disabled={busy}
               onClick={() => { setDraft(proposal); setMode('assume') }}>{t('editAccept')}</Button>
-            <Button type="button" variant="outline" className="w-auto" disabled={busy}
+            <Button type="button" size="sm" variant="ghost" fullWidth={false} disabled={busy}
               onClick={() => actions.reject.mutate({ id: briefId, key: itemKey })}>{t('reject')}</Button>
           </div>
         </div>
       )}
       {mode !== 'view' && (
-        <div className="mt-2 space-y-2">
+        <div className="mt-3 space-y-2">
           <Label htmlFor={fieldId}>{t('itemValue', { item: t(`items.${itemKey}`) })}</Label>
           <textarea
             id={fieldId}
             rows={2}
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
-            className="w-full rounded-md border bg-background px-3 py-2"
+            className={TEXTAREA_CLASSES}
           />
           <div className="flex flex-wrap gap-2">
-            <Button type="button" className="w-auto" disabled={!draft.trim()} isLoading={busy} onClick={() => void save()}>
+            <Button type="button" size="sm" fullWidth={false} disabled={!draft.trim()} isLoading={busy} onClick={() => void save()}>
               {mode === 'assume' ? t('accept') : t('save')}
             </Button>
-            <Button type="button" variant="outline" className="w-auto" onClick={() => setMode('view')}>{t('cancel')}</Button>
+            <Button type="button" size="sm" variant="outline" fullWidth={false} onClick={() => setMode('view')}>{t('cancel')}</Button>
           </div>
         </div>
       )}
@@ -179,16 +191,16 @@ function Conversation({ brief }: { brief: RequirementBriefDetail }) {
   const t = useTranslations('clarifier')
   return (
     <ol className="space-y-3" aria-label={t('conversation')}>
-      <li className="ml-auto max-w-[90%] break-words rounded-lg bg-primary/10 p-2 text-sm">
+      <li className={USER_BUBBLE}>
         <span className="sr-only">{t('you')}: </span>{brief.idea}
       </li>
       {brief.qa_history.map((turn, index) => (
         <li key={index} className="space-y-2">
-          <p className="max-w-[90%] break-words rounded-lg bg-muted p-2 text-sm">
+          <p className={AI_BUBBLE}>
             <span className="font-semibold">{t('ai')}: </span>{turn.question}
           </p>
           {turn.answer && (
-            <p className="ml-auto max-w-[90%] break-words rounded-lg bg-primary/10 p-2 text-sm">
+            <p className={USER_BUBBLE}>
               <span className="sr-only">{t('you')}: </span>{turn.answer}
             </p>
           )}
@@ -234,19 +246,21 @@ function BriefView({ brief, onGenerated }: { brief: RequirementBriefDetail; onGe
     <div className="min-w-0 space-y-4">
       <Conversation brief={brief} />
       {brief.open_question && lastTurn?.question !== brief.open_question && (
-        <p className="max-w-[90%] break-words rounded-lg bg-muted p-2 text-sm">
+        <p className={AI_BUBBLE}>
           <span className="font-semibold">{t('ai')}: </span>{brief.open_question}
         </p>
       )}
       {running && (
-        <div role="status" className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Spinner className="h-4 w-4" /> {t('analyzing')}
+        // Bong bóng AI dạng khung xương trong lúc chờ câu hỏi tiếp theo.
+        <div role="status" className="max-w-[90%] space-y-2 rounded-xl rounded-tl-sm bg-muted px-3 py-2">
+          <p className="text-body-sm text-muted-foreground">{t('analyzing')}</p>
+          <SkeletonText lines={2} className="w-56 max-w-full" />
         </div>
       )}
       {failed && (
         <div className="space-y-2">
           <Alert>{t('turnFailed')}</Alert>
-          <Button type="button" variant="outline" className="sm:w-auto" isLoading={actions.answer.isPending}
+          <Button type="button" variant="outline" fullWidth={false} className="w-full sm:w-auto" isLoading={actions.answer.isPending}
             onClick={() => actions.answer.mutate({ id: brief.id, answer: null })}>{t('retryTurn')}</Button>
         </div>
       )}
@@ -254,20 +268,34 @@ function BriefView({ brief, onGenerated }: { brief: RequirementBriefDetail; onGe
         <form onSubmit={submitAnswer} className="space-y-2">
           <Label htmlFor={answerId}>{t('answerLabel')}</Label>
           <textarea id={answerId} rows={2} required value={answer} onChange={(e) => setAnswer(e.target.value)}
-            className="w-full rounded-md border bg-background px-3 py-2" />
-          <Button type="submit" className="sm:w-auto" isLoading={actions.answer.isPending}>{t('send')}</Button>
+            className={TEXTAREA_CLASSES} />
+          <div className="flex justify-end">
+            <Button type="submit" fullWidth={false} className="w-full sm:w-auto" isLoading={actions.answer.isPending}>
+              {!actions.answer.isPending && <Send className="h-4 w-4" aria-hidden="true" />}
+              {t('send')}
+            </Button>
+          </div>
         </form>
       )}
       <ErrorNotice error={actions.answer.error} />
       {clarifying && (
-        <p className="text-xs text-muted-foreground">{t('turnsRemaining', { count: brief.turns_remaining })}</p>
+        <p className="text-caption text-muted-foreground">{t('turnsRemaining', { count: brief.turns_remaining })}</p>
       )}
 
-      <section aria-labelledby={`${answerId}-progress`} className="space-y-2">
-        <h3 id={`${answerId}-progress`} className="text-sm font-semibold">
-          {t('progress', { resolved: counts.resolved, total: counts.total })}
-        </h3>
-        <p className="text-xs text-muted-foreground">{t('legend')}</p>
+      <section aria-labelledby={`${answerId}-progress`} className="space-y-3 border-t pt-4">
+        <div className="space-y-2">
+          <h3 id={`${answerId}-progress`} className="text-h4 text-foreground">
+            {t('progress', { resolved: counts.resolved, total: counts.total })}
+          </h3>
+          {/* Thanh tiến độ trang trí; số liệu đã có trong tiêu đề. */}
+          <div className="h-2 overflow-hidden rounded-full bg-muted" aria-hidden="true">
+            <div
+              className="h-full rounded-full bg-primary transition-[width] duration-300 ease-out-soft"
+              style={{ width: `${counts.total > 0 ? Math.round((counts.resolved / counts.total) * 100) : 0}%` }}
+            />
+          </div>
+          <p className="text-caption text-muted-foreground">{t('legend')}</p>
+        </div>
         <ul className="space-y-2">
           {BRIEF_ITEM_KEYS.map((key) => (
             <ItemRow key={key} briefId={brief.id} itemKey={key} item={brief.items[key]} editable={brief.status !== 'consumed' && !running} />
@@ -277,15 +305,15 @@ function BriefView({ brief, onGenerated }: { brief: RequirementBriefDetail; onGe
 
       <ErrorNotice error={actions.generate.error} />
       {brief.status !== 'consumed' && (
-        <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+        <div className="flex flex-col-reverse gap-3 border-t pt-4 sm:flex-row sm:justify-end">
           {clarifying && (
-            <Button type="button" variant="outline" className="sm:w-auto" disabled={running}
+            <Button type="button" variant="outline" fullWidth={false} className="w-full sm:w-auto" disabled={running}
               isLoading={actions.generate.isPending} onClick={() => void generate('skip')}>{t('skipAndGenerate')}</Button>
           )}
           {(brief.can_finalize || brief.status === 'ready') && (
-            <Button type="button" className="sm:w-auto" disabled={running}
+            <Button type="button" fullWidth={false} className="w-full sm:w-auto" disabled={running}
               isLoading={actions.generate.isPending} onClick={() => void generate('finalize')}>
-              <Sparkles className="h-4 w-4" /> {t('createProject')}
+              {!actions.generate.isPending && <Sparkles className="h-4 w-4" aria-hidden="true" />} {t('createProject')}
             </Button>
           )}
         </div>
@@ -320,25 +348,25 @@ function IdeaForm({ onCreated, onResume }: { onCreated: (id: number) => void; on
           <Label htmlFor={ideaId}>{t('ideaLabel')}</Label>
           <textarea id={ideaId} rows={4} required maxLength={4000} value={idea} onChange={(e) => setIdea(e.target.value)}
             placeholder={t('ideaPlaceholder')}
-            className="w-full rounded-md border bg-background px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+            className={TEXTAREA_CLASSES} />
         </div>
         <div className="flex justify-end">
-          <Button type="submit" className="sm:w-auto" isLoading={actions.create.isPending}>
-            <Sparkles className="h-4 w-4" /> {t('start')}
+          <Button type="submit" fullWidth={false} className="w-full sm:w-auto" isLoading={actions.create.isPending}>
+            {!actions.create.isPending && <Sparkles className="h-4 w-4" aria-hidden="true" />} {t('start')}
           </Button>
         </div>
       </form>
       {resumable.length > 0 && (
-        <section className="space-y-2">
-          <h3 className="text-sm font-semibold">{t('resumeTitle')}</h3>
+        <section className="space-y-3 border-t pt-4">
+          <h3 className="text-h4 text-foreground">{t('resumeTitle')}</h3>
           <ul className="space-y-2">
             {resumable.map((b) => (
-              <li key={b.id} className="flex min-w-0 flex-wrap items-center gap-2 rounded-md border p-2 text-sm">
-                <span className="min-w-0 flex-1 truncate">{b.idea}</span>
-                <span className="text-xs text-muted-foreground">
+              <li key={b.id} className="flex min-w-0 flex-wrap items-center gap-3 rounded-lg border bg-card p-3 text-body-sm transition-colors hover:bg-muted/40">
+                <span className="min-w-0 flex-1 truncate text-foreground">{b.idea}</span>
+                <Badge size="sm" tone="neutral">
                   {t('progress', { resolved: b.item_counts.resolved, total: b.item_counts.total })}
-                </span>
-                <Button type="button" variant="outline" className="w-auto" onClick={() => onResume(b.id)}>{t('resume')}</Button>
+                </Badge>
+                <Button type="button" variant="outline" size="sm" fullWidth={false} onClick={() => onResume(b.id)}>{t('resume')}</Button>
               </li>
             ))}
           </ul>
@@ -366,7 +394,7 @@ function GenerationStatus({ jobId, onViewProject, onRestart }: {
     return (
       <div className="space-y-4">
         <ErrorNotice error={job.error} />
-        <Button type="button" variant="outline" className="sm:w-auto" onClick={() => void job.refetch()} isLoading={job.isFetching}>
+        <Button type="button" variant="outline" fullWidth={false} className="w-full sm:w-auto" onClick={() => void job.refetch()} isLoading={job.isFetching}>
           {t('retryStatus')}
         </Button>
       </div>
@@ -376,7 +404,7 @@ function GenerationStatus({ jobId, onViewProject, onRestart }: {
     return (
       <div className="space-y-4">
         <Alert>{t('generationFailed')}</Alert>
-        <Button type="button" variant="outline" className="sm:w-auto" onClick={onRestart}>{t('backToBrief')}</Button>
+        <Button type="button" variant="outline" fullWidth={false} className="w-full sm:w-auto" onClick={onRestart}>{t('backToBrief')}</Button>
       </div>
     )
   }
@@ -386,16 +414,27 @@ function GenerationStatus({ jobId, onViewProject, onRestart }: {
         <Alert variant="success">{t('generated')}</Alert>
         {job.data?.project_id && (
           <div className="flex justify-end">
-            <Button type="button" className="sm:w-auto" onClick={() => onViewProject(job.data!.project_id!)}>{t('viewProject')}</Button>
+            <Button type="button" fullWidth={false} className="w-full sm:w-auto" onClick={() => onViewProject(job.data!.project_id!)}>{t('viewProject')}</Button>
           </div>
         )}
       </div>
     )
   }
   return (
-    <div role="status" className="flex flex-col items-center gap-3 py-8 text-center">
-      <Spinner className="h-8 w-8 text-primary" />
-      <p className="text-sm text-muted-foreground">{t('generating')}</p>
+    // Khung xương mô phỏng kế hoạch dự án đang được AI soạn (giai đoạn + công việc).
+    <div role="status" className="space-y-4 py-2">
+      <p className="flex items-center gap-2 text-body-sm text-muted-foreground">
+        <Sparkles className="h-4 w-4 text-primary" aria-hidden="true" />
+        {t('generating')}
+      </p>
+      <div aria-hidden="true" className="space-y-3">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="space-y-2 rounded-lg border p-3">
+            <Skeleton className="h-4 w-1/3" />
+            <SkeletonText lines={2} />
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
@@ -454,20 +493,27 @@ export function RequirementClarifier({ onViewProject }: RequirementClarifierProp
       <div className="space-y-4">
         <ErrorNotice error={brief.error} />
         <div className="flex flex-wrap gap-2">
-          <Button type="button" variant="outline" className="w-auto" onClick={() => void brief.refetch()}>{t('retryStatus')}</Button>
-          <Button type="button" variant="outline" className="w-auto" onClick={startOver}>{t('newIdea')}</Button>
+          <Button type="button" variant="outline" fullWidth={false} onClick={() => void brief.refetch()}>{t('retryStatus')}</Button>
+          <Button type="button" variant="ghost" fullWidth={false} onClick={startOver}>{t('newIdea')}</Button>
         </div>
       </div>
     )
   }
   if (!brief.data) {
-    return <div className="flex justify-center py-8"><Spinner className="h-6 w-6" /></div>
+    // Khung xương hội thoại trong lúc tải hồ sơ đã lưu.
+    return (
+      <SkeletonRegion label={t('conversation')} className="space-y-3 py-2">
+        <Skeleton className="ml-auto h-10 w-2/3 rounded-xl" />
+        <Skeleton className="h-14 w-3/4 rounded-xl" />
+        <Skeleton className="ml-auto h-10 w-1/2 rounded-xl" />
+      </SkeletonRegion>
+    )
   }
   return (
     <div className="space-y-4">
       <BriefView brief={brief.data} onGenerated={setGeneration} />
       <div className="flex justify-start">
-        <Button type="button" variant="ghost" className="w-auto" onClick={startOver}>{t('newIdea')}</Button>
+        <Button type="button" variant="ghost" fullWidth={false} onClick={startOver}>{t('newIdea')}</Button>
       </div>
     </div>
   )

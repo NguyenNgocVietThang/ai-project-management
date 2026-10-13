@@ -1,15 +1,22 @@
 'use client'
 
 import { Grid2X2, List, Plus, Search, Sparkles } from 'lucide-react'
+import Link from 'next/link'
 import { useState } from 'react'
 import { Alert } from '@/components/common/Alert'
 import { Button } from '@/components/common/Button'
 import { Input } from '@/components/common/Input'
 import { Modal } from '@/components/common/Modal'
 import { EmptyState, ErrorState, LoadingState } from '@/components/common/PageState'
+import { Reveal } from '@/components/motion/RevealText'
+import { Card } from '@/components/ui/Card'
+import { PageHeader } from '@/components/ui/PageHeader'
+import { SegmentedControl } from '@/components/ui/SegmentedControl'
+import { Select } from '@/components/ui/Select'
 import { AIGeneratorModal } from '@/features/ai/components/AIGeneratorModal'
 import { usePortfolios } from '@/features/portfolios/hooks/usePortfolios'
 import { ProjectCard } from '@/features/projects/components/ProjectCard'
+import { ProjectStatusBadge } from '@/features/projects/components/ProjectStatusBadge'
 import { ProjectWizard, type InitialProjectMember } from '@/features/projects/components/ProjectWizard'
 import { useCreateProject, useProjects } from '@/features/projects/hooks/useProjects'
 import { formatDate, formatStatus } from '@/lib/format'
@@ -43,14 +50,88 @@ export default function ProjectsPage() {
     setCreating(false)
   }
 
-  return <div className="space-y-6">
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-sm font-medium text-primary">Project workspace</p><h1 className="mt-1 text-3xl font-semibold tracking-tight">Projects</h1><p className="mt-2 text-sm text-muted-foreground">Plan, staff, and monitor projects across portfolios.</p></div><div className="flex flex-col gap-3 sm:flex-row"><Button variant="outline" className="sm:w-auto" onClick={() => setGeneratingWithAI(true)}><Sparkles className="h-4 w-4" />Generate with AI</Button><Button className="sm:w-auto" onClick={() => setCreating(true)}><Plus className="h-4 w-4" />New project</Button></div></div>
+  const newProjectButton = (
+    <Button fullWidth={false} onClick={() => setCreating(true)}>
+      <Plus className="h-4 w-4" aria-hidden="true" />
+      New project
+    </Button>
+  )
+
+  return <div className="space-y-8">
+    <PageHeader
+      eyebrow="Project workspace"
+      title="Projects"
+      description="Plan, staff, and monitor projects across portfolios."
+      actions={<>
+        <Button variant="outline" fullWidth={false} onClick={() => setGeneratingWithAI(true)}>
+          <Sparkles className="h-4 w-4" aria-hidden="true" />
+          Generate with AI
+        </Button>
+        {newProjectButton}
+      </>}
+    />
     {inviteFailures.length > 0 && <Alert>Project created, but invitations failed for: {inviteFailures.join(', ')}. You can retry from the Members page.</Alert>}
-    <div className="grid gap-3 rounded-xl border bg-card p-4 md:grid-cols-2 xl:grid-cols-4"><div className="relative"><Search className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" /><Input value={search} onChange={(event) => setSearch(event.target.value)} className="pl-9" placeholder="Search projects" aria-label="Search projects" /></div><select aria-label="Status filter" value={status} onChange={(event) => setStatus(event.target.value as ProjectStatus | '')} className="h-11 rounded-md border bg-background px-3 text-sm"><option value="">All statuses</option><option value="PLANNING">Planning</option><option value="ACTIVE">Active</option><option value="ON_HOLD">On hold</option><option value="COMPLETED">Completed</option><option value="CANCELLED">Cancelled</option></select><select aria-label="Methodology filter" value={methodology} onChange={(event) => setMethodology(event.target.value as ProjectMethodology | '')} className="h-11 rounded-md border bg-background px-3 text-sm"><option value="">All methods</option><option value="agile">Agile</option><option value="waterfall">Waterfall</option><option value="hybrid">Hybrid</option></select><select aria-label="Portfolio filter" value={portfolioId} onChange={(event) => setPortfolioId(event.target.value)} className="h-11 rounded-md border bg-background px-3 text-sm"><option value="">All portfolios</option>{portfolios.data?.items.map((portfolio) => <option key={portfolio.id} value={portfolio.id}>{portfolio.name}</option>)}</select><div><label htmlFor="projects-start-after" className="mb-1 block text-xs text-muted-foreground">Starts on/after</label><Input id="projects-start-after" type="date" value={startDateFrom} onChange={(event) => setStartDateFrom(event.target.value)} /></div><div><label htmlFor="projects-end-before" className="mb-1 block text-xs text-muted-foreground">Ends on/before</label><Input id="projects-end-before" type="date" value={endDateTo} onChange={(event) => setEndDateTo(event.target.value)} /></div><div className="flex items-end"><div className="flex rounded-md border p-1"><button type="button" onClick={() => setView('grid')} className={`flex h-9 w-10 items-center justify-center rounded ${view === 'grid' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'}`} aria-label="Grid view"><Grid2X2 className="h-4 w-4" /></button><button type="button" onClick={() => setView('table')} className={`flex h-9 w-10 items-center justify-center rounded ${view === 'table' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'}`} aria-label="Table view"><List className="h-4 w-4" /></button></div></div></div>
-    {query.isLoading && <LoadingState label="Loading projects…" />}{query.isError && <ErrorState message={getApiErrorMessage(query.error)} />}
-    {query.data && query.data.items.length === 0 && <EmptyState title="No projects found" description="Create a project or adjust the filters." />}
-    {query.data && query.data.items.length > 0 && view === 'grid' && <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">{query.data.items.map((project) => <ProjectCard key={project.id} project={project} />)}</div>}
-    {query.data && query.data.items.length > 0 && view === 'table' && <div className="overflow-x-auto rounded-xl border"><table className="w-full min-w-[760px] text-left text-sm"><thead className="bg-muted/60 text-xs uppercase text-muted-foreground"><tr><th className="px-4 py-3">Project</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Portfolio</th><th className="px-4 py-3">Timeline</th><th className="px-4 py-3">Progress</th></tr></thead><tbody>{query.data.items.map((project) => <tr key={project.id} className="border-t hover:bg-muted/30"><td className="px-4 py-3"><a href={`/projects/${project.id}/overview`} className="font-medium text-primary hover:underline">{project.name}</a><p className="mt-0.5 text-xs text-muted-foreground">{formatStatus(project.methodology)}</p></td><td className="px-4 py-3">{formatStatus(project.status)}</td><td className="px-4 py-3 text-muted-foreground">{project.portfolio_name || 'Standalone'}</td><td className="px-4 py-3 text-muted-foreground">{formatDate(project.start_date)} – {formatDate(project.end_date)}</td><td className="px-4 py-3">{Math.round(project.progress_percent)}%</td></tr>)}</tbody></table></div>}
+    {/* Thanh bộ lọc: 1 cột trên mobile, 2 cột tablet, 4 cột desktop */}
+    <Card className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+      <div className="relative self-end">
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+        <Input value={search} onChange={(event) => setSearch(event.target.value)} className="pl-9" placeholder="Search projects" aria-label="Search projects" />
+      </div>
+      <Select aria-label="Status filter" wrapperClassName="self-end" value={status} onChange={(event) => setStatus(event.target.value as ProjectStatus | '')}>
+        <option value="">All statuses</option>
+        <option value="PLANNING">Planning</option>
+        <option value="ACTIVE">Active</option>
+        <option value="ON_HOLD">On hold</option>
+        <option value="COMPLETED">Completed</option>
+        <option value="CANCELLED">Cancelled</option>
+      </Select>
+      <Select aria-label="Methodology filter" wrapperClassName="self-end" value={methodology} onChange={(event) => setMethodology(event.target.value as ProjectMethodology | '')}>
+        <option value="">All methods</option>
+        <option value="agile">Agile</option>
+        <option value="waterfall">Waterfall</option>
+        <option value="hybrid">Hybrid</option>
+      </Select>
+      <Select aria-label="Portfolio filter" wrapperClassName="self-end" value={portfolioId} onChange={(event) => setPortfolioId(event.target.value)}>
+        <option value="">All portfolios</option>
+        {portfolios.data?.items.map((portfolio) => <option key={portfolio.id} value={portfolio.id}>{portfolio.name}</option>)}
+      </Select>
+      <div><label htmlFor="projects-start-after" className="mb-1 block text-caption text-muted-foreground">Starts on/after</label><Input id="projects-start-after" type="date" value={startDateFrom} onChange={(event) => setStartDateFrom(event.target.value)} /></div>
+      <div><label htmlFor="projects-end-before" className="mb-1 block text-caption text-muted-foreground">Ends on/before</label><Input id="projects-end-before" type="date" value={endDateTo} onChange={(event) => setEndDateTo(event.target.value)} /></div>
+      <div className="flex items-end xl:col-start-4 xl:justify-end">
+        <SegmentedControl
+          label="View mode"
+          value={view}
+          onChange={setView}
+          options={[
+            { value: 'grid', label: 'Grid view', icon: Grid2X2, iconOnly: true },
+            { value: 'table', label: 'Table view', icon: List, iconOnly: true },
+          ]}
+        />
+      </div>
+    </Card>
+    {query.isLoading && <LoadingState variant={view === 'table' ? 'table' : 'cards'} label="Loading projects…" />}
+    {query.isError && <ErrorState message={getApiErrorMessage(query.error)} onRetry={() => void query.refetch()} />}
+    {query.data && query.data.items.length === 0 && <EmptyState title="No projects found" description="Create a project or adjust the filters." action={newProjectButton} />}
+    {query.data && query.data.items.length > 0 && view === 'grid' && <Reveal stagger={60} className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">{query.data.items.map((project) => <ProjectCard key={project.id} project={project} />)}</Reveal>}
+    {query.data && query.data.items.length > 0 && view === 'table' && <Card flush className="overflow-hidden">
+      {/* Bảng tự cuộn ngang trong khung, trang không bị cuộn ngang */}
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[760px] text-left text-body-sm">
+          <thead className="bg-muted/50 text-caption uppercase text-muted-foreground">
+            <tr><th scope="col" className="px-4 py-3 font-medium">Project</th><th scope="col" className="px-4 py-3 font-medium">Status</th><th scope="col" className="px-4 py-3 font-medium">Portfolio</th><th scope="col" className="px-4 py-3 font-medium">Timeline</th><th scope="col" className="px-4 py-3 font-medium">Progress</th></tr>
+          </thead>
+          <tbody>
+            {query.data.items.map((project) => <tr key={project.id} className="border-t transition-colors hover:bg-muted/40">
+              <td className="px-4 py-3"><Link href={`/projects/${project.id}/overview`} className="font-medium text-primary hover:underline">{project.name}</Link><p className="mt-1 text-caption text-muted-foreground">{formatStatus(project.methodology)}</p></td>
+              <td className="px-4 py-3"><ProjectStatusBadge status={project.status} /></td>
+              <td className="px-4 py-3 text-muted-foreground">{project.portfolio_name || 'Standalone'}</td>
+              <td className="px-4 py-3 text-muted-foreground">{formatDate(project.start_date)} – {formatDate(project.end_date)}</td>
+              <td className="px-4 py-3 tabular-nums">{Math.round(project.progress_percent)}%</td>
+            </tr>)}
+          </tbody>
+        </table>
+      </div>
+    </Card>}
     <Modal open={creating} onClose={() => setCreating(false)} title="Create project" description="Define the project, choose initial members, and review before creating." className="max-w-3xl"><ProjectWizard portfolios={portfolios.data?.items ?? []} onSubmit={createProject} onCancel={() => setCreating(false)} isLoading={createMutation.isPending} error={createMutation.isError ? getApiErrorMessage(createMutation.error) : null} /></Modal>
     <AIGeneratorModal open={generatingWithAI} onClose={() => setGeneratingWithAI(false)} />
   </div>

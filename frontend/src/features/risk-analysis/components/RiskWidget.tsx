@@ -1,15 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { AlertTriangle, ShieldAlert } from 'lucide-react'
+import { AlertTriangle, ShieldAlert, Sparkles } from 'lucide-react'
 import { Alert } from '@/components/common/Alert'
 import { Button } from '@/components/common/Button'
-import { Spinner } from '@/components/common/Spinner'
-import { cn } from '@/lib/utils'
+import { Badge, type BadgeTone } from '@/components/ui/Badge'
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import { Skeleton, SkeletonText } from '@/components/ui/Skeleton'
 import { getApiErrorMessage } from '@/types/api.types'
 import { JobConnectionNotice } from '@/features/jobs/components/JobConnectionNotice'
 import {
-  RISK_LEVEL_COLOR,
   asRiskFactorList,
   asStringList,
   type RiskLevel,
@@ -19,6 +19,14 @@ import { useRequestRiskAnalysis, useRiskAnalysisJob } from '@/features/risk-anal
 const STATUS_LABEL: Record<string, string> = {
   PENDING: 'Đang xếp hàng chờ quét…',
   PROCESSING: 'AI đang phân tích rủi ro dự án…',
+}
+
+// Mức rủi ro -> tông Badge theo token ngữ nghĩa; HIGH/CRITICAL phân biệt bằng chữ.
+const RISK_TONE: Record<RiskLevel, BadgeTone> = {
+  LOW: 'success',
+  MEDIUM: 'warning',
+  HIGH: 'danger',
+  CRITICAL: 'danger',
 }
 
 function isRiskLevel(value: unknown): value is RiskLevel {
@@ -67,101 +75,113 @@ export function RiskWidget({ projectId }: { projectId: number }) {
   const parsed = status === 'COMPLETED' ? parseRiskResult(job.data?.result ?? null) : null
 
   return (
-    <div className="space-y-4 rounded-lg border bg-card p-4">
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <ShieldAlert className="h-5 w-5 text-primary" aria-hidden="true" />
-          <h3 className="text-sm font-semibold">Phân tích rủi ro AI</h3>
+    <Card as="section" aria-labelledby="risk-widget-title" className="min-w-0">
+      <CardHeader>
+        <div className="flex min-w-0 items-start gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent" aria-hidden="true">
+            <ShieldAlert className="h-5 w-5 text-accent-foreground" />
+          </span>
+          <div className="min-w-0">
+            <CardTitle as="h3" id="risk-widget-title">Phân tích rủi ro dự án</CardTitle>
+            <CardDescription>AI quét tiến độ, nguồn lực và phụ thuộc để chấm điểm rủi ro và gợi ý cách giảm thiểu.</CardDescription>
+          </div>
         </div>
         <Button
           type="button"
-          variant="outline"
-          className="sm:w-auto"
+          fullWidth={false}
+          className="w-full sm:w-auto"
           isLoading={requestMutation.isPending}
           disabled={isRunning}
           onClick={() => void runScan()}
         >
+          {!requestMutation.isPending && <Sparkles className="h-4 w-4" aria-hidden="true" />}
           Quét rủi ro
         </Button>
-      </div>
+      </CardHeader>
 
-      {requestMutation.isError && <Alert>{getApiErrorMessage(requestMutation.error)}</Alert>}
+      <div className="space-y-4">
+        {requestMutation.isError && <Alert>{getApiErrorMessage(requestMutation.error)}</Alert>}
 
-      {jobId && job.isError && (
-        <div className="space-y-3">
-          <JobConnectionNotice error={job.error} />
-          <Button type="button" variant="outline" onClick={() => void job.refetch()} isLoading={job.isFetching}>
-            Thử kiểm tra lại
-          </Button>
-        </div>
-      )}
+        {jobId && job.isError && (
+          <div className="space-y-3">
+            <JobConnectionNotice error={job.error} />
+            <Button type="button" variant="outline" fullWidth={false} className="w-full sm:w-auto" onClick={() => void job.refetch()} isLoading={job.isFetching}>
+              Thử kiểm tra lại
+            </Button>
+          </div>
+        )}
 
-      {isRunning && !job.isError && (
-        <div className="flex flex-col items-center gap-3 py-6 text-center">
-          <Spinner className="h-6 w-6 text-primary" />
-          <p className="text-sm text-muted-foreground">{STATUS_LABEL[status ?? 'PENDING']}</p>
-        </div>
-      )}
+        {isRunning && !job.isError && (
+          // Khung xương có hình dạng kết quả (badge mức rủi ro, tóm tắt, danh sách yếu tố).
+          <div role="status" className="space-y-4">
+            <p className="text-body-sm text-muted-foreground">{STATUS_LABEL[status ?? 'PENDING']}</p>
+            <div aria-hidden="true" className="space-y-3">
+              <div className="flex gap-3"><Skeleton className="h-6 w-20 rounded-full" /><Skeleton className="h-6 w-16" /></div>
+              <SkeletonText lines={2} />
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
+            </div>
+          </div>
+        )}
 
-      {jobId && status === 'FAILED' && (
-        <Alert>{job.data?.error ?? 'Phân tích rủi ro thất bại.'}</Alert>
-      )}
+        {jobId && status === 'FAILED' && <Alert>{job.data?.error ?? 'Phân tích rủi ro thất bại.'}</Alert>}
 
-      {parsed && (
-        <div className="space-y-4">
-          <div className="flex flex-wrap items-center gap-3">
-            <span
-              className={cn(
-                'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium',
-                RISK_LEVEL_COLOR[parsed.riskLevel]
+        {!jobId && !requestMutation.isError && (
+          <p className="rounded-lg border border-dashed bg-muted/30 p-4 text-center text-body-sm text-muted-foreground">
+            Chưa có kết quả. Bấm &quot;Quét rủi ro&quot; để AI phân tích dự án.
+          </p>
+        )}
+
+        {parsed && (
+          <div className="space-y-4 animate-fade-up">
+            <div className="flex flex-wrap items-center gap-3">
+              <Badge tone={RISK_TONE[parsed.riskLevel]} dot>{parsed.riskLevel}</Badge>
+              {parsed.riskScore !== null && (
+                <span className="text-h4 tabular-nums text-foreground">
+                  {parsed.riskScore.toFixed(1)}
+                  <span className="text-body-sm font-normal text-muted-foreground"> / 10</span>
+                </span>
               )}
-            >
-              {parsed.riskLevel}
-            </span>
-            {parsed.riskScore !== null && (
-              <span className="text-sm font-medium">{parsed.riskScore.toFixed(1)} / 10</span>
+            </div>
+
+            {parsed.summary && <p className="max-w-prose-ui text-body-sm text-muted-foreground">{parsed.summary}</p>}
+
+            {parsed.factors.length > 0 && (
+              <div className="space-y-2">
+                <h4 className="text-overline uppercase text-muted-foreground">Yếu tố rủi ro</h4>
+                <ul className="space-y-2">
+                  {parsed.factors.map((factor, index) => {
+                    const severity = isRiskLevel(factor.severity) ? factor.severity : 'MEDIUM'
+                    return (
+                      <li key={`${factor.factor}-${index}`} className="rounded-lg border p-3 text-body-sm">
+                        <div className="mb-1 flex items-start gap-2">
+                          <span className="flex h-5 shrink-0 items-center" aria-hidden="true">
+                            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+                          </span>
+                          <span className="min-w-0 flex-1 break-words font-medium text-foreground">{factor.factor}</span>
+                          <Badge tone={RISK_TONE[severity]} size="sm">{factor.severity}</Badge>
+                        </div>
+                        <p className="pl-6 text-muted-foreground">{factor.explanation}</p>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </div>
+            )}
+
+            {parsed.suggestions.length > 0 && (
+              <div className="space-y-2">
+                <h4 className="text-overline uppercase text-muted-foreground">Gợi ý giảm thiểu</h4>
+                <ul className="list-disc space-y-1 pl-6 text-body-sm text-foreground">
+                  {parsed.suggestions.map((suggestion, index) => (
+                    <li key={index}>{suggestion}</li>
+                  ))}
+                </ul>
+              </div>
             )}
           </div>
-
-          {parsed.summary && <p className="text-sm text-muted-foreground">{parsed.summary}</p>}
-
-          {parsed.factors.length > 0 && (
-            <div className="space-y-2">
-              <h4 className="text-xs font-semibold uppercase text-muted-foreground">Yếu tố rủi ro</h4>
-              <ul className="space-y-2">
-                {parsed.factors.map((factor, index) => (
-                  <li key={`${factor.factor}-${index}`} className="rounded-md border p-2.5 text-sm">
-                    <div className="mb-1 flex items-center gap-2">
-                      <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
-                      <span className="font-medium">{factor.factor}</span>
-                      <span
-                        className={cn(
-                          'ml-auto inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-medium',
-                          RISK_LEVEL_COLOR[isRiskLevel(factor.severity) ? factor.severity : 'MEDIUM']
-                        )}
-                      >
-                        {factor.severity}
-                      </span>
-                    </div>
-                    <p className="text-muted-foreground">{factor.explanation}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {parsed.suggestions.length > 0 && (
-            <div className="space-y-2">
-              <h4 className="text-xs font-semibold uppercase text-muted-foreground">Gợi ý giảm thiểu</h4>
-              <ul className="list-disc space-y-1 pl-5 text-sm">
-                {parsed.suggestions.map((suggestion, index) => (
-                  <li key={index}>{suggestion}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </Card>
   )
 }

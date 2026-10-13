@@ -2,11 +2,27 @@
 
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import Link from 'next/link'
 import { Alert } from '@/components/common/Alert'
-import { Button } from '@/components/common/Button'
+import { ButtonLink } from '@/components/common/Button'
+import { Skeleton, SkeletonRegion } from '@/components/ui/Skeleton'
 import { authService } from '@/services/auth.service'
 import { useAuthStore } from '@/store/authStore'
+
+/** Trạng thái chờ: khung xương thay cho spinner, kèm nhãn cho trình đọc màn hình. */
+function OAuthPendingState({ label }: { label: string }) {
+  return (
+    <SkeletonRegion label={label} className="space-y-6">
+      <div className="space-y-2">
+        <Skeleton className="h-8 w-2/3" />
+        <Skeleton className="h-4 w-full" />
+      </div>
+      <Skeleton className="h-12 w-full" />
+      <p className="text-center text-body-sm text-muted-foreground" aria-hidden="true">
+        {label}
+      </p>
+    </SkeletonRegion>
+  )
+}
 
 function OAuthCallbackContent() {
   const router = useRouter()
@@ -52,30 +68,24 @@ function OAuthCallbackContent() {
   }, [searchParams, router, setTokens, setUser])
 
   if (isProcessing) {
-    return (
-      <div className="flex flex-col items-center justify-center space-y-4 py-8">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-        <p className="text-sm font-medium text-muted-foreground">Completing sign in…</p>
-      </div>
-    )
+    return <OAuthPendingState label="Completing sign in…" />
   }
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2 text-center">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">Authentication Failed</h1>
-        <p className="text-sm text-muted-foreground">
+      <div className="space-y-2">
+        <h1 className="text-h2 text-foreground">Authentication Failed</h1>
+        <p className="text-body-sm text-muted-foreground">
           We encountered an issue while signing you in with your social account.
         </p>
       </div>
 
       {errorMessage && <Alert>{errorMessage}</Alert>}
 
-      <div className="flex flex-col gap-3">
-        <Link href="/login">
-          <Button className="w-full">Return to Sign in</Button>
-        </Link>
-      </div>
+      {/* Liên kết mang hình thức nút: tránh lồng <button> trong <a> như trước. */}
+      <ButtonLink href="/login" size="lg" fullWidth>
+        Return to Sign in
+      </ButtonLink>
     </div>
   )
 }
@@ -83,12 +93,7 @@ function OAuthCallbackContent() {
 export default function OAuthCallbackPage() {
   return (
     <Suspense
-      fallback={
-        <div className="flex flex-col items-center justify-center space-y-4 py-8">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="text-sm font-medium text-muted-foreground">Loading authentication status…</p>
-        </div>
-      }
+      fallback={<OAuthPendingState label="Loading authentication status…" />}
     >
       <OAuthCallbackContent />
     </Suspense>

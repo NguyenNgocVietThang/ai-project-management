@@ -6,6 +6,8 @@
  * - Ảo hóa theo hàng: chỉ dựng các hàng (và mũi tên) nằm trong khung nhìn.
  * - Màu lấy từ token theme (primary, destructive, border...) nên tự theo light/dark.
  * Chuỗi hiển thị nhận qua `labels` để trang gọi tự lo i18n.
+ * - Hover thanh/mốc hoặc tên task: tô dải ngang mờ cho cả hàng, thanh sáng hơn và có hai
+ *   đường dóng dọc tại điểm bắt đầu/kết thúc chạy suốt chiều cao biểu đồ.
  */
 import { useId, useMemo, useState, type UIEvent } from 'react'
 import { cn } from '@/lib/utils'
@@ -90,6 +92,8 @@ export function GanttChart({
   const [internalZoom, setInternalZoom] = useState<GanttZoom>(defaultZoom)
   const zoom = controlledZoom ?? internalZoom
   const [scrollTop, setScrollTop] = useState(0)
+  // Task đang được rê chuột (thanh, mốc hoặc tên ở cột trái).
+  const [hoveredId, setHoveredId] = useState<number | null>(null)
   // useId trả về dạng ":r0:"; bỏ ký tự đặc biệt để dùng được trong url(#...).
   const idPrefix = `gantt-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
   const criticalPatternId = `${idPrefix}-critical`
@@ -124,6 +128,12 @@ export function GanttChart({
   }
 
   const onScroll = (event: UIEvent<HTMLDivElement>) => setScrollTop(event.currentTarget.scrollTop)
+
+  const hoveredRow = hoveredId === null ? undefined : layout.rows.find((row) => row.task.id === hoveredId)
+  const hoverHandlers = (id: number) => ({
+    onMouseEnter: () => setHoveredId(id),
+    onMouseLeave: () => setHoveredId((current) => (current === id ? null : current)),
+  })
 
   const describeRow = (row: GanttRow): string => {
     const task = row.task
@@ -269,8 +279,12 @@ export function GanttChart({
                     aria-posinset={row.index + 1}
                     aria-label={describeRow(row)}
                     data-testid="gantt-row"
-                    className="absolute left-0 right-0 flex items-center gap-2 border-b border-border/60 px-3 text-xs"
+                    className={cn(
+                      'absolute left-0 right-0 flex items-center gap-2 border-b border-border/60 px-3 text-xs transition-colors duration-150',
+                      hoveredId === row.task.id && 'bg-muted/70'
+                    )}
                     style={{ top: row.y, height: ROW_HEIGHT }}
+                    {...hoverHandlers(row.task.id)}
                   >
                     <span className={cn('truncate', row.critical ? 'font-semibold text-foreground' : 'text-foreground')} title={row.task.name}>
                       {row.task.name}
@@ -297,6 +311,19 @@ export function GanttChart({
                   />
                 ))}
 
+                {/* Dải ngang mờ đánh dấu hàng đang hover (nằm dưới mũi tên và thanh). */}
+                {hoveredRow && (
+                  <rect
+                    data-testid="gantt-hover-band"
+                    x={0}
+                    y={hoveredRow.y}
+                    width={timelineWidth}
+                    height={ROW_HEIGHT}
+                    className="pointer-events-none fill-muted"
+                    fillOpacity={0.7}
+                  />
+                )}
+
                 {visibleLinks.map((link) => (
                   <path
                     key={`${link.fromId}-${link.toId}`}
@@ -316,7 +343,13 @@ export function GanttChart({
                   if (row.kind === 'milestone') {
                     const half = BAR_HEIGHT / 2
                     return (
-                      <g key={row.task.id} data-testid="gantt-milestone" data-critical={row.critical || undefined}>
+                      <g
+                        key={row.task.id}
+                        data-testid="gantt-milestone"
+                        data-critical={row.critical || undefined}
+                        className={cn('transition-[filter] duration-150', hoveredId === row.task.id && 'brightness-110')}
+                        {...hoverHandlers(row.task.id)}
+                      >
                         <title>{describeRow(row)}</title>
                         <path
                           d={`M${row.x},${centerY - half} L${row.x + half},${centerY} L${row.x},${centerY + half} L${row.x - half},${centerY} Z`}
@@ -328,7 +361,16 @@ export function GanttChart({
                   }
                   const top = centerY - BAR_HEIGHT / 2
                   return (
-                    <g key={row.task.id} data-testid="gantt-bar" data-critical={row.critical || undefined}>
+                    <g
+                      key={row.task.id}
+                      data-testid="gantt-bar"
+                      data-critical={row.critical || undefined}
+                      className={cn(
+                        'transition-[filter,opacity] duration-150',
+                        hoveredId === row.task.id && 'brightness-110 drop-shadow-sm'
+                      )}
+                      {...hoverHandlers(row.task.id)}
+                    >
                       <title>{describeRow(row)}</title>
                       {row.floatWidth > 0 && (
                         <line
@@ -356,6 +398,27 @@ export function GanttChart({
                     </g>
                   )
                 })}
+
+                {/* Đường dóng dọc tại điểm bắt đầu/kết thúc của task đang hover. */}
+                {hoveredRow && (
+                  <g data-testid="gantt-hover-guides" className="pointer-events-none" aria-hidden="true">
+                    {(hoveredRow.kind === 'milestone' ? [hoveredRow.x] : [hoveredRow.x, hoveredRow.x + hoveredRow.width]).map(
+                      (x, index) => (
+                        <line
+                          key={index}
+                          x1={x}
+                          x2={x}
+                          y1={0}
+                          y2={layout.height}
+                          className={hoveredRow.critical ? 'stroke-destructive' : 'stroke-primary'}
+                          strokeOpacity={0.6}
+                          strokeWidth={1}
+                          strokeDasharray="4 4"
+                        />
+                      )
+                    )}
+                  </g>
+                )}
               </svg>
             </div>
           </div>

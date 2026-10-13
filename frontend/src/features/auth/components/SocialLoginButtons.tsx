@@ -1,5 +1,6 @@
 'use client'
 
+import { Button } from '@/components/common/Button'
 import { API_BASE_URL } from '@/services/api'
 
 interface SocialLoginButtonsProps {
@@ -13,20 +14,17 @@ export function SocialLoginButtons({ dividerText = 'Or continue with' }: SocialL
 
   return (
     <div className="space-y-4">
-      <div className="relative flex items-center justify-center">
-        <div className="absolute inset-x-0 border-t border-border" />
-        <span className="relative bg-card px-3 text-xs text-muted-foreground">
-          {dividerText}
-        </span>
+      {/* Đường phân cách dạng hai vạch hai bên chữ, không cần nền đặc phía sau chữ
+          nên hiển thị đúng trên cả thẻ kính mờ lẫn nền trong suốt. */}
+      <div className="flex items-center gap-3">
+        <span className="h-px flex-1 bg-border" aria-hidden="true" />
+        <span className="text-caption text-muted-foreground">{dividerText}</span>
+        <span className="h-px flex-1 bg-border" aria-hidden="true" />
       </div>
 
       <div className="grid grid-cols-1">
-        <button
-          type="button"
-          onClick={handleGoogleLogin}
-          className="inline-flex items-center justify-center gap-2 rounded-lg border border-input bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-all hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 shadow-sm"
-        >
-          <svg className="h-4 w-4" viewBox="0 0 24 24">
+        <Button type="button" variant="outline" size="lg" onClick={handleGoogleLogin}>
+          <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <path
               fill="#4285F4"
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -45,7 +43,7 @@ export function SocialLoginButtons({ dividerText = 'Or continue with' }: SocialL
             />
           </svg>
           Google
-        </button>
+        </Button>
       </div>
     </div>
   )

@@ -6,6 +6,9 @@ import { Button } from '@/components/common/Button'
 import { Input } from '@/components/common/Input'
 import { Modal } from '@/components/common/Modal'
 import { ErrorState, LoadingState } from '@/components/common/PageState'
+import { Card } from '@/components/ui/Card'
+import { PageHeader } from '@/components/ui/PageHeader'
+import { Select } from '@/components/ui/Select'
 import { DeactivateUserDialog } from '@/features/admin/users/components/DeactivateUserDialog'
 import { UserForm } from '@/features/admin/users/components/UserForm'
 import { UserTable } from '@/features/admin/users/components/UserTable'
@@ -44,25 +47,29 @@ export default function AdminUsersPage() {
 
   const roles = rolesQuery.data ?? []
 
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-sm font-medium text-primary">Admin</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight">Users</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Create accounts, assign roles, and activate or deactivate access.
-          </p>
-        </div>
-        <Button className="sm:w-auto" onClick={() => setCreating(true)}>
-          <Plus className="h-4 w-4" />
-          New user
-        </Button>
-      </div>
+  const hasFilters = Boolean(search || roleId || isActive)
 
-      <div className="flex flex-col gap-3 rounded-xl border bg-card p-4 sm:flex-row">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+  return (
+    <div className="space-y-8">
+      <PageHeader
+        eyebrow="Admin"
+        title="Users"
+        description="Create accounts, assign roles, and activate or deactivate access."
+        actions={
+          <Button fullWidth={false} onClick={() => setCreating(true)}>
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            New user
+          </Button>
+        }
+      />
+
+      {/* Thanh bộ lọc: tìm kiếm chiếm phần lớn, hai select cố định độ rộng trên desktop */}
+      <Card className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_12rem_10rem]">
+        <div className="relative">
+          <Search
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+            aria-hidden="true"
+          />
           <Input
             aria-label="Search users"
             value={search}
@@ -71,11 +78,10 @@ export default function AdminUsersPage() {
             placeholder="Search by name, username, or email"
           />
         </div>
-        <select
+        <Select
           aria-label="Filter by role"
           value={roleId}
           onChange={(event) => setRoleId(event.target.value ? Number(event.target.value) : '')}
-          className="h-11 rounded-md border bg-background px-3 text-sm sm:w-48"
         >
           <option value="">All roles</option>
           {roles.map((role) => (
@@ -83,21 +89,22 @@ export default function AdminUsersPage() {
               {role.name}
             </option>
           ))}
-        </select>
-        <select
+        </Select>
+        <Select
           aria-label="Filter by status"
           value={isActive}
           onChange={(event) => setIsActive(event.target.value as '' | 'true' | 'false')}
-          className="h-11 rounded-md border bg-background px-3 text-sm sm:w-40"
         >
           <option value="">All statuses</option>
           <option value="true">Active</option>
           <option value="false">Inactive</option>
-        </select>
-      </div>
+        </Select>
+      </Card>
 
-      {query.isLoading && <LoadingState label="Loading users…" />}
-      {query.isError && <ErrorState message={getApiErrorMessage(query.error)} />}
+      {query.isLoading && <LoadingState variant="table" label="Loading users…" />}
+      {query.isError && (
+        <ErrorState message={getApiErrorMessage(query.error)} onRetry={() => void query.refetch()} />
+      )}
       {query.data && (
         <UserTable
           users={query.data.items}
@@ -107,6 +114,26 @@ export default function AdminUsersPage() {
           onReactivate={async (user) => {
             await reactivateMutation.mutateAsync(user.id)
           }}
+          emptyAction={
+            hasFilters ? (
+              <Button
+                variant="outline"
+                fullWidth={false}
+                onClick={() => {
+                  setSearch('')
+                  setRoleId('')
+                  setIsActive('')
+                }}
+              >
+                Clear filters
+              </Button>
+            ) : (
+              <Button fullWidth={false} onClick={() => setCreating(true)}>
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                New user
+              </Button>
+            )
+          }
         />
       )}
 

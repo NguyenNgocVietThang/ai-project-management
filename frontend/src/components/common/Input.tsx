@@ -20,10 +20,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         aria-invalid={hasError || undefined}
         aria-describedby={describedBy}
         className={cn(
-          'flex h-11 w-full rounded-md border bg-background px-3 py-2 text-base',
+          'flex h-11 w-full rounded-lg border bg-card px-3 py-2 text-body shadow-xs sm:text-body-sm',
           'placeholder:text-muted-foreground',
-          'transition-colors duration-150',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+          'transition-[border-color,box-shadow] duration-150 hover:border-primary/40',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
           'disabled:cursor-not-allowed disabled:opacity-50',
           hasError ? 'border-destructive focus-visible:ring-destructive' : 'border-input',
           className

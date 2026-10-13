@@ -27,7 +27,7 @@ export function DeactivateUserDialog({
       className="max-w-lg"
     >
       {error && <Alert className="mb-4">{error}</Alert>}
-      <p className="text-sm text-muted-foreground">
+      <p className="text-body-sm text-muted-foreground">
         Deactivate <strong className="text-foreground">{user?.full_name}</strong> ({user?.email})?
       </p>
       <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">

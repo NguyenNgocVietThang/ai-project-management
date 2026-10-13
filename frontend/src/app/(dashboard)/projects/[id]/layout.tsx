@@ -1,14 +1,19 @@
 'use client'
 import { useTranslations } from 'next-intl'
 
-import { ArrowLeft, BarChart3, Clock3, FileEdit, FileText, GanttChartSquare, GitBranch, History, ListTodo, MessageSquare, Network, Settings, Sparkles, Users } from 'lucide-react'
-import Link from 'next/link'
+import { BarChart3, Clock3, FileEdit, FileText, GanttChartSquare, GitBranch, History, ListTodo, MessageSquare, Network, Settings, Sparkles, Users } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useNumericParam } from '@/hooks/useNumericParam'
-import { ErrorState, LoadingState } from '@/components/common/PageState'
+import { ErrorState } from '@/components/common/PageState'
+import { useBreadcrumbLabel } from '@/components/layout/Breadcrumbs'
+import { Badge } from '@/components/ui/Badge'
+import { PageHeader } from '@/components/ui/PageHeader'
+import { SkeletonPageHeader, SkeletonRegion, Skeleton } from '@/components/ui/Skeleton'
+import { TabNav } from '@/components/ui/TabNav'
 import { useChatUnreadCount } from '@/features/chat/hooks/useChat'
 import { ProjectStatusBadge } from '@/features/projects/components/ProjectStatusBadge'
 import { useProjectDetail } from '@/features/projects/hooks/useProjects'
+import { formatStatus } from '@/lib/format'
 import { getApiErrorMessage } from '@/types/api.types'
 
 export default function ProjectLayout({ children }: { children: React.ReactNode }) {
@@ -17,9 +22,52 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
   const query = useProjectDetail(id)
   const unread = useChatUnreadCount(id).data?.unread_count ?? 0
   const t = useTranslations('project')
-  if (query.isLoading) return <LoadingState label="Loading project…" />
-  if (query.isError || !query.data) return <ErrorState message={getApiErrorMessage(query.error, t('notFound'))} />
+  const tc = useTranslations('common')
+  // Breadcrumb hiện tên dự án thay vì "#12".
+  useBreadcrumbLabel(`/projects/${id}`, query.data?.name)
+
+  if (query.isLoading) {
+    return (
+      <SkeletonRegion label={tc('loading')} className="space-y-6">
+        <SkeletonPageHeader />
+        <Skeleton className="h-11 w-full" />
+        <Skeleton className="h-80 w-full rounded-xl" />
+      </SkeletonRegion>
+    )
+  }
+  if (query.isError || !query.data) return <ErrorState message={getApiErrorMessage(query.error, t('notFound'))} onRetry={() => void query.refetch()} retryLabel={tc('retry')} />
+
   const project = query.data
-  const links = [{ href: `/projects/${id}/overview`, label: t('overview'), icon: BarChart3 }, { href: `/projects/${id}/wbs`, label: t('wbs'), icon: Network }, { href: `/projects/${id}/tasks`, label: t('tasks'), icon: ListTodo }, { href: `/projects/${id}/gantt`, label: t('gantt'), icon: GanttChartSquare }, { href: `/projects/${id}/timesheet`, label: t('timesheet'), icon: Clock3 }, { href: `/projects/${id}/members`, label: t('members'), icon: Users }, { href: `/projects/${id}/chat`, label: t('chat'), icon: MessageSquare, badge: unread }, { href: `/projects/${id}/change-requests`, label: t('changeRequests'), icon: FileEdit }, { href: `/projects/${id}/versions`, label: t('versions'), icon: History }, { href: `/projects/${id}/documents`, label: t('documents'), icon: FileText }, { href: `/projects/${id}/process`, label: t('process'), icon: GitBranch }, { href: `/projects/${id}/ai-insights`, label: t('aiInsights'), icon: Sparkles }, { href: `/projects/${id}/settings`, label: t('settings'), icon: Settings }]
-  return <div className="space-y-6"><Link href="/projects" className="inline-flex min-h-11 items-center gap-2 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="h-4 w-4" />{t('backToProjects')}</Link><div className="flex flex-col gap-4 border-b pb-5 lg:flex-row lg:items-end lg:justify-between"><div><div className="flex flex-wrap items-center gap-2"><ProjectStatusBadge status={project.status} /><span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium capitalize text-primary">{project.methodology}</span></div><h1 className="mt-3 text-3xl font-semibold tracking-tight">{project.name}</h1><p className="mt-1 text-sm text-muted-foreground">{project.portfolio_name || t('standalone')}</p></div><nav className="flex max-w-full gap-1 overflow-x-auto" aria-label={t('navigation')}>{links.map((link) => { const Icon = link.icon; const active = pathname.startsWith(link.href); return <Link key={link.href} href={link.href} className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-md px-3 text-sm ${active ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent hover:text-foreground'}`}><Icon className="h-4 w-4" />{link.label}{Boolean(link.badge) && <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-xs font-bold text-destructive-foreground">{link.badge}</span>}</Link> })}</nav></div>{children}</div>
+  const base = `/projects/${id}`
+  const links = [
+    { href: `${base}/overview`, label: t('overview'), icon: BarChart3 },
+    { href: `${base}/wbs`, label: t('wbs'), icon: Network },
+    { href: `${base}/tasks`, label: t('tasks'), icon: ListTodo },
+    { href: `${base}/gantt`, label: t('gantt'), icon: GanttChartSquare },
+    { href: `${base}/timesheet`, label: t('timesheet'), icon: Clock3 },
+    { href: `${base}/members`, label: t('members'), icon: Users },
+    { href: `${base}/chat`, label: t('chat'), icon: MessageSquare, badge: unread },
+    { href: `${base}/change-requests`, label: t('changeRequests'), icon: FileEdit },
+    { href: `${base}/versions`, label: t('versions'), icon: History },
+    { href: `${base}/documents`, label: t('documents'), icon: FileText },
+    { href: `${base}/process`, label: t('process'), icon: GitBranch },
+    { href: `${base}/ai-insights`, label: t('aiInsights'), icon: Sparkles },
+    { href: `${base}/settings`, label: t('settings'), icon: Settings },
+  ].map(link => ({ ...link, active: pathname.startsWith(link.href) }))
+
+  return (
+    <div className="space-y-6">
+      {/* ===== Đầu trang dự án: trạng thái, phương pháp, tên, danh mục ===== */}
+      <PageHeader
+        title={project.name}
+        description={project.portfolio_name || t('standalone')}
+        meta={<><ProjectStatusBadge status={project.status} /><Badge tone="primary">{formatStatus(project.methodology)}</Badge></>}
+      />
+      {/* ===== Thanh tab dính ngay dưới header ứng dụng (cao 64px) ===== */}
+      <div className="sticky top-16 z-10 -mx-4 bg-background/85 px-4 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+        <TabNav items={links} label={t('navigation')} />
+      </div>
+      <div>{children}</div>
+    </div>
+  )
 }

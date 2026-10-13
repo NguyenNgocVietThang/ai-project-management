@@ -59,7 +59,7 @@ export function ProfileDetailsForm({ user, onSubmit, isLoading, error, success }
           }
         })}
         noValidate
-        className="space-y-5"
+        className="space-y-4"
       >
         {error && <Alert>{error}</Alert>}
         {success && <Alert variant="success">Profile updated successfully.</Alert>}
@@ -67,7 +67,7 @@ export function ProfileDetailsForm({ user, onSubmit, isLoading, error, success }
         <div>
           <Label htmlFor="email">Email</Label>
           <Input id="email" value={user.email} disabled readOnly />
-          <p className="mt-1.5 text-xs text-muted-foreground">Email cannot be changed here.</p>
+          <p className="mt-1 text-caption text-muted-foreground">Email cannot be changed here.</p>
         </div>
 
         <div>
@@ -78,12 +78,12 @@ export function ProfileDetailsForm({ user, onSubmit, isLoading, error, success }
             disabled
             readOnly
           />
-          <p className="mt-1.5 text-xs text-muted-foreground">
+          <p className="mt-1 text-caption text-muted-foreground">
             Your hourly rate is managed by an administrator.
           </p>
         </div>
 
-        <div className="grid gap-5 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           {fields.map((field) => (
             <div key={field.name} className={field.name === 'full_name' ? 'sm:col-span-2' : ''}>
               <Label htmlFor={field.name}>{field.label}</Label>
@@ -95,7 +95,7 @@ export function ProfileDetailsForm({ user, onSubmit, isLoading, error, success }
                 {...register(field.name)}
               />
               {errors[field.name] && (
-                <p id={`${field.name}-error`} className="mt-1.5 text-sm text-destructive">
+                <p id={`${field.name}-error`} className="mt-1 text-body-sm text-destructive">
                   {errors[field.name]?.message}
                 </p>
               )}

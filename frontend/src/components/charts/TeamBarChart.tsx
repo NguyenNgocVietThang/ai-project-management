@@ -1,13 +1,17 @@
 'use client'
 
 /**
- * TeamBarChart – Recharts BarChart wrapper
- * Hiển thị mức sử dụng nhân sự: giờ ước tính so với giờ đã ghi nhận của từng thành viên
+ * TeamBarChart – biểu đồ cột dọc (Recharts BarChart)
+ * Hiển thị mức sử dụng nhân sự: giờ ước tính so với giờ đã ghi nhận của từng thành viên.
+ * Hover: cột nền bo góc phía sau nhóm cột, nhóm đang hover giữ độ đậm, các nhóm khác mờ đi.
+ * Có bảng sr-only để thông tin không chỉ nằm trong hình.
  */
+import { useMemo, useState } from 'react'
 import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   Legend,
   ResponsiveContainer,
   Tooltip,
@@ -15,68 +19,152 @@ import {
   YAxis,
 } from 'recharts'
 import type { TeamMemberUtilization } from '@/features/dashboard/types/dashboard.types'
+import { ChartTooltip } from './ChartTooltip'
+import {
+  animationProps,
+  axisProps,
+  BandCursor,
+  chartColors,
+  DIM_OPACITY,
+  gridProps,
+  opacityTransition,
+  usePrefersReducedMotion,
+} from './chartTheme'
+
+export interface TeamBarChartLabels {
+  estimated: string
+  logged: string
+  member: string
+  empty: string
+  /** Chú thích bảng sr-only. */
+  summary: string
+}
 
 interface TeamBarChartProps {
   data: TeamMemberUtilization[]
   height?: number
+  /** Chuỗi hiển thị; bỏ trống thì dùng tiếng Anh mặc định (giữ tương thích). */
+  labels?: Partial<TeamBarChartLabels>
 }
 
-export function TeamBarChart({ data, height = 220 }: TeamBarChartProps) {
+const DEFAULT_LABELS: TeamBarChartLabels = {
+  estimated: 'Estimated',
+  logged: 'Logged',
+  member: 'Member',
+  empty: 'No team data available',
+  summary: 'Team utilization: estimated versus logged hours per member',
+}
+
+export function TeamBarChart({ data, height = 220, labels }: TeamBarChartProps) {
+  const text = { ...DEFAULT_LABELS, ...labels }
+  const reducedMotion = usePrefersReducedMotion()
+  const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined)
+  // Giữ nguyên tham chiếu mảng giữa các lần render để hover không kích hoạt lại animation vào.
+  const chartData = useMemo(
+    () =>
+      (data ?? []).map((m) => ({
+        name: m.full_name.split(' ').slice(-1)[0], // chỉ lấy tên cuối cho ngắn gọn
+        fullName: m.full_name,
+        estimated: m.estimated_hours,
+        logged: m.logged_hours,
+      })),
+    [data]
+  )
+
   if (!data || data.length === 0) {
     return (
       <div
-        className="flex items-center justify-center text-sm text-muted-foreground"
+        className="flex items-center justify-center text-body-sm text-muted-foreground"
         style={{ height }}
       >
-        No team data available
+        {text.empty}
       </div>
     )
   }
 
-  const chartData = data.map((m) => ({
-    name: m.full_name.split(' ').slice(-1)[0], // chỉ lấy tên cuối cho ngắn gọn
-    fullName: m.full_name,
-    Estimated: m.estimated_hours,
-    Logged: m.logged_hours,
-  }))
+  const opacityFor = (index: number) =>
+    activeIndex === undefined || activeIndex === index ? 1 : DIM_OPACITY
 
   return (
-    <ResponsiveContainer width="100%" height={height}>
-      <BarChart data={chartData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-        <XAxis
-          dataKey="name"
-          tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
-          tickLine={false}
-          axisLine={false}
-        />
-        <YAxis
-          tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
-          tickLine={false}
-          axisLine={false}
-          unit="h"
-        />
-        <Tooltip
-          formatter={(value: number, name: string) => [`${value}h`, name]}
-          labelFormatter={(label, payload) =>
-            payload?.[0]?.payload?.fullName ?? label
-          }
-          contentStyle={{
-            background: 'hsl(var(--card))',
-            border: '1px solid hsl(var(--border))',
-            borderRadius: '8px',
-            fontSize: '12px',
-            color: 'hsl(var(--foreground))',
-          }}
-        />
-        <Legend
-          iconType="circle"
-          iconSize={8}
-          wrapperStyle={{ fontSize: '12px', paddingTop: '8px' }}
-        />
-        <Bar dataKey="Estimated" fill="hsl(var(--muted-foreground))" radius={[3, 3, 0, 0]} opacity={0.5} />
-        <Bar dataKey="Logged" fill="hsl(var(--primary))" radius={[3, 3, 0, 0]} />
-      </BarChart>
-    </ResponsiveContainer>
+    <div>
+      <div aria-hidden="true">
+        <ResponsiveContainer width="100%" height={height}>
+          <BarChart
+            data={chartData}
+            margin={{ top: 8, right: 8, left: -16, bottom: 0 }}
+            barGap={4}
+            onMouseMove={(state) =>
+              setActiveIndex(state?.isTooltipActive ? state.activeTooltipIndex : undefined)
+            }
+            onMouseLeave={() => setActiveIndex(undefined)}
+          >
+            <CartesianGrid {...gridProps} vertical={false} />
+            <XAxis dataKey="name" {...axisProps} />
+            <YAxis {...axisProps} unit="h" />
+            <Tooltip
+              cursor={<BandCursor />}
+              content={
+                <ChartTooltip
+                  valueFormatter={(value) => `${value}h`}
+                  labelFormatter={(label, payload) => (payload[0]?.payload?.fullName as string | undefined) ?? label}
+                />
+              }
+              isAnimationActive={false}
+            />
+            <Legend
+              iconType="square"
+              iconSize={10}
+              wrapperStyle={{ fontSize: 12, paddingTop: 8 }}
+              formatter={(value: string) => <span className="text-muted-foreground">{value}</span>}
+            />
+            <Bar
+              dataKey="estimated"
+              name={text.estimated}
+              fill={chartColors.muted}
+              fillOpacity={0.45}
+              radius={[6, 6, 0, 0]}
+              maxBarSize={32}
+              {...animationProps(reducedMotion)}
+            >
+              {chartData.map((entry, index) => (
+                <Cell key={`est-${entry.fullName}-${index}`} opacity={opacityFor(index)} style={opacityTransition} />
+              ))}
+            </Bar>
+            <Bar
+              dataKey="logged"
+              name={text.logged}
+              fill={chartColors.primary}
+              radius={[6, 6, 0, 0]}
+              maxBarSize={32}
+              {...animationProps(reducedMotion)}
+            >
+              {chartData.map((entry, index) => (
+                <Cell key={`log-${entry.fullName}-${index}`} opacity={opacityFor(index)} style={opacityTransition} />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+      {/* Bảng dữ liệu cho trình đọc màn hình. */}
+      <table className="sr-only">
+        <caption>{text.summary}</caption>
+        <thead>
+          <tr>
+            <th scope="col">{text.member}</th>
+            <th scope="col">{text.estimated}</th>
+            <th scope="col">{text.logged}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {chartData.map((m, index) => (
+            <tr key={`${m.fullName}-${index}`}>
+              <th scope="row">{m.fullName}</th>
+              <td>{m.estimated}h</td>
+              <td>{m.logged}h</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }

@@ -82,7 +82,7 @@ export function Modal({ open, onClose, title, description, children, className }
       {/* Lớp phủ là div chứ không phải button: một button toàn màn hình nằm trong
           tab order và được screen reader đọc lên như một điều khiển thật. Escape
           và nút đóng ở trên đã là đường thoát cho người dùng bàn phím. */}
-      <div className="absolute inset-0 bg-slate-950/55 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 animate-fade-in bg-slate-950/50 backdrop-blur-sm" onClick={onClose} />
       <section
         ref={panelRef}
         role="dialog"
@@ -91,17 +91,17 @@ export function Modal({ open, onClose, title, description, children, className }
         aria-describedby={description ? descriptionId : undefined}
         tabIndex={-1}
         className={cn(
-          'relative z-10 max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl border bg-background p-6 shadow-2xl',
+          'relative z-10 max-h-[90dvh] w-full max-w-2xl animate-scale-in overflow-y-auto rounded-2xl border border-border/80 bg-card p-6 shadow-soft-lg sm:p-8',
           className
         )}
       >
-        <div className="mb-5 flex items-start justify-between gap-4">
+        <div className="mb-6 flex items-start justify-between gap-4">
           <div>
-            <h2 id={titleId} className="text-xl font-semibold tracking-tight">
+            <h2 id={titleId} className="text-h3">
               {title}
             </h2>
             {description && (
-              <p id={descriptionId} className="mt-1 text-sm text-muted-foreground">
+              <p id={descriptionId} className="mt-1 max-w-prose-ui text-body-sm text-muted-foreground">
                 {description}
               </p>
             )}
@@ -109,7 +109,7 @@ export function Modal({ open, onClose, title, description, children, className }
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="-mr-2 -mt-2 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label="Close"
           >
             <X className="h-5 w-5" aria-hidden="true" />
