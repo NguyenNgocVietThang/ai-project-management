@@ -15,6 +15,10 @@ class AIRequestType(str, enum.Enum):
     RESOURCE_RECOMMEND = "RESOURCE_RECOMMEND"
     RISK_ANALYSIS = "RISK_ANALYSIS"
     DOCUMENT_PARSE = "DOCUMENT_PARSE"
+    # Phase 4: hỏi làm rõ yêu cầu, sinh nội dung SRS/BRD, sinh cấu trúc quy trình BPMN
+    REQUIREMENT_CLARIFY = "REQUIREMENT_CLARIFY"
+    DOCUMENT_GENERATE = "DOCUMENT_GENERATE"
+    BPMN_GENERATE = "BPMN_GENERATE"
 
 
 class AIRequestStatus(str, enum.Enum):

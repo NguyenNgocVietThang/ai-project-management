@@ -30,6 +30,7 @@ ERROR_CODES = frozenset(
         "email_unconfigured",
         "invalid_provider_response",
         "shutdown_interrupted",
+        "storage_error",
         "database_unavailable",
     }
 )

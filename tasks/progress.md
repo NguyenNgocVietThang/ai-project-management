@@ -38,3 +38,20 @@
 - Cluster PostgreSQL tạm tasks/.postgres-test đã dừng sau kiểm thử; không dừng hoặc sửa instance PostgreSQL khác.
 - Manifest build xác nhận proxy /api/v1 và CSP WebSocket đúng cấu hình Render; public JS không có tên các biến secret backend. git diff --check đạt.
 - Công cụ tự động chặn lệnh dọn cache kiểm tra schema tạm (blocked by policy); tasks/.validation-libs và .render-validation.json vẫn được Git ignore, không chứa credential thật hoặc ảnh hưởng deployment.
+
+## Nghiệm thu cloud (2026-10-12)
+
+- Người dùng chọn hoàn tất kế hoạch Render + Supabase trước, tạm dừng Phase 4. Quyết định Phase 4 đã chốt: Gantt tự vẽ SVG/CSS từ `GET /projects/{id}/cpm`, không thêm thư viện.
+- Task A (đối soát): frontend `ai-project-frontend-5zvz.onrender.com` phản hồi 307 sau 0,57 s (đang thức). Proxy `/api/v1/auth/me` trả 401 JSON từ FastAPI, nên backend chạy và proxy đúng. `/health` không đi qua proxy (chỉ `/api/v1`), hostname backend trực tiếp chưa xác định. Migration head, bucket private, extension pg_cron/pg_net/Vault cần truy vấn chỉ đọc trên Supabase SQL Editor (người dùng chạy).
+- Trạng thái mục mở: 7a hoãn (EMAIL_PROVIDER=disabled, chưa có sender); 8b, 10a, 12b chờ kết quả truy vấn và thao tác đăng nhập của người dùng.
+- Backend trực tiếp `ai-project-backend-ejed.onrender.com/health`: 200, database ok, redis ok, 0,38 s (đang thức, chưa phải số đo cold start).
+- 8b đạt: bảng jobs 3 ngày gần nhất có cron.reminders succeeded x2, cron.risk succeeded x2 (một job/ngày dù có retry +2/+5 phút).
+- 7a: người dùng chọn giữ email tắt có chủ đích; đóng mục với lý do.
+- Google OAuth trên demo: người dùng đăng nhập thành công.
+- Mở: dashboard Supabase báo 113 lỗi / 116 "Postgres requests" trong 60 phút. Backend không gọi PostgREST (`/rest/v1`), chỉ dùng kết nối Postgres trực tiếp và `storage/v1`; cần xem Logs Explorer và kiểm tra RLS/quyền anon trên schema public.
+- Cold start đo thật (16:10 UTC, backend ngủ khoảng 1 giờ): `/health` trả 200 sau 42,7 s. Trong lúc backend đang thức dậy, frontend proxy `/api/v1/oauth/google/login` trả 502 Bad Gateway từ Render; tải lại sau khi backend thức thì hết lỗi. Đây là giới hạn đã biết của gói Free (docs nêu cold start khoảng 1 phút).
+- Task B (Storage thật, 2026-10-12 ~16:15 UTC, trình duyệt in-app, tài khoản Google của người dùng):
+  - Ảnh 6 MiB bị chặn ở client ("Avatar must not exceed 5 MiB."), không có request gửi đi. Giới hạn phía server chỉ có test cục bộ, chưa thử trên cloud.
+  - Ảnh PNG thử 600x600 (14 KB) upload qua UI: `POST /api/v1/users/me/avatar` 200. Ảnh trả về là WebP 512x512, `Cache-Control: private, no-store`.
+  - Không có phiên đăng nhập: `GET /api/v1/users/1/avatar` trả 401 qua cả proxy frontend lẫn backend trực tiếp.
+  - Còn lại: tải lại avatar sau khi backend ngủ/khởi động lại, và người dùng xác nhận object nằm trong bucket private `ai-project-files`.

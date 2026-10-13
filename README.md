@@ -60,20 +60,21 @@ Xây dựng một **web application quản lý dự án và danh mục đầu t�
 |---|---|---|
 | Auth, RBAC, Admin Portal, OAuth, Profile | Chạy thật + test | Phase 1 hoàn thành |
 | Portfolio / Project / WBS / Task / Dependency / Assignment / WorkLog | Chạy thật + test | Phase 2 hoàn thành |
-| CPM Engine | Chạy thật + test | `app/utils/cpm.py` + `scheduling_service.py`; endpoint `GET /projects/{id}/cpm` đã mount (chỉ đọc). `/gantt` vẫn là stub (Phase 4) |
+| CPM Engine | Chạy thật + test | `app/utils/cpm.py` + `scheduling_service.py`; endpoint `GET /projects/{id}/cpm` đã mount (chỉ đọc, áp `CPM_MAX_TASKS`/`CPM_MAX_DEPENDENCIES`). Trang Gantt chỉ đọc `/projects/{id}/gantt` vẽ SVG từ dữ liệu CPM (Phase 4); stub `/gantt` đã xóa |
 | Real-time Chat + Notification Push + Celery Beat daily sweep | Chạy thật + test | Phase 2/5 hoàn thành |
 | Dashboard KPI / EVA / Burndown | Chạy thật | endpoint `/dashboards` đã mount |
 | AI Project Generator | Chạy thật + UI | `POST /ai/generate-project` + Celery sinh Project/Phase/Task/Dependency thật; UI `AIGeneratorModal.tsx` |
 | AI Impact / Schedule / Resource / Risk | Chạy thật + UI | 4 endpoint AI đã mount; xử lý qua Celery; UI tại trang Change Request và `/projects/{id}/ai-insights`; Risk Analysis có lịch quét 08:30 hằng ngày |
-| Change Request | CRUD tối giản chạy thật + UI | Create/list/get/submit đã mount và có phân quyền; làm nền cho AI Impact Analysis. Workflow duyệt nhiều cấp vẫn thuộc Phase 4 |
-| Approvals / Project Versioning / Rollback | Chỉ model DB | Endpoint vẫn là stub `TODO`, chưa mount, chưa có UI |
-| Reports DOCX/XLSX | Chỉ scaffold | `report_tasks.py` là stub trả về rỗng, endpoint `/reports` chưa mount |
-| Documents / AI Document Parser | Chỉ model DB | endpoint `/documents` là stub, chưa mount |
+| Change Request + duyệt BA -> PO -> PM | Chạy thật + UI (Phase 4) | Submit tạo 3 bước duyệt (thiếu vai trò trả 422 `missing_roles`); `/change-requests/{id}/approvals` approve/reject có khóa hàng, audit, thông báo in-app; trang chi tiết CR có dòng thời gian duyệt |
+| Project Versioning / So sánh / Rollback | Chạy thật + UI (Phase 4) | `versioning_service`, `/projects/{id}/versions` (baseline PM, diff, rollback theo quy tắc V0, task lưu trữ `archived_at`); trang `/projects/{id}/versions` |
+| Hồ sơ yêu cầu + AI hỏi làm rõ | Chạy thật + UI (Phase 4) | `/requirement-briefs`, job `ai.requirement_clarify`, `POST /ai/generate-project-from-brief`; UI `RequirementClarifier` |
+| Tài liệu SRS/BRD (DOCX), XLSX, BPMN | Chạy thật + UI (Phase 4) | Job `document.generate`, `report.xlsx`, `ai.bpmn_generate` (durable jobs), lưu storage private, tải qua proxy kiểm tra quyền; trang Tài liệu, Quy trình, nút Xuất XLSX |
+| Upload/parse tài liệu gốc | Chưa làm (ngoài phạm vi Phase 4) | `/projects/{id}/documents` nay là tài liệu SRS/BRD do hệ thống sinh |
 | Leaves / Skills catalog | Chỉ model DB | endpoint là stub, chưa mount |
 | Mobile Responsive & UI Polish | Hoàn thành cơ bản | Menu mobile modal với focus trap, chuyển theme light/dark/system, thẻ KPI responsive |
 | Investor Read-only Dashboard | Chưa làm | — |
 
-> **API thực tế đang phục vụ:** 24 REST router (`/api/v1/...`) + 2 WebSocket router (`/ws/...`). 8 router còn lại (`leaves, skills, documents, approvals, gantt, reports, project_versions, system`) vẫn là stub `TODO: Implement`, bị comment trong [`router.py`](./backend/app/api/v1/router.py) và **không** được mount.
+> **API thực tế đang phục vụ:** 32 REST router (`/api/v1/...`) + 2 WebSocket router (`/ws/...`). 3 router còn lại (`leaves, skills, system`) vẫn là stub `TODO: Implement`, bị comment trong [`router.py`](./backend/app/api/v1/router.py) và **không** được mount.
 
 ---
 
@@ -153,7 +154,7 @@ FastAPI WS Endpoint (authenticate_ws đổi vé dùng-một-lần lấy từ POS
 | Lưu trữ tệp | `minio` / `boto3` | `7.2.9` | S3-compatible storage (BRD/SRS, Avatar, Reports) |
 | Dịch vụ email | `fastapi-mail` + Jinja2 | `1.4.1` | Template email async dispatch |
 | Báo cáo | `python-docx`, `openpyxl` | — | Xuất báo cáo dự án định dạng DOCX & XLSX |
-| Kiểm thử | `pytest`, `pytest-asyncio`, `httpx` | — | Automated test suite (`backend/tests/unit/` + `backend/tests/integration/`, 261 passed) |
+| Kiểm thử | `pytest`, `pytest-asyncio`, `httpx` | — | Automated test suite (`backend/tests/unit/` + `backend/tests/integration/`; 2026-10-13: 649 passed, 28 skipped trên SQLite) |
 
 ### Phía giao diện (Next.js / React / TypeScript)
 | Thành phần | Công nghệ / Thư viện | Phiên bản | Mô tả |
@@ -220,8 +221,8 @@ AI Project Planning & Portfolio Management system/
 │   │   │   ├── __init__.py
 │   │   │   ├── v1/
 │   │   │   │   ├── __init__.py
-│   │   │   │   ├── router.py                 # Aggregator: 24 REST routers được mount (+8 stub bị comment)
-│   │   │   │   └── endpoints/                # 32 file handler (24 đã hiện thực & mount, 8 còn là stub TODO)
+│   │   │   │   ├── router.py                 # Aggregator: 32 REST routers được mount (+3 stub bị comment)
+│   │   │   │   └── endpoints/                # 35 file handler (32 đã hiện thực & mount, 3 còn là stub TODO)
 │   │   │   └── ws/
 │   │   │       ├── __init__.py
 │   │   │       ├── deps.py                   # authenticate_ws (đổi vé dùng-một-lần lấy qua POST /auth/ws-ticket, không phải JWT trên query string)
@@ -271,9 +272,9 @@ AI Project Planning & Portfolio Management system/
 │   │       ├── notification_tasks.py         # sweep_task_dates_task (task start & due-soon)
 │   │       ├── scheduling_tasks.py           # Tính lại CPM bất đồng bộ khi dự án vượt ngưỡng CPM_SYNC_TASK_THRESHOLD
 │   │       ├── ai_tasks.py                   # generate_project_task chạy thật; impact/optimize/risk/parse_document vẫn là stub
-│   │       └── email_tasks.py, report_tasks.py  # report_tasks.py vẫn là stub trả về rỗng
+│   │       └── email_tasks.py                # mã Celery kế thừa; tác vụ nền nay chạy bằng durable jobs
 │   │   ├── alembic/versions/                 # Database migrations chain
-│   │   └── tests/                            # unit/ + integration/ — bộ test tự động (261 passed)
+│   │   └── tests/                            # unit/ + integration/ — 649 passed, 28 skipped (2026-10-13)
 │
 ├── frontend/                                 # Next.js 15 React / TypeScript Frontend
 │   ├── src/
@@ -413,11 +414,11 @@ class Task(Base):
 - **SOP-PM-002: Time Tracking & Timesheets**: Member bấm `Start`/`Stop` hoặc ghi nhận WorkLog thủ công → Cập nhật `actual_hours` và chi phí.
 - **SOP-PM-003: Critical Path Method (CPM)**: Tự động chạy thuật toán Topological Sort + Forward/Backward pass khi có cập nhật thời lượng hoặc quan hệ phụ thuộc.
 - **SOP-RM-001: Resource Leveling**: Kiểm tra tải nhân sự và cảnh báo khi phân bổ vượt quá 8 giờ/ngày.
-- **SOP-CR-001: Change Request Workflow**: CRUD và bước submit đã chạy thật để phục vụ Phân tích tác động bằng AI; chuỗi duyệt đa cấp `Customer → BA → PO → PM`, snapshot và apply vẫn nằm trong Phase 4.
+- **SOP-CR-001: Change Request Workflow**: CRUD và bước submit đã chạy thật để phục vụ Phân tích tác động bằng AI; chuỗi duyệt `BA → PO → PM` có khóa hàng và audit; PM duyệt cuối tự tạo phiên bản snapshot (Phase 4).
 - **SOP-PM-004: Project Versioning & Rollback**: Tự động lưu snapshot baseline trước khi cập nhật lớn, cho phép so sánh Diff và khôi phục khi cần.
 - **SOP-CHAT-001: Project Real-time Chat**: Kênh chat nội bộ dự án kết nối qua WebSocket `/ws/chat/{project_id}`, lưu trữ lịch sử tin nhắn và đếm unread count.
 - **SOP-NOTI-001: Real-time Notification & Daily Sweep**: Đẩy thông báo tức thời qua WebSocket `/ws/notifications` khi có sự kiện (giao task, đổi trạng thái, cập nhật ngày); Celery Beat quét định kỳ 08:00 AM hàng ngày gửi thông báo task bắt đầu và sắp đến hạn.
-- **SOP-RPT-001: Xuất báo cáo tự động**: Xuất file tổng hợp tiến độ và tài chính định dạng DOCX và XLSX qua Celery worker.
+- **SOP-RPT-001: Xuất báo cáo tự động**: Xuất SRS/BRD (DOCX) và báo cáo XLSX qua durable jobs, tải qua proxy kiểm tra quyền dự án.
 
 ---
 
@@ -518,8 +519,10 @@ async def publish(channel: str, message: dict):
 | 22 | `/projects/{id}/cpm` | `cpm.py` | Phân tích đường găng (CPM) của dự án — chỉ đọc (`GET`), engine tính toán chạy nội bộ ở mọi thao tác ghi task/dependency |
 | 23 | `/ai` | `ai.py` | `POST /ai/generate-project` (AI Project Generator, xếp hàng qua Celery) & `GET /ai/jobs/{job_id}` |
 
-**9 router còn là stub `TODO: Implement` — bị comment trong `router.py`, CHƯA mount:**
-`/leaves` · `/skills` · `/documents` · `/approvals` · `/change-requests` · `/gantt` · `/reports` · `/versions` · `/system`
+**Router thêm ở Phase 4 (đã mount):** `requirement_briefs.py` (`/requirement-briefs`), `approvals.py` (`/change-requests/{id}/approvals`), `project_versions.py` (`/projects/{id}/versions`), `documents.py` (`/projects/{id}/documents`), `reports.py` (`/projects/{id}/reports/xlsx`), `process_models.py` (`/projects/{id}/process-model`).
+
+**Các router còn là stub `TODO: Implement` — bị comment trong `router.py`, CHƯA mount:**
+`/leaves` · `/skills` · `/system`
 > Các file này tồn tại trong `api/v1/endpoints/` nhưng chỉ trả về placeholder và không có dependency auth. Xem chú thích trong [`router.py`](./backend/app/api/v1/router.py).
 
 ### Danh mục WebSocket Endpoints (`/ws/...`)
@@ -741,7 +744,7 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
   - [x] **Real-time Project Chat (`/projects/[id]/chat`, `/ws/chat/{id}`)** với lịch sử tin nhắn và unread badge.
   - [x] **Notification triggers & Celery Beat daily sweep** (thông báo task bắt đầu và sắp đến hạn lúc 08:00 AM).
   - [x] Endpoint `/cpm` công khai (`GET /projects/{id}/cpm`, chỉ đọc).
-  - [ ] Endpoint `/gantt` + UI Gantt (thuộc Phase 4).
+  - [x] UI Gantt chỉ đọc (Phase 4): trang `/projects/{id}/gantt` dùng `GET /projects/{id}/cpm`, không cần endpoint `/gantt` riêng.
 
 - [x] **Phase 3 — Mô-đun tính năng AI** *(Hoàn thành 5/5 trụ cột AI)*
   - [x] Tầng trừu tượng hóa AI Provider (`BaseAIProvider`, `XkiroProvider`).
@@ -752,22 +755,24 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
   - [x] **AI Risk Analysis (SOP-AI-005):** endpoint `/ai/risk-analysis`, lưu `risk_reports`, `RiskWidget` và Celery Beat quét lúc 08:30 hằng ngày.
   - [x] Models logging/report (`ai_requests`, `ai_outputs`, `impact_reports`, `risk_reports`) đã migrate.
 
-- [ ] **Phase 4 — Workflow & Reporting Module** *(~30%)*
+- [x] **Phase 4 — Workflow & Reporting Module** *(mã nguồn hoàn thành 2026-10-13; chờ duyệt checkpoint và nghiệm thu trên Render)*
   - [x] Hệ thống Quản trị & Audit Timeline toàn diện (`/admin/audit`, cursor pagination).
   - [x] Hạ tầng WebSocket + Redis Pub/Sub (`ws_manager.py`).
   - [x] Models DB: `change_requests`, `approvals`, `project_versions`, `impact_reports` đã migrate.
   - [x] Dashboard endpoints (`/dashboards`: KPI, EVA, Burndown).
-  - [~] Change Request đã có CRUD tối giản + submit + UI; Multi-Level Approval workflow, snapshot và apply chưa triển khai.
-  - [ ] Project Versioning snapshot & Rollback (endpoint stub, chưa mount).
-  - [ ] Interactive Gantt Chart endpoint + UI.
-  - [ ] DOCX / XLSX Export (`report_tasks.py` là stub trả về rỗng, endpoint `/reports` chưa mount).
+  - [x] AI hỏi làm rõ theo hồ sơ yêu cầu (7 mục, giả định, bỏ qua) rồi sinh dự án từ hồ sơ đã chốt.
+  - [x] Change Request duyệt BA -> PO -> PM, snapshot tự động khi PM duyệt cuối.
+  - [x] Project Versioning: baseline, so sánh hai phiên bản, rollback theo quy tắc V0 (chờ người dùng duyệt quy tắc).
+  - [x] Gantt chỉ đọc (SVG, đường găng có nhãn); kéo thả ngoài phạm vi.
+  - [x] Xuất SRS/BRD (DOCX, có sơ đồ BPMN hoặc bảng bước) và XLSX qua durable jobs, tải qua proxy kiểm tra quyền.
+  - [x] BPMN: AI sinh quy trình, xem swimlane SVG, PNG phía server chèn DOCX.
 
 - [ ] **Phase 5 — Document AI & Polish** *(~40%)*
   - [x] **Real-time Notification Push qua WebSocket (`/ws/notifications`)**.
   - [x] **Tiến trình Celery Beat chạy theo lịch trong Docker Compose**.
   - [x] Profile & Avatar MinIO (frontend + backend).
   - [x] Mobile navigation & UI fine-tuning polish (menu modal focus trap, theme switcher, responsive layout).
-  - [ ] Document upload & AI parser (endpoint `/documents` là stub, chưa mount).
+  - [ ] Document upload & AI parser (upload/parse file yêu cầu gốc; ngoài phạm vi Phase 4).
   - [ ] Investor Read-Only Dashboard view.
 
 ---

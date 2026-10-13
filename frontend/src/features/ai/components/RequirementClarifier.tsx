@@ -1,0 +1,474 @@
+'use client'
+
+import { CheckCircle2, HelpCircle, Lightbulb, MinusCircle, Pencil, Sparkles } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { useEffect, useId, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { Alert } from '@/components/common/Alert'
+import { Button } from '@/components/common/Button'
+import { Label } from '@/components/common/Label'
+import { Spinner } from '@/components/common/Spinner'
+import { cn } from '@/lib/utils'
+import { projectKeys } from '@/features/projects/hooks/useProjects'
+import { useAIJob } from '@/features/ai/hooks/useAIGenerator'
+import {
+  isTurnFailed,
+  isTurnRunning,
+  loadActiveBriefId,
+  loadGenerationJobId,
+  saveActiveBriefId,
+  saveGenerationJobId,
+  useBriefActions,
+  useRecentBriefs,
+  useRequirementBrief,
+} from '@/features/ai/hooks/useRequirementBrief'
+import {
+  BRIEF_ITEM_KEYS,
+  type BriefItem,
+  type BriefItemKey,
+  type RequirementBriefDetail,
+} from '@/features/ai/types/requirementBrief.types'
+
+const KNOWN_ERRORS = [
+  'ai_quota_exceeded',
+  'clarify_turn_pending',
+  'no_open_question',
+  'brief_not_clarifying',
+  'clarify_turn_limit',
+  'brief_items_missing',
+  'brief_not_found',
+  'brief_not_ready',
+  'brief_generation_pending',
+] as const
+
+/** Lấy mã lỗi backend (detail dạng chuỗi) từ lỗi Axios. */
+function errorCode(error: unknown): string | null {
+  const detail = (error as { response?: { data?: { detail?: unknown } } } | null)?.response?.data?.detail
+  return typeof detail === 'string' ? detail : null
+}
+
+function httpStatus(error: unknown): number | undefined {
+  return (error as { response?: { status?: number } } | null)?.response?.status
+}
+
+function ErrorNotice({ error }: { error: unknown }) {
+  const t = useTranslations('clarifier')
+  if (!error) return null
+  const code = errorCode(error)
+  const known = KNOWN_ERRORS.find((c) => c === code)
+  return <Alert>{known ? t(`errors.${known}`) : t('errors.generic')}</Alert>
+}
+
+const STATUS_ICON = {
+  clear: CheckCircle2,
+  missing: HelpCircle,
+  assumed: Lightbulb,
+  skipped: MinusCircle,
+} as const
+
+interface ItemRowProps {
+  briefId: number
+  itemKey: BriefItemKey
+  item: BriefItem
+  editable: boolean
+}
+
+function ItemRow({ briefId, itemKey, item, editable }: ItemRowProps) {
+  const t = useTranslations('clarifier')
+  const actions = useBriefActions()
+  const fieldId = useId()
+  // mode: 'edit' sửa trực tiếp mục, 'assume' sửa nội dung giả định rồi chấp nhận
+  const [mode, setMode] = useState<'view' | 'edit' | 'assume'>('view')
+  const [draft, setDraft] = useState('')
+  const Icon = STATUS_ICON[item.status]
+  const isAssumption = item.status === 'assumed'
+  const userConfirmed = item.status === 'clear'
+  const proposal = item.status === 'missing' ? item.proposed_assumption : null
+  const busy = actions.accept.isPending || actions.reject.isPending || actions.patch.isPending
+
+  const save = async () => {
+    try {
+      if (mode === 'assume') await actions.accept.mutateAsync({ id: briefId, key: itemKey, value: draft.trim() })
+      else await actions.patch.mutateAsync({ id: briefId, key: itemKey, update: { status: 'clear', value: draft.trim() } })
+      setMode('view')
+    } catch {
+      // Lỗi hiển thị qua ErrorNotice bên dưới.
+    }
+  }
+
+  return (
+    <li
+      data-testid={`item-${itemKey}`}
+      data-status={item.status}
+      className={cn(
+        'min-w-0 rounded-md p-3 text-sm',
+        isAssumption ? 'border-2 border-dashed border-amber-500 bg-amber-50/60 dark:bg-amber-950/30' : 'border',
+      )}
+    >
+      <div className="flex flex-wrap items-center gap-2">
+        <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+        <span className="font-medium">{t(`items.${itemKey}`)}</span>
+        <span
+          className={cn(
+            'rounded px-1.5 py-0.5 text-xs font-semibold uppercase tracking-wide',
+            isAssumption && 'border border-dashed border-amber-600 text-amber-800 dark:text-amber-300',
+            userConfirmed && 'bg-primary text-primary-foreground',
+            !isAssumption && !userConfirmed && 'bg-muted text-muted-foreground',
+          )}
+        >
+          {isAssumption
+            ? item.source === 'ai_assumption_confirmed' ? t('status.assumedAccepted') : t('status.assumed')
+            : t(`status.${item.status}`)}
+        </span>
+        {editable && mode === 'view' && (
+          <Button
+            type="button"
+            variant="ghost"
+            className="ml-auto w-auto min-h-[36px] px-2"
+            aria-label={t('editItem', { item: t(`items.${itemKey}`) })}
+            onClick={() => { setDraft(item.value ?? ''); setMode('edit') }}
+          >
+            <Pencil className="h-4 w-4" aria-hidden="true" />
+          </Button>
+        )}
+      </div>
+      {item.value && mode === 'view' && (
+        <p className={cn('mt-1 break-words', isAssumption && 'italic')}>
+          {isAssumption && <span className="sr-only">{t('status.assumed')}: </span>}
+          {item.value}
+        </p>
+      )}
+      {proposal && mode === 'view' && editable && (
+        <div className="mt-2 rounded border border-dashed border-amber-500 p-2">
+          <p className="text-xs font-semibold uppercase">{t('proposal')}</p>
+          <p className="break-words italic">{proposal}</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <Button type="button" className="w-auto" disabled={busy}
+              onClick={() => actions.accept.mutate({ id: briefId, key: itemKey })}>{t('accept')}</Button>
+            <Button type="button" variant="outline" className="w-auto" disabled={busy}
+              onClick={() => { setDraft(proposal); setMode('assume') }}>{t('editAccept')}</Button>
+            <Button type="button" variant="outline" className="w-auto" disabled={busy}
+              onClick={() => actions.reject.mutate({ id: briefId, key: itemKey })}>{t('reject')}</Button>
+          </div>
+        </div>
+      )}
+      {mode !== 'view' && (
+        <div className="mt-2 space-y-2">
+          <Label htmlFor={fieldId}>{t('itemValue', { item: t(`items.${itemKey}`) })}</Label>
+          <textarea
+            id={fieldId}
+            rows={2}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            className="w-full rounded-md border bg-background px-3 py-2"
+          />
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" className="w-auto" disabled={!draft.trim()} isLoading={busy} onClick={() => void save()}>
+              {mode === 'assume' ? t('accept') : t('save')}
+            </Button>
+            <Button type="button" variant="outline" className="w-auto" onClick={() => setMode('view')}>{t('cancel')}</Button>
+          </div>
+        </div>
+      )}
+      <ErrorNotice error={actions.accept.error ?? actions.reject.error ?? actions.patch.error} />
+    </li>
+  )
+}
+
+function Conversation({ brief }: { brief: RequirementBriefDetail }) {
+  const t = useTranslations('clarifier')
+  return (
+    <ol className="space-y-3" aria-label={t('conversation')}>
+      <li className="ml-auto max-w-[90%] break-words rounded-lg bg-primary/10 p-2 text-sm">
+        <span className="sr-only">{t('you')}: </span>{brief.idea}
+      </li>
+      {brief.qa_history.map((turn, index) => (
+        <li key={index} className="space-y-2">
+          <p className="max-w-[90%] break-words rounded-lg bg-muted p-2 text-sm">
+            <span className="font-semibold">{t('ai')}: </span>{turn.question}
+          </p>
+          {turn.answer && (
+            <p className="ml-auto max-w-[90%] break-words rounded-lg bg-primary/10 p-2 text-sm">
+              <span className="sr-only">{t('you')}: </span>{turn.answer}
+            </p>
+          )}
+        </li>
+      ))}
+    </ol>
+  )
+}
+
+function BriefView({ brief, onGenerated }: { brief: RequirementBriefDetail; onGenerated: (jobId: string) => void }) {
+  const t = useTranslations('clarifier')
+  const actions = useBriefActions()
+  const answerId = useId()
+  const [answer, setAnswer] = useState('')
+  const running = isTurnRunning(brief)
+  const failed = isTurnFailed(brief)
+  const clarifying = brief.status === 'clarifying'
+  const counts = brief.item_counts
+  // Câu hỏi đang mở là câu cuối chưa có trả lời.
+  const lastTurn = brief.qa_history[brief.qa_history.length - 1]
+  const canAnswer = clarifying && !running && !failed && Boolean(brief.open_question)
+
+  const submitAnswer = async (event: React.FormEvent) => {
+    event.preventDefault()
+    try {
+      await actions.answer.mutateAsync({ id: brief.id, answer: answer.trim() })
+      setAnswer('')
+    } catch {
+      // Lỗi hiển thị bên dưới.
+    }
+  }
+
+  const generate = async (mode: 'skip' | 'finalize') => {
+    try {
+      const res = await actions.generate.mutateAsync({ id: brief.id, mode: brief.status === 'ready' ? 'ready' : mode })
+      onGenerated(res.job_id)
+    } catch {
+      // Lỗi hiển thị bên dưới.
+    }
+  }
+
+  return (
+    <div className="min-w-0 space-y-4">
+      <Conversation brief={brief} />
+      {brief.open_question && lastTurn?.question !== brief.open_question && (
+        <p className="max-w-[90%] break-words rounded-lg bg-muted p-2 text-sm">
+          <span className="font-semibold">{t('ai')}: </span>{brief.open_question}
+        </p>
+      )}
+      {running && (
+        <div role="status" className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Spinner className="h-4 w-4" /> {t('analyzing')}
+        </div>
+      )}
+      {failed && (
+        <div className="space-y-2">
+          <Alert>{t('turnFailed')}</Alert>
+          <Button type="button" variant="outline" className="sm:w-auto" isLoading={actions.answer.isPending}
+            onClick={() => actions.answer.mutate({ id: brief.id, answer: null })}>{t('retryTurn')}</Button>
+        </div>
+      )}
+      {canAnswer && (
+        <form onSubmit={submitAnswer} className="space-y-2">
+          <Label htmlFor={answerId}>{t('answerLabel')}</Label>
+          <textarea id={answerId} rows={2} required value={answer} onChange={(e) => setAnswer(e.target.value)}
+            className="w-full rounded-md border bg-background px-3 py-2" />
+          <Button type="submit" className="sm:w-auto" isLoading={actions.answer.isPending}>{t('send')}</Button>
+        </form>
+      )}
+      <ErrorNotice error={actions.answer.error} />
+      {clarifying && (
+        <p className="text-xs text-muted-foreground">{t('turnsRemaining', { count: brief.turns_remaining })}</p>
+      )}
+
+      <section aria-labelledby={`${answerId}-progress`} className="space-y-2">
+        <h3 id={`${answerId}-progress`} className="text-sm font-semibold">
+          {t('progress', { resolved: counts.resolved, total: counts.total })}
+        </h3>
+        <p className="text-xs text-muted-foreground">{t('legend')}</p>
+        <ul className="space-y-2">
+          {BRIEF_ITEM_KEYS.map((key) => (
+            <ItemRow key={key} briefId={brief.id} itemKey={key} item={brief.items[key]} editable={brief.status !== 'consumed' && !running} />
+          ))}
+        </ul>
+      </section>
+
+      <ErrorNotice error={actions.generate.error} />
+      {brief.status !== 'consumed' && (
+        <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+          {clarifying && (
+            <Button type="button" variant="outline" className="sm:w-auto" disabled={running}
+              isLoading={actions.generate.isPending} onClick={() => void generate('skip')}>{t('skipAndGenerate')}</Button>
+          )}
+          {(brief.can_finalize || brief.status === 'ready') && (
+            <Button type="button" className="sm:w-auto" disabled={running}
+              isLoading={actions.generate.isPending} onClick={() => void generate('finalize')}>
+              <Sparkles className="h-4 w-4" /> {t('createProject')}
+            </Button>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function IdeaForm({ onCreated, onResume }: { onCreated: (id: number) => void; onResume: (id: number) => void }) {
+  const t = useTranslations('clarifier')
+  const ideaId = useId()
+  const [idea, setIdea] = useState('')
+  const actions = useBriefActions()
+  const recent = useRecentBriefs(true)
+  const resumable = (recent.data ?? []).filter((b) => b.status === 'clarifying' || b.status === 'ready')
+
+  const submit = async (event: React.FormEvent) => {
+    event.preventDefault()
+    try {
+      const res = await actions.create.mutateAsync(idea.trim())
+      onCreated(res.brief.id)
+    } catch {
+      // Lỗi hiển thị bên dưới.
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <form onSubmit={submit} className="space-y-4">
+        <ErrorNotice error={actions.create.error} />
+        <div>
+          <Label htmlFor={ideaId}>{t('ideaLabel')}</Label>
+          <textarea id={ideaId} rows={4} required maxLength={4000} value={idea} onChange={(e) => setIdea(e.target.value)}
+            placeholder={t('ideaPlaceholder')}
+            className="w-full rounded-md border bg-background px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+        </div>
+        <div className="flex justify-end">
+          <Button type="submit" className="sm:w-auto" isLoading={actions.create.isPending}>
+            <Sparkles className="h-4 w-4" /> {t('start')}
+          </Button>
+        </div>
+      </form>
+      {resumable.length > 0 && (
+        <section className="space-y-2">
+          <h3 className="text-sm font-semibold">{t('resumeTitle')}</h3>
+          <ul className="space-y-2">
+            {resumable.map((b) => (
+              <li key={b.id} className="flex min-w-0 flex-wrap items-center gap-2 rounded-md border p-2 text-sm">
+                <span className="min-w-0 flex-1 truncate">{b.idea}</span>
+                <span className="text-xs text-muted-foreground">
+                  {t('progress', { resolved: b.item_counts.resolved, total: b.item_counts.total })}
+                </span>
+                <Button type="button" variant="outline" className="w-auto" onClick={() => onResume(b.id)}>{t('resume')}</Button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </div>
+  )
+}
+
+function GenerationStatus({ jobId, onViewProject, onRestart }: {
+  jobId: string
+  onViewProject: (projectId: number) => void
+  onRestart: () => void
+}) {
+  const t = useTranslations('clarifier')
+  const queryClient = useQueryClient()
+  const job = useAIJob(jobId)
+  const status = job.data?.status
+
+  useEffect(() => {
+    if (status === 'COMPLETED') void queryClient.invalidateQueries({ queryKey: projectKeys.all })
+  }, [status, queryClient])
+
+  if (job.isError) {
+    return (
+      <div className="space-y-4">
+        <ErrorNotice error={job.error} />
+        <Button type="button" variant="outline" className="sm:w-auto" onClick={() => void job.refetch()} isLoading={job.isFetching}>
+          {t('retryStatus')}
+        </Button>
+      </div>
+    )
+  }
+  if (status === 'FAILED') {
+    return (
+      <div className="space-y-4">
+        <Alert>{t('generationFailed')}</Alert>
+        <Button type="button" variant="outline" className="sm:w-auto" onClick={onRestart}>{t('backToBrief')}</Button>
+      </div>
+    )
+  }
+  if (status === 'COMPLETED') {
+    return (
+      <div className="space-y-4">
+        <Alert variant="success">{t('generated')}</Alert>
+        {job.data?.project_id && (
+          <div className="flex justify-end">
+            <Button type="button" className="sm:w-auto" onClick={() => onViewProject(job.data!.project_id!)}>{t('viewProject')}</Button>
+          </div>
+        )}
+      </div>
+    )
+  }
+  return (
+    <div role="status" className="flex flex-col items-center gap-3 py-8 text-center">
+      <Spinner className="h-8 w-8 text-primary" />
+      <p className="text-sm text-muted-foreground">{t('generating')}</p>
+    </div>
+  )
+}
+
+export interface RequirementClarifierProps {
+  onViewProject: (projectId: number) => void
+}
+
+/** Luồng hỏi làm rõ: ý tưởng, hội thoại từng câu, bảng tiến độ mục, sinh dự án. */
+export function RequirementClarifier({ onViewProject }: RequirementClarifierProps) {
+  const t = useTranslations('clarifier')
+  const [briefId, setBriefId] = useState<number | null>(null)
+  const [genJobId, setGenJobId] = useState<string | null>(null)
+  const brief = useRequirementBrief(briefId)
+
+  // Khôi phục hồ sơ và job sinh dự án đã lưu sau khi tải lại trang (chỉ chạy phía client).
+  useEffect(() => {
+    setBriefId(loadActiveBriefId())
+    setGenJobId(loadGenerationJobId())
+  }, [])
+
+  const selectBrief = (id: number | null) => {
+    saveActiveBriefId(id)
+    setBriefId(id)
+  }
+  const setGeneration = (id: string | null) => {
+    saveGenerationJobId(id)
+    setGenJobId(id)
+  }
+  const startOver = () => {
+    selectBrief(null)
+    setGeneration(null)
+  }
+
+  // Hồ sơ đã lưu không còn tồn tại (404) thì quay về màn nhập ý tưởng.
+  const notFound = brief.isError && httpStatus(brief.error) === 404
+  useEffect(() => {
+    if (notFound) {
+      saveActiveBriefId(null)
+      setBriefId(null)
+    }
+  }, [notFound])
+
+  if (genJobId) {
+    return (
+      <GenerationStatus
+        jobId={genJobId}
+        onViewProject={(projectId) => { startOver(); onViewProject(projectId) }}
+        onRestart={() => setGeneration(null)}
+      />
+    )
+  }
+  if (briefId === null) return <IdeaForm onCreated={selectBrief} onResume={selectBrief} />
+  if (brief.isError && !notFound) {
+    return (
+      <div className="space-y-4">
+        <ErrorNotice error={brief.error} />
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" variant="outline" className="w-auto" onClick={() => void brief.refetch()}>{t('retryStatus')}</Button>
+          <Button type="button" variant="outline" className="w-auto" onClick={startOver}>{t('newIdea')}</Button>
+        </div>
+      </div>
+    )
+  }
+  if (!brief.data) {
+    return <div className="flex justify-center py-8"><Spinner className="h-6 w-6" /></div>
+  }
+  return (
+    <div className="space-y-4">
+      <BriefView brief={brief.data} onGenerated={setGeneration} />
+      <div className="flex justify-start">
+        <Button type="button" variant="ghost" className="w-auto" onClick={startOver}>{t('newIdea')}</Button>
+      </div>
+    </div>
+  )
+}

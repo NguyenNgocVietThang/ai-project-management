@@ -20,6 +20,10 @@ TYPE_MODELS = {
     AIRequestType.SCHEDULE_OPTIMIZE: AITaskType.SCHEDULE_OPTIMIZATION,
     AIRequestType.RESOURCE_RECOMMEND: AITaskType.RESOURCE_RECOMMENDATION,
     AIRequestType.RISK_ANALYSIS: AITaskType.RISK_ANALYSIS,
+    # Hỏi làm rõ hồ sơ yêu cầu dùng lại model của sinh dự án.
+    AIRequestType.REQUIREMENT_CLARIFY: AITaskType.PROJECT_GENERATION,
+    # B2: sinh quy trình BPMN từ hồ sơ dùng lại model của sinh dự án.
+    AIRequestType.BPMN_GENERATE: AITaskType.PROJECT_GENERATION,
 }
 
 
@@ -71,8 +75,25 @@ async def run_ai(ctx):
         token = active_ai_context.set(ctx)
         try:
             if request_type == AIRequestType.PROJECT_GENERATE:
-                from app.services.ai.project_generator import generate_project_from_prompt
-                result = await generate_project_from_prompt(input_data["prompt"])
+                if "brief_id" in input_data:
+                    # C4: sinh từ hồ sơ đã chốt; ảnh chụp đọc trước khi gọi provider.
+                    from app.models.requirement_brief import RequirementBrief
+                    from app.services.ai.project_generator import (
+                        build_brief_snapshot_for_generation,
+                        generate_project_from_brief,
+                    )
+                    brief = await db.get(RequirementBrief, input_data["brief_id"])
+                    if brief is None or brief.owner_id != request.user_id:
+                        raise PermanentJobError("invalid_payload")
+                    if brief.status == "consumed" or brief.project_id is not None:
+                        # Hồ sơ đã sinh dự án (retry/restart): kết thúc an toàn, không gọi provider.
+                        return JobResult(result={"ai_request_id": request_id})
+                    if brief.status != "ready":
+                        raise PermanentJobError("invalid_payload")
+                    result = await generate_project_from_brief(build_brief_snapshot_for_generation(brief))
+                else:
+                    from app.services.ai.project_generator import generate_project_from_prompt
+                    result = await generate_project_from_prompt(input_data["prompt"])
                 phases = result.get("phases", [])
                 if len(phases) > 50 or sum(len(p.get("tasks", [])) for p in phases if isinstance(p, dict)) > min(settings.AI_MAX_PROJECT_TASKS, 150):
                     raise PermanentJobError("ai_budget_exceeded")
@@ -92,6 +113,25 @@ async def run_ai(ctx):
                 from app.services.ai.risk_analyzer import run_risk_analysis
                 report = await run_risk_analysis(db, input_data["project_id"])
                 result = RiskReportResponse.model_validate(report).model_dump(mode="json")
+            elif request_type == AIRequestType.REQUIREMENT_CLARIFY:
+                from app.models.requirement_brief import RequirementBrief
+                from app.services.ai.parsing import AIResponseError
+                from app.services.ai.requirement_clarifier import (
+                    build_brief_snapshot,
+                    run_requirement_clarification,
+                )
+                brief = await db.get(RequirementBrief, input_data.get("brief_id"))
+                if brief is None or brief.owner_id != request.user_id or brief.status != "clarifying":
+                    raise PermanentJobError("invalid_payload")
+                snapshot = build_brief_snapshot(brief)
+                try:
+                    result = await run_requirement_clarification(snapshot)
+                except AIResponseError as exc:
+                    # Output sai schema hoặc nhiều câu hỏi: lỗi provider, không ghi hồ sơ.
+                    raise PermanentJobError("invalid_provider_response") from exc
+            elif request_type == AIRequestType.BPMN_GENERATE:
+                from app.services.process_model_service import run_process_generation
+                result = await run_process_generation(db, request, input_data)
             else:
                 raise PermanentJobError("handler_missing")
         finally:
@@ -110,6 +150,18 @@ async def run_ai(ctx):
         final_result = dict(result)
         if request_type == AIRequestType.PROJECT_GENERATE:
             from app.services.ai.persistence import _persist_plan
+            brief = None
+            if "brief_id" in input_data:
+                # C4: khóa hồ sơ trong cùng transaction với việc tạo dự án.
+                from app.services.ai.requirement_clarifier import _lock_brief
+                brief = await _lock_brief(db, input_data["brief_id"])
+                if brief is None or brief.owner_id != request.user_id:
+                    raise PermanentJobError("invalid_payload")
+                if brief.status == "consumed" or brief.project_id is not None:
+                    # Đã có dự án từ hồ sơ này: không tạo dự án thứ hai.
+                    return
+                if brief.status != "ready":
+                    raise PermanentJobError("invalid_payload")
             from app.services.scheduling_service import recalculate_project
             db.info["defer_cpm"] = True
             try:
@@ -119,6 +171,10 @@ async def run_ai(ctx):
             await recalculate_project(db, project.id, force_sync=True)
             request.project_id = project.id
             job.project_id = project.id
+            if brief is not None:
+                brief.project_id = project.id
+                brief.status = "consumed"
+                brief.pending_job_id = None
         elif request_type == AIRequestType.IMPACT_ANALYSIS:
             from app.models.impact_report import ImpactReport, RiskLevel
             report = await db.scalar(select(ImpactReport).where(ImpactReport.change_request_id == input_data["change_request_id"]))
@@ -140,6 +196,25 @@ async def run_ai(ctx):
             await db.flush()
             from app.schemas.risk_report import RiskReportResponse
             final_result = RiskReportResponse.model_validate(report).model_dump(mode="json")
+        elif request_type == AIRequestType.REQUIREMENT_CLARIFY:
+            from app.services.ai.requirement_clarifier import apply_clarify_result
+            try:
+                applied = await apply_clarify_result(db, request=request, brief_id=input_data["brief_id"], result=result)
+            except (LookupError, PermissionError) as exc:
+                raise PermanentJobError("invalid_payload") from exc
+            except ValueError as exc:
+                raise PermanentJobError("invalid_provider_response") from exc
+            if applied is None:
+                # Lượt này đã được áp (retry/restart): không áp lần hai.
+                return
+            final_result = applied
+        elif request_type == AIRequestType.BPMN_GENERATE:
+            from app.services.process_model_service import persist_process_model
+            record = await persist_process_model(db, request=request, input_data=input_data, result=result)
+            if record is None:
+                # Đã lưu bởi lần áp trước (retry/restart): không ghi hai lần.
+                return
+            final_result = {"process_model_id": record.id, "version": record.version, "warnings": record.warnings}
         db.add(AIOutput(ai_request_id=request_id, output_json=final_result, model_name=resolve_model(TYPE_MODELS[request_type])))
         request.status = AIRequestStatus.COMPLETED
         request.completed_at = datetime.now(UTC)

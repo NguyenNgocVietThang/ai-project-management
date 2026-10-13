@@ -7,7 +7,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
-from app.core.exceptions import ConflictException
+from app.core.exceptions import ConflictException, UnprocessableException
 from app.db.session import get_db
 from app.models.dependency import Dependency
 from app.models.epic import Epic
@@ -43,7 +43,7 @@ async def recalculate_project(
 
     if not force_sync:
         total = await db.scalar(
-            select(func.count()).select_from(Task).where(Task.project_id == project_id)
+            select(func.count()).select_from(Task).where(Task.project_id == project_id, Task.archived_at.is_(None))
         )
         if (total or 0) > settings.CPM_SYNC_TASK_THRESHOLD:
             from app.services.job_service import enqueue
@@ -51,7 +51,7 @@ async def recalculate_project(
             return
 
     tasks = list(
-        (await db.scalars(select(Task).where(Task.project_id == project_id))).all()
+        (await db.scalars(select(Task).where(Task.project_id == project_id, Task.archived_at.is_(None)))).all()
     )
     task_ids = [task.id for task in tasks]
     dependencies = []
@@ -188,6 +188,29 @@ class SchedulingService:
     def __init__(self, db: AsyncSession):
         self.db = db
 
+    async def _ensure_within_cpm_limits(self, project_id: int) -> None:
+        """Từ chối bằng 422 `resource_limit_exceeded` nếu dự án vượt cap CPM.
+
+        Chỉ dùng COUNT, không nạp dòng nào. 409 vẫn dành riêng cho vòng phụ thuộc để
+        client phân biệt được hai loại lỗi.
+        """
+        task_count = await self.db.scalar(
+            select(func.count()).select_from(Task).where(Task.project_id == project_id, Task.archived_at.is_(None))
+        )
+        if (task_count or 0) > settings.CPM_MAX_TASKS:
+            raise UnprocessableException("resource_limit_exceeded")
+        project_tasks = select(Task.id).where(Task.project_id == project_id, Task.archived_at.is_(None))
+        edge_count = await self.db.scalar(
+            select(func.count())
+            .select_from(Dependency)
+            .where(
+                Dependency.predecessor_id.in_(project_tasks),
+                Dependency.successor_id.in_(project_tasks),
+            )
+        )
+        if (edge_count or 0) > settings.CPM_MAX_DEPENDENCIES:
+            raise UnprocessableException("resource_limit_exceeded")
+
     async def critical_path(self, project_id: int, user: User) -> CPMResponse:
         from app.services.phase2_common import get_project_context
         from app.services.task_service import _require_task_reader
@@ -196,8 +219,13 @@ class SchedulingService:
         _require_task_reader(context)
         project = context.project
 
+        # Đếm trước khi nạp: endpoint này tính đồng bộ trong request, nên dự án vượt
+        # cap phải bị từ chối trước khi nạp hàng nghìn task vào bộ nhớ (cùng giới hạn
+        # và mã lỗi với job scheduling.cpm trong durable_handlers).
+        await self._ensure_within_cpm_limits(project_id)
+
         tasks = list(
-            (await self.db.scalars(select(Task).where(Task.project_id == project_id))).all()
+            (await self.db.scalars(select(Task).where(Task.project_id == project_id, Task.archived_at.is_(None)))).all()
         )
         if not tasks:
             return CPMResponse(

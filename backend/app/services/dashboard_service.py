@@ -188,7 +188,7 @@ class DashboardService:
         # ── Phân bố task theo trạng thái ───────────────────────────────────────────────
         dist_result = await self.db.execute(
             select(Task.status, func.count().label("cnt"))
-            .where(Task.project_id == project_id)
+            .where(Task.project_id == project_id, Task.archived_at.is_(None))
             .group_by(Task.status)
         )
         dist_rows = dist_result.all()
@@ -209,7 +209,7 @@ class DashboardService:
         # Số task quá hạn
         overdue_tasks = await self.db.scalar(
             select(func.count()).where(
-                Task.project_id == project_id,
+                Task.project_id == project_id, Task.archived_at.is_(None),
                 Task.status != TaskStatus.DONE,
                 Task.due_date < today,
             )
@@ -218,7 +218,7 @@ class DashboardService:
         # Task nằm trên đường găng
         critical_tasks = await self.db.scalar(
             select(func.count()).where(
-                Task.project_id == project_id,
+                Task.project_id == project_id, Task.archived_at.is_(None),
                 Task.is_critical.is_(True),
                 Task.status != TaskStatus.DONE,
             )
@@ -446,7 +446,7 @@ class DashboardService:
                     select(Assignment.user_id, func.count(func.distinct(Task.id)))
                     .join(Task, Task.id == Assignment.task_id)
                     .where(
-                        Task.project_id == project_id,
+                        Task.project_id == project_id, Task.archived_at.is_(None),
                         Assignment.user_id.in_(member_ids),
                     )
                     .group_by(Assignment.user_id)
@@ -458,7 +458,7 @@ class DashboardService:
             await self.db.execute(
                 select(Task.assignee_id, func.count())
                 .where(
-                    Task.project_id == project_id,
+                    Task.project_id == project_id, Task.archived_at.is_(None),
                     Task.assignee_id.in_(member_ids),
                     ~select(1)
                     .where(
@@ -478,7 +478,7 @@ class DashboardService:
                     select(Worklog.user_id, func.coalesce(func.sum(Worklog.hours), 0.0))
                     .join(Task, Task.id == Worklog.task_id)
                     .where(
-                        Task.project_id == project_id,
+                        Task.project_id == project_id, Task.archived_at.is_(None),
                         Worklog.user_id.in_(member_ids),
                     )
                     .group_by(Worklog.user_id)
@@ -528,7 +528,7 @@ class DashboardService:
                 await self.db.execute(
                     select(Task.actual_end, func.count())
                     .where(
-                        Task.project_id == project_id,
+                        Task.project_id == project_id, Task.archived_at.is_(None),
                         Task.status == TaskStatus.DONE,
                         Task.actual_end.is_not(None),
                         Task.actual_end <= today,

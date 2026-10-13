@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Sparkles } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Alert } from '@/components/common/Alert'
 import { Button } from '@/components/common/Button'
 import { LoadingState } from '@/components/common/PageState'
@@ -14,6 +15,8 @@ import {
   useRunImpactAnalysis,
   useSubmitChangeRequest,
 } from '@/features/change-requests/hooks/useChangeRequests'
+import { ApprovalTimeline } from '@/features/change-requests/components/ApprovalTimeline'
+import { parseMissingRoles } from '@/features/change-requests/approvals'
 import type { ImpactReport, RiskLevel } from '@/types/change-request.types'
 
 const RISK_CLASSES: Record<RiskLevel, string> = {
@@ -51,6 +54,7 @@ export function ChangeRequestDetail({ changeRequestId }: { changeRequestId: numb
   const runAnalysis = useRunImpactAnalysis()
   const submitMutation = useSubmitChangeRequest()
   const job = useImpactAnalysisJob(jobId)
+  const t = useTranslations('approvals')
 
   // Chuyển sang xem change request khác thì job đang theo dõi (nếu có) không
   // còn liên quan tới nó nữa.
@@ -76,7 +80,7 @@ export function ChangeRequestDetail({ changeRequestId }: { changeRequestId: numb
   }
 
   return (
-    <section className="space-y-4 rounded-xl border bg-card p-5">
+    <section className="min-w-0 space-y-4 rounded-xl border bg-card p-4 sm:p-5">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold">{changeRequest.title}</h2>
@@ -97,6 +101,16 @@ export function ChangeRequestDetail({ changeRequestId }: { changeRequestId: numb
         )}
       </div>
 
+      {submitMutation.isError && (
+        <Alert>
+          {(() => {
+            // 422 missing_roles: nêu rõ vai trò còn thiếu trong dự án.
+            const roles = parseMissingRoles(submitMutation.error)
+            return roles ? t('missingRoles', { roles: roles.join(', ') }) : getApiErrorMessage(submitMutation.error)
+          })()}
+        </Alert>
+      )}
+
       <p className="text-sm text-muted-foreground">{changeRequest.description}</p>
 
       {changeRequest.reason && (
@@ -110,6 +124,12 @@ export function ChangeRequestDetail({ changeRequestId }: { changeRequestId: numb
         <div>
           <h3 className="text-sm font-medium">Impact (as reported)</h3>
           <p className="mt-1 text-sm text-muted-foreground">{changeRequest.impact_description}</p>
+        </div>
+      )}
+
+      {changeRequest.status !== 'DRAFT' && (
+        <div className="border-t pt-4">
+          <ApprovalTimeline changeRequestId={changeRequest.id} />
         </div>
       )}
 

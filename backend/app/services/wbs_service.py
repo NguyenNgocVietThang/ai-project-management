@@ -407,7 +407,7 @@ class WBSService:
         unphased_count = 0
 
         if include_tasks:
-            tasks = list((await self.db.scalars(select(Task).options(selectinload(Task.assignee)).where(Task.project_id == project_id).order_by(Task.id))).all())
+            tasks = list((await self.db.scalars(select(Task).options(selectinload(Task.assignee)).where(Task.project_id == project_id, Task.archived_at.is_(None)).order_by(Task.id))).all())
             for task in tasks:
                 response = task_response(task)
                 if task.sprint_id is not None:
@@ -426,7 +426,7 @@ class WBSService:
                 for sprint_id, count in (
                     await self.db.execute(
                         select(Task.sprint_id, func.count())
-                        .where(Task.project_id == project_id, Task.sprint_id.is_not(None))
+                        .where(Task.project_id == project_id, Task.archived_at.is_(None), Task.sprint_id.is_not(None))
                         .group_by(Task.sprint_id)
                     )
                 ).all()
@@ -437,7 +437,7 @@ class WBSService:
                     await self.db.execute(
                         select(Task.phase_id, func.count())
                         .where(
-                            Task.project_id == project_id,
+                            Task.project_id == project_id, Task.archived_at.is_(None),
                             Task.phase_id.is_not(None),
                             Task.sprint_id.is_(None),
                         )
@@ -448,7 +448,7 @@ class WBSService:
             unphased_count = int(
                 await self.db.scalar(
                     select(func.count()).where(
-                        Task.project_id == project_id,
+                        Task.project_id == project_id, Task.archived_at.is_(None),
                         Task.phase_id.is_(None),
                         Task.sprint_id.is_(None),
                     )

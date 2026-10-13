@@ -10,7 +10,6 @@ celery_app = Celery(
     backend=settings.CELERY_RESULT_BACKEND,
     include=[
         "app.workers.ai_tasks",
-        "app.workers.report_tasks",
         "app.workers.email_tasks",
         "app.workers.notification_tasks",
         "app.workers.scheduling_tasks",

@@ -11,6 +11,7 @@ from app.core.exceptions import (
     ConflictException,
     ForbiddenException,
     NotFoundException,
+    TooManyRequestsException,
 )
 from app.db.session import get_db
 from app.models.ai_output import AIOutput
@@ -31,6 +32,52 @@ class AIService:
         if not prompt.strip() or len(prompt) > 8000:
             raise BadRequestException("Prompt must contain 1 to 8000 characters")
         return await self._queue(AIRequestType.PROJECT_GENERATE, {"prompt": prompt}, user, project_id=None, message="Project generation queued", request_key=request_key)
+
+    async def request_project_generation_from_brief(self, brief_id: int, user: User, *, request_key: str | None = None) -> AIJobResponse:
+        """C4: xếp hàng sinh dự án từ hồ sơ yêu cầu đã chốt (`ready`).
+
+        Chạy trong transaction của request, khóa hàng hồ sơ để hai yêu cầu đồng thời
+        không cùng tạo job. Lỗi:
+        - 404 `brief_not_found`: không có hoặc không thuộc người dùng.
+        - 409 `brief_not_ready`: hồ sơ còn `clarifying` hoặc đã `consumed`.
+        - 409 `brief_generation_pending`: đã có job sinh dự án chưa kết thúc.
+        - 429 `ai_quota_exceeded`: hết quota AI trong ngày.
+        """
+        from app.services.ai.requirement_clarifier import TERMINAL_JOB_STATUSES, _quota_exhausted
+        from app.services.requirement_brief_service import get_owned
+
+        if request_key is not None and (not request_key or len(request_key) > 100):
+            raise BadRequestException("Idempotency-Key must contain 1 to 100 characters")
+        input_data = {"brief_id": brief_id}
+        message = "Project generation queued"
+        brief = await get_owned(self.db, brief_id, user, lock=True)
+        if request_key is not None:
+            # Lặp lại cùng Idempotency-Key: trả về job cũ, không tạo thêm.
+            key = f"ai:{user.id}:{AIRequestType.PROJECT_GENERATE.value}:brief:{request_key}"
+            existing = await self.db.scalar(select(Job).where(Job.dedupe_key == key))
+            if existing is not None:
+                previous = await self.db.get(AIRequest, existing.payload["ai_request_id"])
+                if previous is None or previous.input_data_json != input_data:
+                    raise ConflictException("Idempotency-Key already used for different input")
+                return AIJobResponse(job_id=str(previous.id), status=previous.status.value, message=message)
+        else:
+            key = f"ai:{user.id}:{AIRequestType.PROJECT_GENERATE.value}:brief:{uuid.uuid4().hex}"
+        if brief.status != "ready" or brief.project_id is not None:
+            raise ConflictException("brief_not_ready")
+        if brief.pending_job_id is not None:
+            pending = await self.db.get(Job, brief.pending_job_id)
+            if pending is not None and pending.status not in TERMINAL_JOB_STATUSES:
+                raise ConflictException("brief_generation_pending")
+        if await _quota_exhausted(self.db):
+            raise TooManyRequestsException("ai_quota_exceeded")
+        request = AIRequest(project_id=None, user_id=user.id, request_type=AIRequestType.PROJECT_GENERATE, status=AIRequestStatus.PENDING, input_data_json=input_data)
+        self.db.add(request)
+        await self.db.flush()
+        job = await enqueue(self.db, kind=f"ai.{AIRequestType.PROJECT_GENERATE.value.lower()}", payload={"ai_request_id": request.id}, dedupe_key=key, owner_id=user.id, ambiguous_on_lease_loss=True)
+        # Ghi job đang chạy vào hồ sơ: chặn enqueue lần hai cho tới khi job kết thúc.
+        brief.pending_job_id = job.id
+        await self.db.flush()
+        return AIJobResponse(job_id=str(request.id), status=request.status.value, message=message)
 
     async def request_impact_analysis(self, change_request_id: int, user: User, *, request_key: str | None = None) -> AIJobResponse:
         from app.models.change_request import ChangeRequest

@@ -54,6 +54,8 @@ export function useSubmitChangeRequest() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: changeRequestKeys.detail(data.id) })
       queryClient.invalidateQueries({ queryKey: changeRequestKeys.list(data.project_id) })
+      // Submit tạo chuỗi duyệt mới, cần tải lại dòng thời gian duyệt.
+      queryClient.invalidateQueries({ queryKey: [...changeRequestKeys.all, 'approvals', data.id] })
     },
   })
 }

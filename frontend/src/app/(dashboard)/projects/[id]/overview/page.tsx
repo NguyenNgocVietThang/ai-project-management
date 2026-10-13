@@ -12,6 +12,7 @@ import { useNumericParam } from '@/hooks/useNumericParam'
 import { ErrorState, LoadingState } from '@/components/common/PageState'
 import { useProjectStats } from '@/features/dashboard/hooks/useDashboard'
 import { ProjectOverviewCharts } from './charts'
+import { XlsxExportButton } from '@/features/reports/components/XlsxExportButton'
 import { useProjectActivity, useProjectDetail } from '@/features/projects/hooks/useProjects'
 import { formatDate, formatMoney, formatStatus } from '@/lib/format'
 import { getApiErrorMessage } from '@/types/api.types'
@@ -51,6 +52,10 @@ export default function ProjectOverviewPage() {
 
   return (
     <div className="space-y-6">
+      {/* Xuất báo cáo XLSX của dự án */}
+      <div className="flex justify-end">
+        <XlsxExportButton projectId={id} />
+      </div>
       {/* ── Tiến độ theo dòng thời gian ───────────────────────────────── */}
       <section className="rounded-xl border bg-card p-5">
         <p className="max-w-4xl text-sm text-muted-foreground">

@@ -349,6 +349,8 @@ async def test_the_cpm_endpoint_reports_float_and_the_critical_chain():
     dependency = SimpleNamespace(predecessor_id=1, successor_id=2, dependency_type="FS", lag_days=0)
 
     db = AsyncMock()
+    # COUNT task/dependency trong cap (G1) trước khi nạp.
+    db.scalar = AsyncMock(return_value=2)
     calls = {"n": 0}
 
     async def scalars(_stmt):
@@ -370,3 +372,71 @@ async def test_the_cpm_endpoint_reports_float_and_the_critical_chain():
     assert result.critical_path == [1, 2], "chuoi FS khong co nhanh song song deu la duong gang"
     assert all(task.float_days == 0.0 for task in result.tasks)
     assert result.project_duration_days > 0
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("counts", [(2001, 0), (10, 10001)])
+async def test_the_cpm_endpoint_refuses_over_cap_without_loading_tasks(monkeypatch, counts):
+    """G1: endpoint đọc CPM tính đồng bộ; vượt cap phải từ chối chỉ bằng COUNT,
+    không nạp task/dependency nào vào bộ nhớ."""
+    from fastapi import HTTPException
+
+    from app.core.config import settings
+    from app.services.scheduling_service import SchedulingService
+
+    monkeypatch.setattr(settings, "CPM_MAX_TASKS", 2000)
+    monkeypatch.setattr(settings, "CPM_MAX_DEPENDENCIES", 10000)
+    db = AsyncMock()
+    db.scalar = AsyncMock(side_effect=list(counts))
+    db.scalars = AsyncMock()
+    service = SchedulingService(db)
+
+    project = SimpleNamespace(id=1, start_date=None, deleted_at=None)
+    with patch(
+        "app.services.phase2_common.get_project_context",
+        AsyncMock(return_value=SimpleNamespace(project=project, role="PM", is_admin=False)),
+    ):
+        with pytest.raises(HTTPException) as excinfo:
+            await service.critical_path(1, SimpleNamespace(id=9))
+
+    assert excinfo.value.status_code == 422
+    assert excinfo.value.detail == "resource_limit_exceeded"
+    db.scalars.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("cap", ["tasks", "dependencies", "none"])
+async def test_the_cpm_endpoint_applies_the_job_caps_over_http(
+    session, make_user, monkeypatch, as_user, cap
+):
+    """G1 qua HTTP thật: vượt cap trả 422 resource_limit_exceeded; trong cap trả như cũ."""
+    from app.core.config import settings
+    from app.models.dependency import Dependency
+    from app.models.project import Project
+    from app.models.task import Task
+
+    monkeypatch.setattr(settings, "CPM_MAX_TASKS", 2 if cap == "tasks" else 10)
+    monkeypatch.setattr(settings, "CPM_MAX_DEPENDENCIES", 1 if cap == "dependencies" else 10)
+    owner = await make_user()
+    project = Project(name="Capped CPM read", pm_id=owner.id)
+    session.add(project)
+    await session.flush()
+    tasks = [Task(project_id=project.id, name=f"Task {index}") for index in range(3)]
+    session.add_all(tasks)
+    await session.flush()
+    session.add_all([Dependency(predecessor_id=tasks[0].id, successor_id=tasks[1].id),
+                     Dependency(predecessor_id=tasks[1].id, successor_id=tasks[2].id)])
+    project_id = project.id
+    await session.commit()
+
+    async with as_user(owner) as http:
+        response = await http.get(f"/api/v1/projects/{project_id}/cpm")
+
+    if cap == "none":
+        assert response.status_code == 200
+        body = response.json()
+        assert len(body["tasks"]) == 3
+        assert body["critical_path"] == [task.id for task in tasks]
+    else:
+        assert response.status_code == 422
+        assert response.json()["detail"] == "resource_limit_exceeded"
