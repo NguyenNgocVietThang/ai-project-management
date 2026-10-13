@@ -1,77 +1,53 @@
 # Lộ trình: Mô-đun quy trình và báo cáo (Phase 4)
 
-> **Phiên bản:** 1.3 | **Cập nhật:** 2026-10-02  
-> **Trạng thái:** ~40% — Audit Timeline (`/admin/audit`), hạ tầng WebSocket/Redis, Dashboard endpoints và Change Request CRUD tối giản (`/projects/{id}/change-requests`) đã chạy thật. Approvals đa cấp (`BA -> PO -> PM`), Project Versioning, Reports DOCX/XLSX, Gantt: MỚI có model DB / endpoint scaffold stub, CHƯA mount, CHƯA có UI. 
-> **Mức độ ưu tiên:** Critical – Quy trình kiểm soát thay đổi, truy vết lịch sử, hạ tầng real-time & báo cáo chuyên sâu  
-> **Điều kiện tiên quyết:** [x] Phase 1 (Auth & RBAC), Phase 2 (Project Core, CPM & Real-time Chat) đã hoàn thành
+> **Phiên bản:** 2.0 | **Cập nhật:** 2026-10-13  
+> **Trạng thái:** Hoàn thành phần mã nguồn trên nhánh `feature/phase4-workflow-reporting` (đã gộp vào `main` cục bộ). Còn chờ người dùng: duyệt quy tắc rollback V0 và các checkpoint, chạy thử provider AI thật, kịch bản demo trên Render sau cold start.  
+> **Mức độ ưu tiên:** Critical – kiểm soát thay đổi, truy vết phiên bản, báo cáo cho hội đồng chấm  
+> **Điều kiện tiên quyết:** Phase 1 (Auth và RBAC), Phase 2 (Project Core, CPM, chat) đã hoàn thành  
+> **Kế hoạch chi tiết:** `tasks/phase4/plan.md` (ý định, kiến trúc, V0), `tasks/phase4/todo.md` (task và bằng chứng), `tasks/phase4/progress.md` (nhật ký)
 
 ---
 
-## Tổng quan Module
+## Tổng quan
 
-Module **Workflow & Reporting (Phase 4)** thiết lập cơ chế kiểm soát chất lượng dự án toàn diện, tự động hóa quy trình phê duyệt thay đổi (Change Request), lưu trữ các mốc phiên bản dự án (Versioning & Rollback), cung cấp biểu đồ điều hành nâng cao (Gantt, Agile, EVA), hạ tầng truyền thông thời gian thực và xuất báo cáo tài liệu chuyên nghiệp (DOCX & XLSX).
-
-### 5 Trụ cột chính:
-1. **Audit Timeline & Activity Stream (SOP-AUD-001):** Hệ thống truy vết kiểm toán toàn diện, ghi nhận mọi biến động hệ thống với phân trang hiệu năng cao (cursor pagination) và bộ lọc đối tượng (`/admin/audit`).
-2. **Real-time Communication & Notification Push:** Hạ tầng WebSocket kết hợp Redis Pub/Sub đa tiến trình (`app/core/ws_manager.py`), phục vụ Real-time Project Chat và Push thông báo tức thời.
-3. **Change Request & Multi-Level Approval Workflow (SOP-CR):** Quy trình phê duyệt thay đổi đa cấp theo trình tự `BA -> PO -> PM`, kết hợp AI Impact Analysis.
-4. **Project Versioning & Rollback (SOP-PM-004):** Tự động tạo snapshot JSONB của dự án trước mỗi thay đổi lớn, cho phép so sánh diff trực quan giữa 2 phiên bản và rollback an toàn.
-5. **Advanced Analytics & Report Export Engine (SOP-RPT-001):** Sinh báo cáo chuyên nghiệp định dạng **DOCX** (python-docx) và **XLSX** (openpyxl) qua Celery worker.
+Phase 4 bổ sung kịch bản demo trọn vẹn: nhập ý tưởng, AI hỏi làm rõ theo danh sách mục (có giả định và nút bỏ qua), tạo dự án, Gantt/đường găng, gửi CR, duyệt BA -> PO -> PM, tự tạo phiên bản, so sánh và rollback, xuất SRS/BRD (DOCX, có sơ đồ BPMN) và XLSX. Mọi tác vụ nền chạy bằng durable jobs trong PostgreSQL (không Celery), phù hợp gói Render Free.
 
 ---
 
-## Hiện trạng & Hạ tầng sẵn có
+## Hiện trạng theo tính năng
 
-| Thành phần | Trạng thái | Ghi chú |
-|---|---|---|
-| Audit Timeline & Log Service | Đã hoàn thành | `AuditService`, `audit_timeline.py`, `/admin/audit` |
-| WebSocket & Redis Pub/Sub Bridge | Đã hoàn thành | `core/ws_manager.py`, `core/redis_client.py`, `/ws/*` |
-| Real-time Project Chat | Đã hoàn thành | `chat_service.py`, `/projects/[id]/chat`, `/ws/chat/{id}` |
-| Database Schema: `change_requests`, `approvals`, `project_versions`, `impact_reports`, `audit_logs` | Đã migrate | `change_requests` + `impact_reports` đã có service + endpoint + UI thật; `approvals` + `project_versions` là stub |
-| RBAC Roles: `PM`, `BA`, `PO`, `Member`, `Customer`, `Admin` | Đã cấu hình | Đã phân quyền chi tiết với 34 permissions |
-| Celery + Redis Task Queue | Đã có sẵn | Hạ tầng chạy; `workers/report_tasks.py` mới là stub `TODO` |
-| MinIO Storage Service | Đã có sẵn | Bucket `ai-project-files` lưu trữ report docs |
-
----
-
-## Danh mục tính năng triển khai theo Phase
-
-| Tính năng | Mã SOP | Độ ưu tiên | Trạng thái | Backend Task | Frontend Component |
-|---|---|---|---|---|---|
-| Audit Timeline & Activity Feed | Security | Medium | Hoàn thành | `AuditService` + `audit_timeline.py` | `/admin/audit`, `AuditTimeline` |
-| Real-time WebSocket Infra & Chat | SOP-CHAT-001 | High | Hoàn thành | `ws_manager.py` + `chat_service.py` | `ChatPanel`, `/projects/[id]/chat` |
-| Interactive Gantt Chart & CPM | SOP-PM-003 | Critical | Gantt chỉ đọc hoàn thành | `GET /projects/{id}/cpm` có cap kích thước; stub `gantt.py` đã xóa | `GanttChart` SVG (đường găng có nhãn, zoom ngày/tuần/tháng, ảo hóa hàng), trang `/projects/{id}/gantt`; kéo thả ngoài phạm vi |
-| Change Request CRUD & Submit | SOP-CR | High | Hoàn thành | `change_request_service.py` + `endpoints/change_requests.py` (đã mount) | `features/change-requests/**` (`/projects/{id}/change-requests`) |
-| Multi-Level Approval Workflow Engine | SOP-CR | Critical | Chưa triển khai | `approvals.py` là stub `TODO`, chưa mount; quy trình BA → PO → PM chưa có UI | Chưa có |
-| Project Versioning & Diff/Rollback | SOP-PM-004 | High | Chỉ model DB | `project_versions.py` là stub; không có `versioning_service` | Chưa có |
-| DOCX/XLSX Export via Celery | SOP-RPT-001 | High | Chỉ scaffold | `report_tasks.py` là stub trả về `file_url: ""`; `reports.py` chưa mount | Chưa có |
-| Agile & EVA Metrics Engine | Báo cáo | High | Hoàn thành | `dashboards.py` + `dashboard_service.py` (đã mount) | `BurndownChart`, `StatsRow` |
+| Tính năng | Trạng thái | Backend | Frontend |
+|---|---|---|---|
+| Audit Timeline | Hoàn thành (trước Phase 4) | `AuditService`, `audit_timeline.py` | `/admin/audit` |
+| WebSocket, chat | Hoàn thành (trước Phase 4) | `ws_manager.py`, `chat_service.py` | `/projects/[id]/chat` |
+| Hồ sơ yêu cầu và AI hỏi làm rõ | Hoàn thành | Bảng `requirement_briefs`, job `ai.requirement_clarify`, API `/requirement-briefs` (trần 12 lượt, quota) | `RequirementClarifier` trong `AIGeneratorModal` |
+| Sinh dự án từ hồ sơ đã chốt | Hoàn thành | `POST /ai/generate-project-from-brief`; chỉ dùng mục clear/assumed, mục skipped không được bịa | Nút "Tạo dự án" / "Bỏ qua, tạo luôn" |
+| Gantt chỉ đọc | Hoàn thành | `GET /projects/{id}/cpm` có cap `CPM_MAX_TASKS`/`CPM_MAX_DEPENDENCIES` (422 `resource_limit_exceeded`) | `GanttChart` SVG, trang `/projects/[id]/gantt`; kéo thả ngoài phạm vi |
+| Duyệt CR BA -> PO -> PM | Hoàn thành | Submit tạo 3 bước (thiếu vai trò trả 422 `missing_roles`), `/change-requests/{id}/approvals` approve/reject, khóa hàng, audit, thông báo in-app | `ApprovalTimeline`, trang chi tiết CR |
+| Phiên bản, so sánh, rollback | Hoàn thành | `versioning_service` (snapshot theo V0, cap 50), `/projects/{id}/versions` (baseline, diff, rollback), cột `tasks.archived_at` | Trang `/projects/[id]/versions`, `RollbackDialog` |
+| SRS/BRD DOCX | Hoàn thành | Bảng `generated_documents`, chuỗi job `document.generate` (mỗi job một nhóm mục), storage private, `/projects/{id}/documents` + tải proxy | Trang `/projects/[id]/documents` |
+| XLSX | Hoàn thành | Job `report.xlsx`, `/projects/{id}/reports/xlsx` + tải proxy, số liệu lấy từ cùng service CPM/dashboard | Nút "Xuất XLSX" ở trang tổng quan |
+| BPMN | Hoàn thành | Schema `ProcessModel`, job `ai.bpmn_generate`, bảng `process_models`, PNG phía server (Pillow) chèn vào DOCX, dự phòng bảng các bước | Trang `/projects/[id]/process` (swimlane SVG) |
 
 ---
 
-## Chi tiết các Giai đoạn
+## Quyết định mặc định đang chờ người dùng duyệt
 
-### GIAI ĐOẠN 4.1 – Audit Timeline & Activity Stream (SOP-AUD-001)
-> **Trạng thái:** Đã hoàn thành 
-- Backend: `AuditService` (`backend/app/services/audit_service.py`), endpoint `/api/v1/audit` với cursor pagination và bộ lọc theo `entity_type`.
-- Frontend: `/app/(dashboard)/admin/audit/page.tsx` với bảng đối soát diff trực quan `old_values` và `new_values`.
-
-### GIAI ĐOẠN 4.2 – Real-Time WebSocket Infrastructure & Project Chat (SOP-CHAT-001)
-> **Trạng thái:** Đã hoàn thành 
-- Backend: FastAPI native WebSocket `/ws/chat/{project_id}` và `/ws/notifications`, `ConnectionManager` kết nối Redis Pub/Sub bridge.
-- Frontend: `lib/ws-client.ts`, `useChatSocket`, `ChatPanel`, `/projects/[id]/chat` với unread count badge.
-
-### GIAI ĐOẠN 4.3 – Change Request & Multi-Level Approval Workflow (SOP-CR)
-> **Trạng thái:** Một phần hoàn thành.
-- **Đã hoàn thành:** CRUD Change Request tối giản (`create`, `list`, `get`, `submit` DRAFT → SUBMITTED), service `change_request_service.py`, schema `change_request.py`, endpoint `/api/v1/projects/{id}/change-requests` đã mount, giao diện `/projects/{id}/change-requests` kết nối trực tiếp với AI Impact Analysis (SOP-AI-002).
-- **Chưa triển khai (Kế hoạch tiếp theo):** Quy trình phê duyệt tuần tự nhiều cấp qua bảng `approvals` (`BA Review -> PO Review -> PM Final Approval`) và snapshot tự động để apply thay đổi.
-
-### GIAI ĐOẠN 4.4 – Project Versioning & Rollback System (SOP-PM-004)
-> **Trạng thái:** Chưa bắt đầu — chỉ có model `project_versions`. Chưa có `versioning_service`, endpoint stub chưa mount.
-
-### GIAI ĐOẠN 4.5 – Report Generation & Export (DOCX & XLSX) (SOP-RPT-001)
-> **Trạng thái:** Chưa bắt đầu — `report_tasks.py` chỉ có 2 task stub trả về `{"status": "completed", "file_url": ""}`, chưa dùng python-docx/openpyxl, endpoint `/reports` chưa mount.
+- V0 (quy tắc snapshot/rollback): snapshot gồm phase, sprint, epic, milestone, task, dependency; task mới có worklog/comment/subtask/assignment được lưu trữ (`archived_at`) thay vì xóa; task không có dữ liệu phụ thuộc bị xóa cứng; task đã xóa được tạo lại với ID mới và ghi `id_map`; worklog không bao giờ bị rollback xóa. Chi tiết trong `tasks/phase4/plan.md`.
+- Người tạo CR được duyệt bước của vai trò mình (phục vụ demo ít tài khoản). Admin hệ thống chỉ xem chuỗi duyệt, không quyết định bước.
+- Tài liệu sinh bằng tiếng Việt mặc định, tham số `language` nhận `vi` hoặc `en`.
+- Mục hồ sơ `skipped` không chặn sinh tài liệu (hiện ở mục "Giả định và vấn đề mở"); mục `missing` đưa hồ sơ về vòng hỏi làm rõ.
 
 ---
 
-*Cập nhật lần cuối: 2026-10-02 — Phase 4 (Workflow & Reporting) — đối soát với mã nguồn.*
+## Hạn chế đã biết
+
+- Quota AI: mỗi lượt hỏi làm rõ, mỗi nhóm mục tài liệu (SRS 3 lượt, BRD 4 lượt) và mỗi lần sinh BPMN tính vào `AI_DAILY_JOB_LIMIT` (mặc định 20/ngày).
+- Render dùng runtime Python: nếu không có font TTF có glyph tiếng Việt, chữ trong PNG BPMN bị bỏ dấu (vẫn đọc được).
+- Snapshot nhất quán theo khóa hàng dự án ở mức READ COMMITTED; ghi task đồng thời có thể làm snapshot lệch nhẹ giữa các bảng.
+- Khi dự án có 50 phiên bản đều là baseline, bước PM duyệt cuối nhận 409 vì không tạo được snapshot.
+- Chưa có chế độ provider AI giả ở server để diễn tập demo không tốn quota.
+
+---
+
+*Cập nhật lần cuối: 2026-10-13 — Phase 4 — đối soát với mã nguồn sau khi hoàn tất `tasks/phase4/todo.md`.*

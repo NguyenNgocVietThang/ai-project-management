@@ -60,8 +60,8 @@ Bằng chứng C5: AIGeneratorModal.test.tsx 9 passed; type-check, lint, build �
 **Phụ thuộc:** C3, C4. **Tệp:** `features/ai/components/RequirementClarifier.tsx`, hook + service, `AIGeneratorModal.tsx`, `messages/*.json`, test. **Quy mô:** M
 
 ### Checkpoint: Hỏi làm rõ
-- [ ] Từ ý tưởng mơ hồ đến dự án, AI hỏi từng câu, giả định được xác nhận, bỏ qua hoạt động
-- [ ] Toàn bộ test/build đạt; người dùng duyệt trước khi làm tài liệu
+- [x] Từ ý tưởng mơ hồ đến dự án, AI hỏi từng câu, giả định được xác nhận, bỏ qua hoạt động (xác minh bằng test tích hợp với provider giả; chưa chạy trên trình duyệt vì không có chế độ provider giả cho server)
+- [ ] Toàn bộ test/build đạt (đạt); người dùng duyệt trước khi làm tài liệu: chờ người dùng duyệt
 
 ### D1: Mẫu tài liệu và dựng DOCX
 **Mô tả:** Định nghĩa mẫu SRS và BRD (danh sách mục bắt buộc, kiểu nội dung: đoạn văn, bảng, danh sách). Renderer python-docx thuần từ JSON nội dung + mục "Giả định và vấn đề mở" sinh từ hồ sơ. Không gọi AI.
@@ -92,9 +92,9 @@ Bằng chứng D3: test_documents_api.py 7 passed; vitest 22 tệp / 112 test; t
 **Phụ thuộc:** D2. **Tệp:** `endpoints/documents.py` (thay stub), service/hook/page frontend, i18n. **Quy mô:** M
 
 ### Checkpoint: Lát 1
-- [ ] Ý tưởng -> hỏi làm rõ -> dự án -> SRS/BRD DOCX tải được, mục giả định đúng
-- [ ] Chạy thử với provider thật một lần, ghi số quota/thời gian
-- [ ] Người dùng duyệt
+- [x] Ý tưởng -> hỏi làm rõ -> dự án -> SRS/BRD DOCX tải được, mục giả định đúng (test tích hợp với provider giả và storage giả)
+- [ ] Chạy thử với provider thật một lần, ghi số quota/thời gian: chờ người dùng (cần gọi AI thật)
+- [ ] Người dùng duyệt (chờ người dùng)
 
 ## Lát 2: Duyệt CR BA -> PO -> PM, phiên bản và rollback
 
@@ -162,8 +162,8 @@ Bằng chứng V3: migration `20261013_task_archived_at` cycle đạt; test_vers
 **Phụ thuộc:** V2. **Tệp:** `versioning_service.py`, endpoint, frontend, test. **Quy mô:** M
 
 ### Checkpoint: Lát 2
-- [ ] CR đi hết BA -> PO -> PM, snapshot tự tạo, so sánh và rollback đúng
-- [ ] Người dùng duyệt
+- [x] CR đi hết BA -> PO -> PM, snapshot tự tạo, so sánh và rollback đúng (test SQLite + PostgreSQL; trang Phiên bản kiểm tra trên trình duyệt; duyệt bằng 3 tài khoản trên trình duyệt chưa làm)
+- [ ] Người dùng duyệt (chờ người dùng)
 
 ## Lát 3: Gantt chỉ đọc
 
@@ -194,15 +194,15 @@ Bằng chứng V3: migration `20261013_task_archived_at` cycle đạt; test_vers
 **Phụ thuộc:** G5. **Tệp:** `endpoints/gantt.py`, `schemas/gantt.py`, `router.py`, roadmap, README. **Quy mô:** S
 
 ### Checkpoint: Lát 3
-- [ ] Gantt đúng đường găng trên dự án demo; mobile không tràn
-- [ ] Người dùng duyệt
+- [x] Gantt đúng đường găng trên dự án demo; mobile không tràn (trình duyệt cục bộ, dự án 6 task, 390px scrollWidth 390)
+- [ ] Người dùng duyệt (chờ người dùng)
 
 ## Lát 4: XLSX
 
 - [x] X1: Renderer openpyxl thuần (sheet Task, Đường găng, CR + lịch sử duyệt, EVA/Burndown) với test đọc lại file. M (test_xlsx_renderer.py 14 passed; EVA chưa có nguồn số liệu, X2 xử lý)
 - [x] X2: Job `report.xlsx` + lưu bucket private + endpoint tải kiểm tra quyền; thay `workers/report_tasks.py` và `endpoints/reports.py` stub. M (test_xlsx_report_job.py 7 passed, đối chiếu số liệu với API CPM/dashboard; pytest 641/28)
 - [x] X3: Nút xuất XLSX ở trang dự án, trạng thái qua JobsPanel. S (XlsxExportButton.test.tsx 4 passed; vitest 23 tệp / 116 test, type-check, lint, build đạt)
-- [ ] Checkpoint: XLSX đúng số liệu với API dashboard/CPM; người ngoài dự án bị từ chối.
+- [x] Checkpoint: XLSX đúng số liệu với API dashboard/CPM; người ngoài dự án bị từ chối. (test_xlsx_report_job.py; trên máy cục bộ không có MinIO nên tải file thật chưa thử)
 
 ## Lát 5: BPMN
 
@@ -210,4 +210,4 @@ Bằng chứng V3: migration `20261013_task_archived_at` cycle đạt; test_vers
 - [x] B2: Job AI sinh quy trình từ hồ sơ yêu cầu; dữ liệu thiếu thì quay lại vòng hỏi làm rõ. M (migration `20261013_process_models` cycle đạt; test_process_model_job.py 7 passed; pytest 641/28)
 - [x] B3: Bố cục swimlane thuần + SVG xem trên frontend. M (swimlaneLayout 5 test, ProcessDiagram 3, trang 5; vitest 26 tệp / 129 test, type-check, lint, build đạt)
 - [x] B4: Xuất PNG phía server và chèn vào SRS/BRD; lỗi vẽ thì dùng bảng các bước. M (test_process_png.py + test_document_generation_job.py 13 passed; pytest 648/28. Render dùng runtime python không có font tiếng Việt chắc chắn: thiếu font thì bỏ dấu)
-- [ ] Checkpoint cuối Phase 4: kịch bản demo đầy đủ chạy trên Render sau cold start; roadmap và README cập nhật.
+- [ ] Checkpoint cuối Phase 4: kịch bản demo đầy đủ chạy trên Render sau cold start: chờ người dùng (cần Render + Supabase + AI thật). Roadmap và README đã cập nhật.
