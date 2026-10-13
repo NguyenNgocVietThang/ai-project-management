@@ -239,6 +239,24 @@ async def test_minio_compatibility_releases_download_connection(monkeypatch):
 
 
 @pytest.mark.asyncio
+async def test_minio_infrastructure_errors_become_sanitized_storage_errors(monkeypatch):
+    # MinIO không chạy hoặc mạng lỗi: job phải nhận StorageError (mã storage_error),
+    # không phải ngoại lệ thô làm job ra handler_failed.
+    monkeypatch.setattr(
+        storage_service, "settings", SimpleNamespace(STORAGE_PROVIDER="minio", MINIO_BUCKET="files")
+    )
+    client = Mock()
+    client.bucket_exists.side_effect = ConnectionError("http://minio-secret:9000 refused")
+    client.get_object.side_effect = ConnectionError("http://minio-secret:9000 refused")
+    service = storage_service.StorageService(client=client)
+    with pytest.raises(storage_service.StorageError) as put_error:
+        await service.put_bytes("reports/1/a.xlsx", b"x", "application/octet-stream")
+    assert "minio-secret" not in str(put_error.value)
+    with pytest.raises(storage_service.StorageError):
+        await service.get_bytes("reports/1/a.xlsx")
+
+
+@pytest.mark.asyncio
 async def test_email_transport_timeout_hides_secrets_and_retains_retry_key(monkeypatch):
     monkeypatch.setattr(email, "settings", email_settings())
     requests = []

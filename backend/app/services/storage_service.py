@@ -191,7 +191,14 @@ class StorageService:
                 self.bucket, key, BytesIO(data), length=len(data), content_type=content_type
             )
 
-        await asyncio.to_thread(_put)
+        try:
+            await asyncio.to_thread(_put)
+        except StorageError:
+            raise
+        except Exception as exc:
+            # Lỗi MinIO/mạng thô có thể chứa endpoint hoặc khóa: chỉ ném lỗi đã làm sạch
+            # để job ghi đúng mã storage_error thay vì handler_failed.
+            raise StorageError("Object storage write failed") from exc
 
     async def get_bytes(self, key: str) -> tuple[bytes, str]:
         path = self._key(key)
@@ -213,7 +220,13 @@ class StorageService:
                 response.close()
                 response.release_conn()
 
-        return await asyncio.to_thread(_get)
+        try:
+            return await asyncio.to_thread(_get)
+        except (StorageError, S3Error):
+            # S3Error giữ nguyên để nơi gọi phân biệt NoSuchKey (404) với lỗi hạ tầng.
+            raise
+        except Exception as exc:
+            raise StorageError("Object storage read failed") from exc
 
     async def delete(self, key: str) -> None:
         self._key(key)
