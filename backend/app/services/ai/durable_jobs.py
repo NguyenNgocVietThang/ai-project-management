@@ -22,6 +22,8 @@ TYPE_MODELS = {
     AIRequestType.RISK_ANALYSIS: AITaskType.RISK_ANALYSIS,
     # Hỏi làm rõ hồ sơ yêu cầu dùng lại model của sinh dự án.
     AIRequestType.REQUIREMENT_CLARIFY: AITaskType.PROJECT_GENERATION,
+    # B2: sinh quy trình BPMN từ hồ sơ dùng lại model của sinh dự án.
+    AIRequestType.BPMN_GENERATE: AITaskType.PROJECT_GENERATION,
 }
 
 
@@ -127,6 +129,9 @@ async def run_ai(ctx):
                 except AIResponseError as exc:
                     # Output sai schema hoặc nhiều câu hỏi: lỗi provider, không ghi hồ sơ.
                     raise PermanentJobError("invalid_provider_response") from exc
+            elif request_type == AIRequestType.BPMN_GENERATE:
+                from app.services.process_model_service import run_process_generation
+                result = await run_process_generation(db, request, input_data)
             else:
                 raise PermanentJobError("handler_missing")
         finally:
@@ -203,6 +208,13 @@ async def run_ai(ctx):
                 # Lượt này đã được áp (retry/restart): không áp lần hai.
                 return
             final_result = applied
+        elif request_type == AIRequestType.BPMN_GENERATE:
+            from app.services.process_model_service import persist_process_model
+            record = await persist_process_model(db, request=request, input_data=input_data, result=result)
+            if record is None:
+                # Đã lưu bởi lần áp trước (retry/restart): không ghi hai lần.
+                return
+            final_result = {"process_model_id": record.id, "version": record.version, "warnings": record.warnings}
         db.add(AIOutput(ai_request_id=request_id, output_json=final_result, model_name=resolve_model(TYPE_MODELS[request_type])))
         request.status = AIRequestStatus.COMPLETED
         request.completed_at = datetime.now(UTC)

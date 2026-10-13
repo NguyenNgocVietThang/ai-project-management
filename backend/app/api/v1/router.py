@@ -21,6 +21,7 @@ from app.api.v1.endpoints import (
     permissions,
     phases,
     portfolios,
+    process_models,
     project_versions,
     projects,
     reports,
@@ -62,6 +63,7 @@ api_router.include_router(approvals.router, tags=["Approvals"])
 api_router.include_router(cpm.router, tags=["CPM"])
 api_router.include_router(documents.router, tags=["Documents"])
 api_router.include_router(reports.router, tags=["Reports"])
+api_router.include_router(process_models.router, tags=["Process models"])
 api_router.include_router(resource_leveling.router, tags=["Resource Leveling"])
 api_router.include_router(dashboards.router, prefix="/dashboards", tags=["Dashboards"])
 api_router.include_router(notifications.router, prefix="/notifications", tags=["Notifications"])

@@ -207,7 +207,7 @@ Bằng chứng V3: migration `20261013_task_archived_at` cycle đạt; test_vers
 ## Lát 5: BPMN
 
 - [x] B1: Schema JSON quy trình (lane, task, gateway, event, flow) và validator (flow trỏ node tồn tại, có start/end). S (test_bpmn_schema.py 40 passed)
-- [ ] B2: Job AI sinh quy trình từ hồ sơ yêu cầu; dữ liệu thiếu thì quay lại vòng hỏi làm rõ. M
+- [x] B2: Job AI sinh quy trình từ hồ sơ yêu cầu; dữ liệu thiếu thì quay lại vòng hỏi làm rõ. M (migration `20261013_process_models` cycle đạt; test_process_model_job.py 7 passed; pytest 641/28)
 - [ ] B3: Bố cục swimlane thuần + SVG xem trên frontend. M
 - [ ] B4: Xuất PNG phía server và chèn vào SRS/BRD; lỗi vẽ thì dùng bảng các bước. M
 - [ ] Checkpoint cuối Phase 4: kịch bản demo đầy đủ chạy trên Render sau cold start; roadmap và README cập nhật.
