@@ -75,4 +75,10 @@ async def run_email(ctx):
     return JobResult(result={"sent": True})
 
 
-HANDLERS = {"scheduling.cpm": run_cpm, "email.verify": run_email, "email.reset": run_email, "email.invite": run_email}
+async def run_document(ctx):
+    # Import trễ để tránh vòng import khi nạp danh sách handler.
+    from app.services.document_service import run_document_job
+    return await run_document_job(ctx)
+
+
+HANDLERS = {"document.generate": run_document, "scheduling.cpm": run_cpm, "email.verify": run_email, "email.reset": run_email, "email.invite": run_email}

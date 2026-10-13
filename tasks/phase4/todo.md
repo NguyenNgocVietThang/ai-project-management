@@ -75,9 +75,10 @@ Bằng chứng D1: `pytest backend/tests/unit/test_docx_renderer.py` 15 passed; 
 ### D2: Job sinh nội dung tài liệu theo nhóm mục
 **Mô tả:** Job `document.generate` cho SRS/BRD: kiểm tra mục bắt buộc của hồ sơ, thiếu thì trả trạng thái `needs_clarification` và mở lại vòng hỏi; đủ thì chia nhóm mục thành các lượt AI, lưu từng phần nguyên tử, ghép và dựng DOCX, lưu bucket private.
 **Tiêu chí:**
-- [ ] Nội dung AI chỉ tham chiếu dữ liệu hồ sơ/dự án; provider giả trả mục ngoài mẫu bị loại
-- [ ] Restart giữa chừng tiếp tục từ phần đã lưu, không gọi lại phần đã xong
-- [ ] Lỗi storage để job FAILED rõ ràng, có thể chạy lại
+- [x] Nội dung AI chỉ tham chiếu dữ liệu hồ sơ/dự án; provider giả trả mục ngoài mẫu bị loại
+- [x] Restart giữa chừng tiếp tục từ phần đã lưu, không gọi lại phần đã xong
+- [x] Lỗi storage để job FAILED rõ ràng, có thể chạy lại
+Bằng chứng D2: migration `20261013_generated_documents` cycle đạt; test_document_generation_job.py + test_document_writer.py 19 passed; pytest 620/28 SQLite, 631/16 Postgres (1 lỗi môi trường có sẵn).
 **Xác minh:** test với provider giả và storage giả.
 **Phụ thuộc:** D1, C4. **Tệp:** `services/ai/document_writer.py`, `services/document_service.py`, `services/durable_handlers.py`, model/migration cho bản ghi tài liệu, test. **Quy mô:** M (tách D2a/D2b nếu vượt 5 tệp)
 
