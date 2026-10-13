@@ -40,10 +40,19 @@ DECIDABLE_CR_STATUSES = (CRStatus.SUBMITTED, CRStatus.UNDER_REVIEW)
 async def on_change_request_approved(db: AsyncSession, cr: ChangeRequest, user: User) -> None:
     """Điểm móc khi PM duyệt bước cuối, chạy trong CÙNG transaction với quyết định.
 
-    Hiện là no-op. V1 (phiên bản dự án) gắn việc chụp snapshot tại đây: mọi thay đổi ghi
-    qua `db` được commit cùng lúc CR chuyển APPROVED, hoặc rollback cùng nếu có lỗi.
+    Chụp snapshot phiên bản dự án (V1) gắn `change_request_id`: mọi thay đổi ghi qua `db`
+    được commit cùng lúc CR chuyển APPROVED, hoặc rollback cùng nếu có lỗi.
     """
-    return None
+    # Import trễ để tránh vòng import giữa các service.
+    from app.services.versioning_service import KIND_CHANGE_REQUEST, create_snapshot
+
+    await create_snapshot(
+        db, cr.project_id, user,
+        label=f"CR-{cr.id} được duyệt",
+        description=cr.title,
+        change_request_id=cr.id,
+        kind=KIND_CHANGE_REQUEST,
+    )
 
 
 def _current_step(steps: list[Approval]) -> Approval | None:
