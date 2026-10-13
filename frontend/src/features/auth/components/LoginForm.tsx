@@ -38,7 +38,7 @@ export function LoginForm() {
   })
 
   return (
-    <form onSubmit={onSubmit} noValidate className="space-y-5">
+    <form onSubmit={onSubmit} noValidate className="space-y-6">
       {loginError && <Alert>{loginError}</Alert>}
 
       <div>
@@ -48,22 +48,21 @@ export function LoginForm() {
           type="email"
           autoComplete="email"
           hasError={Boolean(errors.email)}
-          aria-describedby={errors.email ? 'email-error' : undefined}
           {...register('email')}
         />
         {errors.email && (
-          <p id="email-error" className="mt-1.5 text-sm text-destructive">
+          <p id="email-error" className="mt-2 text-body-sm text-destructive">
             {errors.email.message}
           </p>
         )}
       </div>
 
       <div>
-        <div className="flex items-center justify-between gap-4">
-          <Label htmlFor="password">{t('password')}</Label>
+        <div className="mb-2 flex items-center justify-between gap-4">
+          <Label htmlFor="password" className="mb-0">{t('password')}</Label>
           <Link
             href="/forgot-password"
-            className="text-sm font-medium text-primary hover:underline"
+            className="inline-flex min-h-11 items-center text-body-sm font-medium text-primary underline-offset-4 hover:underline"
           >
             {t('forgot')}
           </Link>
@@ -73,25 +72,24 @@ export function LoginForm() {
           type="password"
           autoComplete="current-password"
           hasError={Boolean(errors.password)}
-          aria-describedby={errors.password ? 'password-error' : undefined}
           {...register('password')}
         />
         {errors.password && (
-          <p id="password-error" className="mt-1.5 text-sm text-destructive">
+          <p id="password-error" className="mt-2 text-body-sm text-destructive">
             {errors.password.message}
           </p>
         )}
       </div>
 
-      <Button type="submit" isLoading={isLoggingIn}>
+      <Button type="submit" size="lg" isLoading={isLoggingIn}>
         {isLoggingIn ? t('signingIn') : t('signIn')}
       </Button>
 
       <SocialLoginButtons dividerText={t('social')} />
 
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-center text-body-sm text-muted-foreground">
         {t('noAccount')}{' '}
-        <Link href="/register" className="font-medium text-primary hover:underline">
+        <Link href="/register" className="font-medium text-primary underline-offset-4 hover:underline">
           {t('signUp')}
         </Link>
       </p>

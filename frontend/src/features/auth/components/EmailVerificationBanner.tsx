@@ -29,18 +29,21 @@ export function EmailVerificationBanner({
   }
 
   return (
+    // Banner cảnh báo dùng token warning (tự đổi sáng/tối), không hard-code bảng màu amber.
     <section
       aria-labelledby="email-verification-title"
-      className="mb-6 rounded-lg border border-amber-300 bg-amber-50 p-4 text-amber-950 dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-100"
+      className="mb-6 animate-fade-in rounded-xl border border-warning/25 bg-warning-soft p-4 shadow-xs sm:p-6"
     >
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-start gap-3">
-          <MailWarning className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
-          <div>
-            <h2 id="email-verification-title" className="font-semibold">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-warning/15 text-warning">
+            <MailWarning className="h-5 w-5" aria-hidden="true" />
+          </span>
+          <div className="min-w-0">
+            <h2 id="email-verification-title" className="text-body font-semibold text-foreground">
               Verify your email address
             </h2>
-            <p className="mt-1 text-sm text-amber-900 dark:text-amber-200">
+            <p className="mt-1 max-w-prose-ui break-words text-body-sm text-muted-foreground">
               We sent a verification link to {email}. You can continue using your account while
               you verify it.
             </p>
@@ -49,7 +52,7 @@ export function EmailVerificationBanner({
         <Button
           type="button"
           variant="outline"
-          className="w-full shrink-0 border-amber-400 bg-white text-amber-950 hover:bg-amber-100 sm:w-auto dark:bg-transparent dark:text-amber-100"
+          className="shrink-0 sm:w-auto"
           isLoading={isResending}
           onClick={handleResend}
         >

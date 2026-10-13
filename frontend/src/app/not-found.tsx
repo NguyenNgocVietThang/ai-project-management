@@ -1,22 +1,25 @@
-import Link from 'next/link'
-import { FileQuestion } from 'lucide-react'
+import { FileQuestion, LayoutDashboard } from 'lucide-react'
+import { ButtonLink } from '@/components/common/Button'
 
+// Trang 404 dùng bố cục kiểu EmptyState: ô biểu tượng, tiêu đề rõ ràng, mô tả và CTA về dashboard.
+// Văn bản tiếng Anh cố định được giữ nguyên như trước.
 export default function NotFound() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-4 p-6 text-center">
-      <FileQuestion className="h-10 w-10 text-muted-foreground" aria-hidden="true" />
-      <div>
-        <h1 className="text-xl font-semibold">Page not found</h1>
-        <p className="mt-2 max-w-md text-sm text-muted-foreground">
+    <main className="flex min-h-dvh items-center justify-center bg-background/80 px-4 py-12">
+      <div className="flex w-full max-w-md animate-fade-up flex-col items-center rounded-2xl border border-border/60 bg-card/80 px-6 py-12 text-center shadow-soft backdrop-blur-md">
+        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent ring-8 ring-accent/40">
+          <FileQuestion className="h-6 w-6 text-accent-foreground" aria-hidden="true" />
+        </span>
+        <p className="eyebrow mt-6">404</p>
+        <h1 className="mt-2 text-h3 text-foreground">Page not found</h1>
+        <p className="mt-2 max-w-prose-ui text-body-sm text-muted-foreground">
           This page does not exist, or the item it pointed to has been removed.
         </p>
+        <ButtonLink href="/dashboard" size="lg" className="mt-8 w-full sm:w-auto">
+          <LayoutDashboard className="h-4 w-4" aria-hidden="true" />
+          Back to dashboard
+        </ButtonLink>
       </div>
-      <Link
-        href="/dashboard"
-        className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:opacity-90"
-      >
-        Back to dashboard
-      </Link>
     </main>
   )
 }

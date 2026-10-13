@@ -13,6 +13,9 @@ import { getPasswordStrength, passwordSchema } from '@/features/auth/auth.valida
 import { useAuth } from '@/hooks/useAuth'
 import { SocialLoginButtons } from './SocialLoginButtons'
 
+// Màu thanh độ mạnh mật khẩu theo token ngữ nghĩa (chỉ số = strength.score).
+const STRENGTH_TONES = ['bg-muted', 'bg-destructive', 'bg-warning', 'bg-success'] as const
+
 const registerSchema = z
   .object({
     full_name: z.string().min(2, 'Full name must be at least 2 characters'),
@@ -60,7 +63,7 @@ export function RegisterForm() {
   })
 
   return (
-    <form onSubmit={onSubmit} noValidate className="space-y-5">
+    <form onSubmit={onSubmit} noValidate className="space-y-6">
       {registerError && <Alert>{registerError}</Alert>}
 
       <div>
@@ -71,11 +74,10 @@ export function RegisterForm() {
           placeholder="John Doe"
           autoComplete="name"
           hasError={Boolean(errors.full_name)}
-          aria-describedby={errors.full_name ? 'full_name-error' : undefined}
           {...register('full_name')}
         />
         {errors.full_name && (
-          <p id="full_name-error" className="mt-1.5 text-sm text-destructive">
+          <p id="full_name-error" className="mt-2 text-body-sm text-destructive">
             {errors.full_name.message}
           </p>
         )}
@@ -89,11 +91,10 @@ export function RegisterForm() {
           placeholder="johndoe"
           autoComplete="username"
           hasError={Boolean(errors.username)}
-          aria-describedby={errors.username ? 'username-error' : undefined}
           {...register('username')}
         />
         {errors.username && (
-          <p id="username-error" className="mt-1.5 text-sm text-destructive">
+          <p id="username-error" className="mt-2 text-body-sm text-destructive">
             {errors.username.message}
           </p>
         )}
@@ -107,11 +108,10 @@ export function RegisterForm() {
           placeholder="name@example.com"
           autoComplete="email"
           hasError={Boolean(errors.email)}
-          aria-describedby={errors.email ? 'email-error' : undefined}
           {...register('email')}
         />
         {errors.email && (
-          <p id="email-error" className="mt-1.5 text-sm text-destructive">
+          <p id="email-error" className="mt-2 text-body-sm text-destructive">
             {errors.email.message}
           </p>
         )}
@@ -124,28 +124,27 @@ export function RegisterForm() {
           type="password"
           autoComplete="new-password"
           hasError={Boolean(errors.password)}
-          aria-describedby={errors.password ? 'password-error' : undefined}
           {...register('password', {
             onChange: (e) => setPasswordInput(e.target.value),
           })}
         />
+        {errors.password && (
+          <p id="password-error" className="mt-2 text-body-sm text-destructive">
+            {errors.password.message}
+          </p>
+        )}
         {passwordInput && (
           <div className="mt-2 space-y-1">
-            <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-muted">
+            <div className="flex h-2 w-full overflow-hidden rounded-full bg-muted" aria-hidden="true">
               <div
-                className={`h-full transition-all duration-300 ${strength.color}`}
+                className={`h-full rounded-full transition-[width] duration-300 ease-out-soft ${STRENGTH_TONES[strength.score] ?? 'bg-muted'}`}
                 style={{ width: `${(strength.score / 3) * 100}%` }}
               />
             </div>
-            <p className="text-xs text-muted-foreground">
-              Password strength: <span className="font-medium">{strength.label}</span>
+            <p className="text-caption text-muted-foreground">
+              Password strength: <span className="font-medium text-foreground">{strength.label}</span>
             </p>
           </div>
-        )}
-        {errors.password && (
-          <p id="password-error" className="mt-1.5 text-sm text-destructive">
-            {errors.password.message}
-          </p>
         )}
       </div>
 
@@ -156,25 +155,24 @@ export function RegisterForm() {
           type="password"
           autoComplete="new-password"
           hasError={Boolean(errors.confirm_password)}
-          aria-describedby={errors.confirm_password ? 'confirm_password-error' : undefined}
           {...register('confirm_password')}
         />
         {errors.confirm_password && (
-          <p id="confirm_password-error" className="mt-1.5 text-sm text-destructive">
+          <p id="confirm_password-error" className="mt-2 text-body-sm text-destructive">
             {errors.confirm_password.message}
           </p>
         )}
       </div>
 
-      <Button type="submit" isLoading={isRegistering}>
+      <Button type="submit" size="lg" isLoading={isRegistering}>
         {isRegistering ? 'Creating account…' : 'Create account'}
       </Button>
 
       <SocialLoginButtons dividerText="Or sign up with" />
 
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-center text-body-sm text-muted-foreground">
         Already have an account?{' '}
-        <Link href="/login" className="font-medium text-primary hover:underline">
+        <Link href="/login" className="font-medium text-primary underline-offset-4 hover:underline">
           Sign in
         </Link>
       </p>
