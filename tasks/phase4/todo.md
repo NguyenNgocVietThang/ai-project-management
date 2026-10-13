@@ -42,9 +42,10 @@ Bằng chứng C3: test_requirement_briefs_api.py 8 passed; pytest 575/23 SQLite
 ### C4: Project Generator dùng hồ sơ đã chốt
 **Mô tả:** Endpoint mới (hoặc tham số) sinh dự án từ hồ sơ `ready`; prompt hệ thống chỉ cho dùng mục `clear/assumed`, mục `skipped` để trống. Hồ sơ gắn `project_id`, chuyển `consumed`. Endpoint prompt thô giữ tương thích.
 **Tiêu chí:**
-- [ ] Hồ sơ chưa `ready` bị từ chối
-- [ ] Không tạo hai dự án từ một hồ sơ khi retry/restart
-- [ ] Luồng prompt thô cũ vẫn đạt test hiện có
+- [x] Hồ sơ chưa `ready` bị từ chối (409 `brief_not_ready`)
+- [x] Không tạo hai dự án từ một hồ sơ khi retry/restart
+- [x] Luồng prompt thô cũ vẫn đạt test hiện có
+Bằng chứng C4: test_project_from_brief_job.py 6 passed (5 lần chạy liên tiếp); pytest 586/26 SQLite.
 **Xác minh:** test durable AI flow với provider giả; pytest.
 **Phụ thuộc:** C3. **Tệp:** `services/ai/project_generator.py`, `services/ai_service.py`, `endpoints/ai.py`, test. **Quy mô:** M
 
@@ -132,8 +133,9 @@ Bằng chứng A3: vitest 17 tệp / 82 test, type-check, lint, build đạt; ki
 ### V1: Tạo snapshot và baseline
 **Mô tả:** `versioning_service` tạo snapshot theo V0 trong cùng transaction; số phiên bản tăng dần không trùng; cap phiên bản/dự án. Hook vào A2 (PM duyệt cuối) và endpoint baseline thủ công cho PM.
 **Tiêu chí:**
-- [ ] Snapshot nhất quán khi có ghi đồng thời
-- [ ] PM duyệt cuối luôn có snapshot gắn change_request_id
+- [x] Snapshot nhất quán khi có ghi đồng thời (khóa hàng dự án; giới hạn READ COMMITTED ghi trong docstring)
+- [x] PM duyệt cuối luôn có snapshot gắn change_request_id
+Bằng chứng V1: test_project_versions.py 5 passed, test_project_versions_postgres.py 3 passed (Postgres); không cần migration.
 **Xác minh:** test service PostgreSQL.
 **Phụ thuộc:** V0, A2. **Tệp:** `services/versioning_service.py`, `endpoints/project_versions.py` (thay stub), migration nếu cần, test. **Quy mô:** M
 

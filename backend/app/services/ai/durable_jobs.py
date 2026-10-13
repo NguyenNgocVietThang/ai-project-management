@@ -73,8 +73,25 @@ async def run_ai(ctx):
         token = active_ai_context.set(ctx)
         try:
             if request_type == AIRequestType.PROJECT_GENERATE:
-                from app.services.ai.project_generator import generate_project_from_prompt
-                result = await generate_project_from_prompt(input_data["prompt"])
+                if "brief_id" in input_data:
+                    # C4: sinh từ hồ sơ đã chốt; ảnh chụp đọc trước khi gọi provider.
+                    from app.models.requirement_brief import RequirementBrief
+                    from app.services.ai.project_generator import (
+                        build_brief_snapshot_for_generation,
+                        generate_project_from_brief,
+                    )
+                    brief = await db.get(RequirementBrief, input_data["brief_id"])
+                    if brief is None or brief.owner_id != request.user_id:
+                        raise PermanentJobError("invalid_payload")
+                    if brief.status == "consumed" or brief.project_id is not None:
+                        # Hồ sơ đã sinh dự án (retry/restart): kết thúc an toàn, không gọi provider.
+                        return JobResult(result={"ai_request_id": request_id})
+                    if brief.status != "ready":
+                        raise PermanentJobError("invalid_payload")
+                    result = await generate_project_from_brief(build_brief_snapshot_for_generation(brief))
+                else:
+                    from app.services.ai.project_generator import generate_project_from_prompt
+                    result = await generate_project_from_prompt(input_data["prompt"])
                 phases = result.get("phases", [])
                 if len(phases) > 50 or sum(len(p.get("tasks", [])) for p in phases if isinstance(p, dict)) > min(settings.AI_MAX_PROJECT_TASKS, 150):
                     raise PermanentJobError("ai_budget_exceeded")
@@ -128,6 +145,18 @@ async def run_ai(ctx):
         final_result = dict(result)
         if request_type == AIRequestType.PROJECT_GENERATE:
             from app.services.ai.persistence import _persist_plan
+            brief = None
+            if "brief_id" in input_data:
+                # C4: khóa hồ sơ trong cùng transaction với việc tạo dự án.
+                from app.services.ai.requirement_clarifier import _lock_brief
+                brief = await _lock_brief(db, input_data["brief_id"])
+                if brief is None or brief.owner_id != request.user_id:
+                    raise PermanentJobError("invalid_payload")
+                if brief.status == "consumed" or brief.project_id is not None:
+                    # Đã có dự án từ hồ sơ này: không tạo dự án thứ hai.
+                    return
+                if brief.status != "ready":
+                    raise PermanentJobError("invalid_payload")
             from app.services.scheduling_service import recalculate_project
             db.info["defer_cpm"] = True
             try:
@@ -137,6 +166,10 @@ async def run_ai(ctx):
             await recalculate_project(db, project.id, force_sync=True)
             request.project_id = project.id
             job.project_id = project.id
+            if brief is not None:
+                brief.project_id = project.id
+                brief.status = "consumed"
+                brief.pending_job_id = None
         elif request_type == AIRequestType.IMPACT_ANALYSIS:
             from app.models.impact_report import ImpactReport, RiskLevel
             report = await db.scalar(select(ImpactReport).where(ImpactReport.change_request_id == input_data["change_request_id"]))
