@@ -1,9 +1,9 @@
 # Đặc tả yêu cầu phần mềm (SRS)
 ## Hệ thống Lập kế hoạch Dự án và Quản lý Danh mục bằng AI
 
-**Version:** 2.3.0
-**Date:** 2026-10-02
-**Trạng thái:** Đối soát với mã nguồn thực tế — xem §6 (Phase 1–3 + Real-time + Admin/Audit + 5 Trụ cột AI hoàn thành 100%; Phase 4–5 đang tiếp tục phát triển).
+**Version:** 2.4.0
+**Date:** 2026-10-13
+**Trạng thái:** Đối soát với mã nguồn thực tế — xem §6 (Phase 1–4 hoàn thành phần mã nguồn, đã gộp vào `main` cục bộ, chưa push; chờ người dùng duyệt quy tắc rollback V0, duyệt checkpoint, chạy thử provider AI thật và kịch bản demo trên Render. Phase 5 làm một phần: đã có thông báo đẩy WebSocket, avatar, polish giao diện; chưa có upload/parse tài liệu gốc và dashboard Investor).
 
 ---
 
@@ -17,7 +17,7 @@ Hệ thống phục vụ nhiều vai trò (multi-role) theo cấu trúc phân c�
 ```
 Portfolio → Project → Phase / Sprint / Epic / Milestone → Task → SubTask
 ```
-Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{project_id}`), kênh thông báo cá nhân tức thời (`/ws/notifications`), và quét tự động lịch trình qua Celery Beat.
+Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{project_id}`), kênh thông báo cá nhân tức thời (`/ws/notifications`), và quét tự động lịch trình qua job cron hằng ngày (Supabase Cron hoặc cron cục bộ gọi endpoint nội bộ, sinh durable job trong PostgreSQL).
 
 ### 1.3 Tài liệu tham chiếu
 - `brd.md` — Business Requirements Document
@@ -35,43 +35,40 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 | Phía giao diện | Next.js (App Router), React, TypeScript, Tailwind CSS v3, Zustand, TanStack Query v5, Recharts, @dnd-kit, next-intl (i18n vi/en, locale trong cookie) | Next.js 15, React 18 |
 | Phía máy chủ | FastAPI, Python, Pydantic v2, SQLAlchemy 2.0 (Async Engine), Alembic | Python 3.11+ |
 | **Database** | PostgreSQL (primary), Redis (cache / pub-sub / session) | PG 16, Redis 7 |
-| **Storage** | MinIO (S3-compatible) — BRD/SRS, avatar, báo cáo xuất ra | latest |
+| **Storage** | Bucket riêng tư Supabase Storage (cloud) hoặc MinIO (cục bộ) — avatar, SRS/BRD DOCX, XLSX; tải xuống qua proxy backend có kiểm tra quyền | — |
 | **Real-time Bus** | Redis Pub/Sub + ConnectionManager (hỗ trợ scale đa tiến trình) | Redis 7 |
-| **Queue & Scheduler** | Celery + Celery Beat + Redis Broker — xử lý AI, Email, Sweeps | Celery 5.4 |
+| **Tác vụ nền & lịch** | Durable jobs trong PostgreSQL (bảng `jobs`, runner chạy trong tiến trình FastAPI, outbox cùng transaction) + Supabase Cron (hoặc cron cục bộ) gọi `POST /api/v1/internal/jobs/schedules`. Celery chỉ còn mã kế thừa, không bắt buộc | — |
 | **AI** | xKiro — cổng AI tương thích OpenAI, nhiều model miễn phí (DeepSeek, Qwen, Mistral) theo từng loại việc | openai 1.51 (SDK) |
 | **Auth** | JWT (Access Token 30m + Refresh Token 7d) + RBAC (34 permissions); WebSocket xác thực bằng vé dùng một lần (không phải JWT trên query string) | PyJWT, passlib/bcrypt |
-| **Email** | fastapi-mail (SMTP) + Jinja2 templates | fastapi-mail 1.4 |
-| **Export** | python-docx (DOCX), openpyxl (XLSX) — server-side async generation | — |
+| **Email** | SMTP (fastapi-mail) hoặc Resend + Jinja2 templates; trên demo Render đang tắt gửi thật | fastapi-mail 1.4 |
+| **Export** | python-docx (SRS/BRD DOCX), openpyxl (XLSX), Pillow (ảnh PNG quy trình BPMN chèn vào DOCX) — sinh phía server qua durable job | — |
 
 ### 2.2 Mô hình kết nối (Integration Model)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    Next.js 15 Frontend                      │
-│        Dashboard + Gantt + Real-Time Chat + Notification    │
+│  Dashboard + Gantt chỉ đọc + Chat + Thông báo + Tài liệu    │
 └────────────────┬───────────────────────────┬────────────────┘
                  │ REST API (/api/v1/...)    │ WebSocket (/ws/...)
                  ▼                           ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                   FastAPI Backend Server                    │
 │   (Layered Architecture + ConnectionManager + Redis PubSub) │
-└──────┬─────────┬───────────────────────────┬─────────┬──────┘
-       │         │                           │         │
-  ┌────▼───┐ ┌───▼────┐                 ┌────▼───┐ ┌───▼────────┐
-  │ PG SQL │ │ Redis  │                 │ MinIO  │ │Celery Beat │
-  │        │ │Pub/Sub │                 │ Files  │ │(Scheduler) │
-  └────────┘ └───┬────┘                 └────────┘ └───┬────────┘
-                 │                                     │
-             ┌───▼───┐                                 │
-             │Celery │ ◄───────────────────────────────┘
-             │Worker │ (Async Jobs: AI, Emails, Sweeps, Reports)
-             └───┬───┘
-                 │
-      ┌──────────▼──────────┐
-      │   AI Provider Layer  │
+│   Job runner trong tiến trình (durable jobs, bảng jobs)     │
+└──────┬─────────┬──────────────────┬──────────────┬──────────┘
+       │         │                  │              ▲
+  ┌────▼───┐ ┌───▼────┐   ┌─────────▼────────┐     │ POST /internal/jobs/schedules
+  │ PG SQL │ │ Redis  │   │ Supabase Storage │  ┌──┴───────────────────┐
+  │ + jobs │ │Pub/Sub │   │ hoặc MinIO       │  │ Supabase Cron hoặc   │
+  └────────┘ └────────┘   └──────────────────┘  │ cron cục bộ          │
+                                                │ (08:00, 08:30)       │
+                                                └──────────────────────┘
+      ┌──────────────────────┐
+      │   AI Provider Layer  │ <── job runner gọi (ai.*, document.generate)
       │  └─ xKiro (DeepSeek, │
       │     Qwen, Mistral)   │
-      └─────────────────────┘
+      └──────────────────────┘
 ```
 
 ---
@@ -183,9 +180,9 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 |---|---|
 | NOTI-01 | **WebSocket Real-time Push**: Đẩy thông báo cá nhân tức thời tới người dùng qua `/ws/notifications?ticket=<ticket>` (vé một lần, xem CHAT-02) trên kênh `ws:notif:user:{user_id}`. |
 | NOTI-02 | **Fan-out Notification**: Khi một Task có thay đổi quan trọng (trạng thái, ngày bắt đầu, hạn chót, độ ưu tiên, người thực hiện), tự động gửi thông báo tới toàn bộ thành viên trong nhóm dự án (trừ người thực hiện thao tác). |
-| NOTI-03 | **Celery Beat Daily Sweep**: Tiến trình `celery-beat` chạy định kỳ lúc 08:00 AM hàng ngày quét các task bắt đầu hôm nay và task sắp đến hạn (1 ngày trước hạn) để gửi thông báo fan-out tự động. |
+| NOTI-03 | **Daily Sweep bằng job cron**: Supabase Cron (hoặc cron cục bộ) gọi `POST /api/v1/internal/jobs/schedules`, sinh job `cron.reminders` lúc 08:00 (Asia/Ho_Chi_Minh) quét các task bắt đầu hôm nay và task sắp đến hạn (1 ngày trước hạn) để gửi thông báo fan-out tự động. |
 | NOTI-04 | **Chống gửi trùng (Idempotency)**: Lưu dấu thời gian `last_start_notified_at` và `last_due_soon_notified_at` trên bảng `tasks`. Tự động reset cờ khi task được đổi hạn chót mới. |
-| NOTI-05 | **Email Notifications**: Gửi email qua Celery Worker bằng `fastapi-mail` + Jinja2 HTML templates, lưu nhật ký vào `email_logs`. |
+| NOTI-05 | **Email Notifications**: Gửi email qua durable job (`email.verify`, `email.reset`, `email.invite`) bằng SMTP hoặc Resend + Jinja2 HTML templates, lưu nhật ký vào `email_logs`. Trên demo Render hiện tắt gửi thật. |
 
 ---
 
@@ -194,11 +191,16 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 | ID | SOP | Yêu cầu |
 |---|---|---|
 | AI-01 | SOP-AI-001 | **Project Generator**: PM nhập prompt tự nhiên → AI sinh cấu trúc JSON WBS (Phases, Sprints, Epics, Tasks, Dependencies) → Insert vào DB → Chạy CPM → Hiển thị Gantt. |
-| AI-02 | SOP-AI-002 | **Impact Analysis**: Tự động kích hoạt khi PO duyệt Change Request → AI đánh giá tác động Scope, Timeline, Budget, Resource. |
+| AI-02 | SOP-AI-002 | **Impact Analysis**: Chạy theo yêu cầu trên trang Change Request (job `ai.impact_analysis`) → AI đánh giá tác động Scope, Timeline, Budget, Resource. |
 | AI-03 | SOP-AI-003 | **Schedule Optimization**: AI tính toán lại chuỗi phụ thuộc và đề xuất lịch trình tối ưu sau khi CR được phê duyệt. |
 | AI-04 | SOP-RM-001 | **Resource Recommendation**: Gợi ý nhân sự phù hợp cho Task dựa trên Skill match, Chi phí, Tải công việc và Lịch nghỉ phép. |
 | AI-05 | SOP-AI-005 | **Risk Analysis**: Đánh giá định kỳ các rủi ro dự án (trễ hạn, quá tải, vượt chi phí) và xếp loại mức độ rủi ro. |
-| AI-06 | SOP-DOC-001 | **Document Parser**: Bóc tách tài liệu BRD/SRS từ MinIO để tự động gợi ý danh mục Tasks. |
+| AI-06 | SOP-DOC-001 | **Document Parser**: Bóc tách tài liệu BRD/SRS tải lên để gợi ý danh mục Tasks. Chưa làm, thuộc Phase 5. |
+| AI-07 | — | **Hỏi làm rõ yêu cầu**: Hồ sơ yêu cầu 7 mục (goals, stakeholders, in_scope, out_of_scope, key_features, constraints, success_criteria), mỗi mục có trạng thái clear/missing/assumed/skipped. AI hỏi đúng một câu mỗi lượt, có thể đề xuất giả định, trần 12 lượt; người dùng có thể chọn "Bỏ qua, tạo luôn"; AI không ghi đè mục người dùng đã xác nhận (job `ai.requirement_clarify`, API `/requirement-briefs`, UI `RequirementClarifier` trong `AIGeneratorModal`). |
+| AI-08 | — | **Sinh dự án từ hồ sơ**: `POST /ai/generate-project-from-brief` chỉ dùng mục clear/assumed của hồ sơ đã chốt; mục skipped không được bịa. Endpoint prompt thô cũ giữ tương thích. |
+| AI-09 | — | **Sinh nội dung SRS/BRD**: AI viết JSON theo nhóm mục trên mẫu cố định (SRS 3 lượt AI, BRD 4 lượt); mục "Giả định và vấn đề mở" sinh từ hồ sơ; nếu còn mục missing thì trả `needs_clarification` và mở lại vòng hỏi. Ngôn ngữ mặc định tiếng Việt, tham số `language` vi hoặc en (job `document.generate`). |
+| AI-10 | — | **Sinh mô hình quy trình BPMN**: AI sinh ProcessModel (lane, task, gateway, event, flow) qua job `ai.bpmn_generate`, có validator kiểm tra cấu trúc. |
+| AI-11 | — | **Hạn mức AI**: Giới hạn số job AI mỗi ngày theo `AI_DAILY_JOB_LIMIT` (mặc định 20/ngày). |
 
 ---
 
@@ -207,8 +209,10 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 | ID | Yêu cầu |
 |---|---|
 | CR-01 | Khách hàng hoặc Thành viên tạo yêu cầu thay đổi (CR) kèm mô tả, ước tính thời gian và chi phí. |
-| CR-02 | Quy trình phê duyệt tuần tự: `BA Review (Bước 1) → PO Review (Bước 2) → AI Impact Analysis → PM Final Approval (Bước 3)`. |
-| CR-03 | Khi PM duyệt hoàn tất → Tự động tạo bản lưu Snapshot Version và áp dụng thay đổi vào cấu trúc dự án chính thức. |
+| CR-02 | Submit CR tạo 3 bước duyệt tuần tự BA -> PO -> PM (`/change-requests/{id}/approvals`). Dự án thiếu thành viên giữ vai trò cần thiết thì trả 422 `missing_roles`. |
+| CR-03 | Thành viên dự án đúng vai trò của bước hiện hành (kể cả người tạo CR) mới được quyết định; admin hệ thống chỉ được xem. Khóa hàng chống quyết định đồng thời; ràng buộc unique (change_request_id, step_order). |
+| CR-04 | Từ chối bắt buộc có lý do; khi một bước bị từ chối, các bước sau chuyển `CANCELLED`. Mọi quyết định ghi audit log và gửi thông báo in-app. |
+| CR-05 | PM duyệt bước cuối thì tự động tạo snapshot phiên bản gắn `change_request_id`. UI `ApprovalTimeline` trên trang chi tiết CR `/projects/[id]/change-requests/[crId]`. |
 
 ---
 
@@ -216,9 +220,10 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 
 | ID | Yêu cầu |
 |---|---|
-| VER-01 | Tự động snapshot JSON của dự án trước khi apply thay đổi lớn hoặc PM tạo Baseline thủ công. |
-| VER-02 | Lưu trữ dữ liệu phiên bản trong bảng `project_versions`. |
-| VER-03 | Cho phép PM xem so sánh Diff giữa hai phiên bản và thực hiện Rollback an toàn khi cần thiết. |
+| VER-01 | Snapshot JSON gồm phase, sprint, epic, milestone, task, dependency (không gồm worklog, comment, subtask, assignment); tạo tự động khi PM duyệt CR hoặc baseline thủ công (chỉ PM hoặc admin). Tối đa 50 phiên bản mỗi dự án. |
+| VER-02 | Lưu trữ dữ liệu phiên bản trong bảng `project_versions`; API `/projects/{id}/versions`. |
+| VER-03 | Diff giữa hai phiên bản hoặc với hiện trạng (`/{a}/diff/{b}` hoặc `/{a}/diff/current`), chỉ trả các thay đổi. |
+| VER-04 | Rollback (`/{id}/rollback`) chạy trong một transaction theo quy tắc V0: task có dữ liệu phụ thuộc được đánh dấu `archived_at` thay vì xóa; worklog không bao giờ bị xóa; task đã xóa được tạo lại với ID mới kèm `id_map`; tạo phiên bản "trước khi khôi phục" để có thể đảo ngược; tính lại CPM sau khôi phục. Trang `/projects/[id]/versions`. |
 
 ---
 
@@ -226,14 +231,17 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 
 | ID | Yêu cầu |
 |---|---|
-| RPT-01 | Quản lý tệp tải lên (BRD, SRS, tài liệu bàn giao) lưu trữ an toàn trên MinIO Storage (`documents`). |
-| RPT-02 | Dashboard tổng hợp: Gantt Chart tương tác, Burndown, Burnup, Velocity, Phân bổ trạng thái Task. |
+| RPT-01 | Tải lên và bóc tách tài liệu gốc (BRD, SRS, tài liệu bàn giao): chưa làm, thuộc Phase 5. |
+| RPT-02 | Dashboard tổng hợp: Burndown, Burnup, Velocity, Phân bổ trạng thái Task. |
 | RPT-03 | Chỉ số tài chính & tiến độ nâng cao: EVA (Earned Value Analysis), CPI, SPI, CV, SV. |
-| RPT-04 | Xuất báo cáo tự động định dạng DOCX và XLSX qua Celery Worker. |
+| RPT-04 | **SRS/BRD DOCX**: sinh từ mẫu cố định qua job `document.generate`, lưu vào `generated_documents`, tải qua `/projects/{id}/documents/.../download` (proxy kiểm tra quyền). Có chèn ảnh PNG quy trình BPMN vẽ phía server bằng Pillow; nếu vẽ lỗi thì dùng bảng các bước. Trang `/projects/[id]/documents`. |
+| RPT-05 | **Gantt chỉ đọc**: vẽ SVG từ `GET /projects/{id}/cpm`; đường găng có nhãn chữ (không chỉ dựa vào màu); zoom ngày/tuần/tháng; ảo hóa hàng (2000 task). Giới hạn `CPM_MAX_TASKS`/`CPM_MAX_DEPENDENCIES`, vượt thì trả 422 `resource_limit_exceeded`. Trang `/projects/[id]/gantt`. Kéo thả ngoài phạm vi. |
+| RPT-06 | **XLSX**: job `report.xlsx` xuất các sheet Task, Đường găng, CR và duyệt, EVA và Burndown (EVA tính theo giờ công: BAC = tổng giờ ước tính, EV, AC, PV, SPI, CPI); tải qua `/projects/{id}/reports/xlsx/{job_id}/download`. Nút Xuất XLSX ở trang tổng quan dự án. |
+| RPT-07 | **Trang quy trình**: `/projects/[id]/process` vẽ swimlane SVG từ ProcessModel (`/projects/{id}/process-model`). |
 
 ---
 
-## 4. Cơ sở dữ liệu (Lược đồ cơ sở dữ liệu — 8 Domains, 34 Tables)
+## 4. Cơ sở dữ liệu (Lược đồ cơ sở dữ liệu — 10 Domains, 39 Tables)
 
 | Domain | Số bảng | Danh sách bảng |
 |---|---|---|
@@ -245,6 +253,10 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 | **6. AI Domain** | 3 | `ai_requests`, `ai_outputs`, `risk_reports` |
 | **7. Document & Notification** | 3 | `documents`, `notifications`, `email_logs` |
 | **8. Real-Time Chat** | 2 | `chat_messages`, `chat_read_states` |
+| **9. Requirement & Generated Artifacts** | 3 | `requirement_briefs`, `generated_documents`, `process_models` |
+| **10. Hạ tầng** | 2 | `jobs` (durable jobs), `security_states` |
+
+Ghi chú thay đổi Phase 4: thêm cột `tasks.archived_at`; bảng `approvals` thêm `required_role`, `approver_id` cho phép null, trạng thái `CANCELLED`, ràng buộc unique (change_request_id, step_order); enum `airequesttype` thêm `REQUIREMENT_CLARIFY`, `DOCUMENT_GENERATE`, `BPMN_GENERATE`. Head migration: `20261013_process_models`.
 
 ---
 
@@ -252,18 +264,18 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 
 ### REST Routers (`/api/v1/...`)
 
-**24 router đang mount & phục vụ thật:**
+**32 router đang mount và phục vụ thật:**
 - `/auth`, `/oauth`, `/users`, `/roles`, `/permissions`
 - `/portfolios`, `/projects`, `/phases`, `/sprints`, `/epics`, `/milestones`
 - `/tasks`, `/subtasks`, `/dependencies`, `/assignments`, `/worklogs`
 - `/change-requests`
 - `/projects/{id}/messages` (Chat REST API)
 - `/cpm` (chỉ đọc — engine chạy nội bộ từ Phase 2, endpoint chỉ phơi kết quả)
-- `/resource-leveling`, `/dashboards`, `/notifications`, `/audit`, `/ai`
+- `/resource-leveling`, `/dashboards`, `/notifications`, `/audit`, `/ai` (gồm `POST /ai/generate-project-from-brief`)
+- Mới Phase 4: `/requirement-briefs`, `/change-requests/{id}/approvals`, `/projects/{id}/versions`, `/projects/{id}/documents`, `/projects/{id}/reports/xlsx`, `/projects/{id}/process-model`
+- Tác vụ nền: `/jobs`, `/internal/jobs` (gồm `POST /internal/jobs/schedules` cho cron)
 
-**8 router còn là stub `TODO`, bị comment trong `router.py`, CHƯA mount:**
-- `/leaves`, `/skills`, `/documents`, `/approvals`
-- `/gantt`, `/reports`, `/versions`, `/system`
+**3 router còn là stub, chưa mount:** `/leaves`, `/skills`, `/system`. Stub `/gantt` đã xóa (Gantt vẽ từ `/projects/{id}/cpm`).
 
 ### 2 WebSocket Endpoints (`/ws/...`)
 - `/ws/chat/{project_id}?ticket=<ticket>` — Kênh chat nhóm dự án
@@ -275,23 +287,23 @@ Cả hai dùng vé một lần (single-use ticket, TTL 60 giây, cấp qua `POST
 
 ## 6. Trạng thái Triển khai (Trạng thái triển khai)
 
-> Đối soát với mã nguồn ngày 2026-10-02. API thực tế: **24 REST router + 2 WebSocket router** được mount; 264/264 unit test backend pass (`pytest tests/unit`), 28/28 unit test frontend pass trên 7 file (`vitest`).
+> Đối soát với mã nguồn ngày 2026-10-13. API thực tế: **32 REST router + 2 WebSocket router** được mount. Kiểm thử backend: 649 passed / 28 skipped (SQLite), 659 passed / 16 skipped khi có PostgreSQL (1 test phụ thuộc môi trường có sẵn lỗi). Frontend: 129 test trên 26 tệp (`vitest`) đạt; type-check, lint, build đạt.
 
 - [x] **Core Auth & User Onboarding (Phase 1)**: Hoàn thành 100%.
-- [x] **Portfolio, Project Core & CPM Engine (Phase 2)**: Hoàn thành 100%. CPM chạy nội bộ (`utils/cpm.py` + `scheduling_service.py`); endpoint `/cpm` đã mount (chỉ đọc); `/gantt` **chưa mount** (còn stub).
+- [x] **Portfolio, Project Core & CPM Engine (Phase 2)**: Hoàn thành 100%. CPM chạy nội bộ (`utils/cpm.py` + `scheduling_service.py`); endpoint `/cpm` đã mount (chỉ đọc); stub `/gantt` đã xóa, Gantt chỉ đọc hoàn thành ở Phase 4.
 - [x] **Hệ thống Quản trị Admin & Audit Timeline**: Hoàn thành 100% (`/admin/users`, `/admin/roles`, `/admin/audit`).
 - [x] **Hạ tầng Real-time WebSocket & Redis Pub/Sub**: Hoàn thành 100% (`ConnectionManager`, `redis_listener`).
 - [x] **Real-time Project Chat**: Hoàn thành 100% (Backend endpoints + WS + Frontend UI & unread badge).
-- [x] **Thông báo Real-time & Celery Beat Daily Sweep**: Hoàn thành 100% (WS Push + Beat 08:00 AM sweep).
-- [x] **AI Project Generator (SOP-AI-001)**: Hoàn thành 100%. `BaseAIProvider` + `XkiroProvider` + `project_generator.py`, endpoint `/ai/generate-project` đã mount, Celery `ai_tasks.generate_project_task` sinh Project/Phase/Task/Dependency thật, modal UI `AIGeneratorModal`.
-- [x] **AI 4 Trụ cột còn lại (SOP-AI-002 → 005)**: Hoàn thành 100%. Cả 4 module AI (`impact_analyzer.py`, `schedule_optimizer.py`, `resource_recommender.py`, `risk_analyzer.py`) hoạt động thật qua Celery tasks, endpoint `/ai/impact-analysis`, `/ai/optimize-schedule`, `/ai/resource-recommendation`, `/ai/risk-analysis` đã mount; Celery Beat quét rủi ro 08:30 hàng ngày; UI tại `/projects/{id}/change-requests` và `/projects/{id}/ai-insights`.
-- [x] **Change Request CRUD tối giản**: Hoàn thành và đã mount (`change_requests.py`, `change_request_service.py`), tạo nền dữ liệu thật cho AI Impact Analysis. (Quy trình duyệt nhiều cấp qua `approvals.py` thuộc Phase 4 debt).
-- [~] **Approvals & Project Versioning/Rollback**: Chỉ model DB. Endpoint `approvals`/`project_versions` là stub `TODO`, chưa mount.
-- [ ] **Reports DOCX/XLSX**: `report_tasks.py` là stub trả về rỗng; endpoint `/reports` chưa mount.
-- [ ] **Document AI Parser** (`/documents`), **Investor Read-only Dashboard**: chưa bắt đầu.
+- [x] **Thông báo Real-time & Daily Sweep**: Hoàn thành 100% (WS Push + job cron `cron.reminders` 08:00 do Supabase Cron hoặc cron cục bộ kích hoạt).
+- [x] **Durable jobs thay Celery**: Hoàn thành. Bảng `jobs`, runner trong tiến trình FastAPI, outbox cùng transaction. Mã Celery trong `backend/app/workers/` chỉ còn kế thừa; service `celery-worker`/`celery-beat` trong docker-compose không bắt buộc.
+- [x] **AI Project Generator (SOP-AI-001)**: Hoàn thành 100%. `BaseAIProvider` + `XkiroProvider` + `project_generator.py`, endpoint `/ai/generate-project` đã mount, job `ai.project_generate` sinh Project/Phase/Task/Dependency thật, modal UI `AIGeneratorModal`.
+- [x] **AI 4 Trụ cột còn lại (SOP-AI-002 → 005)**: Hoàn thành 100%. Cả 4 module AI (`impact_analyzer.py`, `schedule_optimizer.py`, `resource_recommender.py`, `risk_analyzer.py`) hoạt động thật qua durable job (`ai.impact_analysis`, `ai.schedule_optimize`, `ai.resource_recommend`, `ai.risk_analysis`), endpoint `/ai/impact-analysis`, `/ai/optimize-schedule`, `/ai/resource-recommendation`, `/ai/risk-analysis` đã mount; job cron `cron.risk` quét rủi ro 08:30 hàng ngày; UI tại `/projects/{id}/change-requests` và `/projects/{id}/ai-insights`.
+- [x] **Change Request CRUD**: Hoàn thành và đã mount (`change_requests.py`, `change_request_service.py`).
+- [x] **Phase 4 Workflow & Reporting**: Hoàn thành phần mã nguồn (gộp vào `main` cục bộ, chưa push): hỏi làm rõ yêu cầu và sinh dự án từ hồ sơ; duyệt CR BA -> PO -> PM; phiên bản snapshot, diff, rollback V0; Gantt chỉ đọc; SRS/BRD DOCX; XLSX; BPMN swimlane và PNG. `workers/report_tasks.py` đã xóa. Còn chờ người dùng: duyệt quy tắc rollback V0, duyệt checkpoint, chạy thử provider AI thật, kịch bản demo trên Render sau cold start.
+- [ ] **Upload và bóc tách tài liệu gốc (Phase 5)**, **Investor Read-only Dashboard**, kéo thả Gantt, gửi email thật trên demo: chưa làm.
 - [x] **Mobile Responsive & Polish**: Hoàn thành cơ bản mobile navigation với modal focus trap, theme switcher (light/dark/system).
 - [x] **Docker Compose 7 Services Dev + Deploy Render + Supabase (Free Tier)**: Hoàn thành cấu hình đầy đủ.
 
 ---
 
-*Cập nhật lần cuối: 2026-10-02 — Version 2.3.0 — Stack: Python FastAPI + Next.js 15*
+*Cập nhật lần cuối: 2026-10-13 — Version 2.4.0 — Stack: Python FastAPI + Next.js 15*

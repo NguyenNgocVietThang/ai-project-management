@@ -1,7 +1,7 @@
 # Lộ trình: Mô-đun tính năng AI (Phase 3)
 
-> **Phiên bản:** 1.5 | **Cập nhật:** 2026-10-02  
-> **Trạng thái:** 100% — Cả 5 trụ cột AI đã chạy thật đầu-cuối. SOP-AI-001 (AI Project Generator): endpoint `/ai/generate-project`, Celery task `generate_project_task` ghi Project/Phase/Task/Dependency thật, UI `AIGeneratorModal.tsx`. SOP-AI-002 (Impact Analysis): CRUD Change Request tối giản mới + `impact_analyzer.py` + `POST /ai/impact-analysis`, ghi bảng `impact_reports`, UI tại `/projects/{id}/change-requests`. SOP-AI-003 (Schedule Optimization): `schedule_optimizer.py` (chỉ đề xuất, không tự ghi đè lịch) + `POST /ai/optimize-schedule`, UI tại `/projects/{id}/ai-insights`. SOP-AI-004 (Resource Recommendation): `resource_recommender.py` (kết hợp chấm điểm định lượng + AI xếp hạng) + `POST /ai/resource-recommendation`, UI cùng trang `ai-insights`. SOP-AI-005 (Risk Analysis): `risk_analyzer.py` + `POST /ai/risk-analysis`, ghi bảng `risk_reports`, quét định kỳ qua Celery Beat (`ai.sweep_active_projects_for_risk`, 08:30 hằng ngày), UI `RiskWidget` tại `ai-insights`.
+> **Phiên bản:** 1.6 | **Cập nhật:** 2026-10-13  
+> **Trạng thái:** 100% — Cả 5 trụ cột AI đã chạy thật đầu-cuối. SOP-AI-001 (AI Project Generator): endpoint `/ai/generate-project`, job `ai.project_generate` ghi Project/Phase/Task/Dependency thật, UI `AIGeneratorModal.tsx`. SOP-AI-002 (Impact Analysis): CRUD Change Request tối giản mới + `impact_analyzer.py` + `POST /ai/impact-analysis`, ghi bảng `impact_reports`, UI tại `/projects/{id}/change-requests`. SOP-AI-003 (Schedule Optimization): `schedule_optimizer.py` (chỉ đề xuất, không tự ghi đè lịch) + `POST /ai/optimize-schedule`, UI tại `/projects/{id}/ai-insights`. SOP-AI-004 (Resource Recommendation): `resource_recommender.py` (kết hợp chấm điểm định lượng + AI xếp hạng) + `POST /ai/resource-recommendation`, UI cùng trang `ai-insights`. SOP-AI-005 (Risk Analysis): `risk_analyzer.py` + `POST /ai/risk-analysis`, ghi bảng `risk_reports`, quét định kỳ qua job `cron.risk` (08:30 hằng ngày), UI `RiskWidget` tại `ai-insights`. Ghi chú 2026-10-13: Celery đã được thay bằng durable jobs (bảng `jobs` trong PostgreSQL, runner chạy trong tiến trình FastAPI); Phase 4 bổ sung bước hỏi làm rõ yêu cầu và sinh dự án từ hồ sơ đã chốt cho SOP-AI-001.
 > **Mức độ ưu tiên:** Critical – Lớp trí tuệ nhân tạo cốt lõi của hệ thống  
 > **Điều kiện tiên quyết:** [x] Phase 1 (Auth & RBAC) & Phase 2 (Portfolio, Project Core, CPM & Real-time Chat) đã hoàn thành
 
@@ -12,7 +12,7 @@
 Module **AI Features (Phase 3)** tích hợp trí tuệ nhân tạo vào toàn bộ quy trình quản lý dự án nhằm tự động hóa việc lập kế hoạch, phân tích rủi ro, cân bằng nguồn lực và đánh giá tác động thay đổi theo chuẩn SOP.
 
 ### 5 Trụ cột AI chính:
-1. **AI Project Generator (SOP-AI-001):** Sinh WBS (Phases, Tasks, Estimated Hours, Dependencies) tự động từ prompt ngôn ngữ tự nhiên hoặc prompt templates.
+1. **AI Project Generator (SOP-AI-001):** Sinh WBS (Phases, Tasks, Estimated Hours, Dependencies) tự động từ prompt ngôn ngữ tự nhiên hoặc prompt templates. Từ Phase 4: có bước hỏi làm rõ (hồ sơ yêu cầu 7 mục, AI hỏi một câu mỗi lượt, trần 12 lượt, nút "Bỏ qua, tạo luôn") và sinh từ hồ sơ đã chốt qua `POST /ai/generate-project-from-brief` (chỉ dùng mục clear/assumed); endpoint prompt thô cũ vẫn giữ tương thích.
 2. **AI Impact Analysis (SOP-AI-002):** Phân tích tác động đa chiều (Timeline, Budget, Resource, Critical Path) khi có Change Request.
 3. **AI Schedule Optimization (SOP-AI-003):** Tối ưu hóa tiến độ, cân bằng workload, loại trừ ngày nghỉ (bảng `leaves`), đa mục tiêu (Time - Cost - Quality).
 4. **AI Resource Recommendation (SOP-RM-001 / SOP-AI-004):** Đề xuất phân bổ nhân sự thông minh theo kỹ năng (`user_skills`), chi phí (`hourly_rate`), khối lượng công việc hiện tại và dữ liệu lịch sử.
@@ -27,9 +27,9 @@ Module **AI Features (Phase 3)** tích hợp trí tuệ nhân tạo vào toàn b
 | AI Provider Abstraction (`BaseAIProvider`) | Đã có | `backend/app/services/ai/base.py` |
 | xKiro Provider (`XkiroProvider`, cổng tương thích OpenAI, nhiều model miễn phí) | Đã có | `backend/app/services/ai/xkiro_provider.py` — đã thay thế các provider OpenAI/Gemini riêng lẻ trước đây |
 | Model Router theo loại tác vụ AI (`AITaskType` -> model xKiro) | Đã có | `backend/app/services/ai/model_router.py` |
-| AI Project Generator Engine (`generate_project_from_prompt`) | Đã có, đã nối endpoint + worker | `backend/app/services/ai/project_generator.py`, gọi từ `workers/ai_tasks.py` |
+| AI Project Generator Engine (`generate_project_from_prompt`) | Đã có, đã nối endpoint + worker | `backend/app/services/ai/project_generator.py`, chạy qua job `ai.project_generate` (durable jobs) |
 | `AIService` điều phối vòng đời `AIRequest` (queue + poll trạng thái) | Đã có | `backend/app/services/ai_service.py` |
-| Celery Worker + Redis Broker | Đã có | `backend/app/workers/celery_app.py` & `ai_tasks.py` (cả 5 task AI chạy thật: `generate_project_task`, `impact_analysis_task`, `optimize_schedule_task`, `resource_recommendation_task`, `risk_analysis_task`; Celery Beat quét rủi ro lúc 08:30) |
+| Tác vụ nền (durable jobs) | Đã có (thay Celery) | Bảng `jobs` trong PostgreSQL, runner trong tiến trình FastAPI, outbox cùng transaction. Kind AI: `ai.project_generate`, `ai.impact_analysis`, `ai.schedule_optimize`, `ai.resource_recommend`, `ai.risk_analysis` (Phase 4 thêm `ai.requirement_clarify`, `ai.bpmn_generate`); quét rủi ro qua `cron.risk` lúc 08:30; quota `AI_DAILY_JOB_LIMIT` mặc định 20/ngày. Mã Celery trong `backend/app/workers/` chỉ còn kế thừa |
 | Database Models: `ai_requests`, `ai_outputs`, `risk_reports`, `impact_reports` | Đã migrate, đang dùng thật | Ghi nhận job AI, lưu trữ phân tích tác động và báo cáo rủi ro |
 | CPM Engine (Topological Sort + Forward/Backward Pass) | Đã có | `app/utils/cpm.py` + `app/services/scheduling_service.py`, mount read-only tại `/api/v1/projects/{id}/cpm` (`endpoints/cpm.py`) |
 | User Skills & Leaves Schema | Đã migrate | `user_skills`, `skills`, `leaves` — endpoint `/leaves`, `/skills` vẫn chưa mount (Phase 2) |
@@ -42,12 +42,12 @@ Module **AI Features (Phase 3)** tích hợp trí tuệ nhân tạo vào toàn b
 | Tính năng | Mã SOP | Độ ưu tiên | Trạng thái | Backend Task | Frontend Component |
 |---|---|---|---|---|---|
 | AI Provider Abstraction Layer | Core | Critical | Hoàn thành | `BaseAIProvider`, `XkiroProvider`, `model_router.py` | — (chưa có Provider Switcher UI) |
-| AI Project Generator Engine | SOP-AI-001 | Critical | Hoàn thành | `project_generator.py` được gọi từ `ai_tasks.generate_project_task` (ghi Project/Phase/Task/Dependency thật); endpoint `POST /ai/generate-project` + `GET /ai/jobs/{id}` đã mount qua `AIService` | `AIGeneratorModal.tsx`, `useAIGenerator.ts` |
+| AI Project Generator Engine | SOP-AI-001 | Critical | Hoàn thành | `project_generator.py` chạy qua job `ai.project_generate` (ghi Project/Phase/Task/Dependency thật); endpoint `POST /ai/generate-project` + `GET /ai/jobs/{id}` đã mount qua `AIService` | `AIGeneratorModal.tsx`, `useAIGenerator.ts` |
 | Change Request CRUD (nền cho SOP-AI-002) | — | High | Hoàn thành (tối giản) | `change_request_service.py`, `endpoints/change_requests.py` — create/list/get/submit, không có workflow duyệt nhiều bước | `features/change-requests/**` |
 | AI Impact Analysis | SOP-AI-002 | High | Hoàn thành | `impact_analyzer.py` gọi từ `ai_tasks.impact_analysis_task`, ghi bảng `impact_reports`; `POST /ai/impact-analysis` | `ChangeRequestDetail.tsx` tại `/projects/{id}/change-requests` |
 | AI Schedule Optimization | SOP-AI-003 | High | Hoàn thành | `schedule_optimizer.py` gọi từ `ai_tasks.optimize_schedule_task` (chỉ đề xuất, không ghi đè Task); `POST /ai/optimize-schedule` | `SchedulePanel.tsx` tại `/projects/{id}/ai-insights` |
 | AI Resource Recommendation | SOP-AI-004 | High | Hoàn thành | `resource_recommender.py` gọi từ `ai_tasks.resource_recommendation_task`; `POST /ai/resource-recommendation` | `ResourceRecommendationPanel.tsx` tại `/projects/{id}/ai-insights` |
-| AI Risk Analysis & Periodic Scan | SOP-AI-005 | Medium | Hoàn thành | `risk_analyzer.py` gọi từ `ai_tasks.risk_analysis_task`, ghi bảng `risk_reports`; `POST /ai/risk-analysis`; Celery Beat `ai.sweep_active_projects_for_risk` (08:30 hằng ngày, quét mọi project ACTIVE) | `RiskWidget.tsx` tại `/projects/{id}/ai-insights` |
+| AI Risk Analysis & Periodic Scan | SOP-AI-005 | Medium | Hoàn thành | `risk_analyzer.py` chạy qua job `ai.risk_analysis`, ghi bảng `risk_reports`; `POST /ai/risk-analysis`; cron `cron.risk` (08:30 hằng ngày, quét mọi project ACTIVE) | `RiskWidget.tsx` tại `/projects/{id}/ai-insights` |
 
 ---
 
@@ -62,14 +62,14 @@ Module **AI Features (Phase 3)** tích hợp trí tuệ nhân tạo vào toàn b
 
 ### GIAI ĐOẠN 3.2 – AI điểm cuối sinh dự án bằng AI và giao diện (SOP-AI-001)
 > **Trạng thái:** Đã hoàn thành
-- Backend: `AIService` (`app/services/ai_service.py`) tạo bản ghi `AIRequest` và xếp hàng Celery; `POST /api/v1/ai/generate-project` (202 Accepted) trả `job_id`, `GET /api/v1/ai/jobs/{job_id}` để poll trạng thái. `ai_tasks.generate_project_task` gọi `generate_project_from_prompt`, ghi thật Project + Phase + Task + Dependency qua `ProjectService`/`WBSService`/`TaskService`, lưu kết quả vào `AIOutput`.
+- Backend: `AIService` (`app/services/ai_service.py`) tạo bản ghi `AIRequest` và xếp hàng durable job (trước đây Celery); `POST /api/v1/ai/generate-project` (202 Accepted) trả `job_id`, `GET /api/v1/ai/jobs/{job_id}` để poll trạng thái. Job `ai.project_generate` gọi `generate_project_from_prompt`, ghi thật Project + Phase + Task + Dependency qua `ProjectService`/`WBSService`/`TaskService`, lưu kết quả vào `AIOutput`.
 - Frontend: `AIGeneratorModal.tsx` + `useAIGenerator.ts` (`useGenerateProject`, `useAIJob` poll 2 giây khi đang PENDING/PROCESSING), gắn vào trang danh sách dự án.
 
 ### GIAI ĐOẠN 3.3 – Phân tích tác động bằng AI (SOP-AI-002)
 > **Trạng thái:** Đã hoàn thành
 - `ChangeRequest` trước đây chỉ là stub CRUD không auth, chưa mount router — đã xây CRUD tối giản thật (`change_request_service.py`, `endpoints/change_requests.py`: create/list/get/submit DRAFT→SUBMITTED) làm nền, không có workflow duyệt nhiều bước (bảng `approvals` vẫn là stub, để lại cho một plan riêng).
 - `impact_analyzer.py`: nạp Project/Task/Dependency, tính CPM (`compute_cpm_for_project`), gọi AI qua `AITaskType.IMPACT_ANALYSIS`, kẹp/validate risk_score/risk_level/affected_task_ids trước khi ghi `impact_reports` (upsert theo `change_request_id`).
-- Endpoint `POST /api/v1/ai/impact-analysis` (xếp hàng qua `AIRequest`/Celery, poll `GET /ai/jobs/{id}` — cùng pattern SOP-AI-001).
+- Endpoint `POST /api/v1/ai/impact-analysis` (xếp hàng qua `AIRequest`/durable job `ai.impact_analysis`, poll `GET /ai/jobs/{id}` — cùng pattern SOP-AI-001).
 - UI: trang `/projects/{id}/change-requests` (danh sách, tạo mới, chi tiết + nút "Run Impact Analysis" + hiển thị report theo risk_level).
 
 ### GIAI ĐOẠN 3.4 – AI Schedule Optimization (SOP-AI-003)
@@ -87,9 +87,9 @@ Module **AI Features (Phase 3)** tích hợp trí tuệ nhân tạo vào toàn b
 ### GIAI ĐOẠN 3.6 – AI Phân tích rủi ro (SOP-AI-005)
 > **Trạng thái:** Đã hoàn thành
 - `risk_analyzer.py`: tổng hợp tín hiệu định lượng (task quá hạn, gần đường găng, % ngân sách đã dùng, tiến độ so với thời gian đã trôi qua, số ngày-người quá tải trong 14 ngày tới) rồi gọi AI phân loại ma trận rủi ro 5x5 + gợi ý giảm thiểu, ghi bảng `risk_reports` (mỗi lần quét là 1 dòng mới, không upsert).
-- Endpoint `POST /api/v1/ai/risk-analysis` (chạy thủ công) + Celery Beat `ai.sweep_active_projects_for_risk` (08:30 hằng ngày, enqueue riêng từng project đang ACTIVE).
+- Endpoint `POST /api/v1/ai/risk-analysis` (chạy thủ công) + cron `cron.risk` (08:30 hằng ngày, Asia/Ho_Chi_Minh; Supabase Cron hoặc cron cục bộ gọi `POST /api/v1/internal/jobs/schedules`), enqueue riêng từng project đang ACTIVE.
 - UI: `RiskWidget.tsx` tại `/projects/{id}/ai-insights` (badge risk_level, risk_score, risk_factors, mitigation_suggestions).
 
 ---
 
-*Cập nhật lần cuối: 2026-09-17 — Phase 3 (AI Features) hoàn thành 5/5 trụ cột. Xem `docs/archive/phase3-ai-features/plan.md` cho quyết định phạm vi (Change Request CRUD tối giản là nền mới cho SOP-AI-002, không có workflow duyệt nhiều bước) và danh sách file đã thêm/sửa.*
+*Cập nhật lần cuối: 2026-10-13 — đồng bộ sau Phase 4 (durable jobs thay Celery; Generator có bước hỏi làm rõ và sinh từ hồ sơ). Hoàn thành ban đầu 2026-09-17 — Phase 3 (AI Features) hoàn thành 5/5 trụ cột. Xem `docs/archive/phase3-ai-features/plan.md` cho quyết định phạm vi (Change Request CRUD tối giản là nền mới cho SOP-AI-002, không có workflow duyệt nhiều bước) và danh sách file đã thêm/sửa.*

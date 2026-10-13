@@ -1,6 +1,6 @@
 # Lộ trình: Portfolio & Project Core Module (Phase 2)
 
-> **Phiên bản:** 1.2 | **Cập nhật:** 2026-09-06  
+> **Phiên bản:** 1.3 | **Cập nhật:** 2026-10-13  
 > **Trạng thái:** Hoàn thành, đã qua rà soát | **Ngày hoàn thành:** 2026-08-22 (rà soát & gia cố: 2026-09-06) 
 > **Mức độ ưu tiên:** Critical – Module nghiệp vụ cốt lõi quản lý danh mục, dự án, WBS, CPM Engine & Real-time Chat  
 > **Điều kiện tiên quyết:** [x] Phase 1 (Auth & User Onboarding) đã hoàn thành
@@ -18,7 +18,7 @@ Module **Portfolio & Project Core (Phase 2)** xây dựng toàn bộ lớp quả
 4. **Task Management & CPM Engine Integration:** Quản lý công việc chi tiết, thiết lập quan hệ phụ thuộc (FS, SS, FF, SF), phát hiện chu trình phụ thuộc (Cycle validation) và tính toán đường găng Critical Path (ES, EF, LS, LF, Float).
 5. **Assignments, WorkLogs & Resource Tracking:** Phân công nhân sự theo khối lượng công việc, ghi nhận nhật ký làm việc (WorkLog timesheet), theo dõi chi phí thực tế.
 6. **Real-time Project Chat (SOP-CHAT-001):** Kênh chat nhóm dự án trực tiếp qua WebSocket `/ws/chat/{project_id}`, phân phối qua Redis Pub/Sub, lưu trữ lịch sử tin nhắn và đếm unread count.
-7. **Task Notification Triggers & Celery Beat Daily Sweep (SOP-NOTI-001):** Thông báo fan-out tới toàn bộ nhóm dự án khi Task có thay đổi quan trọng; Celery Beat quét định kỳ 08:00 AM gửi thông báo nhắc việc bắt đầu và sắp đến hạn.
+7. **Task Notification Triggers & Daily Sweep (SOP-NOTI-001):** Thông báo fan-out tới toàn bộ nhóm dự án khi Task có thay đổi quan trọng; job `cron.reminders` (durable jobs; Supabase Cron hoặc cron cục bộ gọi `POST /api/v1/internal/jobs/schedules`, thay Celery Beat) quét định kỳ 08:00 AM gửi thông báo nhắc việc bắt đầu và sắp đến hạn.
 
 ---
 
@@ -33,7 +33,7 @@ Module **Portfolio & Project Core (Phase 2)** xây dựng toàn bộ lớp quả
 | Assignments & WorkLogs Tracking | SOP-RM-001 | High | Hoàn thành | `ResourceService` | `TaskDrawer` (gán việc & ghi giờ), `projects/[id]/timesheet/page.tsx` |
 | Project & Portfolio Dashboard | Báo cáo | High | Hoàn thành | `DashboardService` + `NotificationService` | `StatsRow`, `ActiveProjectsGrid`, `MyTasksList`, `RecentActivityFeed`, `ProjectOverviewCharts`, `NotificationBell` |
 | Real-time Project Chat | SOP-CHAT-001 | High | Hoàn thành | `ChatService` + `/ws/chat/{id}` | `ChatPanel`, `ChatMessageItem`, `useChatSocket` |
-| Notification Triggers & Beat Sweep | SOP-NOTI-001 | High | Hoàn thành | `notify_project_team` + Celery Beat | `NotificationBell`, `useNotificationSocket` |
+| Notification Triggers & Beat Sweep | SOP-NOTI-001 | High | Hoàn thành | `notify_project_team` + cron `cron.reminders` (durable jobs; trước đây Celery Beat) | `NotificationBell`, `useNotificationSocket` |
 
 ---
 
@@ -52,7 +52,7 @@ Module **Portfolio & Project Core (Phase 2)** xây dựng toàn bộ lớp quả
 - Frontend: `/app/(dashboard)/projects/[id]/wbs/page.tsx`, `WBSTreeView.tsx`.
 
 ### GIAI ĐOẠN 2.4 – Task Management, Phụ thuộc & CPM Engine
-- Backend: `TaskService`, `scheduling_service.py`, pure Python CPM (`app/utils/cpm.py`), `/api/v1/tasks`, `/api/v1/dependencies`. CPM chạy nội bộ khi cập nhật task/dependency và tính lại nền qua `workers/scheduling_tasks.py`, gộp trùng theo dự án khi vượt `CPM_SYNC_TASK_THRESHOLD` (mặc định 300 task). Endpoint `/api/v1/projects/{id}/cpm` đã mount, chỉ đọc (`endpoints/cpm.py`).
+- Backend: `TaskService`, `scheduling_service.py`, pure Python CPM (`app/utils/cpm.py`), `/api/v1/tasks`, `/api/v1/dependencies`. CPM chạy nội bộ khi cập nhật task/dependency và tính lại nền qua job `scheduling.cpm` (durable jobs trong bảng `jobs` PostgreSQL; trước đây `workers/scheduling_tasks.py` của Celery), gộp trùng theo dự án khi vượt `CPM_SYNC_TASK_THRESHOLD` (mặc định 300 task). Endpoint `/api/v1/projects/{id}/cpm` đã mount, chỉ đọc (`endpoints/cpm.py`); từ Phase 4 có cap `CPM_MAX_TASKS`/`CPM_MAX_DEPENDENCIES`, vượt cap trả 422 `resource_limit_exceeded`, và là nguồn dữ liệu cho Gantt chỉ đọc.
 - Frontend: `/app/(dashboard)/projects/[id]/tasks/page.tsx`, `KanbanBoard.tsx`, `TaskDrawer.tsx`.
 
 ### GIAI ĐOẠN 2.5 – Assignments, WorkLogs & Resource Tracking
@@ -74,13 +74,13 @@ Module **Portfolio & Project Core (Phase 2)** xây dựng toàn bộ lớp quả
   - Router: `/app/(dashboard)/projects/[id]/chat/page.tsx`, Tab Chat với huy hiệu số tin chưa đọc trên thanh điều hướng dự án.
   - Helper: `frontend/src/lib/ws-client.ts` tự động kết nối lại khi mất mạng.
 
-### GIAI ĐOẠN 2.8 – Task Notification Triggers & Celery Beat Daily Sweep (SOP-NOTI-001)
+### GIAI ĐOẠN 2.8 – Task Notification Triggers & Daily Sweep (SOP-NOTI-001)
 - Backend:
   - Helper: `notify_project_team()` (`app/services/phase2_common.py`) fan-out thông báo tới toàn bộ thành viên dự án.
   - Triggers: Hook vào `TaskService.update()` (phát hiện thay đổi `SIGNIFICANT_TASK_FIELDS`) và `TaskService.change_status()`.
   - Task Columns: Thêm `last_start_notified_at` và `last_due_soon_notified_at` vào bảng `tasks` để chống gửi trùng.
-  - Celery Beat: `app/workers/notification_tasks.py` (`sweep_task_dates_task`) chạy định kỳ lúc 08:00 AM hàng ngày quét các task bắt đầu và sắp đến hạn.
-  - Service `celery-beat` bổ sung vào `docker-compose.yml`.
+  - Quét định kỳ: ban đầu là Celery Beat (`app/workers/notification_tasks.py`, `sweep_task_dates_task`). Nay (cập nhật 2026-10-13) Celery đã được thay bằng durable jobs: Supabase Cron (hoặc cron cục bộ) gọi `POST /api/v1/internal/jobs/schedules`, sinh job `cron.reminders` lúc 08:00 (Asia/Ho_Chi_Minh) quét các task bắt đầu và sắp đến hạn.
+  - Service `celery-beat`/`celery-worker` trong `docker-compose.yml` nay không bắt buộc; mã trong `backend/app/workers/` chỉ còn kế thừa.
 
 ---
 
@@ -109,7 +109,7 @@ Module **Portfolio & Project Core (Phase 2)** xây dựng toàn bộ lớp quả
 ### Hiệu năng
 - **Mỗi WebSocket giữ một connection DB suốt vòng đời socket** (`Depends(get_db)`)
   — khoảng 30 socket đồng thời là cạn pool và mọi request HTTP đứng chờ.
-- **CPM chạy đồng bộ toàn dự án ở 11 điểm gọi.** Nay đẩy sang Celery có gộp trùng
+- **CPM chạy đồng bộ toàn dự án ở 11 điểm gọi.** Nay đẩy sang tác vụ nền có gộp trùng (ban đầu Celery, nay là job `scheduling.cpm` của durable jobs)
   khi vượt `CPM_SYNC_TASK_THRESHOLD` (mặc định 300 task); `bulk_update` chỉ tính
   lại một lần thay vì N lần.
 - `notify_project_team` fan-out N `flush()` + N round-trip Redis → gộp thành một
@@ -138,10 +138,10 @@ sáng/tối, và i18n `vi`/`en` với tiếng Việt làm mặc định.
 
 ### Còn nợ
 - [x] Endpoint `/cpm` công khai — đã mount, chỉ đọc (`GET /projects/{id}/cpm`).
-- [ ] Endpoint `/gantt` + UI Gantt — thuộc Phase 4.
+- [x] Gantt — hoàn thành ở Phase 4: Gantt chỉ đọc (SVG, đường găng có nhãn chữ, zoom ngày/tuần/tháng, ảo hóa hàng) tại `/projects/[id]/gantt`, vẽ từ `GET /projects/{id}/cpm`. Stub `/gantt` đã xóa. Kéo thả vẫn ngoài phạm vi.
 - [ ] `/leaves`, `/skills` — model đã có, endpoint vẫn là stub. Nhánh cảnh báo
       `on_leave` trong `resource_service` vì thế vẫn là code chết.
 
 ---
 
-*Cập nhật lần cuối: 2026-09-06 — Phase 2 hoàn thành và đã qua rà soát.*
+*Cập nhật lần cuối: 2026-10-13 — đồng bộ hiện trạng sau Phase 4 (Gantt chỉ đọc, cap CPM, durable jobs thay Celery). Phase 2 hoàn thành và đã qua rà soát 2026-09-06.*
