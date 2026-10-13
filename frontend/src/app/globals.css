@@ -38,10 +38,9 @@
     --ring: 175 77% 30%;
     --shadow-color: 222 47% 11%;
     --radius: 0.75rem;
-    /* Ảnh nền theo chế độ sáng/tối: đặt file vào public/backgrounds/ rồi đổi none
-       thành url('/backgrounds/bg-light.webp'). Lớp phủ giữ độ tương phản AA. */
-    --app-bg-image: none;
-    --app-bg-overlay: 0.86;
+    /* Cùng một bố cục ảnh cho hai chế độ; lớp phủ giữ nội dung dễ đọc. */
+    --app-bg-image: url('/backgrounds/old-village-sunset.png');
+    --app-bg-overlay: 0.62;
   }
   :root.dark {
     color-scheme: dark;
@@ -74,8 +73,8 @@
     --input: 215 25% 27%;
     --ring: 172 66% 50%;
     --shadow-color: 224 60% 2%;
-    --app-bg-image: none;
-    --app-bg-overlay: 0.82;
+    --app-bg-image: url('/backgrounds/old-village-night.png');
+    --app-bg-overlay: 0.58;
   }
   * { @apply border-border; }
   html { -webkit-text-size-adjust: 100%; }

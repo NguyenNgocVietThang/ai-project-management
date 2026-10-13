@@ -8,7 +8,6 @@ import { Children, useEffect, useState } from 'react'
 import { Button } from '@/components/common/Button'
 import { FullPageSpinner } from '@/components/common/FullPageSpinner'
 import { BreadcrumbProvider, Breadcrumbs } from '@/components/layout/Breadcrumbs'
-import { AppBackground } from '@/components/background/AppBackground'
 import { FireworksToggle } from '@/components/background/FireworksToggle'
 import { MainNav, MobileNav } from '@/components/layout/Navigation'
 import { LanguageToggle } from '@/components/layout/LanguageToggle'
@@ -93,8 +92,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <BreadcrumbProvider>
       <div className="min-h-dvh lg:pl-64">
-        {/* Lớp nền cố định phía sau mọi nội dung: ảnh nền theo chế độ + pháo hoa khi nhấp vào vùng trống */}
-        <AppBackground />
         <a href="#main-content" className="skip-link">{ts('skipContent')}</a>
 
         {/* ===== Sidebar cố định (desktop >= 1024px) ===== */}

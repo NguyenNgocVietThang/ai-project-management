@@ -5,11 +5,8 @@ import { useEffect, useRef } from 'react'
 import { createFireworks, isInteractiveTarget, type FireworksMode } from './fireworks'
 import { useFireworksPreference } from './useFireworksPreference'
 
-/* Ảnh nền: đặt file vào frontend/public/backgrounds/ (ví dụ bg-light.webp, bg-dark.webp),
- * rồi trong globals.css đặt --app-bg-image: url('/backgrounds/bg-light.webp') ở :root
- * và --app-bg-image: url('/backgrounds/bg-dark.webp') ở :root.dark.
- * Lớp phủ bg-background với độ mờ --app-bg-overlay giữ chữ đạt tương phản WCAG AA;
- * khi --app-bg-image là none, lớp phủ chỉ trùng với màu nền bình thường. */
+/* Ảnh nền sáng/tối được chọn bằng --app-bg-image trong globals.css.
+ * Lớp phủ bg-background làm dịu ảnh để nội dung phía trước dễ đọc hơn. */
 
 /** Đọc chế độ trực tiếp từ class trên <html> để không phụ thuộc ThemeProvider. */
 function currentMode(): FireworksMode {
@@ -49,7 +46,7 @@ export function AppBackground() {
   }, [effectiveEnabled])
 
   return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: 'var(--app-bg-image)' }}

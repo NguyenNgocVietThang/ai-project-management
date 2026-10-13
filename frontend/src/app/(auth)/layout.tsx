@@ -10,7 +10,6 @@ import { useEffect, useState } from 'react'
 import { Skeleton, SkeletonRegion } from '@/components/ui/Skeleton'
 import { Reveal, RevealText } from '@/components/motion/RevealText'
 import { useAuthStore } from '@/store/authStore'
-import { AppBackground } from '@/components/background/AppBackground'
 import { FireworksToggle } from '@/components/background/FireworksToggle'
 
 const STEP_ICONS = [Check, Workflow, ArrowUpRight] as const
@@ -62,11 +61,10 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     return <AuthLoadingSkeleton />
   }
 
-  // Lưu ý: các lớp nền ngoài cùng cố ý dùng màu bán trong suốt (bg-background/..)
-  // để một lớp nền trang trí cố định (-z-10) gắn sau này vẫn nhìn xuyên qua được.
+  // Nền ứng dụng được render chung ở Providers; các lớp bg-background/.. giữ ảnh
+  // nhìn thấy nhẹ phía sau phần giới thiệu và biểu mẫu.
   return (
     <div className="grid min-h-dvh lg:grid-cols-[1.05fr_1fr]">
-      <AppBackground />
       <aside className="auth-grid relative hidden flex-col justify-between overflow-hidden border-r border-border/60 bg-accent/20 p-10 lg:flex xl:p-16">
         {/* Quầng sáng teal mềm phía sau khối tiêu đề, chỉ để trang trí. */}
         <div

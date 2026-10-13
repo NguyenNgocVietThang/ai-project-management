@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { Toaster } from 'sonner'
 import { ThemeProvider, useTheme } from '@/components/theme/ThemeProvider'
 import { notifyError } from '@/lib/notify'
+import { AppBackground } from '@/components/background/AppBackground'
 
 function ThemedToaster() {
   const { resolved } = useTheme()
@@ -36,7 +37,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        {children}
+        <AppBackground />
+        <div className="relative z-10 min-h-dvh">{children}</div>
         <ThemedToaster />
       </ThemeProvider>
     </QueryClientProvider>
