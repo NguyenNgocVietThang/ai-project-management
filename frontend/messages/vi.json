@@ -439,7 +439,19 @@
       "milestones": "Mốc",
       "tasks": "Công việc",
       "dependencies": "Phụ thuộc"
-    }
+    },
+    "rollback": "Khôi phục về phiên bản này",
+    "rollbackFor": "Khôi phục về v{number}",
+    "rollbackTitle": "Khôi phục về phiên bản v{number}?",
+    "rollbackDescription": "Kế hoạch hiện tại được lưu thành một phiên bản trước, nên có thể hoàn tác lần khôi phục này.",
+    "rollbackChangesHeading": "Các thay đổi kể từ v{number} sẽ bị hoàn tác:",
+    "rollbackConfirm": "Khôi phục về v{number}",
+    "rollbackCancel": "Hủy",
+    "rollbackClose": "Đóng",
+    "rollbackDone": "Đã khôi phục. Đã tạo phiên bản mới v{number} ({changes} thay đổi).",
+    "rollbackWarnings": "{count} cảnh báo",
+    "warningAssigneeNotMember": "Task {task}: người được giao trước đây không còn là thành viên dự án, đã bỏ giao.",
+    "rollbackError": "Không thể khôi phục phiên bản này."
   },
   "documents": {
     "title": "Tài liệu",

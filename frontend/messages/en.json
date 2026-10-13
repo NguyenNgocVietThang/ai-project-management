@@ -439,7 +439,19 @@
       "milestones": "Milestones",
       "tasks": "Tasks",
       "dependencies": "Dependencies"
-    }
+    },
+    "rollback": "Restore",
+    "rollbackFor": "Restore v{number}",
+    "rollbackTitle": "Restore version v{number}?",
+    "rollbackDescription": "Current plan is saved as a version first, so you can undo this restore.",
+    "rollbackChangesHeading": "Changes since v{number} that will be undone:",
+    "rollbackConfirm": "Restore to v{number}",
+    "rollbackCancel": "Cancel",
+    "rollbackClose": "Close",
+    "rollbackDone": "Restored. New version v{number} created ({changes} changes).",
+    "rollbackWarnings": "{count, plural, one {# warning} other {# warnings}}",
+    "warningAssigneeNotMember": "Task {task}: previous assignee is no longer a project member, left unassigned.",
+    "rollbackError": "Could not restore this version."
   },
   "documents": {
     "title": "Documents",

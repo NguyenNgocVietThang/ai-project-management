@@ -16,8 +16,10 @@ async def run_cpm(ctx):
         from app.models.dependency import Dependency
         from app.models.task import Task
         project_id = job.payload["project_id"]
-        count = await db.scalar(select(func.count()).select_from(Task).where(Task.project_id == project_id))
-        project_tasks = select(Task.id).where(Task.project_id == project_id)
+        # Task đã lưu trữ (rollback V3) không tham gia CPM nên không tính vào trần kích thước.
+        active = (Task.project_id == project_id, Task.archived_at.is_(None))
+        count = await db.scalar(select(func.count()).select_from(Task).where(*active))
+        project_tasks = select(Task.id).where(*active)
         edges = await db.scalar(select(func.count()).select_from(Dependency).where(Dependency.predecessor_id.in_(project_tasks), Dependency.successor_id.in_(project_tasks)))
         if count > settings.CPM_MAX_TASKS or edges > settings.CPM_MAX_DEPENDENCIES:
             raise PermanentJobError("resource_limit_exceeded")
@@ -81,4 +83,10 @@ async def run_document(ctx):
     return await run_document_job(ctx)
 
 
-HANDLERS = {"document.generate": run_document, "scheduling.cpm": run_cpm, "email.verify": run_email, "email.reset": run_email, "email.invite": run_email}
+async def run_report(ctx):
+    # Import trễ để tránh vòng import khi nạp danh sách handler.
+    from app.services.reports.report_service import run_report_job
+    return await run_report_job(ctx)
+
+
+HANDLERS = {"report.xlsx": run_report, "document.generate": run_document, "scheduling.cpm": run_cpm, "email.verify": run_email, "email.reset": run_email, "email.invite": run_email}
