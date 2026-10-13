@@ -39,7 +39,7 @@ export function PageHeader({ title, eyebrow, description, actions, meta, animate
 /** Tiêu đề khu vực bên trong trang (H2) với liên kết/hành động phụ. */
 export function SectionHeader({ title, description, action, id, className }: { title: string; description?: string; action?: React.ReactNode; id?: string; className?: string }) {
   return (
-    <div className={cn('mb-4 flex items-start justify-between gap-4', className)}>
+    <div className={cn('mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4', className)}>
       <div>
         <h2 id={id} className="text-h4 sm:text-h3">{title}</h2>
         {description && <p className="mt-1 text-body-sm text-muted-foreground">{description}</p>}
