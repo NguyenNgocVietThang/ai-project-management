@@ -1,10 +1,11 @@
 'use client'
 
-import Link from 'next/link'
 import { Suspense, useEffect, useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { CheckCircle2, Loader2, XCircle } from 'lucide-react'
+import { CheckCircle2, XCircle } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
+import { ButtonLink } from '@/components/common/Button'
+import { Skeleton, SkeletonRegion } from '@/components/ui/Skeleton'
 import { authService } from '@/services/auth.service'
 import { useAuthStore } from '@/store/authStore'
 import { getApiErrorMessage } from '@/types/api.types'
@@ -14,8 +15,18 @@ type VerificationState =
   | { status: 'success'; message: string }
   | { status: 'error'; message: string }
 
-const actionLinkClasses =
-  'inline-flex min-h-[44px] w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+/** Khung xương giữ chỗ cho ô biểu tượng, tiêu đề và mô tả trong lúc chờ. */
+function VerifyEmailSkeleton({ label }: { label: string }) {
+  return (
+    <SkeletonRegion label={label} className="flex flex-col items-center gap-6 text-center">
+      <Skeleton className="h-14 w-14 rounded-2xl" />
+      <div className="flex w-full flex-col items-center gap-2">
+        <Skeleton className="h-8 w-1/2" />
+        <Skeleton className="h-4 w-3/4" />
+      </div>
+    </SkeletonRegion>
+  )
+}
 
 function VerifyEmailContent() {
   const searchParams = useSearchParams()
@@ -74,37 +85,44 @@ function VerifyEmailContent() {
   const destination = accessToken ? '/dashboard' : '/login'
 
   return (
-    <div className="space-y-6 text-center" aria-live="polite">
-      <div className="flex justify-center">
-        {state.status === 'loading' && (
-          <Loader2 className="h-12 w-12 animate-spin text-primary" aria-hidden="true" />
-        )}
-        {state.status === 'success' && (
-          <CheckCircle2 className="h-12 w-12 text-emerald-600" aria-hidden="true" />
-        )}
-        {state.status === 'error' && (
-          <XCircle className="h-12 w-12 text-destructive" aria-hidden="true" />
-        )}
-      </div>
+    <div className="flex flex-col items-center gap-6 text-center" aria-live="polite">
+      {state.status === 'loading' ? (
+        <Skeleton className="h-14 w-14 rounded-2xl" />
+      ) : (
+        // Ô biểu tượng trạng thái: nền nhạt cùng tông với biểu tượng.
+        <span
+          className={
+            isSuccess
+              ? 'flex h-14 w-14 animate-scale-in items-center justify-center rounded-2xl bg-success-soft ring-8 ring-success-soft/40'
+              : 'flex h-14 w-14 animate-scale-in items-center justify-center rounded-2xl bg-destructive/10 ring-8 ring-destructive/5'
+          }
+        >
+          {isSuccess ? (
+            <CheckCircle2 className="h-6 w-6 text-success" aria-hidden="true" />
+          ) : (
+            <XCircle className="h-6 w-6 text-destructive" aria-hidden="true" />
+          )}
+        </span>
+      )}
 
       <div className="space-y-2">
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+        <h1 className="text-h2 text-foreground">
           {state.status === 'loading' && 'Verifying email'}
           {state.status === 'success' && 'Email verified'}
           {state.status === 'error' && 'Verification failed'}
         </h1>
-        <p className="text-sm text-muted-foreground">{state.message}</p>
+        <p className="text-body-sm text-muted-foreground">{state.message}</p>
         {state.status === 'error' && accessToken && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-body-sm text-muted-foreground">
             Return to the dashboard to request a fresh verification email.
           </p>
         )}
       </div>
 
       {state.status !== 'loading' && (
-        <Link href={destination} className={actionLinkClasses}>
+        <ButtonLink href={destination} size="lg" fullWidth>
           {accessToken ? 'Go to dashboard' : isSuccess ? 'Sign in' : 'Back to sign in'}
-        </Link>
+        </ButtonLink>
       )}
     </div>
   )
@@ -113,12 +131,7 @@ function VerifyEmailContent() {
 export default function VerifyEmailPage() {
   return (
     <Suspense
-      fallback={
-        <div className="flex flex-col items-center justify-center space-y-4 py-8">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" aria-hidden="true" />
-          <p className="text-sm text-muted-foreground">Loading verification link…</p>
-        </div>
-      }
+      fallback={<VerifyEmailSkeleton label="Loading verification link…" />}
     >
       <VerifyEmailContent />
     </Suspense>

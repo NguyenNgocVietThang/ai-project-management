@@ -208,7 +208,10 @@
     "skipContent": "Skip to content",
     "aiTitle": "Start with a clear plan",
     "aiDescription": "Turn your project brief into phases, tasks and dependencies with AI.",
-    "explore": "Explore projects"
+    "explore": "Explore projects",
+    "fireworks": "Fireworks on click",
+    "effects": "Effects",
+    "fireworksReducedMotion": "Disabled because reduced motion is on"
   },
   "home": {
     "eyebrow": "YOUR WORKSPACE, AT A GLANCE",

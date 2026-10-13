@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Modal } from '@/components/common/Modal'
 import { ThemeToggle } from '@/components/theme/ThemeToggle'
+import { FireworksToggle } from '@/components/background/FireworksToggle'
 import { LanguageToggle } from './LanguageToggle'
 import { cn } from '@/lib/utils'
 
@@ -76,8 +77,9 @@ export function MainNav({ isAdmin, onNavigate }: { isAdmin: boolean; onNavigate?
 
 export function MobileNav({ open, isAdmin, onClose }: { open: boolean; isAdmin: boolean; onClose: () => void }) {
   const t = useTranslations('nav')
+  const ts = useTranslations('shell')
   return <Modal open={open} onClose={onClose} title={t('mainNavigation')} className="max-w-sm">
     <MainNav isAdmin={isAdmin} onNavigate={onClose} />
-    <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t pt-6"><LanguageToggle /><ThemeToggle /></div>
+    <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t pt-6"><LanguageToggle /><div className="flex items-center gap-2"><FireworksToggle label={ts('fireworks')} reducedMotionHint={ts('fireworksReducedMotion')} /><ThemeToggle /></div></div>
   </Modal>
 }

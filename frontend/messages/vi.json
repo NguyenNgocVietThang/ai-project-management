@@ -208,7 +208,10 @@
     "skipContent": "Đến nội dung chính",
     "aiTitle": "Bắt đầu từ kế hoạch rõ ràng",
     "aiDescription": "Dùng AI để chuyển mô tả dự án thành giai đoạn, công việc và các quan hệ phụ thuộc.",
-    "explore": "Khám phá dự án"
+    "explore": "Khám phá dự án",
+    "fireworks": "Pháo hoa khi nhấp chuột",
+    "effects": "Hiệu ứng",
+    "fireworksReducedMotion": "Đã tắt do bật chế độ giảm chuyển động"
   },
   "home": {
     "eyebrow": "TỔNG QUAN KHÔNG GIAN LÀM VIỆC",

@@ -8,6 +8,8 @@ import { Children, useEffect, useState } from 'react'
 import { Button } from '@/components/common/Button'
 import { FullPageSpinner } from '@/components/common/FullPageSpinner'
 import { BreadcrumbProvider, Breadcrumbs } from '@/components/layout/Breadcrumbs'
+import { AppBackground } from '@/components/background/AppBackground'
+import { FireworksToggle } from '@/components/background/FireworksToggle'
 import { MainNav, MobileNav } from '@/components/layout/Navigation'
 import { LanguageToggle } from '@/components/layout/LanguageToggle'
 import { ThemeToggle } from '@/components/theme/ThemeToggle'
@@ -90,7 +92,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <BreadcrumbProvider>
-      <div className="min-h-dvh bg-background lg:pl-64">
+      <div className="min-h-dvh lg:pl-64">
+        {/* Lớp nền cố định phía sau mọi nội dung: ảnh nền theo chế độ + pháo hoa khi nhấp vào vùng trống */}
+        <AppBackground />
         <a href="#main-content" className="skip-link">{ts('skipContent')}</a>
 
         {/* ===== Sidebar cố định (desktop >= 1024px) ===== */}
@@ -105,7 +109,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <p className="mt-1 text-caption text-muted-foreground">{ts('aiDescription')}</p>
               <Link href="/projects" className="group mt-3 inline-flex min-h-9 items-center gap-1 text-caption font-semibold text-primary">{ts('explore')}<ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" /></Link>
             </div>
-            <div className="flex items-center justify-between border-t pt-4"><span className="text-caption text-muted-foreground">{ts('appearance')}</span><ThemeToggle /></div>
+            <div className="flex items-center justify-between border-t pt-4"><span className="text-caption text-muted-foreground">{ts('appearance')}</span><div className="flex items-center gap-2"><FireworksToggle label={ts('fireworks')} reducedMotionHint={ts('fireworksReducedMotion')} /><ThemeToggle /></div></div>
           </div>
         </aside>
 
