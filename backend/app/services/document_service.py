@@ -16,6 +16,8 @@ Lỗi vĩnh viễn (provider, storage...) đặt bản ghi `failed` kèm `error_
 
 from __future__ import annotations
 
+import asyncio
+import logging
 import uuid
 from datetime import UTC, datetime
 from typing import Any
@@ -39,11 +41,15 @@ from app.models.job import Job
 from app.models.project import Project
 from app.models.requirement_brief import RequirementBrief
 from app.models.user import User
+from app.schemas.bpmn import ProcessModel, process_steps_table
 from app.schemas.requirement_brief import validate_items
 from app.services.documents.templates import get_template, missing_brief_items
 from app.services.job_service import enqueue
 from app.services.phase2_common import get_project_context, require_project_roles
+from app.services.process_model_service import get_latest_process
 from app.services.storage_service import StorageError, get_storage_service
+
+logger = logging.getLogger(__name__)
 
 JOB_KIND = "document.generate"
 # Vai trò dự án được yêu cầu sinh tài liệu (Admin hệ thống luôn được phép).
@@ -312,6 +318,7 @@ async def _run_step(ctx, document_id: int) -> JobResult:
         groups = [list(group) for group in document.section_groups]
         brief_context = build_brief_context(brief)
         project_context = await build_project_context(db, document.project_id)
+        process_model = await get_latest_process(db, document.project_id) if index is None else None
         assumptions = build_assumption_items(brief, language)
         content = merged_content(document)
         project_name = project.name
@@ -328,7 +335,44 @@ async def _run_step(ctx, document_id: int) -> JobResult:
     return await _render_and_store(
         ctx, document_id, template, content, assumptions, language, project_name,
         build_process_steps(project_context), doc_type, version, project_id,
+        process_model=process_model,
     )
+
+
+PROCESS_RENDER_FAILED = "process_render_failed"
+
+
+def process_model_steps(model: ProcessModel) -> list[dict[str, str]]:
+    """Bảng các bước từ quy trình (B1) theo định dạng `process_steps` của renderer DOCX."""
+    rows = []
+    for row in process_steps_table(model):
+        description = row["type_label"]
+        if row["next"]:
+            description = f"{description}. Tiếp theo: {row['next']}"
+        rows.append({"order": row["order"], "lane": row["lane"], "name": row["step"], "description": description})
+    return rows
+
+
+async def prepare_process_section(
+    model: ProcessModel | None, fallback_steps: list[dict[str, str]]
+) -> tuple[bytes | None, list[dict[str, str]], list[str]]:
+    """Trả (PNG sơ đồ hoặc None, bảng bước dự phòng, cảnh báo).
+
+    Không có quy trình: giữ bảng bước lấy từ phase dự án. Có quy trình: luôn chuẩn
+    bị bảng bước từ quy trình; vẽ PNG (trong thread vì tốn CPU), lỗi thì bỏ PNG và
+    thêm cảnh báo `process_render_failed` để DOCX dùng bảng các bước.
+    """
+    from app.services.documents.process_png import ProcessRenderError, render_process_png
+
+    if model is None:
+        return None, fallback_steps, []
+    steps = process_model_steps(model)
+    try:
+        png = await asyncio.to_thread(render_process_png, model)
+    except ProcessRenderError as exc:
+        logger.warning("Không vẽ được sơ đồ quy trình: %s", exc)
+        return None, steps, [PROCESS_RENDER_FAILED]
+    return png, steps, []
 
 
 async def _generate_group(ctx, document_id, index, template, group, language, brief_context, project_context, owner_id):
@@ -366,16 +410,18 @@ async def _generate_group(ctx, document_id, index, template, group, language, br
 
 async def _render_and_store(
     ctx, document_id, template, content, assumptions, language, project_name, process_steps,
-    doc_type, version, project_id,
+    doc_type, version, project_id, *, process_model=None,
 ):
     from app.services.documents.docx_renderer import render_docx_report
 
     generated_at = datetime.now(UTC)
+    diagram_png, process_steps, process_warnings = await prepare_process_section(process_model, process_steps)
     rendered = render_docx_report(
         template, content, assumptions, language=language,
         title=f"{template.title(language)} - v{version}", project_name=project_name,
-        generated_at=generated_at, process_steps=process_steps,
+        generated_at=generated_at, process_diagram_png=diagram_png, process_steps=process_steps,
     )
+    warnings = process_warnings + list(rendered.warnings)
     # Key không đoán được; bucket private, chỉ tải qua endpoint đã kiểm tra quyền.
     key = f"documents/{project_id}/{uuid.uuid4().hex}.docx"
     await ctx.assert_lease()
@@ -390,7 +436,7 @@ async def _render_and_store(
             return
         document.storage_key = key
         document.file_size = len(rendered.data)
-        document.warnings = (list(document.warnings or []) + rendered.warnings)[:MAX_WARNINGS]
+        document.warnings = (list(document.warnings or []) + warnings)[:MAX_WARNINGS]
         document.status = "ready"
         document.error_code = None
         document.completed_at = generated_at

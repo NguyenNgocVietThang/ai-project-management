@@ -341,3 +341,61 @@ async def test_no_brief_role_pending_and_quota_rules(session, make_user, seed_ro
     with pytest.raises(HTTPException) as exc:
         await request_document(session, other.id, other_users["PM"], "srs", language="en")
     assert (exc.value.status_code, exc.value.detail) == (429, "ai_quota_exceeded")
+
+
+# --- B4: sơ đồ quy trình PNG trong SRS/BRD ---------------------------------
+
+async def _add_process(session, project, users):
+    from app.models.process_model import ProcessModelRecord
+    from tests.unit.test_process_png import build_model
+
+    session.add(ProcessModelRecord(
+        project_id=project.id, version=1, language="vi", model=build_model().model_dump(mode="json"),
+        warnings=[], created_by_id=users["PM"].id,
+    ))
+    await session.flush()
+
+
+async def _generate(engine, session, users, project, doc_type="srs"):
+    document, _ = await request_document(session, project.id, users["BA"], doc_type)
+    document_id = document.id
+    await session.commit()
+    await drain(engine)
+    session.expire_all()
+    return await session.get(GeneratedDocument, document_id)
+
+
+@pytest.mark.asyncio
+async def test_document_embeds_server_rendered_process_png(engine, session, make_user, seed_roles, monkeypatch):
+    template = get_template("srs")
+    storage = FakeStorage()
+    install(monkeypatch, template, storage)
+    project, users, _ = await make_project(session, make_user, seed_roles)
+    await _add_process(session, project, users)
+    document = await _generate(engine, session, users, project)
+    assert document.status == "ready", document.error_code
+    assert "process_render_failed" not in document.warnings
+    docx = DocxDocument(io.BytesIO(storage.objects[document.storage_key][0]))
+    assert len(docx.inline_shapes) >= 1
+
+
+@pytest.mark.asyncio
+async def test_render_failure_falls_back_to_process_steps_table(engine, session, make_user, seed_roles, monkeypatch):
+    from app.services.documents import process_png
+
+    def broken(model, **kwargs):
+        raise process_png.ProcessRenderError("lỗi vẽ")
+
+    monkeypatch.setattr(process_png, "render_process_png", broken)
+    template = get_template("srs")
+    storage = FakeStorage()
+    install(monkeypatch, template, storage)
+    project, users, _ = await make_project(session, make_user, seed_roles)
+    await _add_process(session, project, users)
+    document = await _generate(engine, session, users, project)
+    assert document.status == "ready", document.error_code
+    assert "process_render_failed" in document.warnings
+    docx = DocxDocument(io.BytesIO(storage.objects[document.storage_key][0]))
+    assert len(docx.inline_shapes) == 0
+    cells = "\n".join(cell.text for table in docx.tables for row in table.rows for cell in row.cells)
+    assert "Gửi yêu cầu đặt hàng" in cells and "Nhân viên bán hàng" in cells and "Rẽ nhánh (chọn một)" in cells

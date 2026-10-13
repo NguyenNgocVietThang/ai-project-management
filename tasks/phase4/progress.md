@@ -34,3 +34,4 @@ Nhánh: `feature/phase4-workflow-reporting` (tạo từ `main` ngày 2026-10-12)
 - 2026-10-13: X2 xong. `services/reports/report_service.py`, handler `report.xlsx`, endpoint xuất/tải (mount bởi điều phối viên), xóa `workers/report_tasks.py`. EVA tính theo giờ công. Điều phối viên: lọc task lưu trữ trong `run_cpm`, thêm key i18n rollback của V3.
 - 2026-10-13: B2 xong. Bảng `process_models`, nhánh BPMN_GENERATE trong run_ai, endpoint `/projects/{id}/process-model` (mount bởi điều phối viên); cần stakeholders + (key_features hoặc in_scope).
 - 2026-10-13: X3 xong. Nút Xuất XLSX ở trang tổng quan, nhãn job `report.xlsx` trong JobsPanel, namespace `reports`.
+- 2026-10-13: B4 xong. `services/documents/process_png.py` (Pillow, swimlane), chèn PNG vào SRS/BRD, lỗi vẽ dùng bảng bước + cảnh báo `process_render_failed`. Rủi ro: Render runtime python có thể thiếu font TTF tiếng Việt, khi đó chữ trong PNG bị bỏ dấu.
