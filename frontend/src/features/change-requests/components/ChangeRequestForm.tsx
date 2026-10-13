@@ -10,8 +10,9 @@ import { useCreateChangeRequest } from '@/features/change-requests/hooks/useChan
 import type { ChangeRequest } from '@/types/change-request.types'
 import { getApiErrorMessage } from '@/types/api.types'
 
+// Ô nhập nhiều dòng cùng kiểu với Input (bo 8px, viền input, focus ring).
 const TEXTAREA_CLASSES =
-  'w-full rounded-md border bg-background px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+  'w-full rounded-lg border border-input bg-card px-3 py-2 text-body sm:text-body-sm shadow-xs transition-[border-color,box-shadow] duration-150 placeholder:text-muted-foreground hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background'
 
 export function ChangeRequestForm({
   projectId,
@@ -123,11 +124,11 @@ export function ChangeRequestForm({
           />
         </div>
 
-        <div className="flex justify-end gap-3">
-          <Button type="button" variant="outline" className="sm:w-auto" onClick={close}>
+        <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
+          <Button type="button" variant="outline" fullWidth={false} className="w-full sm:w-auto" onClick={close}>
             Cancel
           </Button>
-          <Button type="submit" className="sm:w-auto" isLoading={createMutation.isPending}>
+          <Button type="submit" fullWidth={false} className="w-full sm:w-auto" isLoading={createMutation.isPending}>
             Create
           </Button>
         </div>

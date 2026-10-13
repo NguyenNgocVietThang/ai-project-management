@@ -5,7 +5,13 @@ import { AlertTriangle, CalendarRange, Clock3 } from 'lucide-react'
 import { useState } from 'react'
 import { Input } from '@/components/common/Input'
 import { Label } from '@/components/common/Label'
-import { EmptyState, ErrorState, LoadingState } from '@/components/common/PageState'
+import { EmptyState, ErrorState } from '@/components/common/PageState'
+import { Badge } from '@/components/ui/Badge'
+import { Card, CardHeader, CardTitle } from '@/components/ui/Card'
+import { SectionHeader } from '@/components/ui/PageHeader'
+import { Select } from '@/components/ui/Select'
+import { Skeleton, SkeletonRegion, SkeletonStatGrid, SkeletonTable } from '@/components/ui/Skeleton'
+import { cn } from '@/lib/utils'
 import { useProjectMembers } from '@/features/projects/hooks/useProjectMembers'
 import { useProjectWorklogs, useResourceLeveling } from '@/features/tasks/hooks/useTimesheet'
 import { useNumericParam } from '@/hooks/useNumericParam'
@@ -41,25 +47,32 @@ export default function TimesheetPage() {
   const nameFor = (id: number) =>
     members.data?.find((member) => member.user.id === id)?.user.full_name ?? `User #${id}`
 
-  if (worklogs.isLoading) return <LoadingState label="Loading timesheet…" />
-  if (worklogs.isError) return <ErrorState message={getApiErrorMessage(worklogs.error)} />
+  if (worklogs.isLoading) {
+    // Khung xương đúng bố cục thật: bộ lọc, 3 chỉ số, bảng ghi nhận.
+    return (
+      <SkeletonRegion label="Loading timesheet…" className="space-y-6">
+        <Skeleton className="h-7 w-40" />
+        <Skeleton className="h-24 w-full rounded-xl" />
+        <SkeletonStatGrid count={3} />
+        <SkeletonTable rows={5} cols={4} />
+      </SkeletonRegion>
+    )
+  }
+  if (worklogs.isError) return <ErrorState message={getApiErrorMessage(worklogs.error)} onRetry={() => void worklogs.refetch()} />
 
   const data = worklogs.data
   const warnings = leveling.data ?? []
 
   return (
     <div className="space-y-6">
-      <header>
-        <h2 className="text-2xl font-semibold">{t('title')}</h2>
-        <p className="text-sm text-muted-foreground">{t('subtitle')}</p>
-      </header>
+      <SectionHeader title={t('title')} description={t('subtitle')} className="mb-0" />
 
-      <section className="grid gap-3 rounded-xl border bg-card p-4 sm:grid-cols-3">
+      {/* ===== Thanh bộ lọc: thành viên và khoảng ngày ===== */}
+      <Card className="grid gap-4 sm:grid-cols-3">
         <div>
           <Label htmlFor="timesheet-member">{t('member')}</Label>
-          <select
+          <Select
             id="timesheet-member"
-            className="h-11 w-full rounded-md border bg-background px-3 text-sm"
             value={userId}
             onChange={(event) => setUserId(event.target.value)}
           >
@@ -69,7 +82,7 @@ export default function TimesheetPage() {
                 {member.user.full_name}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
         <div>
           <Label htmlFor="timesheet-from">{t('from')}</Label>
@@ -90,13 +103,13 @@ export default function TimesheetPage() {
             onChange={(event) => setEndDate(event.target.value)}
           />
         </div>
-      </section>
+      </Card>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <Metric icon={<Clock3 className="h-5 w-5" />} label={t('totalHours')} value={`${data?.total_hours.toFixed(1) ?? '0.0'}h`} />
-        <Metric icon={<CalendarRange className="h-5 w-5" />} label={t('entries')} value={String(data?.items.length ?? 0)} />
+        <Metric icon={<Clock3 className="h-5 w-5" aria-hidden="true" />} label={t('totalHours')} value={`${data?.total_hours.toFixed(1) ?? '0.0'}h`} />
+        <Metric icon={<CalendarRange className="h-5 w-5" aria-hidden="true" />} label={t('entries')} value={String(data?.items.length ?? 0)} />
         <Metric
-          icon={<AlertTriangle className="h-5 w-5" />}
+          icon={<AlertTriangle className="h-5 w-5" aria-hidden="true" />}
           label={t('overloadWarnings')}
           value={String(warnings.length)}
           alert={warnings.length > 0}
@@ -104,18 +117,23 @@ export default function TimesheetPage() {
       </div>
 
       {warnings.length > 0 && (
-        <section className="rounded-xl border border-amber-500/40 bg-amber-500/5 p-5">
-          <h3 className="mb-3 flex items-center gap-2 font-semibold">
-            <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" aria-hidden="true" />
+        <section className="rounded-xl border border-warning/25 bg-warning-soft p-4 sm:p-6">
+          <h3 className="mb-3 flex items-center gap-2 text-h4">
+            <AlertTriangle className="h-4 w-4 text-warning" aria-hidden="true" />
             {t('resourceWarnings')}
           </h3>
-          <ul className="space-y-1 text-sm">
+          <ul className="space-y-2 text-body-sm">
             {warnings.map((warning) => (
-              <li key={`${warning.user_id}-${warning.date}-${warning.reason}`}>
-                <strong>{nameFor(warning.user_id)}</strong> — {formatDate(warning.date)}:{' '}
-                {warning.reason === 'on_leave'
-                  ? t('onLeave')
-                  : t('overloaded', { hours: warning.total_hours, max: warning.max_hours })}
+              <li key={`${warning.user_id}-${warning.date}-${warning.reason}`} className="flex flex-wrap items-center gap-2">
+                <Badge tone={warning.reason === 'on_leave' ? 'info' : 'warning'} size="sm" dot>
+                  {formatDate(warning.date)}
+                </Badge>
+                <span>
+                  <strong className="font-medium">{nameFor(warning.user_id)}</strong>:{' '}
+                  {warning.reason === 'on_leave'
+                    ? t('onLeave')
+                    : t('overloaded', { hours: warning.total_hours, max: warning.max_hours })}
+                </span>
               </li>
             ))}
           </ul>
@@ -124,47 +142,53 @@ export default function TimesheetPage() {
 
       {!data || data.items.length === 0 ? (
         <EmptyState
+          icon={Clock3}
           title={t('noHours')}
           description={t('noHoursMessage')}
         />
       ) : (
-        <>
-          <section className="rounded-xl border bg-card p-5">
-            <h3 className="mb-3 font-semibold">{t('hoursByMember')}</h3>
-            <ul className="space-y-2 text-sm">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+          {/* ===== Bảng ghi nhận: tự cuộn ngang/dọc trong khung, tiêu đề cột dính khi cuộn ===== */}
+          <Card flush className="order-2 min-w-0 overflow-hidden lg:order-1">
+            <div className="max-h-[32rem] overflow-auto">
+              <table className="w-full min-w-[640px] text-body-sm">
+                <caption className="sr-only">{t('entriesCaption')}</caption>
+                <thead className="sticky top-0 z-10 bg-muted text-left text-caption uppercase text-muted-foreground">
+                  <tr>
+                    <th scope="col" className="px-4 py-3 font-medium">{t('date')}</th>
+                    <th scope="col" className="px-4 py-3 font-medium">{t('member')}</th>
+                    <th scope="col" className="px-4 py-3 text-right font-medium">{t('hours')}</th>
+                    <th scope="col" className="px-4 py-3 font-medium">{t('notes')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.items.map((item) => (
+                    <tr key={item.id} className="border-t transition-colors hover:bg-muted/40">
+                      <td className="whitespace-nowrap px-4 py-3 tabular-nums">{formatDate(item.log_date)}</td>
+                      <td className="px-4 py-3">{item.user?.full_name ?? nameFor(item.user_id)}</td>
+                      <td className="px-4 py-3 text-right font-medium tabular-nums">{item.hours.toFixed(2)}</td>
+                      <td className="px-4 py-3 text-muted-foreground">{item.description || '—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+
+          <Card className="order-1 h-fit lg:order-2">
+            <CardHeader className="mb-3">
+              <CardTitle as="h3">{t('hoursByMember')}</CardTitle>
+            </CardHeader>
+            <ul className="divide-y text-body-sm">
               {Object.entries(data.by_user).map(([id, hours]) => (
-                <li key={id} className="flex items-center justify-between gap-3">
-                  <span>{nameFor(Number(id))}</span>
-                  <span className="font-medium">{hours.toFixed(1)}h</span>
+                <li key={id} className="flex items-center justify-between gap-3 py-2">
+                  <span className="min-w-0 truncate">{nameFor(Number(id))}</span>
+                  <span className="font-medium tabular-nums">{hours.toFixed(1)}h</span>
                 </li>
               ))}
             </ul>
-          </section>
-
-          <div className="overflow-x-auto rounded-xl border">
-            <table className="w-full min-w-[640px] text-sm">
-              <caption className="sr-only">{t('entriesCaption')}</caption>
-              <thead>
-                <tr className="border-b text-left text-xs text-muted-foreground">
-                  <th scope="col" className="p-3">{t('date')}</th>
-                  <th scope="col" className="p-3">{t('member')}</th>
-                  <th scope="col" className="p-3">{t('hours')}</th>
-                  <th scope="col" className="p-3">{t('notes')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.items.map((item) => (
-                  <tr key={item.id} className="border-b last:border-0">
-                    <td className="p-3">{formatDate(item.log_date)}</td>
-                    <td className="p-3">{item.user?.full_name ?? nameFor(item.user_id)}</td>
-                    <td className="p-3">{item.hours.toFixed(2)}</td>
-                    <td className="p-3 text-muted-foreground">{item.description || '—'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </>
+          </Card>
+        </div>
       )}
     </div>
   )
@@ -182,14 +206,12 @@ function Metric({
   alert?: boolean
 }) {
   return (
-    <div className={`rounded-xl border bg-card p-5 ${alert ? 'border-amber-500/40' : ''}`}>
-      <div className="flex items-center gap-2 text-primary">
+    <Card className={cn(alert && 'border-warning/40')}>
+      <div className={cn('flex items-center gap-2', alert ? 'text-warning' : 'text-primary')}>
         {icon}
-        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          {label}
-        </span>
+        <span className="text-overline uppercase text-muted-foreground">{label}</span>
       </div>
-      <p className="mt-3 text-lg font-semibold">{value}</p>
-    </div>
+      <p className="mt-3 text-h3 tabular-nums">{value}</p>
+    </Card>
   )
 }

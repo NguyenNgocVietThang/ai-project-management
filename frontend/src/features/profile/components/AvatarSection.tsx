@@ -69,11 +69,12 @@ export function AvatarSection({ user, onUpload, isLoading, error, success }: Ava
 
   return (
     <SectionCard title="Profile photo" description="Upload a square photo so teammates can recognize you.">
-      <div className="space-y-5">
+      {/* Bố cục dọc, căn giữa: vừa với cột phụ 320px trên desktop */}
+      <div className="space-y-4">
         {(localError || error) && <Alert>{localError ?? error}</Alert>}
         {success && <Alert variant="success">Profile photo updated.</Alert>}
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-          <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted ring-4 ring-accent">
             {avatar ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={avatar} alt={`${user.full_name}'s avatar`} className="h-full w-full object-cover" />
@@ -81,28 +82,30 @@ export function AvatarSection({ user, onUpload, isLoading, error, success }: Ava
               <UserIcon className="h-10 w-10 text-muted-foreground" aria-hidden="true" />
             )}
           </div>
-          <div className="flex-1 space-y-3">
-            <p className="text-sm text-muted-foreground">
-              JPEG, PNG, or WebP up to 5 MiB. The image will be cropped to a 512 × 512 square.
-            </p>
-            <input
-              ref={inputRef}
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              className="sr-only"
-              onChange={(event) => chooseFile(event.target.files?.[0])}
-            />
-            <div className="flex flex-col gap-2 sm:flex-row">
-              <Button type="button" variant="outline" className="sm:w-auto" onClick={() => inputRef.current?.click()}>
-                <Camera className="h-4 w-4" aria-hidden="true" />
-                Choose photo
+          <div>
+            <p className="text-body font-medium text-foreground">{user.full_name}</p>
+            <p className="text-caption text-muted-foreground">{user.email}</p>
+          </div>
+          <p className="text-caption text-muted-foreground">
+            JPEG, PNG, or WebP up to 5 MiB. The image will be cropped to a 512 × 512 square.
+          </p>
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="sr-only"
+            onChange={(event) => chooseFile(event.target.files?.[0])}
+          />
+          <div className="flex w-full flex-col gap-2">
+            <Button type="button" variant="outline" onClick={() => inputRef.current?.click()}>
+              <Camera className="h-4 w-4" aria-hidden="true" />
+              Choose photo
+            </Button>
+            {file && (
+              <Button type="button" isLoading={isLoading} onClick={submit}>
+                Upload photo
               </Button>
-              {file && (
-                <Button type="button" className="sm:w-auto" isLoading={isLoading} onClick={submit}>
-                  Upload photo
-                </Button>
-              )}
-            </div>
+            )}
           </div>
         </div>
       </div>

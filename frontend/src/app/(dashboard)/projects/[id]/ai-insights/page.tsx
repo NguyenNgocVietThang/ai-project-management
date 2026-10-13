@@ -3,9 +3,15 @@
 // Gộp Risk Analysis (SOP-AI-005), Schedule Optimization (SOP-AI-003) và Resource Recommendation
 // (SOP-AI-004). AI Impact Analysis (SOP-AI-002) có trang riêng ở /change-requests.
 import { useMemo, useState } from 'react'
+import { useTranslations } from 'next-intl'
+import { Users } from 'lucide-react'
 import { useNumericParam } from '@/hooks/useNumericParam'
-import { ErrorState, LoadingState } from '@/components/common/PageState'
+import { ErrorState } from '@/components/common/PageState'
 import { Label } from '@/components/common/Label'
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import { SectionHeader } from '@/components/ui/PageHeader'
+import { Select } from '@/components/ui/Select'
+import { Skeleton, SkeletonCard, SkeletonRegion } from '@/components/ui/Skeleton'
 import { useTasks } from '@/features/tasks/hooks/useTasks'
 import { RiskWidget } from '@/features/risk-analysis/components/RiskWidget'
 import { SchedulePanel } from '@/features/schedule-optimization/components/SchedulePanel'
@@ -14,50 +20,87 @@ import { getApiErrorMessage } from '@/types/api.types'
 
 export default function AIInsightsPage() {
   const projectId = useNumericParam()
+  const t = useTranslations('project')
   const tasksQuery = useTasks(projectId, useMemo(() => ({ page_size: 200 }), []))
   const [selectedTaskId, setSelectedTaskId] = useState<number | ''>('')
 
-  if (tasksQuery.isLoading) return <LoadingState label="Đang tải công việc của dự án…" />
-  if (tasksQuery.isError) return <ErrorState message={getApiErrorMessage(tasksQuery.error)} />
+  const header = (
+    <SectionHeader
+      title={t('aiInsights')}
+      description="Phân tích rủi ro, tối ưu lịch trình và đề xuất nhân sự bằng AI. Mọi kết quả chỉ là gợi ý để bạn xem xét."
+    />
+  )
+
+  if (tasksQuery.isLoading) {
+    // Khung xương theo bố cục thật: 2 card AI cạnh nhau + card đề xuất nhân sự.
+    return (
+      <div className="space-y-6">
+        {header}
+        <SkeletonRegion label="Đang tải công việc của dự án…" className="space-y-6">
+          <div className="grid gap-6 xl:grid-cols-2">
+            <SkeletonCard />
+            <SkeletonCard />
+          </div>
+          <Skeleton className="h-48 rounded-xl" />
+        </SkeletonRegion>
+      </div>
+    )
+  }
+  if (tasksQuery.isError) {
+    return (
+      <div className="space-y-6">
+        {header}
+        <ErrorState message={getApiErrorMessage(tasksQuery.error)} onRetry={() => void tasksQuery.refetch()} retryLabel="Thử lại" />
+      </div>
+    )
+  }
 
   const tasks = tasksQuery.data?.items ?? []
   const selectedTask = tasks.find((task) => task.id === selectedTaskId)
 
   return (
     <div className="space-y-6">
-      <section className="rounded-xl border bg-card p-5">
-        <h2 className="mb-4 text-lg font-semibold">Phân tích rủi ro dự án</h2>
+      {header}
+
+      <div className="grid items-start gap-6 xl:grid-cols-2">
         <RiskWidget projectId={projectId} />
-      </section>
-
-      <section className="rounded-xl border bg-card p-5">
-        <h2 className="mb-4 text-lg font-semibold">Tối ưu lịch trình</h2>
         <SchedulePanel projectId={projectId} tasks={tasks.map((task) => ({ id: task.id, name: task.name }))} />
-      </section>
+      </div>
 
-      <section className="rounded-xl border bg-card p-5">
-        <h2 className="mb-1 text-lg font-semibold">Đề xuất nhân sự</h2>
-        <p className="mb-4 text-sm text-muted-foreground">
-          Chọn một công việc để AI đề xuất người phù hợp nhất theo kỹ năng, khối lượng công việc hiện tại và chi phí.
-        </p>
-        <div className="mb-4 max-w-md">
-          <Label htmlFor="resource-recommendation-task">Công việc</Label>
-          <select
-            id="resource-recommendation-task"
-            value={selectedTaskId}
-            onChange={(event) => setSelectedTaskId(event.target.value ? Number(event.target.value) : '')}
-            className="w-full rounded-md border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <option value="">— Chọn công việc —</option>
-            {tasks.map((task) => (
-              <option key={task.id} value={task.id}>{task.name}</option>
-            ))}
-          </select>
+      {/* ===== Đề xuất nhân sự theo công việc ===== */}
+      <Card as="section" aria-labelledby="resource-recommendation-title">
+        <CardHeader>
+          <div className="flex min-w-0 items-start gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent" aria-hidden="true">
+              <Users className="h-5 w-5 text-accent-foreground" />
+            </span>
+            <div className="min-w-0">
+              <CardTitle as="h3" id="resource-recommendation-title">Đề xuất nhân sự</CardTitle>
+              <CardDescription>
+                Chọn một công việc để AI đề xuất người phù hợp nhất theo kỹ năng, khối lượng công việc hiện tại và chi phí.
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <div className="space-y-4">
+          <div className="max-w-md">
+            <Label htmlFor="resource-recommendation-task">Công việc</Label>
+            <Select
+              id="resource-recommendation-task"
+              value={selectedTaskId}
+              onChange={(event) => setSelectedTaskId(event.target.value ? Number(event.target.value) : '')}
+            >
+              <option value="">— Chọn công việc —</option>
+              {tasks.map((task) => (
+                <option key={task.id} value={task.id}>{task.name}</option>
+              ))}
+            </Select>
+          </div>
+          {selectedTask && (
+            <ResourceRecommendationPanel taskId={selectedTask.id} taskLabel={selectedTask.name} />
+          )}
         </div>
-        {selectedTask && (
-          <ResourceRecommendationPanel taskId={selectedTask.id} taskLabel={selectedTask.name} />
-        )}
-      </section>
+      </Card>
     </div>
   )
 }

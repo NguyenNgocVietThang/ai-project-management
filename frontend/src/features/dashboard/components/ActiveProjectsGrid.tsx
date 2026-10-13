@@ -7,69 +7,77 @@
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { CalendarClock, TrendingUp } from 'lucide-react'
-import { MiniProgressBar } from '@/components/charts/MiniProgressBar'
-import { formatMoney, formatStatus } from '@/lib/format'
+import { ButtonLink } from '@/components/common/Button'
+import { EmptyState } from '@/components/common/PageState'
+import { Reveal } from '@/components/motion/RevealText'
+import { Card } from '@/components/ui/Card'
+import { ProjectStatusBadge } from '@/features/projects/components/ProjectStatusBadge'
+import { formatMoney } from '@/lib/format'
+import { cn } from '@/lib/utils'
 import type { ActiveProjectSummary } from '@/features/dashboard/types/dashboard.types'
 
-const STATUS_BADGE: Record<string, string> = {
-  ACTIVE: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
-  PLANNING: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
-  ON_HOLD: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-  COMPLETED: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
-  CANCELLED: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+/** Thanh tiến độ cao 8px, chiều rộng chuyển động mượt 500ms. */
+function ProgressBar({ value, toneClass = 'bg-primary' }: { value: number; toneClass?: string }) {
+  const pct = Math.min(100, Math.max(0, value))
+  return (
+    <div className="h-2 overflow-hidden rounded-full bg-muted">
+      <div className={cn('h-full rounded-full transition-[width] duration-500 ease-out-soft', toneClass)} style={{ width: `${pct}%` }} />
+    </div>
+  )
 }
 
-function ProjectCard({ project }: { project: ActiveProjectSummary }) {
+// Nhận className/style để Reveal gắn hiệu ứng trồi lên theo nhịp
+function ProjectCard({ project, className, style }: { project: ActiveProjectSummary; className?: string; style?: React.CSSProperties }) {
   const t = useTranslations('home')
   const budgetPct =
     project.budget && project.budget > 0
       ? (project.budget_spent / project.budget) * 100
       : null
+  // Ngân sách: > 90% nguy hiểm, > 70% cảnh báo, còn lại an toàn
+  const budgetTone =
+    budgetPct !== null && budgetPct > 90 ? 'bg-destructive' : budgetPct !== null && budgetPct > 70 ? 'bg-warning' : 'bg-success'
 
   return (
-    <Link
-      href={`/projects/${project.id}/overview`}
-      className="group flex flex-col gap-4 rounded-2xl border bg-card p-6 transition-colors hover:border-primary/50 hover:bg-card/80"
-    >
+    <Card as="article" interactive className={cn('group flex flex-col gap-4', className)} style={style}>
       <div className="flex items-start justify-between gap-2">
-        <h3 className="line-clamp-2 text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-          {project.name}
+        <h3 className="line-clamp-2 text-h4">
+          {/* Liên kết kéo giãn phủ toàn thẻ: cả thẻ bấm được nhưng chỉ một điểm dừng Tab */}
+          <Link
+            href={`/projects/${project.id}/overview`}
+            className="transition-colors after:absolute after:inset-0 after:rounded-xl group-hover:text-primary focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring"
+          >
+            {project.name}
+          </Link>
         </h3>
-        <span
-          className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_BADGE[project.status] ?? STATUS_BADGE.PLANNING}`}
-        >
-          {formatStatus(project.status)}
-        </span>
+        <ProjectStatusBadge status={project.status} />
       </div>
 
       {/* Tiến độ */}
       <div>
-        <div className="mb-1.5 flex justify-between text-xs text-muted-foreground">
+        <div className="mb-2 flex justify-between text-caption text-muted-foreground">
           <span className="flex items-center gap-1">
-            <TrendingUp className="h-3 w-3" />
+            <TrendingUp className="h-3 w-3" aria-hidden="true" />
             {t('progress')}
           </span>
-          <span className="font-medium text-foreground">
+          <span className="font-medium text-foreground tabular-nums">
             {Math.round(project.progress_percent)}%
           </span>
         </div>
-        <MiniProgressBar value={project.progress_percent} />
+        <ProgressBar value={project.progress_percent} />
       </div>
 
       {/* Task */}
-      <div className="flex items-center justify-between text-xs text-muted-foreground">
+      <div className="flex items-center justify-between text-caption text-muted-foreground">
         <span>
           {t('taskCount')}:{' '}
-          <span className="font-medium text-foreground">
+          <span className="font-medium text-foreground tabular-nums">
             {project.completed_task_count}/{project.task_count}
           </span>
         </span>
         {project.days_remaining !== null && (
           <span className="flex items-center gap-1">
-            <CalendarClock className="h-3 w-3" />
-            <span
-              className={project.days_remaining <= 7 ? 'font-medium text-red-500' : 'text-muted-foreground'}
-            >
+            <CalendarClock className="h-3 w-3" aria-hidden="true" />
+            <span className={project.days_remaining <= 7 ? 'font-medium text-destructive' : 'text-muted-foreground'}>
               {project.days_remaining < 0 ? t('daysOverdue', { count: Math.abs(project.days_remaining) }) : t('daysLeft', { count: project.days_remaining })}
             </span>
           </span>
@@ -79,27 +87,18 @@ function ProjectCard({ project }: { project: ActiveProjectSummary }) {
       {/* Ngân sách */}
       {project.budget !== null && (
         <div>
-          <div className="mb-1.5 flex justify-between text-xs text-muted-foreground">
+          <div className="mb-2 flex justify-between text-caption text-muted-foreground">
             <span>{t('budget')}</span>
-            <span>{budgetPct !== null ? `${Math.round(budgetPct)}%` : '—'}</span>
+            <span className="tabular-nums">{budgetPct !== null ? `${Math.round(budgetPct)}%` : '—'}</span>
           </div>
-          <MiniProgressBar
-            value={budgetPct ?? 0}
-            colorClass={
-              budgetPct !== null && budgetPct > 90
-                ? 'bg-red-500'
-                : budgetPct !== null && budgetPct > 70
-                ? 'bg-amber-500'
-                : 'bg-emerald-500'
-            }
-          />
-          <div className="mt-1 flex justify-between text-xs text-muted-foreground">
+          <ProgressBar value={budgetPct ?? 0} toneClass={budgetTone} />
+          <div className="mt-1 flex justify-between gap-2 text-caption text-muted-foreground tabular-nums">
             <span>{formatMoney(project.budget_spent, project.currency)}</span>
             <span>{formatMoney(project.budget, project.currency)}</span>
           </div>
         </div>
       )}
-    </Link>
+    </Card>
   )
 }
 
@@ -111,19 +110,19 @@ export function ActiveProjectsGrid({ projects }: ActiveProjectsGridProps) {
   const t = useTranslations('home')
   if (projects.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed bg-card px-6 py-14 text-center text-sm text-muted-foreground">
-        <TrendingUp className="mx-auto mb-4 h-8 w-8 text-primary" aria-hidden="true" />
-        <h3 className="text-base font-semibold text-foreground">{t('noProjects')}</h3>
-        <p className="mt-2">{t('noProjectsDescription')}</p>
-        <Link href="/projects" className="mt-5 inline-flex min-h-11 items-center rounded-xl bg-primary px-5 font-medium text-primary-foreground">{t('viewProjects')}</Link>
-      </div>
+      <EmptyState
+        icon={TrendingUp}
+        title={t('noProjects')}
+        description={t('noProjectsDescription')}
+        action={<ButtonLink href="/projects">{t('viewProjects')}</ButtonLink>}
+      />
     )
   }
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    <Reveal stagger={60} className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
       {projects.map((p) => (
         <ProjectCard key={p.id} project={p} />
       ))}
-    </div>
+    </Reveal>
   )
 }

@@ -6,6 +6,7 @@ import { Alert } from '@/components/common/Alert'
 import { Button } from '@/components/common/Button'
 import { Input } from '@/components/common/Input'
 import { Label } from '@/components/common/Label'
+import { Select } from '@/components/ui/Select'
 import {
   portfolioFormSchema,
   type PortfolioFormValues,
@@ -58,17 +59,17 @@ export function PortfolioForm({ portfolio, onSubmit, onCancel, isLoading, error 
       <div>
         <Label htmlFor="portfolio-name">Name</Label>
         <Input id="portfolio-name" hasError={Boolean(errors.name)} {...register('name')} />
-        {errors.name && <p id="portfolio-name-error" role="alert" className="mt-1 text-sm text-destructive">{errors.name.message}</p>}
+        {errors.name && <p id="portfolio-name-error" role="alert" className="mt-1 text-body-sm text-destructive">{errors.name.message}</p>}
       </div>
       <div>
         <Label htmlFor="portfolio-description">Description</Label>
         <textarea
           id="portfolio-description"
           rows={4}
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="w-full rounded-lg border border-input bg-card px-3 py-2 text-body shadow-xs transition-[border-color,box-shadow] duration-150 placeholder:text-muted-foreground hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:text-body-sm"
           {...register('description')}
         />
-        {errors.description && <p id="portfolio-description-error" role="alert" className="mt-1 text-sm text-destructive">{errors.description.message}</p>}
+        {errors.description && <p id="portfolio-description-error" role="alert" className="mt-1 text-body-sm text-destructive">{errors.description.message}</p>}
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
@@ -78,14 +79,14 @@ export function PortfolioForm({ portfolio, onSubmit, onCancel, isLoading, error 
         <div>
           <Label htmlFor="portfolio-end">End date</Label>
           <Input id="portfolio-end" type="date" hasError={Boolean(errors.end_date)} {...register('end_date')} />
-          {errors.end_date && <p id="portfolio-start-error" role="alert" className="mt-1 text-sm text-destructive">{errors.end_date.message}</p>}
+          {errors.end_date && <p id="portfolio-start-error" role="alert" className="mt-1 text-body-sm text-destructive">{errors.end_date.message}</p>}
         </div>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <Label htmlFor="portfolio-budget">Budget</Label>
           <Input id="portfolio-budget" inputMode="decimal" hasError={Boolean(errors.budget)} {...register('budget')} />
-          {errors.budget && <p id="portfolio-budget-error" role="alert" className="mt-1 text-sm text-destructive">{errors.budget.message}</p>}
+          {errors.budget && <p id="portfolio-budget-error" role="alert" className="mt-1 text-body-sm text-destructive">{errors.budget.message}</p>}
         </div>
         <div>
           <Label htmlFor="portfolio-currency">Currency</Label>
@@ -95,11 +96,11 @@ export function PortfolioForm({ portfolio, onSubmit, onCancel, isLoading, error 
       {portfolio && (
         <div>
           <Label htmlFor="portfolio-status">Status</Label>
-          <select id="portfolio-status" className="h-11 w-full rounded-md border bg-background px-3" {...register('status')}>
+          <Select id="portfolio-status" {...register('status')}>
             <option value="PLANNING">Planning</option>
             <option value="ACTIVE">Active</option>
             <option value="ARCHIVED">Archived</option>
-          </select>
+          </Select>
         </div>
       )}
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">

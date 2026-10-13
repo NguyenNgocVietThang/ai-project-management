@@ -55,7 +55,7 @@ export function PasswordSection({ hasPassword, onSubmit, isLoading, error }: Pas
           }
         })}
         noValidate
-        className="max-w-xl space-y-5"
+        className="max-w-xl space-y-4"
       >
         {error && <Alert>{error}</Alert>}
         {hasPassword && (
@@ -69,7 +69,7 @@ export function PasswordSection({ hasPassword, onSubmit, isLoading, error }: Pas
               {...register('current_password')}
             />
             {errors.current_password && (
-              <p className="mt-1.5 text-sm text-destructive">
+              <p className="mt-1 text-body-sm text-destructive">
                 {errors.current_password.message}
               </p>
             )}
@@ -86,7 +86,7 @@ export function PasswordSection({ hasPassword, onSubmit, isLoading, error }: Pas
             {...register('new_password')}
           />
           {errors.new_password && (
-            <p id="new-password-error" className="mt-1.5 text-sm text-destructive">
+            <p id="new-password-error" className="mt-1 text-body-sm text-destructive">
               {errors.new_password.message}
             </p>
           )}
@@ -102,7 +102,7 @@ export function PasswordSection({ hasPassword, onSubmit, isLoading, error }: Pas
             {...register('confirm_password')}
           />
           {errors.confirm_password && (
-            <p id="confirm-password-error" className="mt-1.5 text-sm text-destructive">
+            <p id="confirm-password-error" className="mt-1 text-body-sm text-destructive">
               {errors.confirm_password.message}
             </p>
           )}

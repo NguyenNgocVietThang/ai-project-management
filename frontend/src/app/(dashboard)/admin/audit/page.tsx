@@ -1,8 +1,10 @@
 'use client'
 
+import { RefreshCw } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/common/Button'
 import { ErrorState, LoadingState } from '@/components/common/PageState'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { AuditLogFilters } from '@/features/audit/components/AuditLogFilters'
 import { AuditLogTable } from '@/features/audit/components/AuditLogTable'
 import { useAuditLogs } from '@/features/audit/hooks/useAuditLogs'
@@ -18,14 +20,24 @@ export default function AdminAuditPage() {
   const query = useAuditLogs({ ...filters, page, page_size: PAGE_SIZE })
 
   return (
-    <div className="space-y-6">
-      <div>
-        <p className="text-sm font-medium text-primary">Admin</p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Audit log</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          A read-only, append-only trail of every change made across the system.
-        </p>
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        eyebrow="Admin"
+        title="Audit log"
+        description="A read-only, append-only trail of every change made across the system."
+        actions={
+          <Button
+            type="button"
+            variant="outline"
+            fullWidth={false}
+            disabled={query.isFetching}
+            onClick={() => void query.refetch()}
+          >
+            <RefreshCw className="h-4 w-4" aria-hidden="true" />
+            Refresh
+          </Button>
+        }
+      />
 
       <AuditLogFilters
         value={filters}
@@ -35,12 +47,18 @@ export default function AdminAuditPage() {
         }}
       />
 
-      {query.isLoading && <LoadingState label="Loading audit log…" />}
-      {query.isError && <ErrorState message={getApiErrorMessage(query.error)} />}
+      {query.isLoading && <LoadingState variant="table" label="Loading audit log…" />}
+      {query.isError && (
+        <ErrorState message={getApiErrorMessage(query.error)} onRetry={() => void query.refetch()} />
+      )}
       {query.data && (
-        <>
+        <div className="space-y-4">
           <AuditLogTable logs={query.data.items} />
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
+          {/* Phân trang: xếp dọc trên mobile để không tràn ngang */}
+          <nav
+            aria-label="Audit log pages"
+            className="flex flex-col gap-3 text-body-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
+          >
             <span>
               Page {query.data.page} of {Math.max(query.data.total_pages, 1)} · {query.data.total} entries
             </span>
@@ -48,7 +66,7 @@ export default function AdminAuditPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-auto"
+                fullWidth={false}
                 disabled={page <= 1}
                 onClick={() => setPage((current) => Math.max(1, current - 1))}
               >
@@ -57,15 +75,15 @@ export default function AdminAuditPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-auto"
+                fullWidth={false}
                 disabled={page >= query.data.total_pages}
                 onClick={() => setPage((current) => current + 1)}
               >
                 Next
               </Button>
             </div>
-          </div>
-        </>
+          </nav>
+        </div>
       )}
     </div>
   )

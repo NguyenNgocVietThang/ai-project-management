@@ -2,7 +2,9 @@
 
 import { useLocale, useTranslations } from 'next-intl'
 import { useState } from 'react'
-import { Download, FileSpreadsheet, Loader2 } from 'lucide-react'
+import { Download, FileSpreadsheet } from 'lucide-react'
+import { Button } from '@/components/common/Button'
+import { Select } from '@/components/ui/Select'
 import { useXlsxExport } from '@/features/reports/hooks/useXlsxExport'
 import type { ReportLanguage } from '@/features/reports/types'
 
@@ -16,41 +18,32 @@ export function XlsxExportButton({ projectId }: { projectId: number }) {
 
   return (
     <div className="flex flex-col gap-2 sm:items-end">
+      {/* Thanh công cụ: chọn ngôn ngữ + xuất (nút phụ); khi có tệp thì nút tải về là CTA chính. */}
       <div className="flex flex-wrap items-center gap-2">
         <label className="sr-only" htmlFor={`xlsx-lang-${projectId}`}>{t('language')}</label>
-        <select
+        <Select
           id={`xlsx-lang-${projectId}`}
           value={language}
           onChange={(event) => setLanguage(event.target.value as ReportLanguage)}
           disabled={running}
-          className="h-9 rounded-md border bg-background px-2 text-sm"
+          wrapperClassName="w-36"
         >
           <option value="vi">{t('languages.vi')}</option>
           <option value="en">{t('languages.en')}</option>
-        </select>
-        <button
-          type="button"
-          onClick={() => exportXlsx(language)}
-          disabled={running}
-          className="inline-flex h-9 items-center gap-2 rounded-md border px-3 text-sm font-medium hover:bg-muted disabled:opacity-60"
-        >
-          {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileSpreadsheet className="h-4 w-4" />}
+        </Select>
+        <Button type="button" variant="outline" fullWidth={false} onClick={() => exportXlsx(language)} isLoading={running}>
+          {!running && <FileSpreadsheet className="h-4 w-4" aria-hidden="true" />}
           {running ? t('generating') : t('export')}
-        </button>
+        </Button>
         {state === 'ready' && (
-          <button
-            type="button"
-            onClick={downloadXlsx}
-            disabled={isDownloading}
-            className="inline-flex h-9 items-center gap-2 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground disabled:opacity-60"
-          >
-            <Download className="h-4 w-4" />
+          <Button type="button" fullWidth={false} onClick={downloadXlsx} isLoading={isDownloading} className="animate-scale-in">
+            {!isDownloading && <Download className="h-4 w-4" aria-hidden="true" />}
             {t('download')}
-          </button>
+          </Button>
         )}
       </div>
       {error ? (
-        <p role="alert" className="text-sm text-destructive">
+        <p role="alert" className="text-body-sm text-destructive">
           {errorCode ? t(`errors.${errorCode}`) : t('errors.unknown')}
         </p>
       ) : null}

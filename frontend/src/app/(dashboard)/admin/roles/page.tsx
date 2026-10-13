@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { Button } from '@/components/common/Button'
 import { Modal } from '@/components/common/Modal'
 import { ErrorState, LoadingState } from '@/components/common/PageState'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { DeleteRoleDialog } from '@/features/admin/roles/components/DeleteRoleDialog'
 import { RoleForm } from '@/features/admin/roles/components/RoleForm'
 import { RoleTable } from '@/features/admin/roles/components/RoleTable'
@@ -23,24 +24,36 @@ export default function AdminRolesPage() {
   const deleteMutation = useDeleteRole()
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-sm font-medium text-primary">Admin</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight">Roles &amp; permissions</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Compose roles from the fixed permission catalog and see who holds each one.
-          </p>
-        </div>
-        <Button className="sm:w-auto" onClick={() => setCreating(true)}>
-          <Plus className="h-4 w-4" />
-          New role
-        </Button>
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        eyebrow="Admin"
+        title="Roles & permissions"
+        description="Compose roles from the fixed permission catalog and see who holds each one."
+        actions={
+          <Button fullWidth={false} onClick={() => setCreating(true)}>
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            New role
+          </Button>
+        }
+      />
 
-      {query.isLoading && <LoadingState label="Loading roles…" />}
-      {query.isError && <ErrorState message={getApiErrorMessage(query.error)} />}
-      {query.data && <RoleTable roles={query.data} onEdit={setEditing} onDelete={setDeleting} />}
+      {query.isLoading && <LoadingState variant="table" label="Loading roles…" />}
+      {query.isError && (
+        <ErrorState message={getApiErrorMessage(query.error)} onRetry={() => void query.refetch()} />
+      )}
+      {query.data && (
+        <RoleTable
+          roles={query.data}
+          onEdit={setEditing}
+          onDelete={setDeleting}
+          emptyAction={
+            <Button fullWidth={false} onClick={() => setCreating(true)}>
+              <Plus className="h-4 w-4" aria-hidden="true" />
+              New role
+            </Button>
+          }
+        />
+      )}
 
       <Modal
         open={creating}

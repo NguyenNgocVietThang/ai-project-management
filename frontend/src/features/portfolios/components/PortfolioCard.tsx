@@ -1,57 +1,74 @@
 import { ArrowRight, CalendarDays, Pencil, Trash2 } from 'lucide-react'
 import Link from 'next/link'
-import { formatDate, formatMoney, formatStatus } from '@/lib/format'
+import type { CSSProperties } from 'react'
+import { Button } from '@/components/common/Button'
+import { Card } from '@/components/ui/Card'
+import { PortfolioStatusBadge } from '@/features/portfolios/components/PortfolioStatusBadge'
+import { formatDate, formatMoney } from '@/lib/format'
+import { cn } from '@/lib/utils'
 import type { Portfolio } from '@/types/portfolio.types'
 
 interface PortfolioCardProps {
   portfolio: Portfolio
   onEdit: (portfolio: Portfolio) => void
   onDelete: (portfolio: Portfolio) => void
+  /** Nhận từ Reveal để gắn hiệu ứng trồi lên theo nhịp. */
+  className?: string
+  style?: CSSProperties
 }
 
-export function PortfolioCard({ portfolio, onEdit, onDelete }: PortfolioCardProps) {
+export function PortfolioCard({ portfolio, onEdit, onDelete, className, style }: PortfolioCardProps) {
+  const progress = Math.min(100, Math.max(0, portfolio.progress_percent))
   return (
-    <article className="group rounded-2xl border bg-card p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+    <Card as="article" interactive className={cn('group flex flex-col', className)} style={style}>
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-            {formatStatus(portfolio.status)}
-          </span>
-          <h2 className="mt-3 truncate text-lg font-semibold">{portfolio.name}</h2>
-          <p className="mt-1 line-clamp-2 min-h-10 text-sm text-muted-foreground">
+          <PortfolioStatusBadge status={portfolio.status} />
+          <h2 className="mt-3 truncate text-h4 sm:text-h3">
+            {/* Liên kết kéo giãn phủ toàn thẻ: cả thẻ bấm được nhưng chỉ một điểm dừng Tab */}
+            <Link
+              href={`/portfolios/${portfolio.id}`}
+              className="transition-colors after:absolute after:inset-0 after:rounded-xl group-hover:text-primary focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring"
+            >
+              {portfolio.name}
+            </Link>
+          </h2>
+          <p className="mt-1 line-clamp-2 min-h-10 text-body-sm text-muted-foreground">
             {portfolio.description || 'No description provided.'}
           </p>
         </div>
         {(portfolio.capabilities.can_update || portfolio.capabilities.can_delete) && (
-          <div className="flex shrink-0 gap-1">
+          // z-10 để nút nổi trên liên kết kéo giãn và vẫn bấm được
+          <div className="relative z-10 -mr-2 -mt-2 flex shrink-0 gap-1">
             {portfolio.capabilities.can_update && (
-              <button type="button" onClick={() => onEdit(portfolio)} className="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-foreground" aria-label={`Edit ${portfolio.name}`}>
-                <Pencil className="h-4 w-4" />
-              </button>
+              <Button type="button" variant="ghost" size="icon" fullWidth={false} onClick={() => onEdit(portfolio)} className="text-muted-foreground" aria-label={`Edit ${portfolio.name}`}>
+                <Pencil className="h-4 w-4" aria-hidden="true" />
+              </Button>
             )}
             {portfolio.capabilities.can_delete && (
-              <button type="button" onClick={() => onDelete(portfolio)} className="rounded-md p-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive" aria-label={`Delete ${portfolio.name}`}>
-                <Trash2 className="h-4 w-4" />
-              </button>
+              <Button type="button" variant="ghost" size="icon" fullWidth={false} onClick={() => onDelete(portfolio)} className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive" aria-label={`Delete ${portfolio.name}`}>
+                <Trash2 className="h-4 w-4" aria-hidden="true" />
+              </Button>
             )}
           </div>
         )}
       </div>
-      <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
-        <div><p className="text-xs text-muted-foreground">Projects</p><p className="mt-1 font-medium">{portfolio.project_count}</p></div>
-        <div><p className="text-xs text-muted-foreground">Budget</p><p className="mt-1 truncate font-medium">{formatMoney(portfolio.budget, portfolio.currency)}</p></div>
-      </div>
+      <dl className="mt-6 grid grid-cols-2 gap-4">
+        <div><dt className="text-caption text-muted-foreground">Projects</dt><dd className="mt-1 text-body-sm font-medium tabular-nums">{portfolio.project_count}</dd></div>
+        <div className="min-w-0"><dt className="text-caption text-muted-foreground">Budget</dt><dd className="mt-1 truncate text-body-sm font-medium tabular-nums">{formatMoney(portfolio.budget, portfolio.currency)}</dd></div>
+      </dl>
       <div className="mt-4">
-        <div className="mb-1.5 flex justify-between text-xs"><span className="text-muted-foreground">Average progress</span><span>{Math.round(portfolio.progress_percent)}%</span></div>
-        <div className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary" style={{ width: `${Math.min(100, Math.max(0, portfolio.progress_percent))}%` }} /></div>
+        <div className="mb-2 flex justify-between text-caption"><span className="text-muted-foreground">Average progress</span><span className="font-medium tabular-nums">{Math.round(portfolio.progress_percent)}%</span></div>
+        <div className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary transition-[width] duration-500 ease-out-soft" style={{ width: `${progress}%` }} /></div>
       </div>
-      <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
-        <CalendarDays className="h-4 w-4" />
+      <div className="mt-4 flex items-center gap-2 text-caption text-muted-foreground">
+        <CalendarDays className="h-4 w-4" aria-hidden="true" />
         {formatDate(portfolio.start_date)} – {formatDate(portfolio.end_date)}
       </div>
-      <Link href={`/portfolios/${portfolio.id}`} className="mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-primary hover:underline">
-        View portfolio <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-      </Link>
-    </article>
+      {/* Gợi ý trực quan; điều hướng thực hiện qua liên kết tiêu đề (tránh hai điểm dừng Tab) */}
+      <span aria-hidden="true" className="mt-auto inline-flex items-center gap-2 pt-6 text-body-sm font-medium text-primary">
+        View portfolio <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+      </span>
+    </Card>
   )
 }

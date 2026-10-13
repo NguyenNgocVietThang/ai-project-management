@@ -5,7 +5,8 @@ import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
-import { FullPageSpinner } from '@/components/common/FullPageSpinner'
+import { LoadingState } from '@/components/common/PageState'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { AvatarSection } from '@/features/profile/components/AvatarSection'
 import { DangerZoneSection } from '@/features/profile/components/DangerZoneSection'
 import { LinkedAccountsSection } from '@/features/profile/components/LinkedAccountsSection'
@@ -83,7 +84,7 @@ function ProfilePageContent() {
     },
   })
 
-  if (!user) return <FullPageSpinner />
+  if (!user) return <LoadingState variant="page" label="Loading profile…" />
 
   const updateProfile = async (values: ProfileFormValues) => {
     await profileMutation.mutateAsync({
@@ -129,57 +130,71 @@ function ProfilePageContent() {
   const linkedSuccess = linkedProvider === 'google' ? 'Google account connected.' : null
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6 pb-10">
-      <div>
-        <Link href="/dashboard" className="mb-4 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-          Back to dashboard
-        </Link>
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">Profile settings</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Manage your personal details and sign-in options.</p>
-      </div>
+    <div className="mx-auto max-w-6xl space-y-8 pb-10">
+      <PageHeader
+        eyebrow="Account"
+        title="Profile settings"
+        description="Manage your personal details and sign-in options."
+        meta={
+          <Link
+            href="/dashboard"
+            className="inline-flex min-h-9 items-center gap-2 rounded-lg text-body-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            Back to dashboard
+          </Link>
+        }
+      />
 
-      <AvatarSection
-        user={user}
-        onUpload={(file) => avatarMutation.mutateAsync(file).then(() => undefined)}
-        isLoading={avatarMutation.isPending}
-        error={avatarMutation.error ? getApiErrorMessage(avatarMutation.error) : null}
-        success={avatarMutation.isSuccess}
-      />
-      <ProfileDetailsForm
-        user={user}
-        onSubmit={updateProfile}
-        isLoading={profileMutation.isPending}
-        error={profileMutation.error ? getApiErrorMessage(profileMutation.error) : null}
-        success={profileMutation.isSuccess}
-      />
-      <PasswordSection
-        hasPassword={user.has_password}
-        onSubmit={changePassword}
-        isLoading={passwordMutation.isPending}
-        error={passwordMutation.error ? getApiErrorMessage(passwordMutation.error) : null}
-      />
-      <LinkedAccountsSection
-        user={user}
-        onConnect={connect}
-        onDisconnect={disconnect}
-        pendingProvider={pendingProvider}
-        error={socialError ?? (disconnectMutation.error ? getApiErrorMessage(disconnectMutation.error) : null)}
-        successMessage={linkedSuccess}
-      />
-      <DangerZoneSection
-        username={user.username}
-        onDelete={deactivate}
-        isLoading={deleteMutation.isPending}
-        error={deleteMutation.error ? getApiErrorMessage(deleteMutation.error) : null}
-      />
+      {/* Hai cột trên desktop: biểu mẫu chính bên trái, ảnh đại diện + tài khoản liên kết bên phải.
+          Trên mobile cột phụ (ảnh đại diện) hiển thị trước. */}
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <aside className="space-y-6 lg:sticky lg:top-24 lg:order-last lg:self-start">
+          <AvatarSection
+            user={user}
+            onUpload={(file) => avatarMutation.mutateAsync(file).then(() => undefined)}
+            isLoading={avatarMutation.isPending}
+            error={avatarMutation.error ? getApiErrorMessage(avatarMutation.error) : null}
+            success={avatarMutation.isSuccess}
+          />
+          <LinkedAccountsSection
+            user={user}
+            onConnect={connect}
+            onDisconnect={disconnect}
+            pendingProvider={pendingProvider}
+            error={socialError ?? (disconnectMutation.error ? getApiErrorMessage(disconnectMutation.error) : null)}
+            successMessage={linkedSuccess}
+          />
+        </aside>
+        <div className="min-w-0 space-y-6">
+          <ProfileDetailsForm
+            user={user}
+            onSubmit={updateProfile}
+            isLoading={profileMutation.isPending}
+            error={profileMutation.error ? getApiErrorMessage(profileMutation.error) : null}
+            success={profileMutation.isSuccess}
+          />
+          <PasswordSection
+            hasPassword={user.has_password}
+            onSubmit={changePassword}
+            isLoading={passwordMutation.isPending}
+            error={passwordMutation.error ? getApiErrorMessage(passwordMutation.error) : null}
+          />
+          <DangerZoneSection
+            username={user.username}
+            onDelete={deactivate}
+            isLoading={deleteMutation.isPending}
+            error={deleteMutation.error ? getApiErrorMessage(deleteMutation.error) : null}
+          />
+        </div>
+      </div>
     </div>
   )
 }
 
 export default function ProfilePage() {
   return (
-    <Suspense fallback={<FullPageSpinner />}>
+    <Suspense fallback={<LoadingState variant="page" label="Loading profile…" />}>
       <ProfilePageContent />
     </Suspense>
   )

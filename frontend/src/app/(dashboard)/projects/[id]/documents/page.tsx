@@ -2,9 +2,14 @@
 
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
-import { Download, FileText } from 'lucide-react'
+import { AlertTriangle, Download, FileText, Sparkles } from 'lucide-react'
 import { Button } from '@/components/common/Button'
+import { Label } from '@/components/common/Label'
 import { EmptyState, ErrorState, LoadingState } from '@/components/common/PageState'
+import { Badge, type BadgeTone } from '@/components/ui/Badge'
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import { SectionHeader } from '@/components/ui/PageHeader'
+import { Select } from '@/components/ui/Select'
 import { AIGeneratorModal } from '@/features/ai/components/AIGeneratorModal'
 import { saveActiveBriefId } from '@/features/ai/hooks/useRequirementBrief'
 import { BRIEF_ITEM_KEYS, type BriefItemKey } from '@/features/ai/types/requirementBrief.types'
@@ -14,12 +19,13 @@ import { useNumericParam } from '@/hooks/useNumericParam'
 import { getApiErrorMessage } from '@/types/api.types'
 
 const KNOWN_ERRORS = ['document_generation_pending', 'ai_quota_exceeded', 'document_not_ready'] as const
-const STATUS_STYLE: Record<DocumentStatus, string> = {
-  queued: 'bg-muted text-muted-foreground',
-  generating: 'bg-primary/10 text-primary',
-  needs_clarification: 'bg-amber-500/10 text-amber-700 dark:text-amber-400',
-  ready: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400',
-  failed: 'bg-destructive/10 text-destructive',
+// Trạng thái tài liệu -> tông Badge theo token ngữ nghĩa.
+const STATUS_TONE: Record<DocumentStatus, BadgeTone> = {
+  queued: 'neutral',
+  generating: 'info',
+  needs_clarification: 'warning',
+  ready: 'success',
+  failed: 'danger',
 }
 
 function apiDetail(error: unknown): { status?: number; detail?: unknown } {
@@ -39,6 +45,7 @@ export default function DocumentsPage() {
   const projectId = useNumericParam()
   const t = useTranslations('documents')
   const tc = useTranslations('clarifier')
+  const tcommon = useTranslations('common')
   const documents = useProjectDocuments(projectId)
   const generate = useGenerateDocument(projectId)
   const download = useDownloadDocument(projectId)
@@ -63,111 +70,150 @@ export default function DocumentsPage() {
   }
 
   const requestDoc = (docType: DocumentType) => generate.mutate({ doc_type: docType, language })
+  // Loại tài liệu đang gửi yêu cầu (để chỉ nút tương ứng hiện spinner).
+  const pendingType = generate.isPending ? generate.variables?.doc_type : undefined
 
-  if (documents.isLoading) return <LoadingState label={t('loading')} />
-  if (documents.isError) return <ErrorState message={errorText(documents.error, t('loadError'))} />
+  const header = <SectionHeader title={t('title')} description={t('subtitle')} />
+
+  if (documents.isLoading) {
+    return (
+      <div className="space-y-6">
+        {header}
+        <LoadingState variant="cards" label={t('loading')} />
+      </div>
+    )
+  }
+  if (documents.isError) {
+    return (
+      <div className="space-y-6">
+        {header}
+        <ErrorState message={errorText(documents.error, t('loadError'))} onRetry={() => void documents.refetch()} retryLabel={tcommon('retry')} />
+      </div>
+    )
+  }
   const list = documents.data ?? []
 
   return (
     <div className="space-y-6">
-      <header>
-        <h2 className="text-2xl font-semibold">{t('title')}</h2>
-        <p className="text-sm text-muted-foreground">{t('subtitle')}</p>
-      </header>
+      {header}
 
-      <section className="space-y-3 rounded-xl border bg-card p-4" aria-labelledby="documents-generate">
-        <h3 id="documents-generate" className="text-base font-semibold">{t('generateTitle')}</h3>
+      {/* ===== Khối sinh tài liệu: SRS là CTA chính, BRD là nút phụ ===== */}
+      <Card as="section" aria-labelledby="documents-generate">
+        <CardHeader>
+          <div className="min-w-0">
+            <CardTitle as="h3" id="documents-generate">{t('generateTitle')}</CardTitle>
+            <CardDescription>{t('jobsHint')}</CardDescription>
+          </div>
+        </CardHeader>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-          <label className="flex flex-col gap-1 text-sm">
-            <span className="font-medium">{t('language')}</span>
-            <select
-              className="min-h-11 rounded-md border bg-background px-3"
-              value={language}
-              onChange={(event) => setLanguage(event.target.value as DocumentLanguage)}
-            >
+          <div className="sm:w-56">
+            <Label htmlFor="documents-language">{t('language')}</Label>
+            <Select id="documents-language" value={language} onChange={(event) => setLanguage(event.target.value as DocumentLanguage)}>
               <option value="vi">{t('languages.vi')}</option>
               <option value="en">{t('languages.en')}</option>
-            </select>
-          </label>
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <Button className="sm:w-auto" onClick={() => requestDoc('SRS')} isLoading={generate.isPending && generate.variables?.doc_type === 'SRS'} disabled={generate.isPending}>{t('generateSrs')}</Button>
-            <Button className="sm:w-auto" variant="outline" onClick={() => requestDoc('BRD')} isLoading={generate.isPending && generate.variables?.doc_type === 'BRD'} disabled={generate.isPending}>{t('generateBrd')}</Button>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Button fullWidth={false} className="w-full sm:w-auto" onClick={() => requestDoc('SRS')} isLoading={pendingType === 'SRS'} disabled={generate.isPending}>
+              {pendingType !== 'SRS' && <Sparkles className="h-4 w-4" aria-hidden="true" />}
+              {t('generateSrs')}
+            </Button>
+            <Button fullWidth={false} className="w-full sm:w-auto" variant="outline" onClick={() => requestDoc('BRD')} isLoading={pendingType === 'BRD'} disabled={generate.isPending}>
+              {pendingType !== 'BRD' && <Sparkles className="h-4 w-4" aria-hidden="true" />}
+              {t('generateBrd')}
+            </Button>
           </div>
         </div>
-        <p className="text-xs text-muted-foreground">{t('jobsHint')}</p>
-        {generate.isError && <p role="alert" className="text-sm text-destructive">{errorText(generate.error, t('generateError'))}</p>}
-        {generate.data?.job_id && <p role="status" className="text-sm text-muted-foreground">{t('queuedNotice', { id: generate.data.job_id })}</p>}
-      </section>
+        {generate.isError && <p role="alert" className="mt-4 text-body-sm text-destructive">{errorText(generate.error, t('generateError'))}</p>}
+        {generate.data?.job_id && <p role="status" className="mt-4 text-body-sm text-muted-foreground">{t('queuedNotice', { id: generate.data.job_id })}</p>}
+      </Card>
 
-      {download.isError && <p role="alert" className="text-sm text-destructive">{errorText(download.error, t('downloadError'))}</p>}
+      {download.isError && <p role="alert" className="text-body-sm text-destructive">{errorText(download.error, t('downloadError'))}</p>}
 
       {list.length === 0 ? (
-        <EmptyState title={t('emptyTitle')} description={t('emptyDescription')} />
+        <EmptyState icon={FileText} title={t('emptyTitle')} description={t('emptyDescription')} />
       ) : (
-        <ul className="space-y-3" aria-label={t('listTitle')}>
-          {list.map((doc) => (
-            <li key={doc.id} className="space-y-3 rounded-xl border bg-card p-4">
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <p className="flex flex-wrap items-center gap-2 font-medium">
-                    <FileText className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-                    {t('docTitle', { type: doc.doc_type, version: doc.version })}
-                    <span className="text-xs font-normal text-muted-foreground">{t(`languages.${doc.language}`)}</span>
-                  </p>
-                  <time className="text-xs text-muted-foreground" dateTime={doc.created_at}>{formatDateTime(doc.created_at)}</time>
-                </div>
-                <span className={`rounded-md px-2 py-1 text-xs font-medium ${STATUS_STYLE[doc.status] ?? 'bg-muted'}`}>{t(`status.${doc.status}`)}</span>
-              </div>
-
-              {doc.progress.total_groups > 0 && doc.status !== 'needs_clarification' && (
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">{t('progress', { done: doc.progress.completed_groups, total: doc.progress.total_groups })}</p>
-                  <div className="h-2 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuemin={0} aria-valuemax={doc.progress.total_groups} aria-valuenow={doc.progress.completed_groups} aria-label={t('progressLabel')}>
-                    <div className="h-full bg-primary" style={{ width: `${Math.round((doc.progress.completed_groups / doc.progress.total_groups) * 100)}%` }} />
+        <section className="space-y-4" aria-labelledby="documents-list">
+          <h3 id="documents-list" className="text-h4 text-foreground">{t('listTitle')}</h3>
+          <ul className="grid gap-4 md:grid-cols-2" aria-label={t('listTitle')}>
+            {list.map((doc) => {
+              const percent = doc.progress.total_groups > 0 ? Math.round((doc.progress.completed_groups / doc.progress.total_groups) * 100) : 0
+              const downloading = download.isPending && download.variables?.id === doc.id
+              return (
+                <li key={doc.id} className="flex min-w-0 flex-col gap-4 rounded-xl border border-border/80 bg-card p-4 shadow-soft sm:p-6">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex min-w-0 items-start gap-3">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent" aria-hidden="true">
+                        <FileText className="h-5 w-5 text-accent-foreground" />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="break-words text-body font-semibold text-foreground">{t('docTitle', { type: doc.doc_type, version: doc.version })}</p>
+                        <p className="text-caption text-muted-foreground">
+                          {t(`languages.${doc.language}`)} · <time dateTime={doc.created_at}>{formatDateTime(doc.created_at)}</time>
+                        </p>
+                      </div>
+                    </div>
+                    <Badge tone={STATUS_TONE[doc.status] ?? 'neutral'} dot>{t(`status.${doc.status}`)}</Badge>
                   </div>
-                </div>
-              )}
 
-              {doc.status === 'failed' && (
-                <p className="text-sm text-destructive">{doc.error_code ? t('failedWithCode', { code: doc.error_code }) : t('failed')}</p>
-              )}
-
-              {doc.status === 'needs_clarification' && (
-                <div className="space-y-2 rounded-md border border-amber-500/40 p-3 text-sm">
-                  {doc.missing_items.includes('no_brief') ? (
-                    <p>{t('noBrief')}</p>
-                  ) : (
-                    <>
-                      <p className="font-medium">{t('missingTitle')}</p>
-                      <ul className="list-inside list-disc">{doc.missing_items.map(key => <li key={key}>{itemLabel(key)}</li>)}</ul>
-                      <p className="text-xs text-muted-foreground">{t('clarifyHint')}</p>
-                      <Button className="sm:w-auto" variant="outline" onClick={() => openClarifier(doc)}>{t('openClarifier')}</Button>
-                    </>
+                  {doc.progress.total_groups > 0 && doc.status !== 'needs_clarification' && (
+                    <div className="space-y-2">
+                      <p className="text-caption text-muted-foreground">{t('progress', { done: doc.progress.completed_groups, total: doc.progress.total_groups })}</p>
+                      <div className="h-2 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuemin={0} aria-valuemax={doc.progress.total_groups} aria-valuenow={doc.progress.completed_groups} aria-label={t('progressLabel')}>
+                        <div className="h-full rounded-full bg-primary transition-[width] duration-300 ease-out-soft" style={{ width: `${percent}%` }} />
+                      </div>
+                    </div>
                   )}
-                </div>
-              )}
 
-              {doc.warnings.length > 0 && (
-                <details className="text-sm">
-                  <summary className="min-h-9 cursor-pointer text-amber-700 dark:text-amber-400">{t('warnings', { count: doc.warnings.length })}</summary>
-                  <ul className="mt-2 list-inside list-disc space-y-1 break-words text-xs text-muted-foreground">{doc.warnings.map((warning, index) => <li key={index}>{String(warning)}</li>)}</ul>
-                </details>
-              )}
+                  {doc.status === 'failed' && (
+                    <p className="text-body-sm text-destructive">{doc.error_code ? t('failedWithCode', { code: doc.error_code }) : t('failed')}</p>
+                  )}
 
-              {doc.status === 'ready' && (
-                <Button
-                  className="sm:w-auto"
-                  variant="outline"
-                  onClick={() => download.mutate(doc)}
-                  isLoading={download.isPending && download.variables?.id === doc.id}
-                  aria-label={t('downloadFor', { type: doc.doc_type, version: doc.version })}
-                >
-                  <Download className="h-4 w-4" aria-hidden="true" />{t('download')}
-                </Button>
-              )}
-            </li>
-          ))}
-        </ul>
+                  {doc.status === 'needs_clarification' && (
+                    <div className="space-y-2 rounded-lg border border-warning/25 bg-warning-soft p-3 text-body-sm text-foreground">
+                      {doc.missing_items.includes('no_brief') ? (
+                        <p>{t('noBrief')}</p>
+                      ) : (
+                        <>
+                          <p className="font-medium">{t('missingTitle')}</p>
+                          <ul className="list-inside list-disc">{doc.missing_items.map(key => <li key={key}>{itemLabel(key)}</li>)}</ul>
+                          <p className="text-caption text-muted-foreground">{t('clarifyHint')}</p>
+                          <Button variant="outline" fullWidth={false} className="w-full sm:w-auto" onClick={() => openClarifier(doc)}>{t('openClarifier')}</Button>
+                        </>
+                      )}
+                    </div>
+                  )}
+
+                  {doc.warnings.length > 0 && (
+                    <details className="text-body-sm">
+                      <summary className="flex min-h-9 cursor-pointer items-center gap-2 font-medium text-warning">
+                        <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden="true" />
+                        {t('warnings', { count: doc.warnings.length })}
+                      </summary>
+                      <ul className="mt-2 list-inside list-disc space-y-1 break-words text-caption text-muted-foreground">{doc.warnings.map((warning, index) => <li key={index}>{String(warning)}</li>)}</ul>
+                    </details>
+                  )}
+
+                  {doc.status === 'ready' && (
+                    <div className="mt-auto border-t pt-4">
+                      <Button
+                        variant="outline"
+                        fullWidth={false}
+                        className="w-full sm:w-auto"
+                        onClick={() => download.mutate(doc)}
+                        isLoading={downloading}
+                        aria-label={t('downloadFor', { type: doc.doc_type, version: doc.version })}
+                      >
+                        {!downloading && <Download className="h-4 w-4" aria-hidden="true" />}
+                        {t('download')}
+                      </Button>
+                    </div>
+                  )}
+                </li>
+              )
+            })}
+          </ul>
+        </section>
       )}
 
       <AIGeneratorModal open={clarifyOpen} onClose={() => { setClarifyOpen(false); void documents.refetch() }} />

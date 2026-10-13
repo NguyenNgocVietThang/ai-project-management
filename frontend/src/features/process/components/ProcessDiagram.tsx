@@ -3,6 +3,7 @@
 import { useId, useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { ZoomIn, ZoomOut } from 'lucide-react'
+import { Button } from '@/components/common/Button'
 import { LANE_HEADER_W, layoutSwimlanes, type LaidOutNode } from '@/features/process/lib/swimlaneLayout'
 import type { ProcessModelGraph, ProcessStep } from '@/features/process/types'
 
@@ -37,7 +38,7 @@ function NodeShape({ node, typeLabel }: { node: LaidOutNode; typeLabel: string }
         {title}
         <rect x={x - width / 2} y={y - height / 2} width={width} height={height} rx={10} className="fill-card stroke-primary" strokeWidth={1.5} />
         {lines.map((line, i) => (
-          <text key={i} x={x} y={y + (i - (lines.length - 1) / 2) * 14 + 4} textAnchor="middle" className="fill-foreground text-[11px]">{line}</text>
+          <text key={i} x={x} y={y + (i - (lines.length - 1) / 2) * 14 + 4} textAnchor="middle" fontSize={11} className="fill-foreground">{line}</text>
         ))}
       </g>
     )
@@ -48,26 +49,26 @@ function NodeShape({ node, typeLabel }: { node: LaidOutNode; typeLabel: string }
     return (
       <g data-node-id={node.id} data-node-type={node.type}>
         {title}
-        <polygon points={`${x},${y - h} ${x + h},${y} ${x},${y + h} ${x - h},${y}`} className="fill-card stroke-amber-600 dark:stroke-amber-400" strokeWidth={1.5} />
+        <polygon points={`${x},${y - h} ${x + h},${y} ${x},${y + h} ${x - h},${y}`} className="fill-card stroke-warning" strokeWidth={1.5} />
         {node.type === 'exclusive_gateway' ? (
           <path d={`M${x - s} ${y - s} L${x + s} ${y + s} M${x + s} ${y - s} L${x - s} ${y + s}`} className="stroke-foreground" strokeWidth={2.5} />
         ) : (
           <path d={`M${x - s - 2} ${y} L${x + s + 2} ${y} M${x} ${y - s - 2} L${x} ${y + s + 2}`} className="stroke-foreground" strokeWidth={2.5} />
         )}
-        {node.name && <text x={x} y={y - h - 6} textAnchor="middle" className="fill-muted-foreground text-[10px]">{clip(node.name, 24)}</text>}
+        {node.name && <text x={x} y={y - h - 6} textAnchor="middle" fontSize={10} className="fill-muted-foreground">{clip(node.name, 24)}</text>}
       </g>
     )
   }
   // Sự kiện: bắt đầu viền mảnh, kết thúc viền dày, trung gian viền đôi.
   const r = width / 2
   const strokeWidth = node.type === 'end_event' ? 4 : 1.5
-  const tone = node.type === 'end_event' ? 'stroke-destructive' : node.type === 'start_event' ? 'stroke-emerald-600 dark:stroke-emerald-400' : 'stroke-primary'
+  const tone = node.type === 'end_event' ? 'stroke-destructive' : node.type === 'start_event' ? 'stroke-success' : 'stroke-primary'
   return (
     <g data-node-id={node.id} data-node-type={node.type}>
       {title}
       <circle cx={x} cy={y} r={r} className={`fill-card ${tone}`} strokeWidth={strokeWidth} />
       {node.type === 'intermediate_event' && <circle cx={x} cy={y} r={r - 4} className={`fill-none ${tone}`} strokeWidth={1.5} />}
-      {node.name && <text x={x} y={y + r + 13} textAnchor="middle" className="fill-muted-foreground text-[10px]">{clip(node.name, 24)}</text>}
+      {node.name && <text x={x} y={y + r + 13} textAnchor="middle" fontSize={10} className="fill-muted-foreground">{clip(node.name, 24)}</text>}
     </g>
   )
 }
@@ -85,16 +86,19 @@ export function ProcessDiagram({ model, steps }: { model: ProcessModelGraph; ste
 
   return (
     <div className="space-y-4">
+      {/* Thanh công cụ thu phóng: nút chỉ có icon nên luôn kèm aria-label. */}
       <div className="flex items-center justify-end gap-2">
-        <span className="text-xs text-muted-foreground" aria-live="polite">{t('zoomLevel', { percent: Math.round(zoom * 100) })}</span>
-        <button type="button" className="inline-flex h-11 w-11 items-center justify-center rounded-md border disabled:opacity-50" onClick={() => setZoomIndex(i => i - 1)} disabled={zoomIndex === 0} aria-label={t('zoomOut')}>
-          <ZoomOut className="h-4 w-4" aria-hidden="true" />
-        </button>
-        <button type="button" className="inline-flex h-11 w-11 items-center justify-center rounded-md border disabled:opacity-50" onClick={() => setZoomIndex(i => i + 1)} disabled={zoomIndex === ZOOM_STEPS.length - 1} aria-label={t('zoomIn')}>
-          <ZoomIn className="h-4 w-4" aria-hidden="true" />
-        </button>
+        <span className="min-w-20 text-right text-caption tabular-nums text-muted-foreground" aria-live="polite">{t('zoomLevel', { percent: Math.round(zoom * 100) })}</span>
+        <div className="inline-flex gap-1 rounded-lg border bg-muted/60 p-1">
+          <Button type="button" variant="ghost" size="icon" fullWidth={false} onClick={() => setZoomIndex(i => i - 1)} disabled={zoomIndex === 0} aria-label={t('zoomOut')}>
+            <ZoomOut className="h-4 w-4" aria-hidden="true" />
+          </Button>
+          <Button type="button" variant="ghost" size="icon" fullWidth={false} onClick={() => setZoomIndex(i => i + 1)} disabled={zoomIndex === ZOOM_STEPS.length - 1} aria-label={t('zoomIn')}>
+            <ZoomIn className="h-4 w-4" aria-hidden="true" />
+          </Button>
+        </div>
       </div>
-      <div className="max-w-full overflow-x-auto rounded-xl border bg-background" tabIndex={0} aria-label={t('diagramScroll')}>
+      <div className="max-w-full overflow-x-auto rounded-xl border bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" tabIndex={0} aria-label={t('diagramScroll')}>
         <svg
           role="img"
           aria-label={t('diagramLabel', { name: model.name, lanes: layout.lanes.length, nodes: layout.nodes.length })}
@@ -112,7 +116,7 @@ export function ProcessDiagram({ model, steps }: { model: ProcessModelGraph; ste
             <g key={lane.id} data-lane-id={lane.id}>
               <rect x={0} y={lane.y} width={layout.width} height={lane.height} className={i % 2 ? 'fill-muted/40 stroke-border' : 'fill-background stroke-border'} />
               <rect x={0} y={lane.y} width={LANE_HEADER_W} height={lane.height} className="fill-muted stroke-border" />
-              <text x={10} y={lane.y + lane.height / 2 + 4} className="fill-foreground text-[12px] font-medium">
+              <text x={10} y={lane.y + lane.height / 2 + 4} fontSize={12} className="fill-foreground font-medium">
                 <title>{lane.name}</title>{clip(lane.name, 16)}
               </text>
             </g>
@@ -128,7 +132,7 @@ export function ProcessDiagram({ model, steps }: { model: ProcessModelGraph; ste
                 markerEnd={`url(#${markerId})`}
               />
               {edge.label && (
-                <text x={edge.labelPos.x} y={edge.labelPos.y - 4} textAnchor="middle" className="fill-foreground text-[10px]" paintOrder="stroke" stroke="hsl(var(--background))" strokeWidth={3}>
+                <text x={edge.labelPos.x} y={edge.labelPos.y - 4} textAnchor="middle" fontSize={10} className="fill-foreground" paintOrder="stroke" stroke="hsl(var(--background))" strokeWidth={3}>
                   {clip(edge.label, 22)}
                 </text>
               )}
@@ -138,19 +142,19 @@ export function ProcessDiagram({ model, steps }: { model: ProcessModelGraph; ste
         </svg>
       </div>
 
-      <section aria-labelledby="process-steps-title" className="space-y-2">
-        <h3 id="process-steps-title" className="text-base font-semibold">{t('stepsTitle')}</h3>
+      <section aria-labelledby="process-steps-title" className="space-y-3">
+        <h3 id="process-steps-title" className="text-h4 text-foreground">{t('stepsTitle')}</h3>
         {steps.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t('noSteps')}</p>
+          <p className="text-body-sm text-muted-foreground">{t('noSteps')}</p>
         ) : (
-          <ol className="space-y-2">
+          <ol className="grid gap-2 md:grid-cols-2">
             {steps.map(step => (
-              <li key={`${step.order}-${step.node_id}`} className="rounded-lg border bg-card p-3 text-sm">
-                <p className="font-medium break-words">{step.order}. {step.step}</p>
-                <p className="text-xs text-muted-foreground break-words">
+              <li key={`${step.order}-${step.node_id}`} className="rounded-lg border bg-card p-3 text-body-sm">
+                <p className="break-words font-medium text-foreground">{step.order}. {step.step}</p>
+                <p className="mt-1 break-words text-caption text-muted-foreground">
                   {t('stepMeta', { lane: step.lane, type: step.type_label || typeLabel(step.type) })}
                 </p>
-                {step.next && <p className="text-xs text-muted-foreground break-words">{t('stepNext', { next: step.next })}</p>}
+                {step.next && <p className="break-words text-caption text-muted-foreground">{t('stepNext', { next: step.next })}</p>}
               </li>
             ))}
           </ol>
