@@ -33,3 +33,4 @@ Nhánh: `feature/phase4-workflow-reporting` (tạo từ `main` ngày 2026-10-12)
 - 2026-10-13: D3 xong. Endpoint `/projects/{id}/documents` (sinh, danh sách, chi tiết, tải proxy), trang Tài liệu, tab, nhãn job trong JobsPanel, dẫn sang luồng hỏi làm rõ khi needs_clarification.
 - 2026-10-13: X2 xong. `services/reports/report_service.py`, handler `report.xlsx`, endpoint xuất/tải (mount bởi điều phối viên), xóa `workers/report_tasks.py`. EVA tính theo giờ công. Điều phối viên: lọc task lưu trữ trong `run_cpm`, thêm key i18n rollback của V3.
 - 2026-10-13: B2 xong. Bảng `process_models`, nhánh BPMN_GENERATE trong run_ai, endpoint `/projects/{id}/process-model` (mount bởi điều phối viên); cần stakeholders + (key_features hoặc in_scope).
+- 2026-10-13: X3 xong. Nút Xuất XLSX ở trang tổng quan, nhãn job `report.xlsx` trong JobsPanel, namespace `reports`.

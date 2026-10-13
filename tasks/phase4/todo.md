@@ -201,7 +201,7 @@ Bằng chứng V3: migration `20261013_task_archived_at` cycle đạt; test_vers
 
 - [x] X1: Renderer openpyxl thuần (sheet Task, Đường găng, CR + lịch sử duyệt, EVA/Burndown) với test đọc lại file. M (test_xlsx_renderer.py 14 passed; EVA chưa có nguồn số liệu, X2 xử lý)
 - [x] X2: Job `report.xlsx` + lưu bucket private + endpoint tải kiểm tra quyền; thay `workers/report_tasks.py` và `endpoints/reports.py` stub. M (test_xlsx_report_job.py 7 passed, đối chiếu số liệu với API CPM/dashboard; pytest 641/28)
-- [ ] X3: Nút xuất XLSX ở trang dự án, trạng thái qua JobsPanel. S
+- [x] X3: Nút xuất XLSX ở trang dự án, trạng thái qua JobsPanel. S (XlsxExportButton.test.tsx 4 passed; vitest 23 tệp / 116 test, type-check, lint, build đạt)
 - [ ] Checkpoint: XLSX đúng số liệu với API dashboard/CPM; người ngoài dự án bị từ chối.
 
 ## Lát 5: BPMN

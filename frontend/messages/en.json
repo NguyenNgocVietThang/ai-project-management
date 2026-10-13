@@ -31,7 +31,8 @@
     "schedule": "Schedule calculation",
     "email": "Email delivery",
     "background": "Background work",
-    "document": "SRS/BRD document"
+    "document": "SRS/BRD document",
+    "report": "XLSX report"
   },
   "common": {
     "appName": "AI Project Management",
@@ -497,6 +498,29 @@
       "ai_quota_exceeded": "The AI usage limit has been reached. Try again when your quota resets.",
       "document_not_ready": "The document is not ready yet.",
       "forbidden": "You do not have access to this action or document."
+    }
+  },
+  "reports": {
+    "title": "XLSX report",
+    "export": "Export XLSX",
+    "generating": "Generating...",
+    "download": "Download",
+    "language": "Report language",
+    "languages": {
+      "vi": "Vietnamese",
+      "en": "English"
+    },
+    "errors": {
+      "storage_error": "The report file could not be saved. Please try again.",
+      "project_unavailable": "The project is no longer available.",
+      "resource_limit_exceeded": "The project is too large to export.",
+      "invalid_payload": "The export request was invalid.",
+      "report_not_ready": "The report is not ready yet.",
+      "report_failed": "The report export failed. Please export again.",
+      "storage_unavailable": "File storage is temporarily unavailable.",
+      "forbidden": "You do not have access to export this project.",
+      "not_found": "The report was not found. Please export again.",
+      "unknown": "The export failed. Please try again."
     }
   }
 }

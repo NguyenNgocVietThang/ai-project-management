@@ -31,7 +31,8 @@
     "schedule": "Tính lại lịch trình",
     "email": "Gửi email",
     "background": "Xử lý nền",
-    "document": "Tài liệu SRS/BRD"
+    "document": "Tài liệu SRS/BRD",
+    "report": "Báo cáo XLSX"
   },
   "common": {
     "appName": "Quản lý dự án AI",
@@ -497,6 +498,29 @@
       "ai_quota_exceeded": "Đã hết hạn mức dùng AI. Thử lại khi hạn mức được làm mới.",
       "document_not_ready": "Tài liệu chưa sẵn sàng.",
       "forbidden": "Bạn không có quyền với thao tác hoặc tài liệu này."
+    }
+  },
+  "reports": {
+    "title": "Báo cáo XLSX",
+    "export": "Xuất XLSX",
+    "generating": "Đang tạo...",
+    "download": "Tải về",
+    "language": "Ngôn ngữ báo cáo",
+    "languages": {
+      "vi": "Tiếng Việt",
+      "en": "Tiếng Anh"
+    },
+    "errors": {
+      "storage_error": "Không lưu được tệp báo cáo. Vui lòng thử lại.",
+      "project_unavailable": "Dự án không còn khả dụng.",
+      "resource_limit_exceeded": "Dự án quá lớn để xuất.",
+      "invalid_payload": "Yêu cầu xuất không hợp lệ.",
+      "report_not_ready": "Báo cáo chưa sẵn sàng.",
+      "report_failed": "Xuất báo cáo thất bại. Vui lòng xuất lại.",
+      "storage_unavailable": "Kho lưu tệp tạm thời không khả dụng.",
+      "forbidden": "Bạn không có quyền xuất báo cáo dự án này.",
+      "not_found": "Không tìm thấy báo cáo. Vui lòng xuất lại.",
+      "unknown": "Xuất báo cáo thất bại. Vui lòng thử lại."
     }
   }
 }
