@@ -2,63 +2,89 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Token thiết kế. Giá trị là bộ ba HSL để Tailwind ghép được độ trong suốt
+   (bg-primary/10). Nền trung tính theo Slate, teal là màu nhấn duy nhất.
+   Mọi cặp chữ/nền dùng cho văn bản đã được kiểm tra đạt WCAG AA (>= 4.5:1). */
 @layer base {
   :root {
     color-scheme: light;
-    --background: 180 12% 96%;
-    --foreground: 190 25% 13%;
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
     --card: 0 0% 100%;
-    --card-foreground: 190 25% 13%;
+    --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 190 25% 13%;
-    --primary: 174 72% 27%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 175 77% 26%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 180 15% 93%;
-    --secondary-foreground: 190 25% 22%;
-    --muted: 180 12% 93%;
-    --muted-foreground: 190 10% 43%;
-    --accent: 173 28% 91%;
-    --accent-foreground: 174 72% 23%;
-    --destructive: 0 68% 46%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 18%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 19% 35%;
+    --accent: 166 76% 96%;
+    --accent-foreground: 175 69% 21%;
+    --destructive: 0 72% 45%;
     --destructive-foreground: 0 0% 100%;
-    --border: 185 13% 87%;
-    --input: 185 13% 81%;
-    --ring: 174 72% 32%;
+    --success: 163 94% 24%;
+    --success-foreground: 0 0% 100%;
+    --success-soft: 152 81% 95%;
+    --warning: 26 90% 37%;
+    --warning-foreground: 0 0% 100%;
+    --warning-soft: 48 100% 95%;
+    --info: 201 96% 32%;
+    --info-foreground: 0 0% 100%;
+    --info-soft: 204 100% 96%;
+    --border: 214 32% 91%;
+    --input: 213 27% 84%;
+    --ring: 175 77% 30%;
+    --shadow-color: 222 47% 11%;
     --radius: 0.75rem;
+    /* Ảnh nền theo chế độ sáng/tối: đặt file vào public/backgrounds/ rồi đổi none
+       thành url('/backgrounds/bg-light.webp'). Lớp phủ giữ độ tương phản AA. */
+    --app-bg-image: none;
+    --app-bg-overlay: 0.86;
   }
   :root.dark {
     color-scheme: dark;
-    --background: 192 23% 8%;
-    --foreground: 170 15% 93%;
-    --card: 192 20% 11%;
-    --card-foreground: 170 15% 93%;
-    --popover: 192 20% 13%;
-    --popover-foreground: 170 15% 93%;
-    --primary: 167 55% 62%;
-    --primary-foreground: 190 35% 10%;
-    --secondary: 190 16% 17%;
-    --secondary-foreground: 170 15% 90%;
-    --muted: 190 16% 16%;
-    --muted-foreground: 185 12% 64%;
-    --accent: 178 26% 19%;
-    --accent-foreground: 167 55% 72%;
-    --destructive: 0 68% 61%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 190 16% 22%;
-    --input: 190 15% 30%;
-    --ring: 167 55% 62%;
+    --background: 224 40% 6%;
+    --foreground: 210 40% 96%;
+    --card: 222 40% 9%;
+    --card-foreground: 210 40% 96%;
+    --popover: 222 37% 11%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 172 66% 50%;
+    --primary-foreground: 222 47% 8%;
+    --secondary: 217 33% 15%;
+    --secondary-foreground: 210 40% 92%;
+    --muted: 217 33% 15%;
+    --muted-foreground: 215 20% 68%;
+    --accent: 175 40% 14%;
+    --accent-foreground: 171 77% 70%;
+    --destructive: 0 91% 71%;
+    --destructive-foreground: 222 47% 8%;
+    --success: 158 64% 52%;
+    --success-foreground: 222 47% 8%;
+    --success-soft: 160 50% 12%;
+    --warning: 43 96% 56%;
+    --warning-foreground: 222 47% 8%;
+    --warning-soft: 35 60% 12%;
+    --info: 198 93% 60%;
+    --info-foreground: 222 47% 8%;
+    --info-soft: 200 60% 13%;
+    --border: 217 30% 18%;
+    --input: 215 25% 27%;
+    --ring: 172 66% 50%;
+    --shadow-color: 224 60% 2%;
+    --app-bg-image: none;
+    --app-bg-overlay: 0.82;
   }
   * { @apply border-border; }
   html { -webkit-text-size-adjust: 100%; }
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: 'Segoe UI Variable', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;
+    @apply bg-background font-sans text-body text-foreground antialiased;
     font-feature-settings: 'cv11', 'ss01';
-    font-size: 16px;
-    line-height: 1.5;
   }
   h1, h2, h3 { text-wrap: balance; }
-  h1 { letter-spacing: -0.035em; }
+  p { text-wrap: pretty; }
   button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
   :focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 3px; }
   ::selection { background: hsl(var(--primary) / 0.2); }
@@ -66,23 +92,31 @@
   th { font-weight: 600; letter-spacing: 0.035em; }
   td { font-variant-numeric: tabular-nums; }
 }
+
 @layer components {
-  .surface { @apply rounded-2xl border bg-card text-card-foreground; }
-  .eyebrow { @apply text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground; }
-  .page-enter { animation: page-enter 280ms ease-out both; }
+  .surface { @apply rounded-xl border border-border/80 bg-card text-card-foreground shadow-soft; }
+  .eyebrow { @apply text-overline uppercase text-muted-foreground; }
+  .page-enter { @apply animate-fade-up; }
   .skip-link { @apply fixed left-4 top-4 z-[60] -translate-y-24 rounded-lg bg-primary px-4 py-3 font-medium text-primary-foreground focus:translate-y-0; }
   .auth-grid {
-    background-image: linear-gradient(hsl(var(--primary) / 0.07) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary) / 0.07) 1px, transparent 1px);
+    background-image: linear-gradient(hsl(var(--primary) / 0.06) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary) / 0.06) 1px, transparent 1px);
     background-size: 48px 48px;
   }
+  /* Nền xương chờ tải: dải sáng chạy ngang trên màu muted. */
+  .skeleton-shimmer {
+    background-image: linear-gradient(90deg, hsl(var(--muted)) 0%, hsl(var(--muted-foreground) / 0.12) 50%, hsl(var(--muted)) 100%);
+    background-size: 200% 100%;
+  }
+  /* Mờ dần hai mép vùng cuộn ngang (thanh tab dự án) để báo còn nội dung. */
+  .scroll-fade-x {
+    mask-image: linear-gradient(90deg, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
+  }
 }
-@keyframes page-enter {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;

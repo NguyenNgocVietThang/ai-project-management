@@ -73,7 +73,10 @@
     "notifications": "Notifications",
     "openNavigation": "Open navigation",
     "closeNavigation": "Close navigation",
-    "mainNavigation": "Main navigation"
+    "mainNavigation": "Main navigation",
+    "groupWorkspace": "Workspace",
+    "groupPersonal": "Personal",
+    "groupAdmin": "Administration"
   },
   "theme": {
     "label": "Colour theme",
@@ -573,5 +576,11 @@
       "ai_quota_exceeded": "AI quota exceeded. Try again later.",
       "forbidden": "You do not have permission to generate the process."
     }
+  },
+  "breadcrumb": {
+    "label": "Breadcrumb",
+    "users": "Users",
+    "roles": "Roles",
+    "audit": "Audit log"
   }
 }

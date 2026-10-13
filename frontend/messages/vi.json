@@ -73,7 +73,10 @@
     "notifications": "Thông báo",
     "openNavigation": "Mở điều hướng",
     "closeNavigation": "Đóng điều hướng",
-    "mainNavigation": "Điều hướng chính"
+    "mainNavigation": "Điều hướng chính",
+    "groupWorkspace": "Không gian làm việc",
+    "groupPersonal": "Cá nhân",
+    "groupAdmin": "Quản trị"
   },
   "theme": {
     "label": "Giao diện màu",
@@ -573,5 +576,11 @@
       "ai_quota_exceeded": "Đã vượt hạn mức AI. Thử lại sau.",
       "forbidden": "Bạn không có quyền sinh quy trình."
     }
+  },
+  "breadcrumb": {
+    "label": "Đường dẫn trang",
+    "users": "Người dùng",
+    "roles": "Vai trò",
+    "audit": "Nhật ký kiểm toán"
   }
 }

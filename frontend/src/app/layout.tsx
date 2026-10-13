@@ -1,9 +1,18 @@
 import type { Metadata, Viewport } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale, getMessages } from 'next-intl/server'
+import { Inter } from 'next/font/google'
 import { Providers } from '@/app/providers'
 import { themeInitScript } from '@/components/theme/ThemeProvider'
 import './globals.css'
+
+// Inter tự host qua next/font: có bộ ký tự tiếng Việt, không chặn render và
+// không gây nhảy layout (next/font tự sinh font dự phòng có cùng số đo).
+const inter = Inter({
+  subsets: ['latin', 'latin-ext', 'vietnamese'],
+  display: 'swap',
+  variable: '--font-sans',
+})
 
 export const metadata: Metadata = {
   title: {
@@ -25,7 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const messages = await getMessages()
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale} className={inter.variable} suppressHydrationWarning>
       <head>
         {/* Chạy trước lần vẽ đầu tiên, nếu không người dùng ở chế độ tối sẽ thấy
             một cú chớp trắng ở mỗi lần tải trang. */}
