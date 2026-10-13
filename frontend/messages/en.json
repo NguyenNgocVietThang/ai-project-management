@@ -103,7 +103,8 @@
     "standalone": "Standalone project",
     "notFound": "Project not found or access denied.",
     "versions": "Versions",
-    "documents": "Documents"
+    "documents": "Documents",
+    "process": "Process"
   },
   "tasks": {
     "title": "Tasks",
@@ -521,6 +522,56 @@
       "forbidden": "You do not have access to export this project.",
       "not_found": "The report was not found. Please export again.",
       "unknown": "The export failed. Please try again."
+    }
+  },
+  "process": {
+    "title": "Process",
+    "subtitle": "Swimlane process model generated from the requirement brief.",
+    "loading": "Loading process…",
+    "loadError": "Could not load the process model.",
+    "generateTitle": "Generate process with AI",
+    "language": "Language",
+    "languages": {
+      "vi": "Vietnamese",
+      "en": "English"
+    },
+    "generate": "Generate process with AI",
+    "generateError": "Could not start process generation.",
+    "jobsHint": "Generation runs in the background. You can follow it in the jobs panel.",
+    "jobRunning": "Job #{id} is generating the process…",
+    "jobSucceeded": "Process generated. Showing the latest version.",
+    "jobFailed": "Process generation failed ({code}).",
+    "noBrief": "This project has no requirement brief yet. Create one with the AI assistant first.",
+    "missingTitle": "The requirement brief is missing:",
+    "briefReopened": "The brief was reopened for clarification.",
+    "clarifyHint": "Answer the clarifying questions, then generate again.",
+    "openClarifier": "Open clarifying questions",
+    "emptyTitle": "No process yet",
+    "emptyDescription": "Generate a process model from the requirement brief to see it here.",
+    "untitled": "Untitled process",
+    "meta": "Version {version} · {language} ·",
+    "warnings": "{count, plural, one {# warning} other {# warnings}}",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "zoomLevel": "Zoom {percent}%",
+    "diagramScroll": "Process diagram, scroll horizontally",
+    "diagramLabel": "Process diagram {name}: {lanes} lanes, {nodes} elements. The step list below describes it in text.",
+    "stepsTitle": "Process steps",
+    "noSteps": "No steps.",
+    "stepMeta": "Lane: {lane} · Type: {type}",
+    "stepNext": "Next: {next}",
+    "nodeTypes": {
+      "start_event": "Start event",
+      "end_event": "End event",
+      "task": "Task",
+      "exclusive_gateway": "Exclusive gateway (X)",
+      "parallel_gateway": "Parallel gateway (+)",
+      "intermediate_event": "Intermediate event"
+    },
+    "errors": {
+      "process_generation_pending": "A process is already being generated for this project.",
+      "ai_quota_exceeded": "AI quota exceeded. Try again later.",
+      "forbidden": "You do not have permission to generate the process."
     }
   }
 }

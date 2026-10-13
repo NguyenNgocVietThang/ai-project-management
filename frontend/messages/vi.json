@@ -103,7 +103,8 @@
     "standalone": "Dự án độc lập",
     "notFound": "Không tìm thấy dự án hoặc bạn không có quyền truy cập.",
     "versions": "Phiên bản",
-    "documents": "Tài liệu"
+    "documents": "Tài liệu",
+    "process": "Quy trình"
   },
   "tasks": {
     "title": "Công việc",
@@ -521,6 +522,56 @@
       "forbidden": "Bạn không có quyền xuất báo cáo dự án này.",
       "not_found": "Không tìm thấy báo cáo. Vui lòng xuất lại.",
       "unknown": "Xuất báo cáo thất bại. Vui lòng thử lại."
+    }
+  },
+  "process": {
+    "title": "Quy trình",
+    "subtitle": "Mô hình quy trình swimlane sinh từ hồ sơ yêu cầu.",
+    "loading": "Đang tải quy trình…",
+    "loadError": "Không tải được mô hình quy trình.",
+    "generateTitle": "Sinh quy trình bằng AI",
+    "language": "Ngôn ngữ",
+    "languages": {
+      "vi": "Tiếng Việt",
+      "en": "Tiếng Anh"
+    },
+    "generate": "Sinh quy trình bằng AI",
+    "generateError": "Không bắt đầu sinh quy trình được.",
+    "jobsHint": "Việc sinh chạy nền. Bạn có thể theo dõi trong bảng công việc.",
+    "jobRunning": "Job #{id} đang sinh quy trình…",
+    "jobSucceeded": "Đã sinh quy trình. Đang hiển thị phiên bản mới nhất.",
+    "jobFailed": "Sinh quy trình thất bại ({code}).",
+    "noBrief": "Dự án chưa có hồ sơ yêu cầu. Hãy tạo bằng trợ lý AI trước.",
+    "missingTitle": "Hồ sơ yêu cầu còn thiếu:",
+    "briefReopened": "Hồ sơ đã được mở lại để làm rõ.",
+    "clarifyHint": "Trả lời các câu hỏi làm rõ rồi sinh lại.",
+    "openClarifier": "Mở câu hỏi làm rõ",
+    "emptyTitle": "Chưa có quy trình",
+    "emptyDescription": "Sinh mô hình quy trình từ hồ sơ yêu cầu để xem tại đây.",
+    "untitled": "Quy trình chưa đặt tên",
+    "meta": "Phiên bản {version} · {language} ·",
+    "warnings": "{count, plural, other {# cảnh báo}}",
+    "zoomIn": "Phóng to",
+    "zoomOut": "Thu nhỏ",
+    "zoomLevel": "Thu phóng {percent}%",
+    "diagramScroll": "Sơ đồ quy trình, cuộn ngang",
+    "diagramLabel": "Sơ đồ quy trình {name}: {lanes} lane, {nodes} phần tử. Danh sách bước bên dưới mô tả bằng chữ.",
+    "stepsTitle": "Các bước quy trình",
+    "noSteps": "Không có bước nào.",
+    "stepMeta": "Lane: {lane} · Loại: {type}",
+    "stepNext": "Tiếp theo: {next}",
+    "nodeTypes": {
+      "start_event": "Sự kiện bắt đầu",
+      "end_event": "Sự kiện kết thúc",
+      "task": "Công việc",
+      "exclusive_gateway": "Cổng rẽ nhánh loại trừ (X)",
+      "parallel_gateway": "Cổng song song (+)",
+      "intermediate_event": "Sự kiện trung gian"
+    },
+    "errors": {
+      "process_generation_pending": "Dự án đang có quy trình được sinh.",
+      "ai_quota_exceeded": "Đã vượt hạn mức AI. Thử lại sau.",
+      "forbidden": "Bạn không có quyền sinh quy trình."
     }
   }
 }

@@ -35,3 +35,4 @@ Nhánh: `feature/phase4-workflow-reporting` (tạo từ `main` ngày 2026-10-12)
 - 2026-10-13: B2 xong. Bảng `process_models`, nhánh BPMN_GENERATE trong run_ai, endpoint `/projects/{id}/process-model` (mount bởi điều phối viên); cần stakeholders + (key_features hoặc in_scope).
 - 2026-10-13: X3 xong. Nút Xuất XLSX ở trang tổng quan, nhãn job `report.xlsx` trong JobsPanel, namespace `reports`.
 - 2026-10-13: B4 xong. `services/documents/process_png.py` (Pillow, swimlane), chèn PNG vào SRS/BRD, lỗi vẽ dùng bảng bước + cảnh báo `process_render_failed`. Rủi ro: Render runtime python có thể thiếu font TTF tiếng Việt, khi đó chữ trong PNG bị bỏ dấu.
+- 2026-10-13: B3 xong. `features/process` (bố cục swimlane thuần, ProcessDiagram SVG, trang và tab Quy trình). Điều phối viên thêm key i18n `process`.
