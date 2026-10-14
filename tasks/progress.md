@@ -55,3 +55,9 @@
   - Ảnh PNG thử 600x600 (14 KB) upload qua UI: `POST /api/v1/users/me/avatar` 200. Ảnh trả về là WebP 512x512, `Cache-Control: private, no-store`.
   - Không có phiên đăng nhập: `GET /api/v1/users/1/avatar` trả 401 qua cả proxy frontend lẫn backend trực tiếp.
   - Còn lại: tải lại avatar sau khi backend ngủ/khởi động lại, và người dùng xác nhận object nằm trong bucket private `ai-project-files`.
+
+## Cập nhật 2026-10-14
+
+- Tất cả các file `.md` đầu được rà soát và cập nhật ngày + trạng thái: README.md (2026-10-14), PHASE_4 (v2.1), PHASE_5 (v1.5), tasks/todo.md, tasks/progress.md.
+- Trạng thái tổng hợp: Phase 1–4 hoàn thành phần mã nguồn, Phase 4 chờ nghiệm thu cloud (Render + AI thật), Phase 5 ~50% (Document AI Parser + Investor Dashboard chưa bắt đầu).
+- Các mục còn mở (todo.md): Bước 10a (Supabase project thật chưa có), 12b (nghiệm thu cloud đầy đủ còn đợi account + sender).

@@ -1,7 +1,7 @@
 # Lộ trình: Mô-đun AI tài liệu và hoàn thiện (Phase 5)
 
-> **Phiên bản:** 1.4 | **Cập nhật:** 2026-10-13  
-> **Trạng thái:** ~50% — Real-time Notification Push (`/ws/notifications` qua vé dùng một lần), quét nhắc việc hằng ngày (cron + durable jobs, thay Celery Beat), Profile/Avatar (MinIO cục bộ hoặc Supabase Storage), và Mobile Responsive menu/theme polish đã chạy thật. Document AI Parser (upload/parse tài liệu gốc) và Investor Dashboard: CHƯA làm. Lưu ý: `/projects/{id}/documents` hiện có là tài liệu SRS/BRD do hệ thống sinh (Phase 4), không phải upload/parser. 
+> **Phiên bản:** 1.5 | **Cập nhật:** 2026-10-14  
+> **Trạng thái:** ~50% — Real-time Notification Push (`/ws/notifications` qua vé dùng một lần), quét nhắc việc hằng ngày (cron + durable jobs, thay Celery Beat), Profile/Avatar (MinIO cục bộ hoặc Supabase Storage), và Mobile Responsive menu/theme polish đã chạy thật. Document AI Parser (upload/parse tài liệu gốc) và Investor Dashboard: CHƯA làm. Storage thay thế MinIO bằng Supabase bucket riêng tư đã kiểm thử và xác minh trên cloud (2026-10-12). Lưu ý: `/projects/{id}/documents` hiện có là tài liệu SRS/BRD do hệ thống sinh (Phase 4), không phải upload/parser. 
 > **Mức độ ưu tiên:** High – Tự động hóa tài liệu, Cổng nhà đầu tư, Thông báo WebSocket & Tối ưu hóa hiệu năng  
 > **Điều kiện tiên quyết:** [x] Phase 1 (Auth & RBAC), Phase 2 (Project Core, CPM & Real-time Chat) đã hoàn thành
 
@@ -75,4 +75,4 @@ Module **Document AI & Polish (Phase 5)** hoàn thiện hệ sinh thái quản l
 
 ---
 
-*Cập nhật lần cuối: 2026-10-13 — Phase 5 (Document AI & Polish) — đối soát với mã nguồn.*
+*Cập nhật lần cuối: 2026-10-14 — Phase 5 (Document AI & Polish) — đối soát với mã nguồn. Storage Supabase bucket riêng tư đã xác minh cloud (2026-10-12); Document AI Parser và Investor Dashboard vẫn chưa bắt đầu.*

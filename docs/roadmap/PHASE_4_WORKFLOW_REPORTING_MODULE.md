@@ -1,7 +1,7 @@
 # Lộ trình: Mô-đun quy trình và báo cáo (Phase 4)
 
-> **Phiên bản:** 2.0 | **Cập nhật:** 2026-10-13  
-> **Trạng thái:** Hoàn thành phần mã nguồn trên nhánh `feature/phase4-workflow-reporting` (đã gộp vào `main` cục bộ). Còn chờ người dùng: duyệt quy tắc rollback V0 và các checkpoint, chạy thử provider AI thật, kịch bản demo trên Render sau cold start.  
+> **Phiên bản:** 2.1 | **Cập nhật:** 2026-10-14  
+> **Trạng thái:** Hoàn thành phần mã nguồn trên nhánh `feature/phase4-workflow-reporting` (đã gộp vào `main` cục bộ). Còn chờ người dùng: duyệt quy tắc rollback V0 và các checkpoint, chạy thử provider AI thật, kịch bản demo trên Render sau cold start. Ngày cập nhật: 2026-10-14.  
 > **Mức độ ưu tiên:** Critical – kiểm soát thay đổi, truy vết phiên bản, báo cáo cho hội đồng chấm  
 > **Điều kiện tiên quyết:** Phase 1 (Auth và RBAC), Phase 2 (Project Core, CPM, chat) đã hoàn thành  
 > **Kế hoạch chi tiết:** `tasks/phase4/plan.md` (ý định, kiến trúc, V0), `tasks/phase4/todo.md` (task và bằng chứng), `tasks/phase4/progress.md` (nhật ký)
@@ -50,4 +50,4 @@ Phase 4 bổ sung kịch bản demo trọn vẹn: nhập ý tưởng, AI hỏi l
 
 ---
 
-*Cập nhật lần cuối: 2026-10-13 — Phase 4 — đối soát với mã nguồn sau khi hoàn tất `tasks/phase4/todo.md`.*
+*Cập nhật lần cuối: 2026-10-14 — Phase 4 — đối soát với mã nguồn sau khi hoàn tất `tasks/phase4/todo.md`. Tất cả lát (1–5) đã hoàn thành phần mã nguồn; nghiệm thu cloud và chạy thử provider AI thật vẫn chờ người dùng.*

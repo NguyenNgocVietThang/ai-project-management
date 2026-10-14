@@ -54,7 +54,7 @@ Xây dựng một **web application quản lý dự án và danh mục đầu t�
 - **Phân tích tác động thay đổi (Phân tích tác động bằng AI)** và tối ưu lịch (Schedule Optimization) khi phát sinh Change Request.
 - **Dashboard & Báo cáo đa chiều**: Gantt Chart tương tác, Burndown, Burnup, Velocity, Earned Value Analysis (EVA, CPI, SPI), xuất file DOCX/XLSX.
 
-### Trạng thái triển khai thực tế (cập nhật 2026-10-13)
+### Trạng thái triển khai thực tế (cập nhật 2026-10-14)
 
 | Nhóm chức năng | Trạng thái | Ghi chú |
 |---|---|---|
@@ -814,4 +814,4 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
 - **Giấy phép:** [MIT License](./LICENSE)
 
 ---
-*Cập nhật toàn diện hệ thống: 2026-10-13 (đối soát README với mã nguồn thực tế: 32 REST router đang mount + 2 WebSocket router; Phase 1–3 hoàn thành, Phase 4 hoàn thành phần mã nguồn và chờ nghiệm thu, Phase 5 đang phát triển).*
+*Cập nhật toàn diện hệ thống: 2026-10-14 (đối soát README với mã nguồn thực tế: 32 REST router đang mount + 2 WebSocket router; Phase 1–4 hoàn thành phần mã nguồn, Phase 4 chờ nghiệm thu cloud, Phase 5 đang phát triển — Document AI Parser và Investor Dashboard chưa bắt đầu).*
