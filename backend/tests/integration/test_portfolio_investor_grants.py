@@ -22,6 +22,7 @@ async def grant_setup(session, make_user, seed_roles):
     admin = await make_user(roles=[seed_roles["Admin"]])
     investor = await make_user(email="inv@example.com", roles=[investor_role])
     member = await make_user(email="member@example.com", roles=[seed_roles["Member"]])
+    await make_user(email="gone@example.com", roles=[investor_role], active=False)
     portfolio = Portfolio(name="Growth", owner_id=owner.id, currency="VND")
     session.add(portfolio)
     await session.flush()
@@ -45,6 +46,7 @@ async def test_chu_portfolio_cap_quyen_thanh_cong_va_co_audit(as_user, session, 
     assert body["granted_by_id"] == grant_setup["owner"].id
     audit = await session.scalar(select(AuditLog).where(AuditLog.action == "GRANT_INVESTOR"))
     assert audit is not None and audit.entity_id == grant_setup["portfolio"].id
+    assert audit.description == "Grant investor on portfolio Growth"
 
 
 @pytest.mark.asyncio
@@ -70,6 +72,14 @@ async def test_email_khong_ton_tai_tra_404(as_user, grant_setup):
     async with as_user(grant_setup["owner"]) as client:
         response = await client.post(url(grant_setup), json={"email": "nobody@example.com"})
     assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_user_bi_khoa_xu_ly_nhu_email_khong_ton_tai(as_user, session, grant_setup):
+    async with as_user(grant_setup["owner"]) as client:
+        response = await client.post(url(grant_setup), json={"email": "gone@example.com"})
+    assert response.status_code == 404
+    assert (await session.scalars(select(PortfolioInvestor))).all() == []
 
 
 @pytest.mark.asyncio

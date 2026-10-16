@@ -36,6 +36,8 @@ async def investor_setup(session, make_user, seed_roles):
     granted = await make_user(roles=[investor_role])
     other_investor = await make_user(roles=[investor_role])
     no_permission = await make_user(roles=[plain_member])
+    # Có dòng cấp quyền và portfolio:read qua role khác nhưng không còn role Investor.
+    stale_grant = await make_user(roles=[pm_reader])
 
     portfolio = Portfolio(name="Growth", owner_id=owner.id, currency="VND")
     session.add(portfolio)
@@ -65,11 +67,12 @@ async def investor_setup(session, make_user, seed_roles):
         RiskReport(project_id=alpha.id, risk_score=8.0, risk_level=RiskLevel.HIGH, summary="Late vendor"),
         Task(project_id=alpha.id, name="Overdue", due_date=today - timedelta(days=2)),
         PortfolioInvestor(portfolio_id=portfolio.id, user_id=granted.id, granted_by_id=owner.id),
+        PortfolioInvestor(portfolio_id=portfolio.id, user_id=stale_grant.id, granted_by_id=owner.id),
     ])
     await session.flush()
     return {
         "owner": owner, "admin": admin, "granted": granted, "other_investor": other_investor,
-        "no_permission": no_permission, "portfolio": portfolio, "alpha": alpha, "usd": usd,
+        "no_permission": no_permission, "stale_grant": stale_grant, "portfolio": portfolio, "alpha": alpha, "usd": usd,
         "unbudgeted": unbudgeted, "standalone": standalone,
     }
 
@@ -81,7 +84,10 @@ def overview_url(setup):
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     ("who", "expected"),
-    [("granted", 200), ("owner", 200), ("admin", 200), ("other_investor", 403), ("no_permission", 403)],
+    [
+        ("granted", 200), ("owner", 200), ("admin", 200), ("other_investor", 403),
+        ("no_permission", 403), ("stale_grant", 403),
+    ],
 )
 async def test_ma_tran_quyen_overview(as_user, investor_setup, who, expected):
     async with as_user(investor_setup[who]) as client:
@@ -103,6 +109,14 @@ async def test_danh_sach_chi_gom_portfolio_duoc_cap(as_user, investor_setup):
     assert items[0]["granted_at"] is not None
     assert items[0]["project_count"] == 3
     assert other.json()["items"] == []
+
+
+@pytest.mark.asyncio
+async def test_dong_cap_quyen_khong_con_role_investor_khong_hien_trong_danh_sach(as_user, investor_setup):
+    async with as_user(investor_setup["stale_grant"]) as client:
+        response = await client.get("/api/v1/investor/portfolios")
+    assert response.status_code == 200
+    assert response.json()["items"] == []
 
 
 @pytest.mark.asyncio
@@ -149,6 +163,7 @@ async def test_du_an_ngoai_portfolio_tra_404(as_user, investor_setup):
 
 @pytest.mark.asyncio
 async def test_thu_hoi_co_hieu_luc_ngay(as_user, investor_setup):
+    project_url = f"/api/v1/investor/projects/{investor_setup['alpha'].id}"
     async with as_user(investor_setup["granted"]) as client:
         before = await client.get(overview_url(investor_setup))
     async with as_user(investor_setup["owner"]) as client:
@@ -157,7 +172,12 @@ async def test_thu_hoi_co_hieu_luc_ngay(as_user, investor_setup):
         )
     async with as_user(investor_setup["granted"]) as client:
         after = await client.get(overview_url(investor_setup))
+        project = await client.get(project_url)
+        listing = await client.get("/api/v1/investor/portfolios")
     assert (before.status_code, revoke.status_code, after.status_code) == (200, 204, 403)
+    assert project.status_code == 403
+    assert listing.status_code == 200
+    assert listing.json()["items"] == []
 
 
 @pytest.mark.asyncio
@@ -201,3 +221,32 @@ async def test_so_cau_sql_khong_doi_theo_so_du_an(as_user, session, engine, inve
     large = await measure()
     assert small <= 6
     assert large == small
+
+
+@pytest.mark.asyncio
+async def test_du_an_huy_qua_han_khong_tinh_la_tre_han(as_user, session, investor_setup):
+    today = date.today()
+    session.add(Project(
+        name="Dropped", pm_id=investor_setup["owner"].id, portfolio_id=investor_setup["portfolio"].id,
+        currency="VND", status=ProjectStatus.CANCELLED,
+        start_date=today - timedelta(days=30), end_date=today - timedelta(days=5),
+    ))
+    await session.flush()
+    async with as_user(investor_setup["granted"]) as client:
+        body = (await client.get(overview_url(investor_setup))).json()
+    # Vẫn chỉ Seed (chưa COMPLETED/CANCELLED) được tính là trễ hạn.
+    assert body["overdue_projects"] == 1
+
+
+@pytest.mark.asyncio
+async def test_so_sanh_tien_te_khong_phan_biet_hoa_thuong(as_user, session, investor_setup):
+    session.add(Project(
+        name="Lowercase", pm_id=investor_setup["owner"].id, portfolio_id=investor_setup["portfolio"].id,
+        currency="vnd", budget=200.0, actual_cost=50.0, progress=10.0,
+    ))
+    await session.flush()
+    async with as_user(investor_setup["granted"]) as client:
+        body = (await client.get(overview_url(investor_setup))).json()
+    rows = {row["name"]: row for row in body["projects"]}
+    assert rows["Lowercase"]["excluded_from_totals"] is False
+    assert body["totals"]["bac"] == 1200.0

@@ -35,12 +35,19 @@ from app.services.phase2_common import is_admin
 
 INVESTOR_ROLE = "Investor"
 
+
+def _has_investor_role(user: User) -> bool:
+    return any(role.name == INVESTOR_ROLE for role in user.roles)
+
 # Chỉ lấy cột cần cho số liệu, không nạp cả đối tượng Project.
 _PROJECT_COLUMNS = (
     Project.id, Project.portfolio_id, Project.name, Project.status, Project.start_date,
     Project.end_date, Project.progress, Project.currency, Project.budget,
     Project.actual_cost, Project.expected_benefit,
 )
+
+# Dự án đã hoàn thành hoặc đã hủy thì không tính là trễ hạn.
+_CLOSED_STATUSES = {ProjectStatus.COMPLETED.value, ProjectStatus.CANCELLED.value}
 
 
 class InvestorService:
@@ -67,6 +74,9 @@ class InvestorService:
         portfolio = await self._active_portfolio(portfolio_id)
         if is_admin(user) or portfolio.owner_id == user.id:
             return portfolio
+        # Quyền xem theo dòng cấp quyền chỉ còn hiệu lực khi user vẫn giữ role Investor.
+        if not _has_investor_role(user):
+            raise ForbiddenException("You do not have access to this portfolio")
         granted = await self.db.scalar(
             select(
                 exists().where(
@@ -99,7 +109,7 @@ class InvestorService:
                 entity_type="Portfolio",
                 entity_id=portfolio.id,
                 new_values={"investor_id": investor_id},
-                description=f"{action.title()} on portfolio {portfolio.name}",
+                description=f"{action.replace('_', ' ').capitalize()} on portfolio {portfolio.name}",
             )
         )
 
@@ -118,11 +128,13 @@ class InvestorService:
     ) -> tuple[InvestorGrantResponse, bool]:
         portfolio = await self._managed_portfolio(portfolio_id, actor)
         target = await self.db.scalar(
-            select(User).where(func.lower(User.email) == email.strip().lower())
+            select(User).where(
+                func.lower(User.email) == email.strip().lower(), User.is_active.is_(True)
+            )
         )
         if target is None:
             raise NotFoundException("User not found")
-        if not any(role.name == INVESTOR_ROLE for role in target.roles):
+        if not _has_investor_role(target):
             raise BadRequestException("User does not have the Investor role")
 
         existing = await self.db.scalar(
@@ -204,7 +216,7 @@ class InvestorService:
 
     @staticmethod
     def _exclusion(project, metrics: Metrics, currency: str) -> str | None:
-        if project.currency != currency:
+        if (project.currency or "").upper() != (currency or "").upper():
             return "currency_mismatch"
         if metrics.bac is None:
             return "no_budget"
@@ -254,7 +266,7 @@ class InvestorService:
             risk_counts[row.risk_level or "none"] += 1
         overdue = sum(
             1 for row in rows
-            if row.end_date and row.end_date < today and row.status != ProjectStatus.COMPLETED.value
+            if row.end_date and row.end_date < today and row.status not in _CLOSED_STATUSES
         )
         return InvestorPortfolioOverview(
             portfolio=PortfolioBrief(
@@ -284,7 +296,11 @@ class InvestorService:
         )
         conditions = [Portfolio.deleted_at.is_(None)]
         if not admin:
-            conditions.append(or_(Portfolio.owner_id == user.id, PortfolioInvestor.id.is_not(None)))
+            # Dòng cấp quyền chỉ tính khi user hiện vẫn có role Investor.
+            visible = [Portfolio.owner_id == user.id]
+            if _has_investor_role(user):
+                visible.append(PortfolioInvestor.id.is_not(None))
+            conditions.append(or_(*visible))
 
         total = await self.db.scalar(
             select(func.count(Portfolio.id))
