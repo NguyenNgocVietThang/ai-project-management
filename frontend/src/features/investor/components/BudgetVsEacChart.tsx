@@ -34,10 +34,13 @@ export function BudgetVsEacChart({ projects, currency }: { projects: InvestorPro
           <Bar dataKey="eac" name={t('kpi.eac')} fill={chartColors.warning} radius={[0, 4, 4, 0]} {...animationProps(reducedMotion)} />
         </BarChart>
       </ResponsiveContainer>
-      <table className="sr-only">
-        <caption>{t('budgetChart')}</caption>
-        <tbody>{data.map((row) => <tr key={row.name}><th scope="row">{row.name}</th><td>{money(row.bac)}</td><td>{row.eac === null ? t('notEnoughData') : money(row.eac)}</td></tr>)}</tbody>
-      </table>
+      {/* sr-only đặt trên div bọc: lớp này không thu nhỏ được phần tử table nên bảng làm tràn ngang trang. */}
+      <div className="sr-only">
+        <table>
+          <caption>{t('budgetChart')}</caption>
+          <tbody>{data.map((row) => <tr key={row.name}><th scope="row">{row.name}</th><td>{money(row.bac)}</td><td>{row.eac === null ? t('notEnoughData') : money(row.eac)}</td></tr>)}</tbody>
+        </table>
+      </div>
     </>
   )
 }

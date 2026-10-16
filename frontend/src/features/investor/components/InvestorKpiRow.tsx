@@ -20,7 +20,7 @@ export function InvestorKpiRow({ totals, currency }: { totals: Metrics; currency
     { key: 'roi', value: totals.roi === null ? missing : formatPercent(totals.roi, locale), hint: totals.roi_basis ? t(`roiBasis.${totals.roi_basis}`) : null },
   ] as const
   return (
-    <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-6">
+    <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 2xl:grid-cols-6">
       {items.map((item) => (
         <Card key={item.key} className="p-4">
           <p className="text-caption font-medium uppercase tracking-wide text-muted-foreground">{t(`kpi.${item.key}`)}</p>
