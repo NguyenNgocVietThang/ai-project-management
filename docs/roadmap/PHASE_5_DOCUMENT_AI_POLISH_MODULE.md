@@ -1,7 +1,7 @@
 # Lộ trình: Mô-đun AI tài liệu và hoàn thiện (Phase 5)
 
 > **Phiên bản:** 1.5 | **Cập nhật:** 2026-10-14  
-> **Trạng thái:** ~50% — Real-time Notification Push (`/ws/notifications` qua vé dùng một lần), quét nhắc việc hằng ngày (cron + durable jobs, thay Celery Beat), Profile/Avatar (MinIO cục bộ hoặc Supabase Storage), và Mobile Responsive menu/theme polish đã chạy thật. Document AI Parser (upload/parse tài liệu gốc) và Investor Dashboard: CHƯA làm. Storage thay thế MinIO bằng Supabase bucket riêng tư đã kiểm thử và xác minh trên cloud (2026-10-12). Lưu ý: `/projects/{id}/documents` hiện có là tài liệu SRS/BRD do hệ thống sinh (Phase 4), không phải upload/parser. 
+> **Trạng thái:** ~65% — Investor Dashboard (giai đoạn 5.3) hoàn thành 2026-10-16: backend `InvestorService` + `/api/v1/investor/*`, frontend `/investor`. Real-time Notification Push (`/ws/notifications` qua vé dùng một lần), quét nhắc việc hằng ngày (cron + durable jobs, thay Celery Beat), Profile/Avatar (MinIO cục bộ hoặc Supabase Storage), và Mobile Responsive menu/theme polish đã chạy thật. Document AI Parser (upload/parse tài liệu gốc): CHƯA làm. Storage thay thế MinIO bằng Supabase bucket riêng tư đã kiểm thử và xác minh trên cloud (2026-10-12). Lưu ý: `/projects/{id}/documents` hiện có là tài liệu SRS/BRD do hệ thống sinh (Phase 4), không phải upload/parser. 
 > **Mức độ ưu tiên:** High – Tự động hóa tài liệu, Cổng nhà đầu tư, Thông báo WebSocket & Tối ưu hóa hiệu năng  
 > **Điều kiện tiên quyết:** [x] Phase 1 (Auth & RBAC), Phase 2 (Project Core, CPM & Real-time Chat) đã hoàn thành
 
@@ -30,7 +30,7 @@ Module **Document AI & Polish (Phase 5)** hoàn thiện hệ sinh thái quản l
 | Database Models: `documents`, `notifications`, `email_logs`, `users` | Đã migrate | Sẵn sàng lưu trữ dữ liệu |
 | FastAPI-Mail & SMTP Configuration | Đã cấu hình | `backend/app/utils/email.py` & templates |
 | Durable jobs (bảng `jobs` PostgreSQL) | Đã có sẵn (thay Celery) | Chạy tác vụ nền (AI, `document.generate`, `report.xlsx`, `email.*`); Document AI Parser khi làm sẽ dùng cơ chế này |
-| RBAC Role `Investor` | Đã cấu hình | Hỗ trợ RBAC Guard cho chế độ Read-Only |
+| RBAC Role `Investor` | Đã cấu hình | Dùng cho `/investor`; quyền xem theo từng portfolio qua `portfolio_investors` |
 
 ---
 
@@ -41,7 +41,7 @@ Module **Document AI & Polish (Phase 5)** hoàn thiện hệ sinh thái quản l
 | Real-time Notification Push | SOP-NOTI-001 | Critical | Hoàn thành | `NotificationService.push` + WS | `NotificationBell`, `useNotificationSocket` |
 | Daily Task Sweeps | SOP-NOTI-001 | High | Hoàn thành | job `cron.reminders` (thay `notification_tasks.py` của Celery Beat) | — (Chạy ngầm tự động) |
 | BRD/SRS Document AI Parser | SOP-DOC-001 | Critical | Chưa bắt đầu | Chưa có endpoint upload/parse; `/projects/{id}/documents` hiện là tài liệu SRS/BRD do hệ thống sinh (Phase 4), không nhận tệp tải lên | Chưa có |
-| Investor Dashboard (Read-Only) | Portal | High | Chưa bắt đầu | Không có `InvestorService` | Chưa có |
+| Investor Dashboard (Read-Only) | Portal | High | Hoàn thành | `InvestorService` + router `/investor` (`/investor/portfolios`, `/investor/portfolios/{id}`, `/investor/projects/{id}`); bảng `portfolio_investors`, cột `projects.expected_benefit` | Trang `/investor` và `/investor/portfolios/[id]` (KPI, biểu đồ, bảng dự án); thẻ "Nhà đầu tư" ở `/portfolios/[id]` |
 | Avatar Upload & Profile Settings | Core | Medium | Hoàn thành | `UserService` + MinIO (`/users`) | `profile/page.tsx`, `AvatarSection` |
 | Query Optimization & Redis Caching | Performance | High | Một phần | `selectinload` dùng rải rác; chưa có tầng cache Redis chủ động | Lazy charts (Recharts) |
 | Mobile & Tablet Responsive Polish | UI/UX | High | Hoàn thành cơ bản | — | Menu mobile dạng modal có focus trap, Escape, chuyển đổi theme light/dark/system, thẻ KPI responsive |
@@ -64,8 +64,13 @@ Module **Document AI & Polish (Phase 5)** hoàn thiện hệ sinh thái quản l
 - Phân biệt với Phase 4: `/projects/{id}/documents` (+ `/download`) và trang `/projects/[id]/documents` hiện phục vụ tài liệu SRS/BRD DOCX do hệ thống sinh (job `document.generate`, bảng `generated_documents`). Upload và bóc tách tài liệu do người dùng cung cấp vẫn là việc của giai đoạn này; khi triển khai cần chọn đường dẫn không đụng với route tài liệu sinh.
 
 ### GIAI ĐOẠN 5.3 – Investor Dashboard Portal (Executive Read-Only View)
-> **Trạng thái:** Kế hoạch tiếp theo 
+> **Trạng thái:** Hoàn thành (2026-10-16) — spec `docs/superpowers/specs/2026-10-16-investor-dashboard-design.md`.
 - Cổng xem dữ liệu tổng hợp cấp Portfolio (ROI, tổng ngân sách, sức khỏe dự án) chỉ đọc dành riêng cho role Investor.
+- Quyền theo portfolio: investor chỉ xem portfolio được owner/admin cấp qua bảng `portfolio_investors`; thu hồi có hiệu lực ngay ở request kế tiếp. Quyết định F3: quyền đã cấp chỉ còn hiệu lực khi người nhận vẫn giữ role Investor tại thời điểm đọc.
+- Chỉ số: EVM (BAC, AC, EV, PV, CPI, SPI, EAC, VAC), ROI theo lợi ích kỳ vọng (`expected_benefit`), sức khỏe dự án. Dự án khác tiền tệ hoặc chưa có ngân sách bị loại khỏi tổng và có nhãn loại trừ. Quyết định F6: `overdue_projects` không tính dự án COMPLETED và CANCELLED.
+- Kiểm thử: backend 697 passed / 28 skipped, ruff sạch; frontend 32 file / 146 test, tsc, eslint và next build sạch. Migration PostgreSQL 16 upgrade, downgrade, upgrade lại đã kiểm. Kiểm tra trình duyệt cục bộ (docker compose): luồng cấp/thu hồi, PM bị chuyển về `/dashboard`, EN/VI không còn khóa thô, 390px không tràn ngang, số liệu khớp tính tay.
+- Chưa có giao diện: endpoint `GET /investor/projects/{id}` và trường `risk_distribution` đã có ở API nhưng chưa có UI.
+- Việc theo dõi: task đã lưu trữ (archived) vẫn bị tính trong `project_task_counts` (dashboard và investor); thông báo lỗi cấp quyền từ backend hiển thị tiếng Anh; môi trường cục bộ: image `minio/minio` không còn trên Docker Hub, `backend/.env` có `SEED_ADMIN_*` bị `Settings` (extra=forbid) từ chối, watcher `uvicorn --reload` lỗi quyền trên `.pytest_cache`.
 
 ### GIAI ĐOẠN 5.4 – Profile Settings & Avatar Management Polish
 > **Trạng thái:** Hoàn thành — trang `profile/` (ProfileDetailsForm, AvatarSection, PasswordSection, LinkedAccountsSection, DangerZoneSection); backend `/users` + MinIO.
@@ -75,4 +80,4 @@ Module **Document AI & Polish (Phase 5)** hoàn thiện hệ sinh thái quản l
 
 ---
 
-*Cập nhật lần cuối: 2026-10-14 — Phase 5 (Document AI & Polish) — đối soát với mã nguồn. Storage Supabase bucket riêng tư đã xác minh cloud (2026-10-12); Document AI Parser và Investor Dashboard vẫn chưa bắt đầu.*
+*Cập nhật lần cuối: 2026-10-16 — Phase 5 (Document AI & Polish) — đối soát với mã nguồn. Storage Supabase bucket riêng tư đã xác minh cloud (2026-10-12); Investor Dashboard hoàn thành 2026-10-16 (giai đoạn 5.3); Document AI Parser vẫn chưa bắt đầu.*

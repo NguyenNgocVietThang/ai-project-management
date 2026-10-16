@@ -72,9 +72,9 @@ Xây dựng một **web application quản lý dự án và danh mục đầu t�
 | Upload/parse tài liệu gốc | Chưa làm (ngoài phạm vi Phase 4) | `/projects/{id}/documents` nay là tài liệu SRS/BRD do hệ thống sinh |
 | Leaves / Skills catalog | Chỉ model DB | endpoint là stub, chưa mount |
 | Mobile Responsive & UI Polish | Hoàn thành cơ bản | Menu mobile modal với focus trap, chuyển theme light/dark/system, thẻ KPI responsive |
-| Investor Read-only Dashboard | Chưa làm | — |
+| Investor Read-only Dashboard | Chạy thật | router `/investor`, trang `/investor`; quyền theo từng portfolio (`portfolio_investors`). Chưa có UI cho `GET /investor/projects/{id}` và `risk_distribution` |
 
-> **API thực tế đang phục vụ:** 32 REST router (`/api/v1/...`) + 2 WebSocket router (`/ws/...`). 3 router còn lại (`leaves, skills, system`) vẫn là stub `TODO: Implement`, bị comment trong [`router.py`](./backend/app/api/v1/router.py) và **không** được mount.
+> **API thực tế đang phục vụ:** 33 REST router (`/api/v1/...`) + 2 WebSocket router (`/ws/...`). 3 router còn lại (`leaves, skills, system`) vẫn là stub `TODO: Implement`, bị comment trong [`router.py`](./backend/app/api/v1/router.py) và **không** được mount.
 
 ---
 
@@ -223,8 +223,8 @@ AI Project Planning & Portfolio Management system/
 │   │   │   ├── __init__.py
 │   │   │   ├── v1/
 │   │   │   │   ├── __init__.py
-│   │   │   │   ├── router.py                 # Aggregator: 32 REST routers được mount (+3 stub bị comment)
-│   │   │   │   └── endpoints/                # 35 file handler (32 đã hiện thực & mount, 3 còn là stub TODO)
+│   │   │   │   ├── router.py                 # Aggregator: 33 REST routers được mount (+3 stub bị comment)
+│   │   │   │   └── endpoints/                # 35 file handler (33 đã hiện thực & mount, 3 còn là stub TODO)
 │   │   │   └── ws/
 │   │   │       ├── __init__.py
 │   │   │       ├── deps.py                   # authenticate_ws (đổi vé dùng-một-lần lấy qua POST /auth/ws-ticket, không phải JWT trên query string)
@@ -494,7 +494,7 @@ async def publish(channel: str, message: dict):
 
 ### Danh mục REST API Routers (`/api/v1/...`)
 
-**32 REST router đang được mount & phục vụ thật:**
+**33 REST router đang được mount & phục vụ thật:**
 
 | STT | Endpoint Prefix | Router File | Mô tả chức năng |
 |---|---|---|---|
@@ -530,6 +530,7 @@ async def publish(channel: str, message: dict):
 | 30 | `/requirement-briefs` | `requirement_briefs.py` | Hồ sơ yêu cầu và vòng AI hỏi làm rõ (Phase 4) |
 | 31 | `/jobs` | `jobs.py` | Tra cứu trạng thái durable job |
 | 32 | `/internal/jobs` | `internal_jobs.py` | Endpoint nội bộ cho cron (`POST /internal/jobs/schedules`) |
+| 33 | `/investor` | `investor.py` | Cổng nhà đầu tư chỉ đọc: danh sách portfolio được cấp, tổng quan EVM/ROI, chi tiết dự án (Phase 5, giai đoạn 5.3) |
 
 Stub `/gantt` đã xóa: Gantt vẽ từ `GET /projects/{id}/cpm`.
 
@@ -740,8 +741,8 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
        (100% Hoàn thành)                (100% Hoàn thành)                (100% Hoàn thành)
                                                                             │
 [Phase 5: Document AI & Polish] ◄──── [Phase 4: Workflow & Reporting] ◄─────┘
-  (~40% — WS/Notif/lịch hằng ngày xong,  (Mã nguồn hoàn thành 2026-10-13;
-   Document/Investor chưa làm)            chờ duyệt checkpoint, nghiệm thu Render)
+  (~65% — WS/Notif/lịch hằng ngày,       (Mã nguồn hoàn thành 2026-10-13;
+   Investor xong; Document Parser chưa)    chờ duyệt checkpoint, nghiệm thu Render)
 ```
 
 - [x] **Phase 1 — Core Auth & User Onboarding** *(Hoàn thành)*
@@ -782,13 +783,13 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
   - [x] Xuất SRS/BRD (DOCX, có sơ đồ BPMN hoặc bảng bước) và XLSX qua durable jobs, tải qua proxy kiểm tra quyền.
   - [x] BPMN: AI sinh quy trình, xem swimlane SVG, PNG phía server chèn DOCX.
 
-- [ ] **Phase 5 — Document AI & Polish** *(~40%)*
+- [ ] **Phase 5 — Document AI & Polish** *(~65%)*
   - [x] **Real-time Notification Push qua WebSocket (`/ws/notifications`)**.
   - [x] **Lịch hằng ngày qua cron endpoint** (`POST /api/v1/internal/jobs/schedules`, thay Celery Beat).
   - [x] Profile & Avatar MinIO (frontend + backend).
   - [x] Mobile navigation & UI fine-tuning polish (menu modal focus trap, theme switcher, responsive layout).
   - [ ] Document upload & AI parser (upload/parse file yêu cầu gốc; ngoài phạm vi Phase 4).
-  - [ ] Investor Read-Only Dashboard view.
+  - [x] Investor Read-Only Dashboard (2026-10-16): quyền theo portfolio, KPI EVM/ROI, biểu đồ và bảng dự án. Chưa có UI cho chi tiết dự án và `risk_distribution`.
 
 ---
 
@@ -814,4 +815,4 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
 - **Giấy phép:** [MIT License](./LICENSE)
 
 ---
-*Cập nhật toàn diện hệ thống: 2026-10-14 (đối soát README với mã nguồn thực tế: 32 REST router đang mount + 2 WebSocket router; Phase 1–4 hoàn thành phần mã nguồn, Phase 4 chờ nghiệm thu cloud, Phase 5 đang phát triển — Document AI Parser và Investor Dashboard chưa bắt đầu).*
+*Cập nhật toàn diện hệ thống: 2026-10-16 (33 REST router đang mount + 2 WebSocket router; Phase 1–4 hoàn thành phần mã nguồn, Phase 4 chờ nghiệm thu cloud, Phase 5 đang phát triển — Investor Dashboard hoàn thành, Document AI Parser chưa bắt đầu).*
