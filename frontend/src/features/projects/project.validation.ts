@@ -12,6 +12,11 @@ export const projectFormSchema = z
       .refine((value) => value === '' || (!Number.isNaN(Number(value)) && Number(value) >= 0), {
         message: 'Budget must be zero or greater',
       }),
+    expected_benefit: z
+      .string()
+      .refine((value) => value === '' || (!Number.isNaN(Number(value)) && Number(value) >= 0), {
+        message: 'Expected benefit must be zero or greater',
+      }),
     currency: z.string().trim().min(3).max(10),
     methodology: z.enum(['agile', 'waterfall', 'hybrid']),
     status: z.enum(['PLANNING', 'ACTIVE', 'ON_HOLD', 'COMPLETED', 'CANCELLED']).optional(),

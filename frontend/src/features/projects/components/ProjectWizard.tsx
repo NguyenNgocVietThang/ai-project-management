@@ -27,7 +27,7 @@ export function ProjectWizard({ portfolios, onSubmit, onCancel, isLoading, error
   const roles = useAssignableRoles()
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectFormSchema),
-    defaultValues: { name: '', description: '', portfolio_id: '', start_date: '', end_date: '', budget: '', currency: 'VND', methodology: 'agile' },
+    defaultValues: { name: '', description: '', portfolio_id: '', start_date: '', end_date: '', budget: '', expected_benefit: '', currency: 'VND', methodology: 'agile' },
   })
 
   const addMember = (candidate: UserSearchResult) => {
@@ -43,6 +43,7 @@ export function ProjectWizard({ portfolios, onSubmit, onCancel, isLoading, error
     start_date: values.start_date,
     end_date: values.end_date,
     budget: values.budget === '' ? null : Number(values.budget),
+    expected_benefit: values.expected_benefit === '' ? null : Number(values.expected_benefit),
     currency: values.currency,
     methodology: values.methodology,
   }, members))
