@@ -76,7 +76,9 @@
     "mainNavigation": "Điều hướng chính",
     "groupWorkspace": "Không gian làm việc",
     "groupPersonal": "Cá nhân",
-    "groupAdmin": "Quản trị"
+    "groupAdmin": "Quản trị",
+    "investor": "Cổng nhà đầu tư",
+    "groupInvestor": "Nhà đầu tư"
   },
   "theme": {
     "label": "Giao diện màu",
@@ -585,5 +587,38 @@
     "users": "Người dùng",
     "roles": "Vai trò",
     "audit": "Nhật ký kiểm toán"
+  },
+  "investor": {
+    "title": "Cổng nhà đầu tư",
+    "description": "Xem chỉ đọc tình hình tài chính và tiến độ của các portfolio được chia sẻ với bạn.",
+    "empty": "Chưa có portfolio nào được chia sẻ với bạn.",
+    "loading": "Đang tải dữ liệu nhà đầu tư…",
+    "loadError": "Không tải được dữ liệu nhà đầu tư.",
+    "noAccess": "Bạn không còn quyền xem portfolio này.",
+    "backToList": "Quay lại danh sách portfolio",
+    "projects": "{count} dự án",
+    "kpi": { "bac": "Ngân sách (BAC)", "ac": "Chi phí thực", "eac": "Chi phí dự báo (EAC)", "cpi": "CPI", "spi": "SPI", "roi": "ROI kỳ vọng" },
+    "roiBasis": { "eac": "trên chi phí dự báo", "bac": "trên ngân sách", "mixed": "cơ sở kết hợp" },
+    "health": { "on_track": "Đúng kế hoạch", "at_risk": "Có rủi ro", "off_track": "Chệch kế hoạch", "unknown": "Chưa đủ dữ liệu" },
+    "healthChart": "Sức khỏe dự án",
+    "budgetChart": "Ngân sách so với chi phí dự báo",
+    "risk": "Rủi ro",
+    "overdueProjects": "Dự án trễ hạn",
+    "notEnoughData": "Chưa đủ dữ liệu",
+    "notEnoughDataHint": "Cần ngân sách, ngày kế hoạch và chi phí đã ghi nhận.",
+    "exclusion": { "currency_mismatch": "Khác tiền tệ", "no_budget": "Chưa có ngân sách" },
+    "excludedHint": "Không được tính vào tổng của portfolio.",
+    "table": { "project": "Dự án", "progress": "Tiến độ", "health": "Sức khỏe", "risk": "Rủi ro", "overdue": "Task quá hạn" },
+    "grants": {
+      "title": "Nhà đầu tư",
+      "description": "Nhà đầu tư được xem chỉ đọc số liệu của portfolio này.",
+      "email": "Email nhà đầu tư",
+      "grant": "Cấp quyền",
+      "revoke": "Thu hồi",
+      "cancel": "Hủy",
+      "revokeConfirm": "Thu hồi quyền xem portfolio này của {name}?",
+      "empty": "Chưa có nhà đầu tư nào được cấp quyền.",
+      "grantedOn": "Cấp ngày {date}"
+    }
   }
 }

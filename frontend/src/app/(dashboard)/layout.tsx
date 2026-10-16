@@ -18,7 +18,7 @@ import { NotificationBell } from '@/features/notifications/components/Notificati
 import { useNotificationSocket } from '@/features/notifications/hooks/useNotifications'
 import { useAuth } from '@/hooks/useAuth'
 import { Brand } from '@/components/layout/Brand'
-import { isAdminUser } from '@/lib/rbac'
+import { canViewInvestorPortal, isAdminUser } from '@/lib/rbac'
 import { bootstrapSession } from '@/services/api'
 import { hasSessionCookie, useAuthStore } from '@/store/authStore'
 
@@ -97,7 +97,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* ===== Sidebar cố định (desktop >= 1024px) ===== */}
         <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col overflow-y-auto border-r bg-card/95 px-4 py-6 backdrop-blur-xl lg:flex">
           <Link href="/dashboard" className="mb-8 shrink-0 rounded-lg px-2 transition-opacity duration-200 hover:opacity-80" aria-label={t('dashboard')}><Brand /></Link>
-          <MainNav isAdmin={isAdminUser(user)} />
+          <MainNav isAdmin={isAdminUser(user)} isInvestor={canViewInvestorPortal(user)} />
           <div className="mt-auto space-y-4 pt-8">
             {/* Gợi ý AI: CTA phụ, nhẹ nhàng, không cạnh tranh với nội dung chính */}
             <div className="sidebar-tip rounded-xl border border-primary/15 bg-gradient-to-br from-accent to-card p-4">
@@ -127,7 +127,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <button type="button" onClick={logout} aria-label={t('logout')} title={t('logout')} className="flex h-11 w-11 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-accent hover:text-foreground"><LogOut className="h-4 w-4" aria-hidden="true" /></button>
           </div>
         </header>
-        <MobileNav open={mobileNavOpen} isAdmin={isAdminUser(user)} onClose={() => setMobileNavOpen(false)} />
+        <MobileNav open={mobileNavOpen} isAdmin={isAdminUser(user)} isInvestor={canViewInvestorPortal(user)} onClose={() => setMobileNavOpen(false)} />
 
         {/* ===== Nội dung chính ===== */}
         <main id="main-content" tabIndex={-1} className="page-enter mx-auto w-full max-w-[1440px] space-y-6 px-4 py-6 outline-none sm:px-6 sm:py-8 lg:px-8">
