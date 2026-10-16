@@ -1,8 +1,8 @@
 # Đặc tả yêu cầu phần mềm (SRS)
 ## Hệ thống Lập kế hoạch Dự án và Quản lý Danh mục bằng AI
 
-**Version:** 2.4.0
-**Date:** 2026-10-13
+**Version:** 2.4.1
+**Date:** 2026-10-16
 **Trạng thái:** Đối soát với mã nguồn thực tế — xem §6 (Phase 1–4 hoàn thành phần mã nguồn, đã gộp vào `main` cục bộ, chưa push; chờ người dùng duyệt quy tắc rollback V0, duyệt checkpoint, chạy thử provider AI thật và kịch bản demo trên Render. Phase 5 làm một phần: đã có thông báo đẩy WebSocket, avatar, polish giao diện; chưa có upload/parse tài liệu gốc; dashboard Investor đã hoàn thành 2026-10-16).
 
 ---
@@ -287,7 +287,7 @@ Cả hai dùng vé một lần (single-use ticket, TTL 60 giây, cấp qua `POST
 
 ## 6. Trạng thái Triển khai (Trạng thái triển khai)
 
-> Đối soát với mã nguồn ngày 2026-10-13. API thực tế: **32 REST router + 2 WebSocket router** được mount. Kiểm thử backend: 649 passed / 28 skipped (SQLite), 659 passed / 16 skipped khi có PostgreSQL (1 test phụ thuộc môi trường có sẵn lỗi). Frontend: 129 test trên 26 tệp (`vitest`) đạt; type-check, lint, build đạt.
+> Đối soát với mã nguồn ngày 2026-10-16. API thực tế: **33 REST router + 2 WebSocket router** được mount. Kiểm thử backend: 697 passed / 28 skipped (SQLite). Frontend: 146 test trên 32 tệp (`vitest`) đạt; type-check, lint, build đạt.
 
 - [x] **Core Auth & User Onboarding (Phase 1)**: Hoàn thành 100%.
 - [x] **Portfolio, Project Core & CPM Engine (Phase 2)**: Hoàn thành 100%. CPM chạy nội bộ (`utils/cpm.py` + `scheduling_service.py`); endpoint `/cpm` đã mount (chỉ đọc); stub `/gantt` đã xóa, Gantt chỉ đọc hoàn thành ở Phase 4.
@@ -307,4 +307,4 @@ Cả hai dùng vé một lần (single-use ticket, TTL 60 giây, cấp qua `POST
 
 ---
 
-*Cập nhật lần cuối: 2026-10-13 — Version 2.4.0 — Stack: Python FastAPI + Next.js 15*
+*Cập nhật lần cuối: 2026-10-16 — Version 2.4.1 — Stack: Python FastAPI + Next.js 15*

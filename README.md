@@ -224,7 +224,7 @@ AI Project Planning & Portfolio Management system/
 │   │   │   ├── v1/
 │   │   │   │   ├── __init__.py
 │   │   │   │   ├── router.py                 # Aggregator: 33 REST routers được mount (+3 stub bị comment)
-│   │   │   │   └── endpoints/                # 35 file handler (33 đã hiện thực & mount, 3 còn là stub TODO)
+│   │   │   │   └── endpoints/                # 36 file handler (33 đã hiện thực & mount, 3 còn là stub TODO)
 │   │   │   └── ws/
 │   │   │       ├── __init__.py
 │   │   │       ├── deps.py                   # authenticate_ws (đổi vé dùng-một-lần lấy qua POST /auth/ws-ticket, không phải JWT trên query string)
