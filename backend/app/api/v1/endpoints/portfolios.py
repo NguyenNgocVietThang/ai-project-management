@@ -10,12 +10,14 @@ from app.core.dependencies import (
 from app.models.portfolio import PortfolioStatus
 from app.models.user import User
 from app.schemas.common import PaginatedResponse
+from app.schemas.investor import InvestorGrantCreate, InvestorGrantResponse
 from app.schemas.portfolio import (
     PortfolioCreate,
     PortfolioDetailResponse,
     PortfolioResponse,
     PortfolioUpdate,
 )
+from app.services.investor_service import InvestorServiceDep
 from app.services.portfolio_service import PortfolioServiceDep
 
 router = APIRouter()
@@ -87,4 +89,43 @@ async def delete_portfolio(
     _verified: CurrentVerifiedUser,
 ):
     await service.delete(portfolio_id, current_user)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.get("/{portfolio_id}/investors", response_model=list[InvestorGrantResponse])
+async def list_portfolio_investors(
+    portfolio_id: int,
+    service: InvestorServiceDep,
+    current_user: CurrentUser,
+):
+    return await service.list_grants(portfolio_id, current_user)
+
+
+@router.post(
+    "/{portfolio_id}/investors",
+    response_model=InvestorGrantResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def grant_portfolio_investor(
+    portfolio_id: int,
+    body: InvestorGrantCreate,
+    response: Response,
+    service: InvestorServiceDep,
+    current_user: CurrentVerifiedUser,
+):
+    grant, created = await service.grant(portfolio_id, body.email, current_user)
+    # Cấp lại cho người đã có quyền: trả bản ghi cũ với 200, không coi là lỗi.
+    if not created:
+        response.status_code = status.HTTP_200_OK
+    return grant
+
+
+@router.delete("/{portfolio_id}/investors/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def revoke_portfolio_investor(
+    portfolio_id: int,
+    user_id: int,
+    service: InvestorServiceDep,
+    current_user: CurrentVerifiedUser,
+):
+    await service.revoke(portfolio_id, user_id, current_user)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
