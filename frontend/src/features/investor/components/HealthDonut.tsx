@@ -12,5 +12,5 @@ export function HealthDonut({ distribution }: { distribution: Record<HealthKey, 
   const t = useTranslations('investor')
   const data = ORDER.map((key) => ({ name: t(`health.${key}`), value: distribution[key] ?? 0, color: HEALTH_COLORS[key] }))
   const total = data.reduce((sum, slice) => sum + slice.value, 0)
-  return <DonutChart data={data} centerValue={total} summaryLabel={t('healthChart')} emptyLabel={t('empty')} />
+  return <DonutChart data={data} centerValue={total} summaryLabel={t('healthChart')} emptyLabel={t('noProjects')} />
 }

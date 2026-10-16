@@ -18,7 +18,7 @@ export function BudgetVsEacChart({ projects, currency }: { projects: InvestorPro
   const data = projects
     .filter((project) => !project.excluded_from_totals)
     .map((project) => ({ name: project.name, bac: project.metrics.bac ?? 0, eac: project.metrics.eac }))
-  if (data.length === 0) return <p className="text-body-sm text-muted-foreground">{t('empty')}</p>
+  if (data.length === 0) return <p className="text-body-sm text-muted-foreground">{t('noComparableProjects')}</p>
   // ChartTooltip truyền giá trị dạng number | string, nên ép về number trước khi định dạng.
   const money = (value: number | string) => formatMoney(Number(value), currency)
   return (

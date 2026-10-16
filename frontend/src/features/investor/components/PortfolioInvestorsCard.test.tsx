@@ -1,5 +1,5 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { render, screen, within } from '@testing-library/react'
+import { MutationCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { NextIntlClientProvider } from 'next-intl'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -9,8 +9,14 @@ import { PortfolioInvestorsCard } from './PortfolioInvestorsCard'
 const api = vi.hoisted(() => ({ get: vi.fn(), post: vi.fn(), delete: vi.fn() }))
 vi.mock('@/services/api', () => ({ api }))
 
-function setup() {
-  const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } })
+function setup(onGlobalError = vi.fn()) {
+  // Mô phỏng MutationCache toàn cục của app để kiểm tra toast chung đã bị tắt.
+  const mutationCache = new MutationCache({
+    onError: (error, _variables, _context, mutation) => {
+      if (!mutation.meta?.silent) onGlobalError(error)
+    },
+  })
+  const client = new QueryClient({ mutationCache, defaultOptions: { queries: { retry: false }, mutations: { retry: false } } })
   return render(
     <QueryClientProvider client={client}>
       <NextIntlClientProvider locale="vi" messages={messages}><PortfolioInvestorsCard portfolioId={7} /></NextIntlClientProvider>
@@ -40,5 +46,56 @@ describe('thẻ quản lý nhà đầu tư', () => {
     const dialog = await screen.findByRole('dialog')
     await userEvent.click(within(dialog).getByRole('button', { name: 'Thu hồi' }))
     expect(api.delete).toHaveBeenCalledWith('/portfolios/7/investors/3')
+  })
+
+  it('lỗi cấp quyền chỉ hiện một thông báo và không báo toast chung', async () => {
+    api.get.mockResolvedValue({ data: [] })
+    api.post.mockRejectedValue({ response: { status: 400, data: { detail: 'User does not have the Investor role' } } })
+    const onGlobalError = vi.fn()
+    setup(onGlobalError)
+    await userEvent.type(await screen.findByLabelText('Email nhà đầu tư'), 'a@example.com')
+    await userEvent.click(screen.getByRole('button', { name: 'Cấp quyền' }))
+    expect(await screen.findAllByText('User does not have the Investor role')).toHaveLength(1)
+    expect(onGlobalError).not.toHaveBeenCalled()
+    // Sửa email thì lỗi cũ biến mất.
+    await userEvent.type(screen.getByLabelText('Email nhà đầu tư'), 'x')
+    await waitFor(() => expect(screen.queryByText('User does not have the Investor role')).toBeNull())
+  })
+
+  it('cấp quyền thành công thì xóa ô email', async () => {
+    api.get.mockResolvedValue({ data: [] })
+    api.post.mockResolvedValue({ data: grant })
+    setup()
+    const input = await screen.findByLabelText('Email nhà đầu tư')
+    await userEvent.type(input, 'a@example.com')
+    await userEvent.click(screen.getByRole('button', { name: 'Cấp quyền' }))
+    await waitFor(() => expect(input).toHaveValue(''))
+  })
+
+  it('thu hồi thành công thì đóng hộp thoại', async () => {
+    api.get.mockResolvedValue({ data: [grant] })
+    api.delete.mockResolvedValue({})
+    setup()
+    await userEvent.click(await screen.findByRole('button', { name: 'Thu hồi' }))
+    const dialog = await screen.findByRole('dialog')
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Thu hồi' }))
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+  })
+
+  it('lỗi thu hồi không còn khi mở lại hộp thoại', async () => {
+    api.get.mockResolvedValue({ data: [grant] })
+    api.delete.mockRejectedValue({ response: { status: 404, data: { detail: 'Investor access not found' } } })
+    const onGlobalError = vi.fn()
+    setup(onGlobalError)
+    await userEvent.click(await screen.findByRole('button', { name: 'Thu hồi' }))
+    let dialog = await screen.findByRole('dialog')
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Thu hồi' }))
+    expect(await screen.findAllByText('Investor access not found')).toHaveLength(1)
+    expect(onGlobalError).not.toHaveBeenCalled()
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Hủy' }))
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+    await userEvent.click(screen.getByRole('button', { name: 'Thu hồi' }))
+    dialog = await screen.findByRole('dialog')
+    expect(within(dialog).queryByText('Investor access not found')).toBeNull()
   })
 })

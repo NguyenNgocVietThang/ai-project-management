@@ -43,7 +43,7 @@ export function InvestorProjectTable({ projects }: { projects: InvestorProjectRo
                 <td className="px-4 py-3 tabular-nums">{project.metrics.spi === null ? missing : formatRatio(project.metrics.spi, locale)}</td>
                 <td className="px-4 py-3 tabular-nums">{project.metrics.roi === null ? missing : formatPercent(project.metrics.roi, locale)}</td>
                 <td className={cn('px-4 py-3 font-medium', HEALTH_TEXT_CLASS[project.metrics.health])}>{t(`health.${project.metrics.health}`)}</td>
-                <td className="px-4 py-3">{project.risk_level ?? '—'}</td>
+                <td className="px-4 py-3">{project.risk_level ? t(`riskLevel.${project.risk_level}`) : '—'}</td>
                 <td className="px-4 py-3 tabular-nums">{project.overdue_tasks > 0 ? <span className="font-medium text-destructive">{project.overdue_tasks}</span> : '0'}</td>
               </tr>
             ))}

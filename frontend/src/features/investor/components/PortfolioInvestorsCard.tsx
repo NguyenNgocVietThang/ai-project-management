@@ -22,6 +22,16 @@ export function PortfolioInvestorsCard({ portfolioId }: { portfolioId: number })
   const [email, setEmail] = useState('')
   const [pending, setPending] = useState<InvestorGrant | null>(null)
 
+  // Xóa lỗi cũ của lần thu hồi trước mỗi khi mở/đóng hộp thoại.
+  const openRevoke = (grant: InvestorGrant) => {
+    revokeMutation.reset()
+    setPending(grant)
+  }
+  const closeRevoke = () => {
+    revokeMutation.reset()
+    setPending(null)
+  }
+
   return (
     <Card as="section" aria-labelledby="portfolio-investors-title">
       <CardHeader className="mb-4">
@@ -31,15 +41,14 @@ export function PortfolioInvestorsCard({ portfolioId }: { portfolioId: number })
 
       <form
         className="flex flex-col gap-3 sm:flex-row sm:items-end"
-        onSubmit={async (event) => {
+        onSubmit={(event) => {
           event.preventDefault()
-          await grantMutation.mutateAsync(email.trim())
-          setEmail('')
+          grantMutation.mutate(email.trim(), { onSuccess: () => setEmail('') })
         }}
       >
         <div className="flex-1">
           <Label htmlFor="investor-email">{t('email')}</Label>
-          <Input id="investor-email" type="email" required value={email} onChange={(event) => setEmail(event.target.value)} />
+          <Input id="investor-email" type="email" required value={email} onChange={(event) => { setEmail(event.target.value); if (grantMutation.isError) grantMutation.reset() }} />
         </div>
         <Button type="submit" fullWidth={false} isLoading={grantMutation.isPending}>{t('grant')}</Button>
       </form>
@@ -54,25 +63,24 @@ export function PortfolioInvestorsCard({ portfolioId }: { portfolioId: number })
                 <p className="truncate font-medium">{grant.full_name}</p>
                 <p className="truncate text-caption text-muted-foreground">{grant.email} · {t('grantedOn', { date: format.dateTime(new Date(grant.granted_at), { dateStyle: 'medium' }) })}</p>
               </div>
-              <Button variant="outline" fullWidth={false} onClick={() => setPending(grant)}>{t('revoke')}</Button>
+              <Button variant="outline" fullWidth={false} onClick={() => openRevoke(grant)}>{t('revoke')}</Button>
             </li>
           ))}
         </ul>
       )}
 
-      <Modal open={pending !== null} onClose={() => setPending(null)} title={t('revoke')}>
+      <Modal open={pending !== null} onClose={closeRevoke} title={t('revoke')}>
         <p className="text-body">{pending && t('revokeConfirm', { name: pending.full_name })}</p>
         {revokeMutation.isError && <Alert className="mt-3">{getApiErrorMessage(revokeMutation.error)}</Alert>}
         <div className="mt-6 flex justify-end gap-2">
-          <Button variant="outline" fullWidth={false} onClick={() => setPending(null)}>{t('cancel')}</Button>
+          <Button variant="outline" fullWidth={false} onClick={closeRevoke}>{t('cancel')}</Button>
           <Button
             variant="destructive"
             fullWidth={false}
             isLoading={revokeMutation.isPending}
-            onClick={async () => {
+            onClick={() => {
               if (!pending) return
-              await revokeMutation.mutateAsync(pending.user_id)
-              setPending(null)
+              revokeMutation.mutate(pending.user_id, { onSuccess: () => setPending(null) })
             }}
           >
             {t('revoke')}

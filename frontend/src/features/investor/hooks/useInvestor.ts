@@ -37,6 +37,8 @@ export function useGrantInvestor(portfolioId: number) {
   const client = useQueryClient()
   return useMutation({
     mutationFn: (email: string) => investorService.grant(portfolioId, email),
+    // Lỗi hiện inline trong thẻ nên tắt toast chung để không báo hai lần.
+    meta: { silent: true },
     onSuccess: () => client.invalidateQueries({ queryKey: INVESTOR_KEYS.grants(portfolioId) }),
   })
 }
@@ -45,6 +47,7 @@ export function useRevokeInvestor(portfolioId: number) {
   const client = useQueryClient()
   return useMutation({
     mutationFn: (userId: number) => investorService.revoke(portfolioId, userId),
+    meta: { silent: true },
     onSuccess: () => client.invalidateQueries({ queryKey: INVESTOR_KEYS.grants(portfolioId) }),
   })
 }
