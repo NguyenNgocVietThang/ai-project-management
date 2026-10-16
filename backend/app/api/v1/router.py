@@ -14,6 +14,7 @@ from app.api.v1.endpoints import (
     documents,
     epics,
     internal_jobs,
+    investor,
     jobs,
     milestones,
     notifications,
@@ -66,6 +67,7 @@ api_router.include_router(reports.router, tags=["Reports"])
 api_router.include_router(process_models.router, tags=["Process models"])
 api_router.include_router(resource_leveling.router, tags=["Resource Leveling"])
 api_router.include_router(dashboards.router, prefix="/dashboards", tags=["Dashboards"])
+api_router.include_router(investor.router, prefix="/investor", tags=["Investor"])
 api_router.include_router(notifications.router, prefix="/notifications", tags=["Notifications"])
 api_router.include_router(audit_timeline.router, prefix="/audit", tags=["Audit"])
 api_router.include_router(ai.router, prefix="/ai", tags=["AI"])

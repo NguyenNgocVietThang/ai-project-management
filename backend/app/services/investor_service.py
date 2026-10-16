@@ -3,10 +3,12 @@
 Quyền luôn đọc thẳng từ DB ở mỗi request (không cache), nên thu hồi có hiệu lực
 ngay ở request kế tiếp.
 """
+from dataclasses import asdict
+from datetime import date
 from typing import Annotated
 
 from fastapi import Depends
-from sqlalchemy import exists, func, select
+from sqlalchemy import exists, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import BadRequestException, ForbiddenException, NotFoundException
@@ -14,11 +16,31 @@ from app.db.session import get_db
 from app.models.audit_log import AuditLog
 from app.models.portfolio import Portfolio
 from app.models.portfolio_investor import PortfolioInvestor
+from app.models.project import Project, ProjectStatus
+from app.models.risk_report import RiskLevel, RiskReport
+from app.models.task import Task
 from app.models.user import User
-from app.schemas.investor import InvestorGrantResponse
+from app.schemas.investor import (
+    InvestorGrantResponse,
+    InvestorPortfolioItem,
+    InvestorPortfolioOverview,
+    InvestorProjectDetail,
+    InvestorProjectRow,
+    MetricsResponse,
+    PortfolioBrief,
+)
+from app.services.dashboard_service import project_task_counts
+from app.services.evm import HEALTH_KEYS, Metrics, aggregate_metrics, compute_project_metrics
 from app.services.phase2_common import is_admin
 
 INVESTOR_ROLE = "Investor"
+
+# Chỉ lấy cột cần cho số liệu, không nạp cả đối tượng Project.
+_PROJECT_COLUMNS = (
+    Project.id, Project.portfolio_id, Project.name, Project.status, Project.start_date,
+    Project.end_date, Project.progress, Project.currency, Project.budget,
+    Project.actual_cost, Project.expected_benefit,
+)
 
 
 class InvestorService:
@@ -137,6 +159,213 @@ class InvestorService:
         await self.db.flush()
         self._audit(actor, "REVOKE_INVESTOR", portfolio, user_id)
         await self.db.flush()
+
+    # ── Đọc số liệu ───────────────────────────────────────────────────────────
+
+    async def _project_rows(self, portfolio_ids: list[int]):
+        if not portfolio_ids:
+            return []
+        result = await self.db.execute(
+            select(*_PROJECT_COLUMNS)
+            .where(Project.portfolio_id.in_(portfolio_ids), Project.deleted_at.is_(None))
+            .order_by(Project.id)
+        )
+        return result.all()
+
+    async def _latest_risks(self, project_ids: list[int]) -> dict:
+        if not project_ids:
+            return {}
+        # max(id) thay vì max(created_at) để không trùng khi hai báo cáo cùng thời điểm.
+        latest = (
+            select(func.max(RiskReport.id).label("id"))
+            .where(RiskReport.project_id.in_(project_ids))
+            .group_by(RiskReport.project_id)
+            .subquery()
+        )
+        result = await self.db.execute(
+            select(
+                RiskReport.project_id, RiskReport.risk_level,
+                RiskReport.risk_score, RiskReport.summary,
+            ).join(latest, RiskReport.id == latest.c.id)
+        )
+        return {row.project_id: row for row in result.all()}
+
+    @staticmethod
+    def _metrics(project, today: date) -> Metrics:
+        return compute_project_metrics(
+            budget=project.budget,
+            actual_cost=project.actual_cost,
+            progress=project.progress,
+            start_date=project.start_date,
+            end_date=project.end_date,
+            expected_benefit=project.expected_benefit,
+            today=today,
+        )
+
+    @staticmethod
+    def _exclusion(project, metrics: Metrics, currency: str) -> str | None:
+        if project.currency != currency:
+            return "currency_mismatch"
+        if metrics.bac is None:
+            return "no_budget"
+        return None
+
+    def _row(self, project, metrics: Metrics, currency: str, task_row, risk) -> InvestorProjectRow:
+        reason = self._exclusion(project, metrics, currency)
+        return InvestorProjectRow(
+            id=project.id,
+            name=project.name,
+            status=project.status.value,
+            start_date=project.start_date,
+            end_date=project.end_date,
+            progress=round(project.progress, 1),
+            currency=project.currency,
+            metrics=MetricsResponse(**asdict(metrics)),
+            risk_level=risk.risk_level.value if risk else None,
+            risk_score=risk.risk_score if risk else None,
+            overdue_tasks=int(task_row.overdue or 0) if task_row else 0,
+            excluded_from_totals=reason is not None,
+            exclusion_reason=reason,
+        )
+
+    async def portfolio_overview(
+        self, portfolio_id: int, user: User, today: date | None = None
+    ) -> InvestorPortfolioOverview:
+        today = today or date.today()
+        portfolio = await self._viewable_portfolio(portfolio_id, user)
+        projects = await self._project_rows([portfolio.id])
+        ids = [project.id for project in projects]
+        task_map = {row.project_id: row for row in await project_task_counts(self.db, ids, today)}
+        risks = await self._latest_risks(ids)
+
+        rows: list[InvestorProjectRow] = []
+        included: list[Metrics] = []
+        for project in projects:
+            metrics = self._metrics(project, today)
+            row = self._row(project, metrics, portfolio.currency, task_map.get(project.id), risks.get(project.id))
+            rows.append(row)
+            if not row.excluded_from_totals:
+                included.append(metrics)
+
+        health = dict.fromkeys(HEALTH_KEYS, 0)
+        risk_counts = {level.value: 0 for level in RiskLevel} | {"none": 0}
+        for row in rows:
+            health[row.metrics.health] += 1
+            risk_counts[row.risk_level or "none"] += 1
+        overdue = sum(
+            1 for row in rows
+            if row.end_date and row.end_date < today and row.status != ProjectStatus.COMPLETED.value
+        )
+        return InvestorPortfolioOverview(
+            portfolio=PortfolioBrief(
+                id=portfolio.id,
+                name=portfolio.name,
+                description=portfolio.description,
+                status=portfolio.status.value,
+                start_date=portfolio.start_date,
+                end_date=portfolio.end_date,
+                budget=portfolio.budget,
+                currency=portfolio.currency,
+            ),
+            totals=MetricsResponse(**asdict(aggregate_metrics(included))),
+            health_distribution=health,
+            risk_distribution=risk_counts,
+            overdue_projects=overdue,
+            projects=rows,
+        )
+
+    async def list_portfolios(
+        self, user: User, *, skip: int, limit: int, today: date | None = None
+    ) -> tuple[list[InvestorPortfolioItem], int]:
+        today = today or date.today()
+        admin = is_admin(user)
+        grant_join = (PortfolioInvestor.portfolio_id == Portfolio.id) & (
+            PortfolioInvestor.user_id == user.id
+        )
+        conditions = [Portfolio.deleted_at.is_(None)]
+        if not admin:
+            conditions.append(or_(Portfolio.owner_id == user.id, PortfolioInvestor.id.is_not(None)))
+
+        total = await self.db.scalar(
+            select(func.count(Portfolio.id))
+            .select_from(Portfolio)
+            .outerjoin(PortfolioInvestor, grant_join)
+            .where(*conditions)
+        )
+        result = await self.db.execute(
+            select(Portfolio, PortfolioInvestor.created_at.label("granted_at"))
+            .outerjoin(PortfolioInvestor, grant_join)
+            .where(*conditions)
+            .order_by(Portfolio.name, Portfolio.id)
+            .offset(skip)
+            .limit(limit)
+        )
+        page = result.all()
+        projects = await self._project_rows([row.Portfolio.id for row in page])
+
+        items: list[InvestorPortfolioItem] = []
+        for row in page:
+            portfolio = row.Portfolio
+            own = [project for project in projects if project.portfolio_id == portfolio.id]
+            included = []
+            for project in own:
+                metrics = self._metrics(project, today)
+                if self._exclusion(project, metrics, portfolio.currency) is None:
+                    included.append(metrics)
+            totals = aggregate_metrics(included)
+            # Xem với tư cách admin hoặc chủ thì không hiện thời điểm cấp quyền.
+            viewing_as_investor = not admin and portfolio.owner_id != user.id
+            items.append(
+                InvestorPortfolioItem(
+                    id=portfolio.id,
+                    name=portfolio.name,
+                    status=portfolio.status.value,
+                    currency=portfolio.currency,
+                    budget=portfolio.budget,
+                    project_count=len(own),
+                    total_bac=totals.bac,
+                    total_ac=totals.ac,
+                    cpi=totals.cpi,
+                    spi=totals.spi,
+                    health=totals.health,
+                    granted_at=row.granted_at if viewing_as_investor else None,
+                )
+            )
+        return items, int(total or 0)
+
+    async def project_summary(
+        self, project_id: int, user: User, today: date | None = None
+    ) -> InvestorProjectDetail:
+        today = today or date.today()
+        project = (
+            await self.db.execute(
+                select(*_PROJECT_COLUMNS).where(Project.id == project_id, Project.deleted_at.is_(None))
+            )
+        ).first()
+        # Dự án không thuộc portfolio nào trả 404 để không lộ sự tồn tại.
+        if project is None or project.portfolio_id is None:
+            raise NotFoundException("Project not found")
+        portfolio = await self._viewable_portfolio(project.portfolio_id, user)
+
+        task_rows = await project_task_counts(self.db, [project.id], today)
+        risks = await self._latest_risks([project.id])
+        status_rows = await self.db.execute(
+            select(Task.status, func.count().label("cnt"))
+            .where(Task.project_id == project.id, Task.archived_at.is_(None))
+            .group_by(Task.status)
+        )
+        metrics = self._metrics(project, today)
+        row = self._row(
+            project, metrics, portfolio.currency,
+            task_rows[0] if task_rows else None, risks.get(project.id),
+        )
+        risk = risks.get(project.id)
+        return InvestorProjectDetail(
+            **row.model_dump(),
+            portfolio_id=portfolio.id,
+            task_counts={status.value: int(cnt) for status, cnt in status_rows.all()},
+            risk_summary=risk.summary if risk else None,
+        )
 
 
 async def get_investor_service(db: Annotated[AsyncSession, Depends(get_db)]) -> InvestorService:
