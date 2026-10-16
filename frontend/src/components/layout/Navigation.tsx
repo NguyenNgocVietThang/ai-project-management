@@ -1,7 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { Bell, Briefcase, FolderKanban, LayoutDashboard, ShieldCheck, User } from 'lucide-react'
+import { Bell, Briefcase, FolderKanban, LayoutDashboard, LineChart, ShieldCheck, User } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Modal } from '@/components/common/Modal'
@@ -10,11 +10,11 @@ import { FireworksToggle } from '@/components/background/FireworksToggle'
 import { LanguageToggle } from './LanguageToggle'
 import { cn } from '@/lib/utils'
 
-// Liên kết chia nhóm để sidebar có phân cấp rõ: công việc chính / cá nhân / quản trị.
+// Liên kết chia nhóm để sidebar có phân cấp rõ: công việc chính / cá nhân / nhà đầu tư / quản trị.
 const GROUPS = [
   {
     key: 'groupWorkspace',
-    adminOnly: false,
+    audience: 'all',
     links: [
       { href: '/dashboard', key: 'dashboard', Icon: LayoutDashboard },
       { href: '/portfolios', key: 'portfolios', Icon: Briefcase },
@@ -23,25 +23,33 @@ const GROUPS = [
   },
   {
     key: 'groupPersonal',
-    adminOnly: false,
+    audience: 'all',
     links: [
       { href: '/notifications', key: 'notifications', Icon: Bell },
       { href: '/profile', key: 'profile', Icon: User },
     ],
   },
   {
+    key: 'groupInvestor',
+    audience: 'investor',
+    links: [{ href: '/investor', key: 'investor', Icon: LineChart }],
+  },
+  {
     key: 'groupAdmin',
-    adminOnly: true,
+    audience: 'admin',
     links: [{ href: '/admin', key: 'admin', Icon: ShieldCheck }],
   },
 ] as const
 
-export function MainNav({ isAdmin, onNavigate }: { isAdmin: boolean; onNavigate?: () => void }) {
+export function MainNav({ isAdmin, isInvestor = false, onNavigate }: { isAdmin: boolean; isInvestor?: boolean; onNavigate?: () => void }) {
   const pathname = usePathname()
   const t = useTranslations('nav')
+  // Nhóm hiện theo đối tượng; backend vẫn kiểm tra quyền ở từng API.
+  const visible = (audience: 'all' | 'admin' | 'investor') =>
+    audience === 'all' || (audience === 'admin' && isAdmin) || (audience === 'investor' && isInvestor)
   return (
     <nav aria-label={t('mainNavigation')} className="flex flex-col gap-6">
-      {GROUPS.filter(group => !group.adminOnly || isAdmin).map(group => (
+      {GROUPS.filter(group => visible(group.audience)).map(group => (
         <div key={group.key}>
           <p className="eyebrow mb-2 px-3">{t(group.key)}</p>
           <ul className="flex flex-col gap-1">
@@ -75,11 +83,11 @@ export function MainNav({ isAdmin, onNavigate }: { isAdmin: boolean; onNavigate?
   )
 }
 
-export function MobileNav({ open, isAdmin, onClose }: { open: boolean; isAdmin: boolean; onClose: () => void }) {
+export function MobileNav({ open, isAdmin, isInvestor = false, onClose }: { open: boolean; isAdmin: boolean; isInvestor?: boolean; onClose: () => void }) {
   const t = useTranslations('nav')
   const ts = useTranslations('shell')
   return <Modal open={open} onClose={onClose} title={t('mainNavigation')} className="max-w-sm">
-    <MainNav isAdmin={isAdmin} onNavigate={onClose} />
+    <MainNav isAdmin={isAdmin} isInvestor={isInvestor} onNavigate={onClose} />
     <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t pt-6"><LanguageToggle /><div className="flex items-center gap-2"><FireworksToggle label={ts('fireworks')} reducedMotionHint={ts('fireworksReducedMotion')} /><ThemeToggle /></div></div>
   </Modal>
 }

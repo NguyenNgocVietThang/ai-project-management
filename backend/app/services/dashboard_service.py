@@ -55,6 +55,28 @@ def _iso_week_bounds(today: date) -> tuple[date, date]:
     return monday, monday + timedelta(days=6)
 
 
+async def project_task_counts(db: AsyncSession, project_ids: list[int], today: date):
+    """Đếm task theo dự án trong một câu GROUP BY (tổng, xong, quá hạn).
+
+    Dùng chung cho dashboard và cổng nhà đầu tư để số liệu quá hạn khớp nhau.
+    """
+    if not project_ids:
+        return []
+    result = await db.execute(
+        select(
+            Task.project_id,
+            func.count().label("total"),
+            func.sum(case((Task.status == TaskStatus.DONE, 1), else_=0)).label("done"),
+            func.sum(
+                case(((Task.due_date < today) & (Task.status != TaskStatus.DONE), 1), else_=0)
+            ).label("overdue"),
+        )
+        .where(Task.project_id.in_(project_ids))
+        .group_by(Task.project_id)
+    )
+    return result.all()
+
+
 class DashboardService:
 
     def __init__(self, db: AsyncSession):
@@ -283,26 +305,7 @@ class DashboardService:
         return list(result.scalars().all())
 
     async def _project_task_counts(self, project_ids: list[int], today: date):
-        if not project_ids:
-            return []
-        result = await self.db.execute(
-            select(
-                Task.project_id,
-                func.count().label("total"),
-                func.sum(
-                    case((Task.status == TaskStatus.DONE, 1), else_=0)
-                ).label("done"),
-                func.sum(
-                    case(
-                        ((Task.due_date < today) & (Task.status != TaskStatus.DONE), 1),
-                        else_=0,
-                    )
-                ).label("overdue"),
-            )
-            .where(Task.project_id.in_(project_ids))
-            .group_by(Task.project_id)
-        )
-        return result.all()
+        return await project_task_counts(self.db, project_ids, today)
 
     async def _active_projects(
         self, project_ids: list[int], task_map: dict, today: date

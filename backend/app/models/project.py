@@ -2,7 +2,7 @@ import enum
 from datetime import date, datetime
 from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import Date, DateTime, Enum, Float, ForeignKey, Index, String, Text
+from sqlalchemy import CheckConstraint, Date, DateTime, Enum, Float, ForeignKey, Index, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
@@ -40,6 +40,10 @@ class Project(Base):
         Index("ix_projects_pm_status", "pm_id", "status"),
         Index("ix_projects_pm_deleted", "pm_id", "deleted_at"),
         Index("ix_projects_portfolio_deleted", "portfolio_id", "deleted_at"),
+        CheckConstraint(
+            "expected_benefit IS NULL OR expected_benefit >= 0",
+            name="ck_projects_expected_benefit_nonneg",
+        ),
     )
 
     name: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -62,6 +66,8 @@ class Project(Base):
     budget: Mapped[float | None] = mapped_column(Float, nullable=True)
     actual_cost: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
     currency: Mapped[str] = mapped_column(String(10), default="VND", nullable=False)
+    # Tổng lợi ích kỳ vọng, cùng tiền tệ với `currency`; dùng để tính ROI cho Investor.
+    expected_benefit: Mapped[float | None] = mapped_column(Float, nullable=True)
 
     portfolio_id: Mapped[int | None] = mapped_column(
         ForeignKey("portfolios.id", ondelete="SET NULL"), nullable=True

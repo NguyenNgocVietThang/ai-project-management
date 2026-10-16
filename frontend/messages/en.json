@@ -76,7 +76,9 @@
     "mainNavigation": "Main navigation",
     "groupWorkspace": "Workspace",
     "groupPersonal": "Personal",
-    "groupAdmin": "Administration"
+    "groupAdmin": "Administration",
+    "investor": "Investor portal",
+    "groupInvestor": "Investor"
   },
   "theme": {
     "label": "Colour theme",
@@ -585,5 +587,41 @@
     "users": "Users",
     "roles": "Roles",
     "audit": "Audit log"
+  },
+  "investor": {
+    "title": "Investor portal",
+    "description": "Read-only financial and schedule view of the portfolios shared with you.",
+    "empty": "No portfolio has been shared with you yet.",
+    "noProjects": "This portfolio has no projects yet.",
+    "noComparableProjects": "No project is counted in the portfolio totals yet.",
+    "riskLevel": { "LOW": "Low", "MEDIUM": "Medium", "HIGH": "High", "CRITICAL": "Critical" },
+    "loading": "Loading investor data…",
+    "loadError": "Could not load investor data.",
+    "noAccess": "You no longer have access to this portfolio.",
+    "backToList": "Back to portfolios",
+    "projects": "{count, plural, one {# project} other {# projects}}",
+    "kpi": { "bac": "Budget (BAC)", "ac": "Actual cost", "eac": "Forecast cost (EAC)", "cpi": "CPI", "spi": "SPI", "roi": "Expected ROI" },
+    "roiBasis": { "eac": "on forecast cost", "bac": "on budget", "mixed": "mixed basis" },
+    "health": { "on_track": "On track", "at_risk": "At risk", "off_track": "Off track", "unknown": "Not enough data" },
+    "healthChart": "Project health",
+    "budgetChart": "Budget vs forecast cost",
+    "risk": "Risk",
+    "overdueProjects": "Overdue projects",
+    "notEnoughData": "Not enough data",
+    "notEnoughDataHint": "Needs a budget, dates and recorded cost.",
+    "exclusion": { "currency_mismatch": "Different currency", "no_budget": "No budget yet" },
+    "excludedHint": "Not included in portfolio totals.",
+    "table": { "project": "Project", "progress": "Progress", "health": "Health", "risk": "Risk", "overdue": "Overdue tasks" },
+    "grants": {
+      "title": "Investors",
+      "description": "Investors get read-only access to this portfolio's figures.",
+      "email": "Investor email",
+      "grant": "Grant access",
+      "revoke": "Revoke",
+      "cancel": "Cancel",
+      "revokeConfirm": "Revoke {name}'s access to this portfolio?",
+      "empty": "No investor has access yet.",
+      "grantedOn": "Granted {date}"
+    }
   }
 }

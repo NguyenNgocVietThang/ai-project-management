@@ -42,6 +42,7 @@ export interface Project {
   progress_percent: number
   budget: number | null
   budget_spent: number
+  expected_benefit: number | null
   currency: string
   portfolio_id: number | null
   portfolio_name: string | null
@@ -103,6 +104,7 @@ export interface ProjectCreate {
   start_date: string
   end_date: string
   budget?: number | null
+  expected_benefit?: number | null
   currency?: string
   methodology: ProjectMethodology
 }

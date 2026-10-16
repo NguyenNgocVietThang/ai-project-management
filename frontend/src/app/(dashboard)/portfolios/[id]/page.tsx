@@ -12,6 +12,7 @@ import { useBreadcrumbLabel } from '@/components/layout/Breadcrumbs'
 import { Reveal } from '@/components/motion/RevealText'
 import { Card, CardHeader, CardTitle } from '@/components/ui/Card'
 import { PageHeader, SectionHeader } from '@/components/ui/PageHeader'
+import { PortfolioInvestorsCard } from '@/features/investor/components/PortfolioInvestorsCard'
 import { DeletePortfolioDialog } from '@/features/portfolios/components/DeletePortfolioDialog'
 import { PortfolioForm } from '@/features/portfolios/components/PortfolioForm'
 import { PortfolioStatusBadge } from '@/features/portfolios/components/PortfolioStatusBadge'
@@ -97,6 +98,8 @@ export default function PortfolioDetailPage() {
         </div>
       </Card>}
     </Card>}
+
+    {portfolio.capabilities.can_update && <PortfolioInvestorsCard portfolioId={portfolio.id} />}
 
     <section aria-labelledby="portfolio-projects-title">
       <SectionHeader id="portfolio-projects-title" title="Projects" />

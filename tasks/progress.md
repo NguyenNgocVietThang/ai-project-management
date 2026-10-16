@@ -61,3 +61,14 @@
 - Tất cả các file `.md` đầu được rà soát và cập nhật ngày + trạng thái: README.md (2026-10-14), PHASE_4 (v2.1), PHASE_5 (v1.5), tasks/todo.md, tasks/progress.md.
 - Trạng thái tổng hợp: Phase 1–4 hoàn thành phần mã nguồn, Phase 4 chờ nghiệm thu cloud (Render + AI thật), Phase 5 ~50% (Document AI Parser + Investor Dashboard chưa bắt đầu).
 - Các mục còn mở (todo.md): Bước 10a (Supabase project thật chưa có), 12b (nghiệm thu cloud đầy đủ còn đợi account + sender).
+
+## Cập nhật 2026-10-16 — Investor Dashboard (Phase 5, giai đoạn 5.3)
+
+- Hoàn thành trên nhánh feat/investor-dashboard: bảng `portfolio_investors`, cột `projects.expected_benefit`, `InvestorService` và router `/investor` (33 REST router đang mount), trang `/investor`, thẻ "Nhà đầu tư" ở `/portfolios/[id]`.
+- Quyết định sau rà soát cuối: F3 quyền đã cấp chỉ có hiệu lực khi người nhận còn role Investor lúc đọc; F6 `overdue_projects` bỏ qua dự án COMPLETED và CANCELLED. Cả hai đã ghi vào spec (mục 4 và 6.1).
+- Kiểm thử: backend 697 passed / 28 skipped, ruff sạch (trước kế hoạch: 649 / 28). Frontend 32 file / 146 test; tsc, eslint, next build sạch.
+- Migration PostgreSQL 16 (cụm tạm): upgrade, downgrade, upgrade lại đều đạt.
+- Kiểm tra trình duyệt (docker compose cục bộ, dữ liệu thử riêng): owner cấp investor và lỗi cấp quyền chỉ hiện một lần; investor chỉ thấy portfolio được cấp; số liệu khớp tính tay; thu hồi thì investor bị đưa về `/investor` kèm thông báo; PM vào `/investor` bị chuyển về `/dashboard`; EN/VI không còn khóa thô; 390px không tràn ngang. Phát hiện và đã sửa: bảng sr-only làm trang desktop tràn ngang (scrollWidth 1410 so với 1302), giá trị KPI bị ngắt giữa số ở độ rộng 1000-1300px.
+- Chưa có giao diện cho `GET /investor/projects/{id}` và `risk_distribution`.
+- Việc theo dõi: (1) task đã lưu trữ vẫn bị tính trong `project_task_counts` (dashboard và investor), cần sửa riêng vì đổi số liệu dashboard; (2) lỗi cấp quyền từ backend hiển thị tiếng Anh; (3) cấp quyền đồng thời hai lần cho cùng người có thể trả 500 thay vì 200 idempotent; (4) môi trường cục bộ: image `minio/minio` không còn trên Docker Hub, `backend/.env` chứa `SEED_ADMIN_*` bị `Settings` (extra=forbid) từ chối, watcher `uvicorn --reload` lỗi quyền trên `.pytest_cache`.
+- Chưa làm: đồ thị tri thức (`graphify update .`) chờ người dùng quyết định vì `graphify-out/` đã có thay đổi chưa commit từ trước.

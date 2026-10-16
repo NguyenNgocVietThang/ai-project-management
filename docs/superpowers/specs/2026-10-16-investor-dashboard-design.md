@@ -1,6 +1,6 @@
 # Thiết kế: Investor Dashboard (Phase 5, giai đoạn 5.3)
 
-> **Ngày:** 2026-10-16 | **Trạng thái:** Chờ duyệt | **Lộ trình gốc:** `docs/roadmap/PHASE_5_DOCUMENT_AI_POLISH_MODULE.md`
+> **Ngày:** 2026-10-16 | **Trạng thái:** Đã triển khai | **Lộ trình gốc:** `docs/roadmap/PHASE_5_DOCUMENT_AI_POLISH_MODULE.md`
 
 ## 1. Mục tiêu
 
@@ -44,6 +44,7 @@ Ký hiệu: `admin` là `is_admin(user)` trong `backend/app/services/phase2_comm
 | Xem dự án X qua `/investor` | X chưa bị xóa mềm, `X.portfolio_id` không null, và người dùng xem được portfolio đó theo dòng trên. |
 | Liệt kê, cấp, thu hồi investor của P | `admin` hoặc `owner`. |
 | Được nhận quyền | Người được cấp phải có role `Investor`; nếu không thì trả 400. |
+| Quyền đã cấp còn hiệu lực | (Quyết định F3) Chỉ khi người được cấp vẫn có role `Investor` tại thời điểm đọc; mất role thì lượt cấp ngừng có tác dụng (admin và owner không bị ảnh hưởng). |
 
 Quy tắc bổ sung:
 - Portfolio hoặc dự án đã xóa mềm trả 404. Không có quyền thì trả 403, giống các service hiện có.
@@ -115,7 +116,7 @@ Schema Pydantic đặt trong `backend/app/schemas/investor.py`.
 - `totals`: một `PortfolioMetrics` (BAC, AC, EV, PV, CPI, SPI, EAC, VAC, expected_benefit, roi, roi_basis, health)
 - `health_distribution`: số dự án theo `on_track`/`at_risk`/`off_track`/`unknown`
 - `risk_distribution`: số dự án theo `risk_level` của `RiskReport` mới nhất, cộng nhóm `none` cho dự án chưa có báo cáo
-- `overdue_projects`: số dự án có `end_date < today` và chưa `COMPLETED`
+- `overdue_projects`: số dự án có `end_date < today` và chưa `COMPLETED` hoặc `CANCELLED` (quyết định F6: dự án đã hủy không bị coi là trễ hạn)
 - `projects`: danh sách `InvestorProjectRow` gồm `id`, `name`, `status`, `start_date`, `end_date`, `progress`, `currency`, các chỉ số ở mục 5, `health`, `risk_level`, `risk_score`, `overdue_tasks`, `excluded_from_totals`, `exclusion_reason`
 
 `GET /investor/projects/{id}`: một `InvestorProjectRow` kèm `task_counts` (theo trạng thái) và `risk_summary` (trường `summary` của `RiskReport` mới nhất, có thể null).

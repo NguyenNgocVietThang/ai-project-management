@@ -21,6 +21,7 @@ export function ProjectForm({ project, portfolios, onSubmit, isLoading, error }:
       start_date: project.start_date ?? '',
       end_date: project.end_date ?? '',
       budget: project.budget?.toString() ?? '',
+      expected_benefit: project.expected_benefit?.toString() ?? '',
       currency: project.currency,
       methodology: project.methodology,
       status: project.status,
@@ -35,6 +36,7 @@ export function ProjectForm({ project, portfolios, onSubmit, isLoading, error }:
       start_date: values.start_date,
       end_date: values.end_date,
       budget: values.budget === '' ? null : Number(values.budget),
+      expected_benefit: values.expected_benefit === '' ? null : Number(values.expected_benefit),
       currency: values.currency,
       methodology: values.methodology,
       status: values.status,
@@ -61,8 +63,9 @@ export function ProjectFields({ register, setValue, errors, portfolios, includeS
       <div><Label htmlFor="project-start">Start date</Label><Input id="project-start" type="date" hasError={Boolean(errors.start_date)} {...startDate} onInput={(event) => setValue('start_date', event.currentTarget.value, { shouldDirty: true })} />{errors.start_date && <p id="project-start-error" role="alert" className="mt-1 text-body-sm text-destructive">{errors.start_date.message}</p>}</div>
       <div><Label htmlFor="project-end">End date</Label><Input id="project-end" type="date" hasError={Boolean(errors.end_date)} {...endDate} onInput={(event) => setValue('end_date', event.currentTarget.value, { shouldDirty: true })} />{errors.end_date && <p id="project-end-error" role="alert" className="mt-1 text-body-sm text-destructive">{errors.end_date.message}</p>}</div>
     </div>
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid gap-4 sm:grid-cols-3">
       <div><Label htmlFor="project-budget">Budget</Label><Input id="project-budget" inputMode="decimal" hasError={Boolean(errors.budget)} {...register('budget')} />{errors.budget && <p id="project-budget-error" role="alert" className="mt-1 text-body-sm text-destructive">{errors.budget.message}</p>}</div>
+      <div><Label htmlFor="project-expected-benefit">Expected benefit</Label><Input id="project-expected-benefit" inputMode="decimal" hasError={Boolean(errors.expected_benefit)} {...register('expected_benefit')} />{errors.expected_benefit && <p id="project-expected-benefit-error" role="alert" className="mt-1 text-body-sm text-destructive">{errors.expected_benefit.message}</p>}</div>
       <div><Label htmlFor="project-currency">Currency</Label><Input id="project-currency" {...register('currency')} /></div>
     </div>
     {includeStatus && <div><Label htmlFor="project-status">Status</Label><Select id="project-status" {...register('status')}><option value="PLANNING">Planning</option><option value="ACTIVE">Active</option><option value="ON_HOLD">On hold</option><option value="COMPLETED">Completed</option><option value="CANCELLED">Cancelled</option></Select></div>}

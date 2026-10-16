@@ -1,9 +1,9 @@
 # Đặc tả yêu cầu phần mềm (SRS)
 ## Hệ thống Lập kế hoạch Dự án và Quản lý Danh mục bằng AI
 
-**Version:** 2.4.0
-**Date:** 2026-10-13
-**Trạng thái:** Đối soát với mã nguồn thực tế — xem §6 (Phase 1–4 hoàn thành phần mã nguồn, đã gộp vào `main` cục bộ, chưa push; chờ người dùng duyệt quy tắc rollback V0, duyệt checkpoint, chạy thử provider AI thật và kịch bản demo trên Render. Phase 5 làm một phần: đã có thông báo đẩy WebSocket, avatar, polish giao diện; chưa có upload/parse tài liệu gốc và dashboard Investor).
+**Version:** 2.4.1
+**Date:** 2026-10-16
+**Trạng thái:** Đối soát với mã nguồn thực tế — xem §6 (Phase 1–4 hoàn thành phần mã nguồn, đã gộp vào `main` cục bộ, chưa push; chờ người dùng duyệt quy tắc rollback V0, duyệt checkpoint, chạy thử provider AI thật và kịch bản demo trên Render. Phase 5 làm một phần: đã có thông báo đẩy WebSocket, avatar, polish giao diện; chưa có upload/parse tài liệu gốc; dashboard Investor đã hoàn thành 2026-10-16).
 
 ---
 
@@ -287,7 +287,7 @@ Cả hai dùng vé một lần (single-use ticket, TTL 60 giây, cấp qua `POST
 
 ## 6. Trạng thái Triển khai (Trạng thái triển khai)
 
-> Đối soát với mã nguồn ngày 2026-10-13. API thực tế: **32 REST router + 2 WebSocket router** được mount. Kiểm thử backend: 649 passed / 28 skipped (SQLite), 659 passed / 16 skipped khi có PostgreSQL (1 test phụ thuộc môi trường có sẵn lỗi). Frontend: 129 test trên 26 tệp (`vitest`) đạt; type-check, lint, build đạt.
+> Đối soát với mã nguồn ngày 2026-10-16. API thực tế: **33 REST router + 2 WebSocket router** được mount. Kiểm thử backend: 697 passed / 28 skipped (SQLite). Frontend: 146 test trên 32 tệp (`vitest`) đạt; type-check, lint, build đạt.
 
 - [x] **Core Auth & User Onboarding (Phase 1)**: Hoàn thành 100%.
 - [x] **Portfolio, Project Core & CPM Engine (Phase 2)**: Hoàn thành 100%. CPM chạy nội bộ (`utils/cpm.py` + `scheduling_service.py`); endpoint `/cpm` đã mount (chỉ đọc); stub `/gantt` đã xóa, Gantt chỉ đọc hoàn thành ở Phase 4.
@@ -300,10 +300,11 @@ Cả hai dùng vé một lần (single-use ticket, TTL 60 giây, cấp qua `POST
 - [x] **AI 4 Trụ cột còn lại (SOP-AI-002 → 005)**: Hoàn thành 100%. Cả 4 module AI (`impact_analyzer.py`, `schedule_optimizer.py`, `resource_recommender.py`, `risk_analyzer.py`) hoạt động thật qua durable job (`ai.impact_analysis`, `ai.schedule_optimize`, `ai.resource_recommend`, `ai.risk_analysis`), endpoint `/ai/impact-analysis`, `/ai/optimize-schedule`, `/ai/resource-recommendation`, `/ai/risk-analysis` đã mount; job cron `cron.risk` quét rủi ro 08:30 hàng ngày; UI tại `/projects/{id}/change-requests` và `/projects/{id}/ai-insights`.
 - [x] **Change Request CRUD**: Hoàn thành và đã mount (`change_requests.py`, `change_request_service.py`).
 - [x] **Phase 4 Workflow & Reporting**: Hoàn thành phần mã nguồn (gộp vào `main` cục bộ, chưa push): hỏi làm rõ yêu cầu và sinh dự án từ hồ sơ; duyệt CR BA -> PO -> PM; phiên bản snapshot, diff, rollback V0; Gantt chỉ đọc; SRS/BRD DOCX; XLSX; BPMN swimlane và PNG. `workers/report_tasks.py` đã xóa. Còn chờ người dùng: duyệt quy tắc rollback V0, duyệt checkpoint, chạy thử provider AI thật, kịch bản demo trên Render sau cold start.
-- [ ] **Upload và bóc tách tài liệu gốc (Phase 5)**, **Investor Read-only Dashboard**, kéo thả Gantt, gửi email thật trên demo: chưa làm.
+- [x] **Investor Read-only Dashboard**: Hoàn thành (2026-10-16). Router `/investor`, bảng `portfolio_investors`, trang `/investor`; investor chỉ xem portfolio được cấp, quyền cấp yêu cầu role Investor tại thời điểm đọc; `overdue_projects` bỏ qua dự án COMPLETED và CANCELLED. Backend 697 passed / 28 skipped, frontend 146 test. Chưa có UI cho `GET /investor/projects/{id}` và `risk_distribution`.
+- [ ] **Upload và bóc tách tài liệu gốc (Phase 5)**, kéo thả Gantt, gửi email thật trên demo: chưa làm.
 - [x] **Mobile Responsive & Polish**: Hoàn thành cơ bản mobile navigation với modal focus trap, theme switcher (light/dark/system).
 - [x] **Docker Compose 7 Services Dev + Deploy Render + Supabase (Free Tier)**: Hoàn thành cấu hình đầy đủ.
 
 ---
 
-*Cập nhật lần cuối: 2026-10-13 — Version 2.4.0 — Stack: Python FastAPI + Next.js 15*
+*Cập nhật lần cuối: 2026-10-16 — Version 2.4.1 — Stack: Python FastAPI + Next.js 15*

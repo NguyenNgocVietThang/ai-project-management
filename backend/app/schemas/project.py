@@ -13,6 +13,7 @@ class ProjectCreate(BaseModel):
     start_date: date
     end_date: date
     budget: float | None = Field(default=None, ge=0)
+    expected_benefit: float | None = Field(default=None, ge=0)
     currency: str = Field(default="VND", min_length=3, max_length=10)
     methodology: ProjectMethodology = ProjectMethodology.AGILE
 
@@ -50,6 +51,7 @@ class ProjectUpdate(BaseModel):
     start_date: date | None = None
     end_date: date | None = None
     budget: float | None = Field(default=None, ge=0)
+    expected_benefit: float | None = Field(default=None, ge=0)
     currency: str | None = Field(default=None, min_length=3, max_length=10)
 
     @field_validator("name")
@@ -144,6 +146,7 @@ class ProjectSummaryResponse(BaseModel):
     progress_percent: float
     budget: float | None
     budget_spent: float
+    expected_benefit: float | None = None
     currency: str
     portfolio_id: int | None
     portfolio_name: str | None
