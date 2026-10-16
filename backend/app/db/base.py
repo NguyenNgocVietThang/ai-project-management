@@ -42,6 +42,7 @@ from app.models.phase import Phase  # noqa: F401
 
 # ─── Domain 3: Lõi dự án ──────────────────────────────────────────────────────
 from app.models.portfolio import Portfolio  # noqa: F401
+from app.models.portfolio_investor import PortfolioInvestor  # noqa: F401
 from app.models.process_model import ProcessModelRecord  # noqa: F401
 from app.models.project import Project  # noqa: F401
 from app.models.project_version import ProjectVersion  # noqa: F401
