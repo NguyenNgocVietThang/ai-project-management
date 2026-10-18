@@ -72,3 +72,11 @@
 - Chưa có giao diện cho `GET /investor/projects/{id}` và `risk_distribution`.
 - Việc theo dõi: (1) task đã lưu trữ vẫn bị tính trong `project_task_counts` (dashboard và investor), cần sửa riêng vì đổi số liệu dashboard; (2) lỗi cấp quyền từ backend hiển thị tiếng Anh; (3) cấp quyền đồng thời hai lần cho cùng người có thể trả 500 thay vì 200 idempotent; (4) môi trường cục bộ: image `minio/minio` không còn trên Docker Hub, `backend/.env` chứa `SEED_ADMIN_*` bị `Settings` (extra=forbid) từ chối, watcher `uvicorn --reload` lỗi quyền trên `.pytest_cache`.
 - Chưa làm: đồ thị tri thức (`graphify update .`) chờ người dùng quyết định vì `graphify-out/` đã có thay đổi chưa commit từ trước.
+
+## Cập nhật 2026-10-18 — Dọn dẹp nhánh và cache lỗi thời
+
+- Xóa 3 nhánh cục bộ đã merge vào `main`: `codex/consistent-firework-launch`, `feature/phase4-workflow-reporting`, `feat/ui-modernization`.
+- Xóa 1 nhánh remote đã merge: `origin/feat/ui-modernization`.
+- Xóa ~134 MB thư mục lỗi thời đã gitignore: `tasks/.postgres-test/` (67 MB, cụm PostgreSQL tạm), `.mypy_cache/` (64 MB), `tasks/.validation-libs/` (2.7 MB), `.pytest_cache/`, `.ruff_cache/`, `tasks/.render-validation.json`.
+- Cập nhật ngày tất cả file `.md`: README.md, PHASE_4 (v2.2), PHASE_5 (v1.7), tasks/plan.md, tasks/todo.md, tasks/progress.md, tasks/phase4/progress.md.
+- Nhánh còn lại: chỉ `main` (local) và `origin/main` (remote).

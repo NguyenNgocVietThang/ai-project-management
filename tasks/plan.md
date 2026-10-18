@@ -1,6 +1,6 @@
 # Kế hoạch: Render Free + Supabase Free
 
-Ngày: 2026-10-08. Phạm vi: kế hoạch, chưa thay đổi mã ứng dụng hoặc tài khoản cloud.
+Ngày: 2026-10-08 (cập nhật 2026-10-18). Phạm vi: kế hoạch, chưa thay đổi mã ứng dụng hoặc tài khoản cloud.
 
 ## Mục tiêu
 

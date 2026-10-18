@@ -1,6 +1,6 @@
 # Nhật ký tiến độ Phase 4
 
-Nhánh: `feature/phase4-workflow-reporting` (tạo từ `main` ngày 2026-10-12). Không push, không merge.
+Nhánh: `feature/phase4-workflow-reporting` (tạo từ `main` ngày 2026-10-12, merge vào `main` và xóa ngày 2026-10-18).
 
 ## Môi trường kiểm thử
 

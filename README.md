@@ -54,7 +54,7 @@ Xây dựng một **web application quản lý dự án và danh mục đầu t�
 - **Phân tích tác động thay đổi (Phân tích tác động bằng AI)** và tối ưu lịch (Schedule Optimization) khi phát sinh Change Request.
 - **Dashboard & Báo cáo đa chiều**: Gantt Chart tương tác, Burndown, Burnup, Velocity, Earned Value Analysis (EVA, CPI, SPI), xuất file DOCX/XLSX.
 
-### Trạng thái triển khai thực tế (cập nhật 2026-10-14)
+### Trạng thái triển khai thực tế (cập nhật 2026-10-18)
 
 | Nhóm chức năng | Trạng thái | Ghi chú |
 |---|---|---|
@@ -156,7 +156,7 @@ FastAPI WS Endpoint (authenticate_ws đổi vé dùng-một-lần lấy từ POS
 | Lưu trữ tệp | `minio` / `boto3` | `7.2.9` | S3-compatible storage (BRD/SRS, Avatar, Reports) |
 | Dịch vụ email | `fastapi-mail` + Jinja2 | `1.4.1` | Template email async dispatch |
 | Báo cáo | `python-docx`, `openpyxl` | — | Xuất báo cáo dự án định dạng DOCX & XLSX |
-| Kiểm thử | `pytest`, `pytest-asyncio`, `httpx` | — | Automated test suite (`backend/tests/unit/` + `backend/tests/integration/`; 2026-10-13: 649 passed, 28 skipped trên SQLite) |
+| Kiểm thử | `pytest`, `pytest-asyncio`, `httpx` | — | Automated test suite (`backend/tests/unit/` + `backend/tests/integration/`; 2026-10-16: 697 passed, 28 skipped trên SQLite) |
 
 ### Phía giao diện (Next.js / React / TypeScript)
 | Thành phần | Công nghệ / Thư viện | Phiên bản | Mô tả |
@@ -815,4 +815,4 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
 - **Giấy phép:** [MIT License](./LICENSE)
 
 ---
-*Cập nhật toàn diện hệ thống: 2026-10-16 (33 REST router đang mount + 2 WebSocket router; Phase 1–4 hoàn thành phần mã nguồn, Phase 4 chờ nghiệm thu cloud, Phase 5 đang phát triển — Investor Dashboard hoàn thành, Document AI Parser chưa bắt đầu).*
+*Cập nhật toàn diện hệ thống: 2026-10-18 (33 REST router đang mount + 2 WebSocket router; Phase 1–4 hoàn thành phần mã nguồn, Phase 4 chờ nghiệm thu cloud, Phase 5 đang phát triển ~65% — Investor Dashboard hoàn thành, Document AI Parser chưa bắt đầu). Dọn dẹp 3 nhánh cục bộ + 1 nhánh remote đã merge, xóa ~134 MB cache/test lỗi thời.*
