@@ -4,7 +4,7 @@
 
 # Hệ thống Lập kế hoạch Dự án và Quản lý Danh mục bằng AI
 
-Demo **Render Free + Supabase Free** dùng Next.js Node server và FastAPI ngủ theo lưu lượng; 750 giờ web là tổng dùng chung của workspace. AI, email và CPM lớn dùng jobs/outbox bền vững trong Postgres, Supabase Cron thay Beat, Resend HTTPS thay SMTP, avatar lưu trong bucket Supabase riêng tư. Xem [hướng dẫn triển khai và vận hành](docs/deploy-render-supabase.md), [số đo tài nguyên](docs/free-compute-audit.md) và [checklist nghiệm thu](tasks/todo.md). Cloud chưa được triển khai vì chưa có tài khoản và sender; xuất báo cáo (SRS/BRD DOCX, XLSX) đã có từ Phase 4; chỉ upload/phân tích tài liệu gốc còn TODO.
+Demo được thiết kế cho Render Free + Supabase Free, dùng Next.js Node server và FastAPI có thể ngủ theo lưu lượng; 750 giờ web là tổng dùng chung của workspace. AI, email và CPM lớn dùng jobs/outbox bền vững trong Postgres; lịch chạy qua cron endpoint. Adapter email và Storage đã kiểm thử cục bộ, nghiệm thu với provider/cloud thật vẫn còn mở. Xem [hướng dẫn triển khai và vận hành](docs/deploy-render-supabase.md), [số đo tài nguyên](docs/free-compute-audit.md) và [checklist nghiệm thu](tasks/todo.md). Xuất SRS/BRD DOCX và báo cáo XLSX đã có; chỉ upload/phân tích tài liệu gốc còn TODO.
 
 > **Hệ thống quản lý dự án & danh mục thông minh tích hợp AI — tương đương MS Project với lớp AI tự động phân tích, đề xuất và tối ưu hóa kế hoạch, hỗ trợ Real-time Project Chat và WebSocket Notifications.**
 
@@ -26,7 +26,7 @@ Demo **Render Free + Supabase Free** dùng Next.js Node server và FastAPI ngủ
 3. [Ngăn xếp công nghệ](#3-technology-stack)
 4. [Phân cấp cấu trúc dự án (WBS)](#4-phân-cấp-cấu-trúc-dự-án-wbs)
 5. [Cấu trúc thư mục dự án](#5-cấu-trúc-thư-mục-dự-án)
-6. [Lược đồ cơ sở dữ liệu (8 Domains & 34 Tables)](#6-database-schema-8-domains--34-tables)
+6. [Lược đồ cơ sở dữ liệu (39 bảng, 9 domain nghiệp vụ)](#6-database-schema-39-bảng-9-domain-nghiệp-vụ)
 7. [Hệ thống phân quyền (RBAC) & Quản trị Admin](#7-hệ-thống-phân-quyền-rbac--quản-trị-admin)
 8. [Quy trình vận hành chuẩn (SOP)](#8-quy-trình-vận-hành-chuẩn-sop)
 9. [Thuật toán cốt lõi & Hạ tầng Real-time](#9-thuật-toán-cốt-lõi--hạ-tầng-real-time)
@@ -276,7 +276,7 @@ AI Project Planning & Portfolio Management system/
 │   │       ├── ai_tasks.py                   # mã Celery kế thừa; AI nay chạy qua các job `ai.*`
 │   │       └── email_tasks.py                # mã Celery kế thừa; tác vụ nền nay chạy bằng durable jobs
 │   │   ├── alembic/versions/                 # Database migrations chain
-│   │   └── tests/                            # unit/ + integration/ — 649 passed, 28 skipped (2026-10-13)
+│   │   └── tests/                            # unit/ + integration/ — xem docs/backend-final-verification.md
 │
 ├── frontend/                                 # Next.js 15 React / TypeScript Frontend
 │   ├── src/
@@ -815,4 +815,4 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000
 - **Giấy phép:** [MIT License](./LICENSE)
 
 ---
-*Cập nhật toàn diện hệ thống: 2026-10-18 (33 REST router đang mount + 2 WebSocket router; Phase 1–4 hoàn thành phần mã nguồn, Phase 4 chờ nghiệm thu cloud, Phase 5 đang phát triển ~65% — Investor Dashboard hoàn thành, Document AI Parser chưa bắt đầu). Dọn dẹp 3 nhánh cục bộ + 1 nhánh remote đã merge, xóa ~134 MB cache/test lỗi thời.*
+*Đối soát tài liệu hiện trạng: 2026-10-19. Có 33 REST router đang mount và 2 WebSocket router; Phase 1–4 hoàn thành phần mã nguồn, nghiệm thu cloud/provider vẫn còn mở. Phase 5 đã có Investor Dashboard; upload/parse tài liệu gốc chưa bắt đầu. Kết quả kiểm thử theo từng thời điểm được lưu trong các tài liệu verification.*

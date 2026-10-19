@@ -1,8 +1,9 @@
 # Thiết kế kiến trúc hệ thống
 ## Hệ thống Lập kế hoạch Dự án và Quản lý Danh mục bằng AI
 
-**Version:** 2.4.0
-**Date:** 2026-10-13
+**Version:** 2.5.0
+**Date:** 2026-10-19
+**Current baseline:** 33 REST routers, 39 database tables, 9 business domains; latest recorded test snapshot is 2026-10-16 (backend 697 passed / 28 skipped; frontend 32 files / 146 tests). Historical counts remain in Change History.
 
 ---
 
@@ -45,7 +46,7 @@ Hệ thống **AI Project Planning & Portfolio Management** được thiết k�
 | Export XLSX | openpyxl | 3.1.5 |
 | HTTP Client | httpx | 0.27.2 |
 | Date Utils | python-dateutil, pytz | 2.9.0 / 2024.2 |
-| Kiểm thử | pytest, pytest-asyncio, httpx (backend 649 passed / 28 skipped trên SQLite; frontend 26 tệp / 129 test Vitest) | — |
+| Kiểm thử | pytest, pytest-asyncio, httpx (kết quả theo từng lần chạy xem `docs/backend-final-verification.md`; mốc mới nhất ghi nhận 2026-10-16: backend 697/28, frontend 32 tệp / 146 test) | — |
 
 ### Lớp phía giao diện
 
@@ -94,7 +95,7 @@ HTTP / WS Request
      ▼
 ┌────────────────────────────────────────────────────────┐
 │ 1. ENDPOINTS & WS LAYER (app/api/v1/ & app/api/ws/)    │
-│    - 32 REST Routers mounted + 2 WebSocket Routers     │
+│    - 33 REST Routers mounted + 2 WebSocket Routers     │
 │    - Kiểm tra RBAC (require_roles, require_permissions)│
 │    - Xác thực WS handshake via vé một lần (ticket)     │
 │    - Trả về Pydantic DTO schemas                       │
@@ -120,7 +121,7 @@ HTTP / WS Request
 ┌────────────────────────────────────────────────────────┐
 │ 4. MODELS LAYER  (app/models/)                         │
 │    - SQLAlchemy Declarative Base (39 bảng)             │
-│    - 8 Domains chức năng                               │
+│    - 9 domain nghiệp vụ, cộng bảng hạ tầng             │
 └────────────────────────────────────────────────────────┘
 ```
 
@@ -132,7 +133,7 @@ backend/
 │   ├── main.py                 # FastAPI entrypoint + lifespan + CORS + WS Router mount
 │   ├── api/
 │   │   ├── v1/
-│   │   │   ├── router.py       # Mount 32 REST routers (3 stub chưa mount: leaves, skills, system) → api_router
+│   │   │   ├── router.py       # Mount 33 REST routers (3 stub chưa mount: leaves, skills, system) → api_router
 │   │   │   └── endpoints/
 │   │   │       ├── auth.py, oauth.py, users.py, roles.py, permissions.py
 │   │   │       ├── portfolios.py, projects.py, phases.py, sprints.py, epics.py, milestones.py
@@ -194,7 +195,7 @@ backend/
 │       ├── version_diff.py     # Diff snapshot phiên bản (chỉ trả thay đổi)
 │       ├── date_utils.py, pagination.py, email.py, sanitize.py
 ├── alembic/                    # Database migrations (async PostgreSQL)
-└── tests/unit/                 # 649 passed / 28 skipped (SQLite), 659 passed / 16 skipped khi có PostgreSQL
+└── tests/unit/                 # Xem kết quả theo mốc trong docs/backend-final-verification.md
 ```
 
 ---
@@ -397,8 +398,8 @@ Email gửi qua SMTP hoặc Resend; trên bản demo Render hiện đang tắt. 
 | 2.2.1 | 2026-09-03 | Đối soát tài liệu với mã nguồn thực tế: **21/32 REST router được mount** (11 router `leaves/skills/documents/approvals/change_requests/gantt/cpm/reports/versions/ai/system` vẫn là stub `TODO`, chưa mount); `workers/ai_tasks.py` và `report_tasks.py` là stub; CPM chạy nội bộ qua `utils/cpm.py` + `scheduling_service.py`; 123/123 unit test pass. Model DB đủ 34 bảng nhưng business logic Phase 3–5 phần lớn chưa hiện thực. |
 | 2.2.2 | 2026-09-16 | Sửa các sai lệch phát hiện khi đối soát lại với mã nguồn: thực tế **23/32 REST router được mount**... |
 | 2.3.0 | 2026-10-02 | Hoàn thành toàn diện Phase 3 (AI Features) với 5/5 trụ cột: AI Project Generator, AI Impact Analysis, AI Schedule Optimization, AI Resource Recommendation, AI Risk Analysis. Mount thêm `change_requests` router (nâng tổng số lên **24/32 REST router đang hoạt động**, chỉ còn 8 stub). Thêm 2 route frontend mới (`change-requests`, `ai-insights`). Thêm Celery Beat risk sweep (08:30 hàng ngày). Chuyển triển khai production sang Render + Supabase (Free Tier), thay thế Oracle Cloud Always Free. Cập nhật bộ unit test backend lên 264/264 passing. |
-| 2.4.0 | 2026-10-13 | Hoàn thành mã nguồn Phase 4 (Workflow & Reporting): hỏi làm rõ yêu cầu (`requirement_briefs`), duyệt CR 3 bước BA -> PO -> PM, snapshot/diff/rollback theo quy tắc V0, Gantt chỉ đọc, SRS/BRD DOCX, XLSX, BPMN (SVG và PNG bằng Pillow). Thay Celery bằng durable jobs + cron endpoint (Celery chỉ còn kế thừa). **32 REST router được mount**, 3 stub (`leaves`, `skills`, `system`); xóa stub `gantt` và `workers/report_tasks.py`. CSDL 39 bảng (thêm `requirement_briefs`, `generated_documents`, `process_models`, cột `tasks.archived_at`, mở rộng `approvals`). Kiểm thử backend 649 passed / 28 skipped, frontend 129 test. |
+| 2.4.0 | 2026-10-13 | Mốc lịch sử: hoàn thành mã nguồn Phase 4 (Workflow & Reporting): hỏi làm rõ yêu cầu (`requirement_briefs`), duyệt CR 3 bước BA -> PO -> PM, snapshot/diff/rollback theo quy tắc V0, Gantt chỉ đọc, SRS/BRD DOCX, XLSX, BPMN (SVG và PNG bằng Pillow). Thay Celery bằng durable jobs + cron endpoint (Celery chỉ còn kế thừa). Khi đó ghi nhận 32 REST router được mount, 3 stub; 39 bảng. Kết quả kiểm thử lúc đó: backend 649/28 và frontend 129 test; đây là kết quả lịch sử, không phải hiện trạng mới nhất. |
 
 ---
 
-*Cập nhật lần cuối: 2026-10-13 — Version 2.4.0 — Stack: Python FastAPI + Next.js 15*
+*Cập nhật hiện trạng: 2026-10-19 — Version 2.5.0. Các dòng Change History giữ nguyên làm nhật ký; số liệu kiểm thử trong đó là mốc lịch sử. Mốc hiện trạng gần nhất được ghi nhận ngày 2026-10-16: backend 697/28, frontend 32 tệp / 146 test. Stack: Python FastAPI + Next.js 15.*

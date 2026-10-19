@@ -1,6 +1,6 @@
 # Công việc: Render Free + Supabase Free
 
-Checklist phân biệt mã/cấu hình đã kiểm thử cục bộ và nghiệm thu cloud còn thiếu tài khoản. Bằng chứng tổng hợp tại docs/backend-final-verification.md và các tài liệu verification liên quan. *Cập nhật: 2026-10-18.*
+Checklist phân biệt mã/cấu hình đã kiểm thử cục bộ và nghiệm thu cloud còn mở. Bằng chứng tổng hợp tại docs/backend-final-verification.md và các tài liệu verification liên quan. Không có tài khoản cloud/provider để hoàn tất nghiệm thu. *Đối soát: 2026-10-19.*
 
 | Bước | Công việc / nghiệm thu | Xác minh | Phụ thuộc | Tệp dự kiến / phạm vi |
 |---|---|---|---|---|

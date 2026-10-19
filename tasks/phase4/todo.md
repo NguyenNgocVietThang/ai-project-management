@@ -1,6 +1,6 @@
-# Công việc: Phase 4 — Workflow & Reporting
+# Lưu trữ checklist: Phase 4 — Workflow & Reporting (hoàn tất phần mã nguồn)
 
-Kế hoạch và ý định đã xác nhận: tasks/phase4/plan.md. Lệnh xác minh chung:
+Kế hoạch và ý định ban đầu: tasks/phase4/plan.md. Checklist dưới đây giữ lại trạng thái và bằng chứng theo thời điểm triển khai; xem docs/roadmap/PHASE_4_WORKFLOW_REPORTING_MODULE.md để biết hiện trạng tổng hợp. Lệnh xác minh đã dùng:
 - Backend: `backend/.venv/Scripts/python -m pytest` (baseline 400 passed / 21 skipped; 416/2 với Postgres)
 - Frontend: `npm run test`, `npm run type-check`, `npm run lint`, `npm run build` trong `frontend/`
 - Migration: upgrade/downgrade/upgrade trên PostgreSQL test

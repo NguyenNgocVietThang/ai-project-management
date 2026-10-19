@@ -58,7 +58,7 @@
 
 ## Cập nhật 2026-10-14
 
-- Tất cả các file `.md` đầu được rà soát và cập nhật ngày + trạng thái: README.md (2026-10-14), PHASE_4 (v2.1), PHASE_5 (v1.5), tasks/todo.md, tasks/progress.md.
+- Một nhóm file Markdown đã được rà soát/cập nhật trong đợt 2026-10-14 (README, roadmap Phase 4/5, checklist và nhật ký); đây không phải khẳng định mọi Markdown trong repo đều cập nhật cùng ngày.
 - Trạng thái tổng hợp: Phase 1–4 hoàn thành phần mã nguồn, Phase 4 chờ nghiệm thu cloud (Render + AI thật), Phase 5 ~50% (Document AI Parser + Investor Dashboard chưa bắt đầu).
 - Các mục còn mở (todo.md): Bước 10a (Supabase project thật chưa có), 12b (nghiệm thu cloud đầy đủ còn đợi account + sender).
 
@@ -73,10 +73,17 @@
 - Việc theo dõi: (1) task đã lưu trữ vẫn bị tính trong `project_task_counts` (dashboard và investor), cần sửa riêng vì đổi số liệu dashboard; (2) lỗi cấp quyền từ backend hiển thị tiếng Anh; (3) cấp quyền đồng thời hai lần cho cùng người có thể trả 500 thay vì 200 idempotent; (4) môi trường cục bộ: image `minio/minio` không còn trên Docker Hub, `backend/.env` chứa `SEED_ADMIN_*` bị `Settings` (extra=forbid) từ chối, watcher `uvicorn --reload` lỗi quyền trên `.pytest_cache`.
 - Chưa làm: đồ thị tri thức (`graphify update .`) chờ người dùng quyết định vì `graphify-out/` đã có thay đổi chưa commit từ trước.
 
-## Cập nhật 2026-10-18 — Dọn dẹp nhánh và cache lỗi thời
+## Cập nhật 2026-10-18 — Dọn dẹp nhánh và cache lỗi thời (nhật ký)
 
 - Xóa 3 nhánh cục bộ đã merge vào `main`: `codex/consistent-firework-launch`, `feature/phase4-workflow-reporting`, `feat/ui-modernization`.
 - Xóa 1 nhánh remote đã merge: `origin/feat/ui-modernization`.
 - Xóa ~134 MB thư mục lỗi thời đã gitignore: `tasks/.postgres-test/` (67 MB, cụm PostgreSQL tạm), `.mypy_cache/` (64 MB), `tasks/.validation-libs/` (2.7 MB), `.pytest_cache/`, `.ruff_cache/`, `tasks/.render-validation.json`.
-- Cập nhật ngày tất cả file `.md`: README.md, PHASE_4 (v2.2), PHASE_5 (v1.7), tasks/plan.md, tasks/todo.md, tasks/progress.md, tasks/phase4/progress.md.
+- Cập nhật các file Markdown được liệt kê: README, roadmap Phase 4/5, tasks/plan.md, tasks/todo.md, tasks/progress.md và tasks/phase4/progress.md.
 - Nhánh còn lại: chỉ `main` (local) và `origin/main` (remote).
+
+## Đối soát hiện trạng 2026-10-19
+
+- `git worktree list` chỉ có checkout chính; không có worktree phụ đăng ký trong metadata của repo. Không xác định được thư mục mồ côi nào thuộc repo này để xóa an toàn.
+- Trạng thái cloud: chưa nghiệm thu Supabase Storage, email provider hoặc các luồng cloud; báo cáo cloud ngày 2026-10-12 là nhật ký lịch sử. Xem `docs/adapter-verification.md` và `tasks/todo.md`.
+- Tài liệu roadmap Phase 5 sửa để phản ánh adapter Storage đã kiểm thử giả lập cục bộ nhưng chưa nghiệm thu trên Supabase thật. Xuất DOCX/XLSX đã có; chỉ upload/parse tài liệu nguồn còn TODO.
+- Số liệu test trong các báo cáo giữ nguyên theo ngày chạy; mốc mới nhất trong tài liệu hiện có là backend 697 passed / 28 skipped và frontend 32 tệp / 146 test (2026-10-16).

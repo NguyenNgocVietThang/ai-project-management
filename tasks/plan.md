@@ -1,19 +1,17 @@
 # Kế hoạch: Render Free + Supabase Free
 
-Ngày: 2026-10-08 (cập nhật 2026-10-18). Phạm vi: kế hoạch, chưa thay đổi mã ứng dụng hoặc tài khoản cloud.
+Ngày lập: 2026-10-08. Kế hoạch được thực hiện; nội dung hiện trạng ban đầu được giữ làm bối cảnh lịch sử. Đối soát gần nhất: 2026-10-19.
 
 ## Mục tiêu
 
 Chạy bản demo dùng ít người trên Render Free và Supabase Free; giữ email giao dịch, AI, tính lại lịch và nhắc việc. Không yêu cầu Celery worker/Beat trả phí. Không cam kết hoạt động liên tục hoặc lịch đúng phút khi dịch vụ ngủ/DB bị pause.
 
-## Hiện trạng đã xác minh
+## Hiện trạng tại thời điểm lập kế hoạch (2026-10-08; lưu làm bối cảnh lịch sử)
 
 - FastAPI + Next.js; frontend có next-intl và headers động, chưa thể mặc định export static.
-- AIService đưa các tác vụ AI vào Celery; auth và lời mời dự án cũng đưa email vào Celery.
-- Tính đường găng trên ngưỡng 300 task chuyển sang Celery.
-- Beat nhắc công việc lúc 08:00 và quét rủi ro lúc 08:30 theo APP_TIMEZONE (mặc định Asia/Ho_Chi_Minh).
+- Thời điểm đó AIService và email còn dùng Celery; CPM lớn chuyển sang Celery; Beat chạy lịch nhắc việc và quét rủi ro.
 - Redis còn dùng cho WebSocket, OAuth, giới hạn đăng nhập và thu hồi token; không được bỏ Redis chỉ vì bỏ Celery.
-- Các worker xuất DOCX/XLSX và parse_document còn TODO; không coi chúng là tính năng đã hoàn thiện.
+- Xuất DOCX/XLSX và parse_document còn TODO ở thời điểm lập kế hoạch. Hiện xuất SRS/BRD DOCX và XLSX đã triển khai; upload/parse tài liệu gốc vẫn chưa có.
 
 ## Kiến trúc đề xuất
 

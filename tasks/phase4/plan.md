@@ -1,6 +1,6 @@
-# Kế hoạch: Phase 4 — Workflow & Reporting (phần còn dang dở)
+# Kế hoạch lưu trữ: Phase 4 — Workflow & Reporting (đã triển khai mã nguồn)
 
-Ngày: 2026-10-12 (cập nhật sau phỏng vấn ý định cùng ngày). Nguồn: docs/roadmap/PHASE_4_WORKFLOW_REPORTING_MODULE.md (v1.3, ~40%), tasks/progress.md.
+Ngày lập: 2026-10-12 (cập nhật sau phỏng vấn ý định cùng ngày). Đây là bản kế hoạch lịch sử, được giữ để lưu ý định và quyết định trước triển khai. Phase 4 đã hoàn tất phần mã nguồn; xem docs/roadmap/PHASE_4_WORKFLOW_REPORTING_MODULE.md để biết trạng thái hiện hành.
 
 Tệp riêng trong `tasks/phase4/` vì `tasks/plan.md` và `tasks/todo.md` (Render + Supabase Free) còn mục mở chờ nghiệm thu cloud (10a, 12b, checkpoint cuối). Không ghi đè hai tệp đó.
 
@@ -13,15 +13,15 @@ Tệp riêng trong `tasks/phase4/` vì `tasks/plan.md` và `tasks/todo.md` (Rend
 - Ràng buộc: gói Free (512 MB RAM, backend ngủ, quota AI), không Celery, dùng durable jobs hiện có; còn vài tháng tới ngày bảo vệ.
 - Ngoài phạm vi: upload/parse file yêu cầu gốc; kéo thả Gantt; chỉ định người duyệt cụ thể cho từng CR; email thông báo duyệt (email đang tắt); chỉnh sửa DOCX trong ứng dụng.
 
-## Hiện trạng đã xác minh
+## Hiện trạng tại thời điểm lập kế hoạch (2026-10-12; bối cảnh lịch sử)
 
-- AI Project Generator: `POST /ai/generate-project` nhận một prompt, đưa vào durable job, `project_generator.generate_project_from_prompt` gọi provider xKiro một lần. Không có bước hỏi lại; AI tự lấp chỗ trống.
+- Khi lập kế hoạch, AI Project Generator chỉ nhận prompt thô; Phase 4 sau đó bổ sung luồng hỏi làm rõ và sinh từ hồ sơ.
 - AI chạy qua `AIRequest` + jobs; quota `AI_DAILY_JOB_LIMIT=20`/ngày, `AI_MAX_OUTPUT_TOKENS=8000`, timeout 90 giây.
-- Vai trò dự án: `PM, BA, PO, Member, Customer` (`project_service.PROJECT_ROLES`); CR hiện cho PM/BA tạo; `models/approval.py` có step_order 1=BA, 2=PO, 3=PM nhưng chưa có service.
-- `ProjectVersion` có snapshot JSON, is_baseline, change_request_id; chưa có service/endpoint.
+- Vai trò dự án khi lập kế hoạch: `PM, BA, PO, Member, Customer`; khi đó CR cho PM/BA tạo và chưa có workflow duyệt.
+- Khi lập kế hoạch, `ProjectVersion` chưa có service/endpoint; Phase 4 sau đó bổ sung baseline, diff và rollback.
 - `python-docx` và `openpyxl` đã có trong requirements. Storage private adapter (Supabase) đã có cho avatar; nghiệm thu cloud (10a) chưa xong.
-- CPM: `GET /projects/{id}/cpm` đã mount nhưng tính đồng bộ, không áp `CPM_MAX_TASKS`/`CPM_MAX_DEPENDENCIES` như luồng job.
-- Stub chưa mount: `gantt.py`, `approvals.py`, `project_versions.py`, `reports.py`, `workers/report_tasks.py` (Celery, phải thay bằng durable jobs).
+- CPM: tại thời điểm lập kế hoạch `GET /projects/{id}/cpm` tính đồng bộ, chưa áp dụng các giới hạn được đề xuất.
+- Khi đó các luồng Gantt, approvals, project versions và reports còn chưa triển khai; Phase 4 sau đó đã bổ sung.
 
 ## Quyết định kiến trúc
 

@@ -1,6 +1,6 @@
 # Lộ trình: Mô-đun quy trình và báo cáo (Phase 4)
 
-> **Phiên bản:** 2.2 | **Cập nhật:** 2026-10-18  
+> **Phiên bản:** 2.3 | **Cập nhật:** 2026-10-19
 > **Trạng thái:** Hoàn thành phần mã nguồn; nhánh `feature/phase4-workflow-reporting` đã merge vào `main` và xóa. Còn chờ người dùng: duyệt quy tắc rollback V0 và các checkpoint, chạy thử provider AI thật, kịch bản demo trên Render sau cold start.  
 > **Mức độ ưu tiên:** Critical – kiểm soát thay đổi, truy vết phiên bản, báo cáo cho hội đồng chấm  
 > **Điều kiện tiên quyết:** Phase 1 (Auth và RBAC), Phase 2 (Project Core, CPM, chat) đã hoàn thành  
@@ -50,4 +50,4 @@ Phase 4 bổ sung kịch bản demo trọn vẹn: nhập ý tưởng, AI hỏi l
 
 ---
 
-*Cập nhật lần cuối: 2026-10-18 — Phase 4 — nhánh `feature/phase4-workflow-reporting` đã merge vào `main` và xóa. Tất cả lát (1–5) đã hoàn thành phần mã nguồn; nghiệm thu cloud và chạy thử provider AI thật vẫn chờ người dùng.*
+*Cập nhật lần cuối: 2026-10-19 — Phase 4 hoàn thành phần mã nguồn; nghiệm thu cloud và chạy thử provider AI thật vẫn còn mở. Thông tin nhánh merge là nhật ký ngày 2026-10-18.*

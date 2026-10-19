@@ -67,7 +67,7 @@ Module **AI Features (Phase 3)** tích hợp trí tuệ nhân tạo vào toàn b
 
 ### GIAI ĐOẠN 3.3 – Phân tích tác động bằng AI (SOP-AI-002)
 > **Trạng thái:** Đã hoàn thành
-- `ChangeRequest` trước đây chỉ là stub CRUD không auth, chưa mount router — đã xây CRUD tối giản thật (`change_request_service.py`, `endpoints/change_requests.py`: create/list/get/submit DRAFT→SUBMITTED) làm nền, không có workflow duyệt nhiều bước (bảng `approvals` vẫn là stub, để lại cho một plan riêng).
+- Lịch sử Phase 3: `ChangeRequest` được triển khai khi đó thành CRUD và submit tối giản, không có workflow duyệt nhiều bước. Phase 4 sau đó bổ sung chuỗi duyệt BA → PO → PM tại `/change-requests/{id}/approvals`; xem [roadmap Phase 4](PHASE_4_WORKFLOW_REPORTING_MODULE.md).
 - `impact_analyzer.py`: nạp Project/Task/Dependency, tính CPM (`compute_cpm_for_project`), gọi AI qua `AITaskType.IMPACT_ANALYSIS`, kẹp/validate risk_score/risk_level/affected_task_ids trước khi ghi `impact_reports` (upsert theo `change_request_id`).
 - Endpoint `POST /api/v1/ai/impact-analysis` (xếp hàng qua `AIRequest`/durable job `ai.impact_analysis`, poll `GET /ai/jobs/{id}` — cùng pattern SOP-AI-001).
 - UI: trang `/projects/{id}/change-requests` (danh sách, tạo mới, chi tiết + nút "Run Impact Analysis" + hiển thị report theo risk_level).
@@ -92,4 +92,4 @@ Module **AI Features (Phase 3)** tích hợp trí tuệ nhân tạo vào toàn b
 
 ---
 
-*Cập nhật lần cuối: 2026-10-13 — đồng bộ sau Phase 4 (durable jobs thay Celery; Generator có bước hỏi làm rõ và sinh từ hồ sơ). Hoàn thành ban đầu 2026-09-17 — Phase 3 (AI Features) hoàn thành 5/5 trụ cột. Xem `docs/archive/phase3-ai-features/plan.md` cho quyết định phạm vi (Change Request CRUD tối giản là nền mới cho SOP-AI-002, không có workflow duyệt nhiều bước) và danh sách file đã thêm/sửa.*
+*Cập nhật lần cuối: 2026-10-19 — đồng bộ ghi chú lịch sử sau Phase 4: durable jobs thay Celery; Generator có bước hỏi làm rõ và sinh từ hồ sơ; workflow duyệt CR BA → PO → PM được bổ sung ở Phase 4. Phase 3 hoàn thành ban đầu ngày 2026-09-17. Xem `docs/archive/phase3-ai-features/plan.md` cho phạm vi tại thời điểm đó.*

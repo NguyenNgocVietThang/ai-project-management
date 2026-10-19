@@ -1,6 +1,6 @@
 # Nhật ký tiến độ Phase 4
 
-Nhánh: `feature/phase4-workflow-reporting` (tạo từ `main` ngày 2026-10-12, merge vào `main` và xóa ngày 2026-10-18).
+Nhật ký lịch sử của nhánh `feature/phase4-workflow-reporting` (tạo từ `main` ngày 2026-10-12, merge vào `main` và xóa ngày 2026-10-18). Trạng thái hiện hành xem `docs/roadmap/PHASE_4_WORKFLOW_REPORTING_MODULE.md`.
 
 ## Môi trường kiểm thử
 
