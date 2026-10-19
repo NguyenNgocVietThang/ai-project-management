@@ -71,7 +71,12 @@ async def test_rejected_provider_request_has_known_outcome_and_closes_client(eng
         claimed = (await JobService.claim(db, 1, 240))[0]
         db.expunge(claimed)
     context = JobContext(claimed, factory)
-    client = httpx.AsyncClient(transport=httpx.MockTransport(lambda request: httpx.Response(status, json={"error": {"message": "rejected"}})))
+    def transport(request):
+        if request.method == "GET":
+            return httpx.Response(200, json={"data": [{"id": settings.XKIRO_MODEL_CHAT_QUICK, "access_tier": "free"}]})
+        return httpx.Response(status, json={"error": {"message": "rejected"}})
+
+    client = httpx.AsyncClient(transport=httpx.MockTransport(transport))
     provider = object.__new__(XkiroProvider)
     provider.client = AsyncOpenAI(api_key="test-key", http_client=client, max_retries=0)
     token = active_ai_context.set(context)

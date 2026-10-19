@@ -14,6 +14,8 @@ ERROR_CODES = frozenset(
     {
         "provider_error",
         "provider_rejected",
+        "model_catalog_unavailable",
+        "no_free_model_available",
         "invalid_payload",
         "job_expired",
         "lease_expired",

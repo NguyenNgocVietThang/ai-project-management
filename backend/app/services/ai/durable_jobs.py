@@ -215,7 +215,8 @@ async def run_ai(ctx):
                 # Đã lưu bởi lần áp trước (retry/restart): không ghi hai lần.
                 return
             final_result = {"process_model_id": record.id, "version": record.version, "warnings": record.warnings}
-        db.add(AIOutput(ai_request_id=request_id, output_json=final_result, model_name=resolve_model(TYPE_MODELS[request_type])))
+        actual_model = (ctx.job.staged_result or {}).get("model") or resolve_model(TYPE_MODELS[request_type])
+        db.add(AIOutput(ai_request_id=request_id, output_json=final_result, model_name=actual_model))
         request.status = AIRequestStatus.COMPLETED
         request.completed_at = datetime.now(UTC)
 

@@ -1,4 +1,4 @@
-"""Durable checkpoint around exactly one provider call per AI job."""
+"""Durable checkpoints and quota reservations for bounded provider attempts."""
 import hashlib
 from contextvars import ContextVar
 from datetime import UTC, datetime, time, timedelta

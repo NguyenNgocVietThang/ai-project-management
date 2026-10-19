@@ -683,6 +683,7 @@ MINIO_USE_SSL=false
 # AI Provider (xKiro) — mỗi loại tác vụ AI dùng một model riêng (app/services/ai/model_router.py)
 XKIRO_API_KEY=sk-xt-your-xkiro-api-key-here
 XKIRO_BASE_URL=https://api.xkiro.com/v1
+XKIRO_FREE_FALLBACK_MODELS=["mistralai/mistral-large-4-0","mistralai/mistral-medium-3.5","qwen/qwen-plus-2025-07-28:free"]
 XKIRO_MODEL_PROJECT_GENERATION=deepseek/deepseek-v4-pro-0813
 XKIRO_MODEL_DOCUMENT_PARSING=qwen/qwen3-vl-plus:free
 XKIRO_MODEL_IMPACT_ANALYSIS=deepseek/deepseek-v4-flash

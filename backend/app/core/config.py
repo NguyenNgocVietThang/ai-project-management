@@ -104,6 +104,12 @@ class Settings(BaseSettings):
     XKIRO_MODEL_RESOURCE_RECOMMENDATION: str = "mistralai/mistral-medium-3.5"
     XKIRO_MODEL_RISK_ANALYSIS: str = "mistralai/mistral-large-2512"
     XKIRO_MODEL_CHAT_QUICK: str = "deepseek/deepseek-chat-v3.1"
+    # Every dispatched model must also be marked free in the live provider catalog.
+    XKIRO_FREE_FALLBACK_MODELS: list[str] = Field(
+        default=["mistralai/mistral-large-4-0", "mistralai/mistral-medium-3.5", "qwen/qwen-plus-2025-07-28:free"],
+        min_length=1,
+        max_length=8,
+    )
 
     # Email
     SMTP_HOST: str = "smtp.gmail.com"

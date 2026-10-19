@@ -27,6 +27,16 @@ Nguồn chính thức kiểm tra ngày 2026-10-08: [Render Free](https://render.
 
 ## Tác vụ, lỗi và resume
 
+AI kiểm tra danh mục `GET /v1/models` trước mỗi lượt mới và chỉ gọi model có
+`access_tier=free`. Model của tác vụ được ưu tiên nếu còn miễn phí; tiếp theo là
+`XKIRO_FREE_FALLBACK_MODELS` (mảng JSON), tối đa ba model khác nhau trong một lần chạy.
+Model trả 403/404/429 có thể chuyển sang model tiếp theo; 400/401/402 dừng ngay.
+Timeout, mất kết nối hoặc 5xx sau khi gửi giữ trạng thái chưa rõ kết quả và không
+tự gọi model khác. Mỗi lần gửi đều tính vào quota AI của ứng dụng. Khi không đọc
+được danh mục, hệ thống không gửi yêu cầu sinh nội dung; hết danh sách model miễn phí
+thì báo lỗi. Quota miễn phí của nhà cung cấp dùng chung tài khoản, không tăng theo
+số model dự phòng. AIOutput lưu tên model thực sự trả kết quả từ checkpoint.
+
 Outbox và bản ghi nghiệp vụ commit cùng transaction. Runner claim bằng `FOR UPDATE SKIP LOCKED`, lease/fencing ngăn worker cũ ghi kết quả. Timeout 180 giây, lease 240 giây, heartbeat, retry giới hạn 3 attempts. CPM dùng generation để không bỏ sót chỉnh sửa trong lúc đang chạy. Khi Render ngủ, jobs chờ trong DB; khi thức, runner tự recover và tiếp tục.
 
 AI không giữ DB transaction khi gọi provider; SDK không tự retry. Ghi dispatch intent trước gửi, checkpoint response trước ghi nghiệp vụ. Project/Phase/Task/Dependency/AIOutput và success commit nguyên tử. Nếu đã gửi nhưng chưa lưu response, job FAILED `external_outcome_unknown`: kiểm tra provider usage và để người dùng chủ động tạo yêu cầu mới, không tự gọi lại có thể tốn tiền. Response đã staged được dùng lại sau restart. Không cam kết exactly-once qua API bên ngoài.
