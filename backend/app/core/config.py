@@ -97,7 +97,7 @@ class Settings(BaseSettings):
     # app/services/ai/model_router.py.
     XKIRO_API_KEY: str = ""
     XKIRO_BASE_URL: str = "https://api.xkiro.com/v1"
-    XKIRO_MODEL_PROJECT_GENERATION: str = "deepseek/deepseek-v4-pro"
+    XKIRO_MODEL_PROJECT_GENERATION: str = "deepseek/deepseek-v4-pro-0813"
     XKIRO_MODEL_DOCUMENT_PARSING: str = "qwen/qwen3-vl-plus:free"
     XKIRO_MODEL_IMPACT_ANALYSIS: str = "deepseek/deepseek-v4-flash"
     XKIRO_MODEL_SCHEDULE_OPTIMIZATION: str = "qwen/qwen3.7-max:free"
