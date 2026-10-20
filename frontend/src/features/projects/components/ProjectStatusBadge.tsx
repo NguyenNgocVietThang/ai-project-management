@@ -1,5 +1,6 @@
 import { Badge, type BadgeTone } from '@/components/ui/Badge'
 import { formatStatus } from '@/lib/format'
+import { useTranslations } from 'next-intl'
 
 // Trạng thái dự án -> tông màu ngữ nghĩa; có chấm tròn để không chỉ dựa vào màu.
 const TONES: Record<string, BadgeTone> = {
@@ -11,5 +12,6 @@ const TONES: Record<string, BadgeTone> = {
 }
 
 export function ProjectStatusBadge({ status, className }: { status: string; className?: string }) {
-  return <Badge tone={TONES[status] ?? 'neutral'} dot className={className}>{formatStatus(status)}</Badge>
+  const t = useTranslations('project')
+  return <Badge tone={TONES[status] ?? 'neutral'} dot className={className}>{t.has(`statuses.${status}`) ? t(`statuses.${status}`) : formatStatus(status)}</Badge>
 }

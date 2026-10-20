@@ -1,0 +1,1016 @@
+{
+  "synthetic": true,
+  "source": "Actual local Next.js UI with fully intercepted synthetic API responses; no production reads/writes.",
+  "mode": "baseline",
+  "started": "2026-10-20T14:41:36.551Z",
+  "cases": [
+    {
+      "route": "wbs",
+      "width": 390,
+      "locale": "vi",
+      "theme": "light",
+      "dialog": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 1658,
+          "left": 0,
+          "width": 390,
+          "height": 1594
+        },
+        "dialog": {
+          "top": 146,
+          "right": 378,
+          "bottom": 698,
+          "left": 12,
+          "width": 366,
+          "height": 552
+        },
+        "ancestors": [
+          {
+            "tag": "DIV",
+            "className": "fixed inset-0 z-50 flex h-dvh items-center justify-center p-3 sm:p-4",
+            "rect": {
+              "top": 0,
+              "right": 390,
+              "bottom": 844,
+              "left": 0,
+              "width": 390,
+              "height": 844
+            },
+            "transform": "none",
+            "filter": "none",
+            "backdropFilter": "none",
+            "perspective": "none",
+            "contain": "none",
+            "position": "fixed",
+            "overflow": "visible",
+            "willChange": "auto"
+          },
+          {
+            "tag": "BODY",
+            "className": "",
+            "rect": {
+              "top": 0,
+              "right": 390,
+              "bottom": 1658,
+              "left": 0,
+              "width": 390,
+              "height": 1658
+            },
+            "transform": "none",
+            "filter": "none",
+            "backdropFilter": "none",
+            "perspective": "none",
+            "contain": "none",
+            "position": "static",
+            "overflow": "hidden",
+            "willChange": "auto"
+          },
+          {
+            "tag": "HTML",
+            "className": "__variable_5e14ba light",
+            "rect": {
+              "top": 0,
+              "right": 390,
+              "bottom": 1658,
+              "left": 0,
+              "width": 390,
+              "height": 1658
+            },
+            "transform": "none",
+            "filter": "none",
+            "backdropFilter": "none",
+            "perspective": "none",
+            "contain": "none",
+            "position": "static",
+            "overflow": "visible",
+            "willChange": "auto"
+          }
+        ],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "id": "wbs-390-vi-light-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 1658,
+          "left": 0,
+          "width": 390,
+          "height": 1594
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nPhân rã công việc\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nPhân rã công việc\nCông việc\nGantt\nChấm công\nThành viên\nTrò chuyện\nYêu cầu thay đổi\nPhiên bản\nTài liệu\nQuy trình\nThông tin AI\nCài đặt\nPhân rã công việc\n\nTổ chức giai đoạn, sprint, epic và cột mốc.\n\nThêm epic\nThêm cột mốc\nThêm giai đoạn\nGiai đoạn\nSprint 1 - Khởi động và phân tích\nĐã lên kế hoạch\n\nChưa đặt ngày – Chưa đặt ngày · 6 công việc\n\nGiai đoạn này chưa có sprint nào.\n\nSprint 2 - Thiết kế và phát triển\nĐã lên kế hoạch\n\nChưa đặt ngày – Chưa đặt ngày · 6 công việc\n\nGiai đoạn này chưa có sprint nào.\n\nSprint 3 - Kiểm thử và triển khai\nĐã lên kế hoạch\n\nChưa đặt ngày – Chưa đặt ngày · 5 công việc\n\nGiai đoạn này chưa có sprint nào.\n\nEpic\n\nChưa có epic nào.\n\nCột mốc\n\nChưa có cột mốc nào.",
+      "focusInitiallyInside": true,
+      "focusTrap": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "escapeClosed": true,
+      "focusRestored": true,
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)"
+      ]
+    },
+    {
+      "route": "wbs",
+      "width": 320,
+      "locale": "vi",
+      "theme": "light",
+      "dialog": {
+        "width": 320,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 320,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 320,
+          "bottom": 1890,
+          "left": 0,
+          "width": 320,
+          "height": 1826
+        },
+        "dialog": {
+          "top": 146,
+          "right": 308,
+          "bottom": 698,
+          "left": 12,
+          "width": 296,
+          "height": 552
+        },
+        "ancestors": [
+          {
+            "tag": "DIV",
+            "className": "fixed inset-0 z-50 flex h-dvh items-center justify-center p-3 sm:p-4",
+            "rect": {
+              "top": 0,
+              "right": 320,
+              "bottom": 844,
+              "left": 0,
+              "width": 320,
+              "height": 844
+            },
+            "transform": "none",
+            "filter": "none",
+            "backdropFilter": "none",
+            "perspective": "none",
+            "contain": "none",
+            "position": "fixed",
+            "overflow": "visible",
+            "willChange": "auto"
+          },
+          {
+            "tag": "BODY",
+            "className": "",
+            "rect": {
+              "top": 0,
+              "right": 320,
+              "bottom": 1890,
+              "left": 0,
+              "width": 320,
+              "height": 1890
+            },
+            "transform": "none",
+            "filter": "none",
+            "backdropFilter": "none",
+            "perspective": "none",
+            "contain": "none",
+            "position": "static",
+            "overflow": "hidden",
+            "willChange": "auto"
+          },
+          {
+            "tag": "HTML",
+            "className": "__variable_5e14ba light",
+            "rect": {
+              "top": 0,
+              "right": 320,
+              "bottom": 1890,
+              "left": 0,
+              "width": 320,
+              "height": 1890
+            },
+            "transform": "none",
+            "filter": "none",
+            "backdropFilter": "none",
+            "perspective": "none",
+            "contain": "none",
+            "position": "static",
+            "overflow": "visible",
+            "willChange": "auto"
+          }
+        ],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "id": "wbs-320-vi-light-17-ready",
+      "geometry": {
+        "width": 320,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 320,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 320,
+          "bottom": 1890,
+          "left": 0,
+          "width": 320,
+          "height": 1826
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nPhân rã công việc\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nPhân rã công việc\nCông việc\nGantt\nChấm công\nThành viên\nTrò chuyện\nYêu cầu thay đổi\nPhiên bản\nTài liệu\nQuy trình\nThông tin AI\nCài đặt\nPhân rã công việc\n\nTổ chức giai đoạn, sprint, epic và cột mốc.\n\nThêm epic\nThêm cột mốc\nThêm giai đoạn\nGiai đoạn\nSprint 1 - Khởi động và phân tích\nĐã lên kế hoạch\n\nChưa đặt ngày – Chưa đặt ngày · 6 công việc\n\nGiai đoạn này chưa có sprint nào.\n\nSprint 2 - Thiết kế và phát triển\nĐã lên kế hoạch\n\nChưa đặt ngày – Chưa đặt ngày · 6 công việc\n\nGiai đoạn này chưa có sprint nào.\n\nSprint 3 - Kiểm thử và triển khai\nĐã lên kế hoạch\n\nChưa đặt ngày – Chưa đặt ngày · 5 công việc\n\nGiai đoạn này chưa có sprint nào.\n\nEpic\n\nChưa có epic nào.\n\nCột mốc\n\nChưa có cột mốc nào.",
+      "focusInitiallyInside": true,
+      "focusTrap": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "escapeClosed": true,
+      "focusRestored": true,
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)"
+      ]
+    },
+    {
+      "route": "wbs",
+      "width": 1440,
+      "locale": "vi",
+      "theme": "light",
+      "dialog": {
+        "width": 1440,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1440,
+          "bottom": 1145,
+          "left": 256,
+          "width": 1184,
+          "height": 1081
+        },
+        "dialog": {
+          "top": 208,
+          "right": 1056,
+          "bottom": 692,
+          "left": 384,
+          "width": 672,
+          "height": 484
+        },
+        "ancestors": [
+          {
+            "tag": "DIV",
+            "className": "fixed inset-0 z-50 flex h-dvh items-center justify-center p-3 sm:p-4",
+            "rect": {
+              "top": 0,
+              "right": 1440,
+              "bottom": 900,
+              "left": 0,
+              "width": 1440,
+              "height": 900
+            },
+            "transform": "none",
+            "filter": "none",
+            "backdropFilter": "none",
+            "perspective": "none",
+            "contain": "none",
+            "position": "fixed",
+            "overflow": "visible",
+            "willChange": "auto"
+          },
+          {
+            "tag": "BODY",
+            "className": "",
+            "rect": {
+              "top": 0,
+              "right": 1440,
+              "bottom": 1145,
+              "left": 0,
+              "width": 1440,
+              "height": 1145
+            },
+            "transform": "none",
+            "filter": "none",
+            "backdropFilter": "none",
+            "perspective": "none",
+            "contain": "none",
+            "position": "static",
+            "overflow": "hidden",
+            "willChange": "auto"
+          },
+          {
+            "tag": "HTML",
+            "className": "__variable_5e14ba light",
+            "rect": {
+              "top": 0,
+              "right": 1440,
+              "bottom": 1145,
+              "left": 0,
+              "width": 1440,
+              "height": 1145
+            },
+            "transform": "none",
+            "filter": "none",
+            "backdropFilter": "none",
+            "perspective": "none",
+            "contain": "none",
+            "position": "static",
+            "overflow": "visible",
+            "willChange": "auto"
+          }
+        ],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "id": "wbs-1440-vi-light-17-ready",
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1440,
+          "bottom": 1145,
+          "left": 256,
+          "width": 1184,
+          "height": 1081
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nAI Project.\nKẾ HOẠCH & DANH MỤC\n\nKHÔNG GIAN LÀM VIỆC\n\nBảng điều khiển\nDanh mục\nDự án\n\nCÁ NHÂN\n\nThông báo\nHồ sơ\n\nNHÀ ĐẦU TƯ\n\nCổng nhà đầu tư\n\nQUẢN TRỊ\n\nQuản trị\n\nBắt đầu từ kế hoạch rõ ràng\n\nDùng AI để chuyển mô tả dự án thành giai đoạn, công việc và các quan hệ phụ thuộc.\n\nKhám phá dự án\nGiao diện\nDự án\nDự án mẫu AI — Quản lý dự án và danh mục\nPhân rã công việc\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nNguyễn QA\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nPhân rã công việc\nCông việc\nGantt\nChấm công\nThành viên\nTrò chuyện\nYêu cầu thay đổi\nPhiên bản\nTài liệu\nQuy trình\nThông tin AI\nCài đặt\nPhân rã công việc\n\nTổ chức giai đoạn, sprint, epic và cột mốc.\n\nThêm epic\nThêm cột mốc\nThêm giai đoạn\nGiai đoạn\nSprint 1 - Khởi động và phân tích\nĐã lên kế hoạch\n\nChưa đặt ngày – Chưa đặt ngày · 6 công việc\n\nGiai đoạn này chưa có sprint nào.\n\nSprint 2 - Thiết kế và phát triển\nĐã lên kế hoạch\n\nChưa đặt ngày – Chưa đặt ngày · 6 công việc\n\nGiai đoạn này chưa có sprint nào.\n\nSprint 3 - Kiểm thử và triển khai\nĐã lên kế hoạch\n\nChưa đặt ngày – Chưa đặt ngày · 5 công việc\n\nGiai đoạn này chưa có sprint nào.\n\nEpic\n\nChưa có epic nào.\n\nCột mốc\n\nChưa có cột mốc nào.",
+      "focusInitiallyInside": true,
+      "focusTrap": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "escapeClosed": true,
+      "focusRestored": true,
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)"
+      ]
+    },
+    {
+      "route": "tasks",
+      "width": 390,
+      "locale": "vi",
+      "theme": "light",
+      "id": "tasks-390-vi-light-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 3197,
+          "left": 0,
+          "width": 390,
+          "height": 3133
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nCông việc\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nPhân rã công việc\nCông việc\nGantt\nChấm công\nThành viên\nTrò chuyện\nYêu cầu thay đổi\nPhiên bản\nTài liệu\nQuy trình\nThông tin AI\nCài đặt\nCông việc\n\nLập kế hoạch, phân công và theo dõi công việc của dự án.\n\nBảng\nDanh sách\nSprint\nCông việc mới\nMọi trạng thái\nTodo\nIn Progress\nIn Review\nDone\nBlocked\nMọi độ ưu tiên\nLow\nMedium\nHigh\nCritical\nMọi giai đoạn\nSprint 1 - Khởi động và phân tích\nSprint 2 - Thiết kế và phát triển\nSprint 3 - Kiểm thử và triển khai\nMọi sprint\nMọi epic\nMọi người phụ trách\nNguyễn QA\nTodo\n16\nKhảo sát quy trình hiện tại\nĐường găng\nMedium\nQA\nNov 10, 2026\nNguyễn\nXác định phạm vi dự án\nĐường găng\nMedium\nQA\nNov 10, 2026\nNguyễn\nThiết kế kiến trúc hệ thống\nHigh\nQA\nNov 10, 2026\nNguyễn\nThiết kế giao diện người dùng\nMedium\nQA\nNov 10, 2026\nNguyễn\nXây dựng cơ sở dữ liệu\nMedium\nQA\nNov 10, 2026\nNguyễn\nPhát triển đăng nhập và phân quyền\nHigh\nQA\nNov 10, 2026\nNguyễn\nPhát triển quản lý dự án\nMedium\nQA\nNov 10, 2026\nNguyễn\nPhát triển quản lý công việc\nMedium\nQA\nNov 10, 2026\nNguyễn\nTích hợp lịch và biểu đồ Gantt\nHigh\nQA\nNov 10, 2026\nNguyễn\nXây dựng báo cáo tiến độ\nMedium\nQA\nNov 10, 2026\nNguyễn\nTích hợp dịch vụ AI\nMedium\nQA\nNov 10, 2026\nNguyễn\nKiểm thử chức năng\nHigh\nQA\nNov 10, 2026\nNguyễn\nKiểm thử tích hợp\nMedium\nQA\nNov 10, 2026\nNguyễn\nĐào tạo người dùng\nMedium\nQA\nNov 10, 2026\nNguyễn\nTriển khai thử nghiệm\nHigh\nQA\nNov 10, 2026\nNguyễn\nNghiệm thu và bàn giao\nMedium\nQA\nNov 10, 2026\nNguyễn\nIn Progress\n1\nPhân tích yêu cầu nghiệp vụ\nĐường găng\nHigh\nQA\nNov 10, 2026\nNguyễn\nIn Review\n0\nDone\n0\nBlocked\n0\n\nHiển thị 17 trong 17 công việc.",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "GET",
+          "path": "/users/me/worklogs/active"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/members"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)"
+      ]
+    },
+    {
+      "route": "tasks",
+      "width": 1440,
+      "locale": "vi",
+      "theme": "light",
+      "id": "tasks-1440-vi-light-17-ready",
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1440,
+          "bottom": 2611,
+          "left": 256,
+          "width": 1184,
+          "height": 2547
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nAI Project.\nKẾ HOẠCH & DANH MỤC\n\nKHÔNG GIAN LÀM VIỆC\n\nBảng điều khiển\nDanh mục\nDự án\n\nCÁ NHÂN\n\nThông báo\nHồ sơ\n\nNHÀ ĐẦU TƯ\n\nCổng nhà đầu tư\n\nQUẢN TRỊ\n\nQuản trị\n\nBắt đầu từ kế hoạch rõ ràng\n\nDùng AI để chuyển mô tả dự án thành giai đoạn, công việc và các quan hệ phụ thuộc.\n\nKhám phá dự án\nGiao diện\nDự án\nDự án mẫu AI — Quản lý dự án và danh mục\nCông việc\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nNguyễn QA\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nPhân rã công việc\nCông việc\nGantt\nChấm công\nThành viên\nTrò chuyện\nYêu cầu thay đổi\nPhiên bản\nTài liệu\nQuy trình\nThông tin AI\nCài đặt\nCông việc\n\nLập kế hoạch, phân công và theo dõi công việc của dự án.\n\nBảng\nDanh sách\nSprint\nCông việc mới\nMọi trạng thái\nTodo\nIn Progress\nIn Review\nDone\nBlocked\nMọi độ ưu tiên\nLow\nMedium\nHigh\nCritical\nMọi giai đoạn\nSprint 1 - Khởi động và phân tích\nSprint 2 - Thiết kế và phát triển\nSprint 3 - Kiểm thử và triển khai\nMọi sprint\nMọi epic\nMọi người phụ trách\nNguyễn QA\nTodo\n16\nKhảo sát quy trình hiện tại\nĐường găng\nMedium\nQA\nNov 10, 2026\nNguyễn\nXác định phạm vi dự án\nĐường găng\nMedium\nQA\nNov 10, 2026\nNguyễn\nThiết kế kiến trúc hệ thống\nHigh\nQA\nNov 10, 2026\nNguyễn\nThiết kế giao diện người dùng\nMedium\nQA\nNov 10, 2026\nNguyễn\nXây dựng cơ sở dữ liệu\nMedium\nQA\nNov 10, 2026\nNguyễn\nPhát triển đăng nhập và phân quyền\nHigh\nQA\nNov 10, 2026\nNguyễn\nPhát triển quản lý dự án\nMedium\nQA\nNov 10, 2026\nNguyễn\nPhát triển quản lý công việc\nMedium\nQA\nNov 10, 2026\nNguyễn\nTích hợp lịch và biểu đồ Gantt\nHigh\nQA\nNov 10, 2026\nNguyễn\nXây dựng báo cáo tiến độ\nMedium\nQA\nNov 10, 2026\nNguyễn\nTích hợp dịch vụ AI\nMedium\nQA\nNov 10, 2026\nNguyễn\nKiểm thử chức năng\nHigh\nQA\nNov 10, 2026\nNguyễn\nKiểm thử tích hợp\nMedium\nQA\nNov 10, 2026\nNguyễn\nĐào tạo người dùng\nMedium\nQA\nNov 10, 2026\nNguyễn\nTriển khai thử nghiệm\nHigh\nQA\nNov 10, 2026\nNguyễn\nNghiệm thu và bàn giao\nMedium\nQA\nNov 10, 2026\nNguyễn\nIn Progress\n1\nPhân tích yêu cầu nghiệp vụ\nĐường găng\nHigh\nQA\nNov 10, 2026\nNguyễn\nIn Review\n0\nDone\n0\nBlocked\n0\n\nHiển thị 17 trong 17 công việc.",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "GET",
+          "path": "/users/me/worklogs/active"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/members"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)"
+      ]
+    },
+    {
+      "route": "overview",
+      "width": 390,
+      "locale": "vi",
+      "theme": "light",
+      "id": "overview-390-vi-light-17-ready",
+      "failure": "page.evaluate: Execution context was destroyed, most likely because of a navigation",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/overview"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)"
+      ]
+    },
+    {
+      "route": "overview",
+      "width": 1440,
+      "locale": "vi",
+      "theme": "light",
+      "id": "overview-1440-vi-light-17-ready",
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1440,
+          "bottom": 1555,
+          "left": 240,
+          "width": 1200,
+          "height": 1491
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nAI Project.\nKẾ HOẠCH & DANH MỤC\nThu gọn điều hướng\n\nKHÔNG GIAN LÀM VIỆC\n\nBảng điều khiển\nDanh mục\nDự án\n\nCÁ NHÂN\n\nThông báo\nHồ sơ\n\nNHÀ ĐẦU TƯ\n\nCổng nhà đầu tư\n\nQUẢN TRỊ\n\nQuản trị\nGiao diện\nDự án\nDự án mẫu AI — Quản lý dự án và danh mục\nTổng quan\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nNguyễn QA\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nNgôn ngữ báo cáo\nTiếng Việt\nTiếng Anh\nXuất XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nTask Status\n17Tasks\nTodoIn progress\nTodo: 16 (94%)\nIn progress: 1 (6%)\n\nTotal: 17\n\nDone: 0\n\nOverdue: 0\n\nCritical: 3\n\nBudget\n0%Utilization\nSpentRemaining\nSpent: ₫0 (0%)\nRemaining: ₫100,000,000 (100%)\n\nSpent: ₫0\n\nBudget: ₫100,000,000\n\nUtilization: 0%\n\n14-day Burndown\nNo burndown data\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)"
+      ]
+    },
+    {
+      "route": "gantt",
+      "width": 390,
+      "locale": "vi",
+      "theme": "light",
+      "id": "gantt-390-vi-light-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 969,
+          "left": 0,
+          "width": 390,
+          "height": 905
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nGantt\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nLịch dự án\nNgày\nTuần\nTháng\nĐường găng\nCó dự trữ\nMốc\nDự trữ\nCông việc\n26 thg 10\n2 thg 11\n9 thg 11\nPhân tích yêu cầu nghiệp vụ\nĐƯỜNG GĂNG\nPhát triển quản lý công việc\nNghiệm thu và bàn giao\nKhảo sát quy trình hiện tại\nĐƯỜNG GĂNG\nTích hợp lịch và biểu đồ Gantt\nXác định phạm vi dự án\nĐƯỜNG GĂNG\nXây dựng báo cáo tiến độ\nThiết kế kiến trúc hệ thống\nTích hợp dịch vụ AI\nThiết kế giao diện người dùng\nKiểm thử chức năng\nXây dựng cơ sở dữ liệu\nKiểm thử tích hợp\nPhát triển đăng nhập và phân quyền\nĐào tạo người dùng\nPhát triển quản lý dự án\nTriển khai thử nghiệm",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/cpm"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)"
+      ]
+    },
+    {
+      "route": "gantt",
+      "width": 1440,
+      "locale": "vi",
+      "theme": "light",
+      "id": "gantt-1440-vi-light-17-ready",
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1440,
+          "bottom": 893,
+          "left": 240,
+          "width": 1200,
+          "height": 829
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nAI Project.\nKẾ HOẠCH & DANH MỤC\nThu gọn điều hướng\n\nKHÔNG GIAN LÀM VIỆC\n\nBảng điều khiển\nDanh mục\nDự án\n\nCÁ NHÂN\n\nThông báo\nHồ sơ\n\nNHÀ ĐẦU TƯ\n\nCổng nhà đầu tư\n\nQUẢN TRỊ\n\nQuản trị\nGiao diện\nDự án\nDự án mẫu AI — Quản lý dự án và danh mục\nGantt\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nNguyễn QA\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nLịch dự án\nNgày\nTuần\nTháng\nĐường găng\nCó dự trữ\nMốc\nDự trữ\nCông việc\n26 thg 10\n2 thg 11\n9 thg 11\nPhân tích yêu cầu nghiệp vụ\nĐƯỜNG GĂNG\nPhát triển quản lý công việc\nNghiệm thu và bàn giao\nKhảo sát quy trình hiện tại\nĐƯỜNG GĂNG\nTích hợp lịch và biểu đồ Gantt\nXác định phạm vi dự án\nĐƯỜNG GĂNG\nXây dựng báo cáo tiến độ\nThiết kế kiến trúc hệ thống\nTích hợp dịch vụ AI\nThiết kế giao diện người dùng\nKiểm thử chức năng\nXây dựng cơ sở dữ liệu\nKiểm thử tích hợp\nPhát triển đăng nhập và phân quyền\nĐào tạo người dùng\nPhát triển quản lý dự án\nTriển khai thử nghiệm",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/cpm"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)",
+        "Failed to load resource: the server responded with a status of 405 (Method Not Allowed)"
+      ]
+    }
+  ]
+}

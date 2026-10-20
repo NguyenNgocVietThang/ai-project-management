@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { usePathname } from 'next/navigation'
 
 import { createFireworks, isInteractiveTarget, type FireworksMode } from './fireworks'
 import { useFireworksPreference } from './useFireworksPreference'
@@ -20,12 +21,14 @@ function hasTextSelection(): boolean {
 }
 
 export function AppBackground() {
+  const pathname = usePathname()
+  const decorative = ['/login', '/register', '/forgot-password', '/reset-password', '/verify-email', '/oauth-callback'].includes(pathname)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const { effectiveEnabled } = useFireworksPreference()
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!effectiveEnabled || !canvas) return
+    if (!decorative || !effectiveEnabled || !canvas) return
 
     const engine = createFireworks(canvas, { getMode: currentMode })
 
@@ -43,7 +46,9 @@ export function AppBackground() {
       window.removeEventListener('pointerdown', onPointerDown)
       engine.destroy()
     }
-  }, [effectiveEnabled])
+  }, [decorative, effectiveEnabled])
+
+  if (!decorative) return null
 
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">

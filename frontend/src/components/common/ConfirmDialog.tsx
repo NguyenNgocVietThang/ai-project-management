@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/common/Button'
 import { Modal } from '@/components/common/Modal'
 
@@ -26,17 +27,18 @@ export function ConfirmDialog({
   open,
   title,
   description,
-  confirmLabel = 'Confirm',
+  confirmLabel,
   isLoading = false,
   destructive = true,
   onConfirm,
   onClose,
 }: ConfirmDialogProps) {
+  const t = useTranslations('common')
   return (
     <Modal open={open} onClose={onClose} title={title} description={description} className="max-w-md">
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" className="w-auto" onClick={onClose}>
-          Cancel
+          {t('cancel')}
         </Button>
         <Button
           type="button"
@@ -45,7 +47,7 @@ export function ConfirmDialog({
           isLoading={isLoading}
           onClick={onConfirm}
         >
-          {confirmLabel}
+          {confirmLabel ?? t('confirm')}
         </Button>
       </div>
     </Modal>

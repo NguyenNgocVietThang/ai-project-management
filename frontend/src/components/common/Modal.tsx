@@ -1,7 +1,9 @@
 'use client'
 
 import { X } from 'lucide-react'
-import { useCallback, useEffect, useId, useRef } from 'react'
+import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 
 interface ModalProps {
@@ -10,16 +12,37 @@ interface ModalProps {
   title: string
   description?: string
   children: React.ReactNode
+  footer?: React.ReactNode
   className?: string
 }
 
 /** Phần tử có thể nhận focus bên trong dialog, theo thứ tự tab của tài liệu. */
 const FOCUSABLE =
-  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+  'a[href], button, input:not([type="hidden"]), select, textarea, [tabindex]'
 
-export function Modal({ open, onClose, title, description, children, className }: ModalProps) {
+function canReceiveFocus(element: HTMLElement) {
+  if (element.tabIndex < 0 || element.matches(':disabled') || element.closest('[hidden], [inert], [aria-hidden="true"]')) return false
+  for (let ancestor: HTMLElement | null = element; ancestor; ancestor = ancestor.parentElement) {
+    const style = getComputedStyle(ancestor)
+    if (style.display === 'none' || style.visibility === 'hidden') return false
+  }
+  return true
+}
+
+const activePanels = new Set<HTMLElement>()
+let originalBodyOverflow = ''
+
+function topPanel() {
+  // Retain the layer order until cleanup, even after React removes a portal's DOM.
+  return Array.from(activePanels).at(-1)
+}
+
+export function Modal({ open, onClose, title, description, children, footer, className }: ModalProps) {
+  const t = useTranslations('common')
+  const [mounted, setMounted] = useState(false)
   const panelRef = useRef<HTMLElement>(null)
   const onCloseRef = useRef(onClose)
+  useEffect(() => { setMounted(true) }, [])
   useEffect(() => { onCloseRef.current = onClose }, [onClose])
   // ID phải duy nhất cho từng instance vì nhiều modal có thể render cùng lúc (TaskCreateModal và
   // TaskDrawer).
@@ -27,21 +50,34 @@ export function Modal({ open, onClose, title, description, children, className }
   const descriptionId = useId()
 
   const focusables = useCallback(
-    () => Array.from(panelRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? []),
+    () => Array.from(panelRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? [])
+      .filter(canReceiveFocus),
     []
   )
 
   useEffect(() => {
-    if (!open) return
+    const panel = panelRef.current
+    if (!mounted || !open || !panel) return
 
     // Nhớ nơi focus đang đứng để trả nó về khi đóng; nếu không, focus rơi về
     // <body> và người dùng bàn phím phải tab lại từ đầu trang.
     const previouslyFocused = document.activeElement as HTMLElement | null
+    if (activePanels.size === 0) {
+      originalBodyOverflow = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+    }
+    activePanels.add(panel)
+    const orderedPanels = Array.from(document.querySelectorAll<HTMLElement>('[data-modal-panel]'))
+      .filter(element => activePanels.has(element))
+    activePanels.clear()
+    orderedPanels.forEach(element => activePanels.add(element))
     const items = focusables()
-    ;(items[0] ?? panelRef.current)?.focus()
+    if (topPanel() === panel) (items[0] ?? panel).focus()
 
     const onKeyDown = (event: KeyboardEvent) => {
+      if (topPanel() !== panel) return
       if (event.key === 'Escape') {
+        event.preventDefault()
         onCloseRef.current()
         return
       }
@@ -52,52 +88,60 @@ export function Modal({ open, onClose, title, description, children, className }
       const current = focusables()
       if (current.length === 0) {
         event.preventDefault()
+        panel.focus()
         return
       }
       const first = current[0]
       const last = current[current.length - 1]
-      if (event.shiftKey && document.activeElement === first) {
+      const outside = !panel.contains(document.activeElement) || document.activeElement === panel
+      if (event.shiftKey && (document.activeElement === first || outside)) {
         event.preventDefault()
         last.focus()
-      } else if (!event.shiftKey && document.activeElement === last) {
+      } else if (!event.shiftKey && (document.activeElement === last || outside)) {
         event.preventDefault()
         first.focus()
       }
     }
 
     document.addEventListener('keydown', onKeyDown)
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
     return () => {
       document.removeEventListener('keydown', onKeyDown)
-      document.body.style.overflow = previousOverflow
-      previouslyFocused?.focus?.()
+      const wasTop = topPanel() === panel || panel.contains(document.activeElement)
+      activePanels.delete(panel)
+      if (activePanels.size === 0) document.body.style.overflow = originalBodyOverflow
+      const remaining = topPanel()
+      if (wasTop && previouslyFocused?.isConnected && (!remaining || remaining.contains(previouslyFocused))) {
+        previouslyFocused.focus()
+      } else if (wasTop) {
+        remaining?.focus()
+      }
     }
-  }, [focusables, open])
+  }, [focusables, mounted, open])
 
-  if (!open) return null
+  if (!mounted || !open) return null
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="presentation">
+  return createPortal(
+    <div className="fixed inset-0 z-50 flex h-dvh items-center justify-center p-3 sm:p-4" role="presentation">
       {/* Lớp phủ là div chứ không phải button: một button toàn màn hình nằm trong
           tab order và được screen reader đọc lên như một điều khiển thật. Escape
           và nút đóng ở trên đã là đường thoát cho người dùng bàn phím. */}
-      <div className="absolute inset-0 animate-fade-in bg-slate-950/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-slate-950/50" onClick={() => { if (topPanel() === panelRef.current) onClose() }} />
       <section
         ref={panelRef}
         role="dialog"
+        data-modal-panel=""
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={description ? descriptionId : undefined}
         tabIndex={-1}
         className={cn(
-          'relative z-10 max-h-[90dvh] w-full max-w-2xl animate-scale-in overflow-y-auto rounded-2xl border border-border/80 bg-card p-6 shadow-soft-lg sm:p-8',
+          'relative z-10 flex max-h-[calc(100dvh-1.5rem)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-border/80 bg-card shadow-soft-lg sm:max-h-[calc(100dvh-2rem)]',
           className
         )}
       >
-        <div className="mb-6 flex items-start justify-between gap-4">
-          <div>
-            <h2 id={titleId} className="text-h3">
+        <div className="flex shrink-0 items-start justify-between gap-4 p-4 pb-3 sm:p-6 sm:pb-4">
+          <div className="min-w-0">
+            <h2 id={titleId} className="break-words text-h3">
               {title}
             </h2>
             {description && (
@@ -110,13 +154,15 @@ export function Modal({ open, onClose, title, description, children, className }
             type="button"
             onClick={onClose}
             className="-mr-2 -mt-2 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            aria-label="Close"
+            aria-label={t('close')}
           >
             <X className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
-        {children}
+        <div className="min-h-0 overflow-y-auto overscroll-contain px-4 pb-4 sm:px-6 sm:pb-6">{children}</div>
+        {footer && <div className="shrink-0 border-t border-border bg-card p-4 sm:px-6">{footer}</div>}
       </section>
-    </div>
+    </div>,
+    document.body
   )
 }

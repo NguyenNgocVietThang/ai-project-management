@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Users } from 'lucide-react'
 import {
   Bar,
@@ -47,6 +48,7 @@ const ROW_SIZE = 40
  * Hover: dải ngang bo góc phía sau hàng, hàng đang hover giữ độ đậm, các hàng khác mờ đi.
  */
 function TeamUtilizationChart({ data }: { data: TeamMemberUtilization[] }) {
+  const t = useTranslations('projectOverview')
   const reducedMotion = usePrefersReducedMotion()
   const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined)
   const opacityFor = (index: number) =>
@@ -89,7 +91,7 @@ function TeamUtilizationChart({ data }: { data: TeamMemberUtilization[] }) {
             />
             <Bar
               dataKey="estimated_hours"
-              name="Estimated (h)"
+              name={t('estimated')}
               fill={chartColors.muted}
               fillOpacity={0.45}
               radius={[0, 6, 6, 0]}
@@ -102,7 +104,7 @@ function TeamUtilizationChart({ data }: { data: TeamMemberUtilization[] }) {
             </Bar>
             <Bar
               dataKey="logged_hours"
-              name="Logged (h)"
+              name={t('logged')}
               fill={chartColors.primary}
               radius={[0, 6, 6, 0]}
               maxBarSize={14}
@@ -117,12 +119,12 @@ function TeamUtilizationChart({ data }: { data: TeamMemberUtilization[] }) {
       </div>
       {/* Bảng dữ liệu cho trình đọc màn hình. */}
       <table className="sr-only">
-        <caption>Team utilization: estimated versus logged hours per member</caption>
+        <caption>{t('teamSummary')}</caption>
         <thead>
           <tr>
-            <th scope="col">Member</th>
-            <th scope="col">Estimated (h)</th>
-            <th scope="col">Logged (h)</th>
+            <th scope="col">{t('member')}</th>
+            <th scope="col">{t('estimated')}</th>
+            <th scope="col">{t('logged')}</th>
           </tr>
         </thead>
         <tbody>
@@ -140,27 +142,29 @@ function TeamUtilizationChart({ data }: { data: TeamMemberUtilization[] }) {
 }
 
 export function ProjectOverviewCharts({ stats }: { stats: ProjectDashboardStats }) {
+  const t = useTranslations('projectOverview')
+  const tt = useTranslations('tasks')
   // Màu trạng thái lấy từ token theme (thay hex backend) để biểu đồ không vỡ ở dark mode.
   const statusData = useMemo<DonutSlice[]>(
     () =>
       stats.task_distribution.map((entry, index) => ({
-        name: humanizeStatus(entry.status),
+        name: tt.has(`statuses.${entry.status}`) ? tt(`statuses.${entry.status}`) : humanizeStatus(entry.status),
         value: entry.count,
         color: colorForStatus(entry.status, index),
       })),
-    [stats.task_distribution]
+    [stats.task_distribution, tt]
   )
 
   const budgetData = useMemo<DonutSlice[]>(
     () => [
-      { name: 'Spent', value: stats.budget.spent, color: chartColors.primary },
+      { name: t('spent'), value: stats.budget.spent, color: chartColors.primary },
       {
-        name: 'Remaining',
+        name: t('remaining'),
         value: Math.max(0, (stats.budget.budget ?? 0) - stats.budget.spent),
         color: chartColors.track,
       },
     ],
-    [stats.budget.spent, stats.budget.budget]
+    [stats.budget.spent, stats.budget.budget, t]
   )
 
   const money = (value: number) => formatMoney(value, stats.budget.currency)
@@ -169,18 +173,18 @@ export function ProjectOverviewCharts({ stats }: { stats: ProjectDashboardStats 
     <>
       <div className="grid gap-6 xl:grid-cols-3">
         {/* Biểu đồ vành khuyên phân bố công việc */}
-        <section className="rounded-xl border bg-card p-5 shadow-soft">
-          <h2 className="mb-4 text-h4">Task Status</h2>
+        <section className="min-w-0 rounded-xl border bg-card p-4 shadow-soft">
+          <h2 className="mb-4 text-h4">{t('taskStatus')}</h2>
           <DonutChart
             data={statusData}
             height={220}
             centerValue={stats.total_tasks}
-            centerLabel="Tasks"
-            summaryLabel="Task status distribution"
+            centerLabel={t('tasks')}
+            summaryLabel={t('taskSummary')}
           />
           <div className="mt-2 grid grid-cols-2 gap-1 text-caption tabular-nums">
-            <p>Total: <strong>{stats.total_tasks}</strong></p>
-            <p>Done: <strong>{stats.completed_tasks}</strong></p>
+            <p>{t('total')}: <strong>{stats.total_tasks}</strong></p>
+            <p>{t('done')}: <strong>{stats.completed_tasks}</strong></p>
             <p className={stats.overdue_tasks > 0 ? 'font-medium text-destructive' : ''}>
               Overdue: <strong>{stats.overdue_tasks}</strong>
             </p>
@@ -191,8 +195,8 @@ export function ProjectOverviewCharts({ stats }: { stats: ProjectDashboardStats 
         </section>
 
         {/* Biểu đồ vành khuyên ngân sách */}
-        <section className="rounded-xl border bg-card p-5 shadow-soft">
-          <h2 className="mb-4 text-h4">Budget</h2>
+        <section className="min-w-0 rounded-xl border bg-card p-4 shadow-soft">
+          <h2 className="mb-4 text-h4">{t('budget')}</h2>
           {stats.budget.budget ? (
             <>
               <DonutChart
@@ -203,12 +207,12 @@ export function ProjectOverviewCharts({ stats }: { stats: ProjectDashboardStats 
                 centerValue={
                   stats.budget.utilization_pct !== null ? `${stats.budget.utilization_pct}%` : money(stats.budget.spent)
                 }
-                centerLabel={stats.budget.utilization_pct !== null ? 'Utilization' : 'Spent'}
-                summaryLabel="Budget breakdown"
+                centerLabel={stats.budget.utilization_pct !== null ? t('utilization') : t('spent')}
+                summaryLabel={t('budgetSummary')}
               />
               <div className="mt-2 space-y-1 text-caption tabular-nums">
-                <p>Spent: <strong>{money(stats.budget.spent)}</strong></p>
-                <p>Budget: <strong>{money(stats.budget.budget)}</strong></p>
+                <p>{t('spent')}: <strong>{money(stats.budget.spent)}</strong></p>
+                <p>{t('budget')}: <strong>{money(stats.budget.budget)}</strong></p>
                 {stats.budget.utilization_pct !== null && (
                   <p className={stats.budget.utilization_pct > 90 ? 'font-medium text-destructive' : ''}>
                     Utilization: <strong>{stats.budget.utilization_pct}%</strong>
@@ -217,22 +221,22 @@ export function ProjectOverviewCharts({ stats }: { stats: ProjectDashboardStats 
               </div>
             </>
           ) : (
-            <p className="py-10 text-center text-body-sm text-muted-foreground">No budget set</p>
+            <p className="py-10 text-center text-body-sm text-muted-foreground">{t('noBudget')}</p>
           )}
         </section>
 
         {/* Biểu đồ vùng burndown */}
-        <section className="rounded-xl border bg-card p-5 shadow-soft">
-          <h2 className="mb-4 text-h4">14-day Burndown</h2>
-          <BurndownChart data={stats.burndown} height={240} />
+        <section className="min-w-0 rounded-xl border bg-card p-4 shadow-soft">
+          <h2 className="mb-4 text-h4">{t('burndown')}</h2>
+          <BurndownChart data={stats.burndown} height={240} labels={{ ideal: t('ideal'), remaining: t('remaining'), date: t('date'), empty: t('noBurndown'), summary: t('burndownSummary') }} />
         </section>
       </div>
 
       {stats.team_utilization.length > 0 && (
-        <section className="rounded-xl border bg-card p-5 shadow-soft">
+        <section className="min-w-0 rounded-xl border bg-card p-4 shadow-soft">
           <div className="mb-4 flex items-center gap-2">
             <Users className="h-4 w-4 text-primary" aria-hidden="true" />
-            <h2 className="text-h4">Team Utilization</h2>
+            <h2 className="text-h4">{t('teamUtilization')}</h2>
           </div>
           <TeamUtilizationChart data={stats.team_utilization} />
         </section>

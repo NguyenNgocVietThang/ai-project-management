@@ -2,7 +2,7 @@
 import { useLocale, useTranslations } from 'next-intl'
 
 import { AlertTriangle, GanttChartSquare, ListTodo, RefreshCw } from 'lucide-react'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Button, ButtonLink } from '@/components/common/Button'
 import { EmptyState } from '@/components/common/PageState'
 import { Card } from '@/components/ui/Card'
@@ -11,6 +11,8 @@ import { Skeleton, SkeletonRegion } from '@/components/ui/Skeleton'
 import { GanttChart, type GanttChartLabels } from '@/components/gantt/GanttChart'
 import { useCPM } from '@/features/gantt/hooks/useCPM'
 import { useNumericParam } from '@/hooks/useNumericParam'
+import { ScheduleList, type ScheduleListLabels } from '@/features/gantt/components/ScheduleList'
+import { cn } from '@/lib/utils'
 
 /**
  * Tab Gantt của dự án: hiển thị lịch tính từ CPM, phân biệt các trạng thái
@@ -21,12 +23,32 @@ export default function ProjectGanttPage() {
   const locale = useLocale()
   const t = useTranslations('gantt')
   const cpm = useCPM(projectId)
+  const [isMobile, setIsMobile] = useState(false)
+  const [chosenView, setChosenView] = useState<'schedule' | 'chart' | null>(null)
+  const view = chosenView ?? (isMobile ? 'schedule' : 'chart')
+
+  useEffect(() => {
+    if (!window.matchMedia) return
+    const media = window.matchMedia('(max-width: 767px)')
+    const update = () => setIsMobile(media.matches)
+    update()
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
 
   const labels = useMemo<GanttChartLabels>(() => ({
     chart: t('chart'), zoom: t('zoom'), zoomDay: t('zoomDay'), zoomWeek: t('zoomWeek'), zoomMonth: t('zoomMonth'),
     task: t('task'), critical: t('critical'), nonCritical: t('nonCritical'), milestone: t('milestone'), float: t('float'),
     floatDays: (days: number) => t('floatDays', { days }),
     unscheduledTitle: t('unscheduledTitle'), unscheduledHint: t('unscheduledHint'), empty: t('empty'),
+    timeline: t('timeline'), scrollHint: t('scrollHint'), nameColumnWidth: t('nameColumnWidth'),
+    widthStandard: t('widthStandard'), widthWide: t('widthWide'), widthExtraWide: t('widthExtraWide'),
+    taskDetails: t('taskDetails'), selectionHint: t('selectionHint'),
+  }), [t])
+  const scheduleLabels = useMemo<ScheduleListLabels>(() => ({
+    title: t('scheduleTitle'), hint: t('scheduleHint'), grouping: t('scheduleGrouping'), day: t('zoomDay'), week: t('zoomWeek'),
+    weekOf: (date) => t('weekOf', { date }), critical: t('critical'), milestone: t('milestone'),
+    unscheduledTitle: t('unscheduledTitle'), unscheduledHint: t('unscheduledHint'),
   }), [t])
 
   const tasksHref = `/projects/${projectId}/tasks`
@@ -43,8 +65,15 @@ export default function ProjectGanttPage() {
   } else if (cpm.data.tasks.length === 0) {
     body = <EmptyState icon={GanttChartSquare} title={t('empty')} description={t('emptyHint')} action={<ButtonLink href={tasksHref}><ListTodo className="h-4 w-4" aria-hidden="true" />{t('goToTasks')}</ButtonLink>} />
   } else {
-    // Biểu đồ đặt trong Card tràn viền; GanttChart tự cuộn ngang bên trong khung của nó.
-    body = <Card flush className="min-w-0 overflow-hidden p-4"><GanttChart data={cpm.data} labels={labels} locale={locale} viewportHeight={480} /></Card>
+    body = <Card flush className="min-w-0 overflow-hidden p-3 sm:p-4">
+      <div role="group" aria-label={t('view')} className="mb-4 flex w-fit max-w-full flex-wrap gap-1 rounded-lg border border-border p-1">
+        {(['schedule', 'chart'] as const).map((option) => <button key={option} type="button" aria-pressed={view === option} onClick={() => setChosenView(option)}
+          className={cn('min-h-11 min-w-11 rounded-md px-3 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring', view === option ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-muted')}>
+          {t(option === 'schedule' ? 'viewSchedule' : 'viewChart')}
+        </button>)}
+      </div>
+      {view === 'schedule' ? <ScheduleList data={cpm.data} labels={scheduleLabels} locale={locale} /> : <GanttChart data={cpm.data} labels={labels} locale={locale} viewportHeight={560} />}
+    </Card>
   }
 
   return (

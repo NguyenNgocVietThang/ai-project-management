@@ -1,0 +1,40 @@
+{
+  "en": {
+    "gantt": {
+      "view": "Schedule view",
+      "viewSchedule": "Schedule list",
+      "viewChart": "Gantt chart",
+      "scheduleTitle": "Project schedule",
+      "scheduleHint": "Grouped by task start date. Dates come from the calculated project schedule.",
+      "scheduleGrouping": "Group schedule by",
+      "weekOf": "Week of {date}",
+      "timeline": "Project timeline",
+      "scrollHint": "Scroll within this timeline to see more dates and tasks. Focus the timeline and use arrow keys to scroll; select a task name to see its full name and dates.",
+      "nameColumnWidth": "Task column width",
+      "widthStandard": "Standard",
+      "widthWide": "Wide",
+      "widthExtraWide": "Extra wide",
+      "taskDetails": "Task details",
+      "selectionHint": "Focus or select a task name to see its full name and dates."
+    }
+  },
+  "vi": {
+    "gantt": {
+      "view": "Chế độ xem lịch",
+      "viewSchedule": "Danh sách lịch",
+      "viewChart": "Biểu đồ Gantt",
+      "scheduleTitle": "Lịch dự án",
+      "scheduleHint": "Nhóm theo ngày bắt đầu công việc. Ngày lấy từ lịch dự án đã tính toán.",
+      "scheduleGrouping": "Nhóm lịch theo",
+      "weekOf": "Tuần bắt đầu {date}",
+      "timeline": "Trục thời gian dự án",
+      "scrollHint": "Cuộn trong lịch để xem thêm ngày và công việc. Đặt tiêu điểm vào lịch và dùng phím mũi tên để cuộn; chọn tên công việc để xem tên đầy đủ và ngày.",
+      "nameColumnWidth": "Độ rộng cột công việc",
+      "widthStandard": "Tiêu chuẩn",
+      "widthWide": "Rộng",
+      "widthExtraWide": "Rất rộng",
+      "taskDetails": "Chi tiết công việc",
+      "selectionHint": "Đặt tiêu điểm hoặc chọn tên công việc để xem tên đầy đủ và ngày."
+    }
+  }
+}

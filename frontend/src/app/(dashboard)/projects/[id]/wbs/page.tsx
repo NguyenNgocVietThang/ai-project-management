@@ -1,9 +1,9 @@
 'use client'
-import { useTranslations } from 'next-intl'
+import { useFormatter, useTranslations } from 'next-intl'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { useNumericParam } from '@/hooks/useNumericParam'
-import { CalendarDays, CheckCircle2, ChevronDown, Flag, Layers3, Pencil, Plus, Trash2 } from 'lucide-react'
+import { CalendarDays, CheckCircle2, Flag, Pencil, Plus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/common/Button'
 import { Input } from '@/components/common/Input'
 import { ConfirmDialog } from '@/components/common/ConfirmDialog'
@@ -15,10 +15,9 @@ import { SectionHeader } from '@/components/ui/PageHeader'
 import { Select } from '@/components/ui/Select'
 import { Skeleton, SkeletonCard, SkeletonRegion, SkeletonText } from '@/components/ui/Skeleton'
 import { cn } from '@/lib/utils'
+import { WBSTree } from '@/features/wbs/components/WBSTree'
 import { usePhaseImpact, useWBS, useWBSActions } from '@/features/wbs/hooks/useWBS'
 import { useProjectDetail } from '@/features/projects/hooks/useProjects'
-import { formatDate, formatStatus } from '@/lib/format'
-import { getApiErrorMessage } from '@/types/api.types'
 import type { Epic, Milestone, Phase, Sprint } from '@/types/wbs.types'
 
 type Editor =
@@ -37,69 +36,38 @@ export default function WBSPage() {
   // Dùng ConfirmDialog chung thay cho window.confirm để khớp giao diện.
   const [confirming, setConfirming] = useState<{ label: string; run: () => void } | null>(null)
   const t = useTranslations('wbs')
+  const format = useFormatter()
+  const dateLabel = (value: string | null) => value ? format.dateTime(new Date(value), { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }) : t('dateNotSet')
   const confirmDelete = (label: string, mutation: () => void) => setConfirming({ label, run: mutation })
   if (query.isLoading) return <WBSSkeleton />
-  if (query.isError || !query.data) return <ErrorState message={getApiErrorMessage(query.error)} onRetry={() => void query.refetch()} />
+  if (query.isError || !query.data) return <ErrorState message={t('loadError')} retryLabel={t('retry')} onRetry={() => void query.refetch()} />
   const wbs = query.data
   const canManage = Boolean(projectQuery.data?.current_user_role === 'PM' || projectQuery.data?.capabilities.can_update)
-  return <div className="space-y-8">
+  return <div className="space-y-4">
     <SectionHeader
       title={t('title')}
       description={t('subtitle')}
       className="mb-0 flex-col sm:flex-row sm:items-end"
-      action={canManage && <div className="flex flex-wrap gap-2">
-        <Button variant="outline" fullWidth={false} onClick={() => setEditor({ kind: 'epic' })}><Plus className="h-4 w-4" aria-hidden="true" />Epic</Button>
-        <Button variant="outline" fullWidth={false} onClick={() => setEditor({ kind: 'milestone' })}><Plus className="h-4 w-4" aria-hidden="true" />Milestone</Button>
-        <Button fullWidth={false} onClick={() => setEditor({ kind: 'phase' })}><Plus className="h-4 w-4" aria-hidden="true" />Phase</Button>
+      action={canManage && <div className="flex flex-wrap items-center gap-2">
+        <Button fullWidth={false} onClick={() => setEditor({ kind: 'phase' })}><Plus className="h-4 w-4" aria-hidden="true" />{t('addPhase')}</Button>
+        <details className="relative" onKeyDown={event => { if (event.key === 'Escape') { event.currentTarget.open = false; event.currentTarget.querySelector('summary')?.focus() } }}>
+          <summary className="flex min-h-11 cursor-pointer items-center rounded-lg border bg-card px-3 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{t('createOther')}</summary>
+          <div className="absolute right-0 top-full z-20 mt-1 min-w-48 rounded-lg border bg-popover p-1 shadow-lg" onClick={event => { const details = event.currentTarget.closest('details'); if (details) details.open = false }}>
+            <Button variant="ghost" className="justify-start" onClick={() => setEditor({ kind: 'epic' })}>{t('addEpic')}</Button>
+            <Button variant="ghost" className="justify-start" onClick={() => setEditor({ kind: 'milestone' })}>{t('addMilestone')}</Button>
+          </div>
+        </details>
       </div>}
     />
 
-    {/* ===== Giai đoạn (phase) và các sprint con ===== */}
-    <section className="space-y-4" aria-labelledby="wbs-phases">
-      <BlockTitle id="wbs-phases" icon={<Layers3 className="h-5 w-5" aria-hidden="true" />}>{t('phases')}</BlockTitle>
-      {wbs.phases.length === 0 && <Empty label={t('noPhases')} />}
-      {wbs.phases.map(phase => <details key={phase.id} open className="group overflow-hidden rounded-xl border border-border/80 bg-card shadow-soft">
-        <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 p-4 transition-colors hover:bg-muted/40 [&::-webkit-details-marker]:hidden">
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground -rotate-90 transition-transform duration-200 group-open:rotate-0" aria-hidden="true" />
-              <strong className="text-body font-semibold">{phase.name}</strong>
-              <Badge tone={statusTone(phase.status)} size="sm" dot>{formatStatus(phase.status)}</Badge>
-            </div>
-            <p className="mt-1 pl-6 text-caption tabular-nums text-muted-foreground">{formatDate(phase.start_date)} – {formatDate(phase.end_date)} · {t('taskCount', { count: phase.task_count })}</p>
-          </div>
-          {canManage && <span className="flex gap-1">
-            <IconButton label="Edit phase" onClick={() => setEditor({ kind: 'phase', item: phase })}><Pencil className="h-4 w-4" aria-hidden="true" /></IconButton>
-            <IconButton label="Add sprint" onClick={() => setEditor({ kind: 'sprint', phaseId: phase.id })}><Plus className="h-4 w-4" aria-hidden="true" /></IconButton>
-            <IconButton label="Delete phase" onClick={() => setDeleting(phase)} destructive><Trash2 className="h-4 w-4" aria-hidden="true" /></IconButton>
-          </span>}
-        </summary>
-        <div className="grid gap-3 border-t bg-muted/40 p-4 lg:grid-cols-2">
-          {phase.sprints.map(sprint => <Card key={sprint.id} className="p-4 sm:p-4">
-            <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2"><strong className="text-body-sm font-semibold">{sprint.name}</strong><Badge tone={statusTone(sprint.status)} size="sm">{formatStatus(sprint.status)}</Badge></div>
-                <p className="mt-1 text-caption tabular-nums text-muted-foreground">{t('taskCount', { count: sprint.task_count })} · {sprint.story_points_completed}/{sprint.story_points_committed} pts</p>
-              </div>
-              {canManage && <div className="flex">
-                <IconButton label="Edit sprint" onClick={() => setEditor({ kind: 'sprint', phaseId: phase.id, item: sprint })}><Pencil className="h-4 w-4" aria-hidden="true" /></IconButton>
-                <IconButton label="Delete sprint" destructive onClick={() => confirmDelete(sprint.name, () => actions.deleteSprint.mutate(sprint.id))}><Trash2 className="h-4 w-4" aria-hidden="true" /></IconButton>
-              </div>}
-            </div>
-            {canManage && (sprint.status === 'PLANNED' || sprint.status === 'ACTIVE') && <div className="mt-3 flex gap-2">
-              {sprint.status === 'PLANNED' && <Button variant="outline" size="sm" fullWidth={false} onClick={() => actions.startSprint.mutate(sprint.id)}>{t('start')}</Button>}
-              {sprint.status === 'ACTIVE' && <Button variant="outline" size="sm" fullWidth={false} onClick={() => actions.completeSprint.mutate(sprint.id)}>{t('complete')}</Button>}
-            </div>}
-          </Card>)}
-          {phase.sprints.length === 0 && <Empty label={t('noSprints')} />}
-        </div>
-      </details>)}
-    </section>
-
-    {wbs.unphased_sprints.length > 0 && <section className="space-y-4" aria-labelledby="wbs-unphased">
-      <BlockTitle id="wbs-unphased">{t('unphasedSprints')}</BlockTitle>
-      <div className="grid gap-3 md:grid-cols-2">{wbs.unphased_sprints.map(sprint => <Card key={sprint.id} className="p-4 sm:p-4"><strong className="text-body-sm font-semibold">{sprint.name}</strong><p className="mt-1 text-caption tabular-nums text-muted-foreground">{t('taskCount', { count: sprint.task_count })}</p></Card>)}</div>
-    </section>}
+    <WBSTree phases={wbs.phases} unphasedSprints={wbs.unphased_sprints} canManage={canManage}
+      onEditPhase={phase => setEditor({ kind: 'phase', item: phase })}
+      onDeletePhase={setDeleting}
+      onAddSprint={phaseId => setEditor({ kind: 'sprint', phaseId })}
+      onEditSprint={sprint => setEditor({ kind: 'sprint', phaseId: sprint.phase_id ?? 0, item: sprint })}
+      onDeleteSprint={sprint => confirmDelete(sprint.name, () => actions.deleteSprint.mutate(sprint.id))}
+      onStartSprint={sprint => actions.startSprint.mutate(sprint.id)}
+      onCompleteSprint={sprint => actions.completeSprint.mutate(sprint.id)} />
 
     {/* ===== Epic và mốc (milestone) dạng danh sách trong card ===== */}
     <div className="grid gap-6 xl:grid-cols-2">
@@ -109,11 +77,11 @@ export default function WBSPage() {
           <div className="flex min-w-0 items-center gap-3">
             {/* Màu epic do người dùng chọn nên giữ dạng style; mặc định dùng token muted-foreground. */}
             <span className="h-3 w-3 shrink-0 rounded-full bg-muted-foreground" style={epic.color ? { background: epic.color } : undefined} aria-hidden="true" />
-            <div className="min-w-0"><strong className="block truncate text-body-sm font-medium">{epic.name}</strong><Badge tone={statusTone(epic.status)} size="sm" className="mt-1">{formatStatus(epic.status)}</Badge></div>
+            <div className="min-w-0"><strong className="block break-words text-body-sm [overflow-wrap:anywhere] font-medium">{epic.name}</strong><Badge tone={statusTone(epic.status)} size="sm" className="mt-1">{t(`statuses.${epic.status}`)}</Badge></div>
           </div>
           {canManage && <div className="flex shrink-0">
-            <IconButton label="Edit epic" onClick={() => setEditor({ kind: 'epic', item: epic })}><Pencil className="h-4 w-4" aria-hidden="true" /></IconButton>
-            <IconButton label="Delete epic" destructive onClick={() => confirmDelete(epic.name, () => actions.deleteEpic.mutate(epic.id))}><Trash2 className="h-4 w-4" aria-hidden="true" /></IconButton>
+            <IconButton label={t('editEpic')} onClick={() => setEditor({ kind: 'epic', item: epic })}><Pencil className="h-4 w-4" aria-hidden="true" /></IconButton>
+            <IconButton label={t('deleteEpic')} destructive onClick={() => confirmDelete(epic.name, () => actions.deleteEpic.mutate(epic.id))}><Trash2 className="h-4 w-4" aria-hidden="true" /></IconButton>
           </div>}
         </li>)}</ul>}
       </Card>
@@ -121,13 +89,13 @@ export default function WBSPage() {
         <div className="border-b px-4 py-3"><BlockTitle id="wbs-milestones" icon={<CalendarDays className="h-5 w-5" aria-hidden="true" />}>{t('milestones')}</BlockTitle></div>
         {wbs.milestones.length === 0 ? <div className="p-4"><Empty label={t('noMilestones')} /></div> : <ul className="divide-y">{wbs.milestones.map(milestone => <li key={milestone.id} className="flex items-center justify-between gap-3 px-4 py-3 transition-colors hover:bg-muted/40">
           <div className="min-w-0">
-            <strong className="block truncate text-body-sm font-medium">{milestone.name}</strong>
-            <div className="mt-1 flex flex-wrap items-center gap-2"><span className="text-caption tabular-nums text-muted-foreground">{formatDate(milestone.due_date)}</span><Badge tone={statusTone(milestone.status)} size="sm" dot>{formatStatus(milestone.status)}</Badge></div>
+            <strong className="block break-words text-body-sm [overflow-wrap:anywhere] font-medium">{milestone.name}</strong>
+            <div className="mt-1 flex flex-wrap items-center gap-2"><span className="text-caption tabular-nums text-muted-foreground">{dateLabel(milestone.due_date)}</span><Badge tone={statusTone(milestone.status)} size="sm" dot>{t(`statuses.${milestone.status}`)}</Badge></div>
           </div>
           {canManage && <div className="flex shrink-0">
-            {milestone.status !== 'COMPLETED' && <IconButton label="Complete milestone" onClick={() => actions.completeMilestone.mutate(milestone.id)}><CheckCircle2 className="h-4 w-4" aria-hidden="true" /></IconButton>}
-            <IconButton label="Edit milestone" onClick={() => setEditor({ kind: 'milestone', item: milestone })}><Pencil className="h-4 w-4" aria-hidden="true" /></IconButton>
-            <IconButton label="Delete milestone" destructive onClick={() => confirmDelete(milestone.name, () => actions.deleteMilestone.mutate(milestone.id))}><Trash2 className="h-4 w-4" aria-hidden="true" /></IconButton>
+            {milestone.status !== 'COMPLETED' && <IconButton label={t('completeMilestone')} onClick={() => actions.completeMilestone.mutate(milestone.id)}><CheckCircle2 className="h-4 w-4" aria-hidden="true" /></IconButton>}
+            <IconButton label={t('editMilestone')} onClick={() => setEditor({ kind: 'milestone', item: milestone })}><Pencil className="h-4 w-4" aria-hidden="true" /></IconButton>
+            <IconButton label={t('deleteMilestone')} destructive onClick={() => confirmDelete(milestone.name, () => actions.deleteMilestone.mutate(milestone.id))}><Trash2 className="h-4 w-4" aria-hidden="true" /></IconButton>
           </div>}
         </li>)}</ul>}
       </Card>
@@ -146,6 +114,8 @@ export default function WBSPage() {
 }
 
 function EntityEditor({ editor, onClose, actions }: { editor: Editor | null; onClose: () => void; actions: ReturnType<typeof useWBSActions> }) {
+  const t = useTranslations('wbs')
+  const formId = useId()
   const [form, setForm] = useState<Record<string, string>>({})
   useEffect(() => { if (!editor) return; const item = editor.item; setForm({ name: item?.name || '', description: 'description' in (item || {}) ? String((item as Epic | Milestone | Phase).description || '') : '', goal: 'goal' in (item || {}) ? String((item as Sprint).goal || '') : '', start_date: 'start_date' in (item || {}) ? String((item as Phase | Sprint).start_date || '') : '', end_date: 'end_date' in (item || {}) ? String((item as Phase | Sprint).end_date || '') : '', due_date: 'due_date' in (item || {}) ? String((item as Milestone).due_date || '') : '', color: 'color' in (item || {}) ? String((item as Epic).color || '#3b82f6') : '#3b82f6', status: item?.status || '' }) }, [editor])
   if (!editor) return null
@@ -156,10 +126,29 @@ function EntityEditor({ editor, onClose, actions }: { editor: Editor | null; onC
     if (editor.kind === 'milestone') editor.item ? actions.updateMilestone.mutate({ id: editor.item.id, body: cleaned }, done) : actions.createMilestone.mutate(cleaned as never, done)
   }
   const pending = Object.values(actions).some(value => 'isPending' in value && value.isPending)
-  return <Modal open onClose={onClose} title={`${editor.item ? 'Edit' : 'New'} ${editor.kind}`}><form className="space-y-4" onSubmit={submit}><Field label="Name"><Input required minLength={3} value={form.name || ''} onChange={e => setForm({ ...form, name: e.target.value })} /></Field>{editor.kind === 'sprint' ? <Field label="Goal"><textarea className={TEXTAREA_CLASS} value={form.goal || ''} onChange={e => setForm({ ...form, goal: e.target.value })} /></Field> : <Field label="Description"><textarea className={TEXTAREA_CLASS} value={form.description || ''} onChange={e => setForm({ ...form, description: e.target.value })} /></Field>}{(editor.kind === 'phase' || editor.kind === 'sprint') && <div className="grid gap-4 sm:grid-cols-2"><Field label="Start date"><Input type="date" value={form.start_date || ''} onChange={e => setForm({ ...form, start_date: e.target.value })} /></Field><Field label="End date"><Input type="date" value={form.end_date || ''} onChange={e => setForm({ ...form, end_date: e.target.value })} /></Field></div>}{editor.kind === 'milestone' && <Field label="Due date"><Input type="date" value={form.due_date || ''} onChange={e => setForm({ ...form, due_date: e.target.value })} /></Field>}{editor.kind === 'epic' && <Field label="Color"><Input type="color" value={form.color || '#3b82f6'} onChange={e => setForm({ ...form, color: e.target.value })} /></Field>}{editor.item && <Field label="Status"><Select value={form.status || ''} onChange={e => setForm({ ...form, status: e.target.value })}>{statusOptions(editor.kind).map(status => <option key={status}>{status}</option>)}</Select></Field>}<div className="flex justify-end gap-2"><Button type="button" variant="outline" fullWidth={false} onClick={onClose}>Cancel</Button><Button type="submit" fullWidth={false} isLoading={pending}>Save</Button></div></form></Modal>
+  return <Modal open onClose={onClose} title={t(`editor.${editor.item ? 'edit' : 'create'}.${editor.kind}`)}
+    footer={<div className="flex justify-end gap-2">
+      <Button type="button" variant="outline" fullWidth={false} onClick={onClose}>{t('cancel')}</Button>
+      <Button type="submit" form={formId} fullWidth={false} isLoading={pending}>{t('save')}</Button>
+    </div>}>
+    <form id={formId} className="space-y-4" onSubmit={submit}>
+      <Field label={t('fields.name')}><Input required minLength={3} value={form.name || ''} onChange={e => setForm({ ...form, name: e.target.value })} /></Field>
+      {editor.kind === 'sprint'
+        ? <Field label={t('fields.goal')}><textarea className={TEXTAREA_CLASS} value={form.goal || ''} onChange={e => setForm({ ...form, goal: e.target.value })} /></Field>
+        : <Field label={t('fields.description')}><textarea className={TEXTAREA_CLASS} value={form.description || ''} onChange={e => setForm({ ...form, description: e.target.value })} /></Field>}
+      {(editor.kind === 'phase' || editor.kind === 'sprint') && <div className="grid gap-4 sm:grid-cols-2">
+        <Field label={t('fields.startDate')}><Input type="date" value={form.start_date || ''} onChange={e => setForm({ ...form, start_date: e.target.value })} /></Field>
+        <Field label={t('fields.endDate')}><Input type="date" value={form.end_date || ''} onChange={e => setForm({ ...form, end_date: e.target.value })} /></Field>
+      </div>}
+      {editor.kind === 'milestone' && <Field label={t('fields.dueDate')}><Input type="date" value={form.due_date || ''} onChange={e => setForm({ ...form, due_date: e.target.value })} /></Field>}
+      {editor.kind === 'epic' && <Field label={t('fields.color')}><Input type="color" value={form.color || '#3b82f6'} onChange={e => setForm({ ...form, color: e.target.value })} /></Field>}
+      {editor.item && <Field label={t('fields.status')}><Select value={form.status || ''} onChange={e => setForm({ ...form, status: e.target.value })}>{statusOptions(editor.kind).map(status => <option key={status} value={status}>{t(`statuses.${status}`)}</option>)}</Select></Field>}
+    </form>
+  </Modal>
 }
 
 function DeletePhaseDialog({ phase, phases, onClose, onDelete, isLoading }: { phase: Phase | null; phases: Phase[]; onClose: () => void; onDelete: (strategy: 'cascade' | 'reassign' | 'unlink', target?: number) => void; isLoading: boolean }) {
+  const t = useTranslations('wbs')
   const impact = usePhaseImpact(phase?.id ?? null)
   const [strategy, setStrategy] = useState<'cascade' | 'reassign' | 'unlink'>('unlink')
   const [target, setTarget] = useState('')
@@ -167,7 +156,26 @@ function DeletePhaseDialog({ phase, phases, onClose, onDelete, isLoading }: { ph
   useEffect(() => { setStrategy('unlink'); setTarget(''); setConfirmation('') }, [phase])
   if (!phase) return null
   const canSubmit = strategy !== 'reassign' ? strategy !== 'cascade' || confirmation === phase.name : Boolean(target)
-  return <Modal open onClose={onClose} title={`Delete ${phase.name}`} description="Review the live impact before choosing how child work should be handled.">{impact.isLoading ? <SkeletonRegion label="Calculating impact…" className="grid grid-cols-2 gap-2 sm:grid-cols-3">{[0, 1, 2, 3, 4, 5].map(i => <Skeleton key={i} className="h-16" />)}</SkeletonRegion> : impact.data && <div className="space-y-6"><div className="grid grid-cols-2 gap-2 text-body-sm sm:grid-cols-3">{Object.entries({ Sprints: impact.data.sprint_count, Tasks: impact.data.task_count, Subtasks: impact.data.subtask_count, 'External links': impact.data.external_dependency_count, Assignments: impact.data.assignment_count, Worklogs: impact.data.worklog_count }).map(([label, value]) => <div key={label} className="rounded-lg border bg-muted/40 p-3"><strong className="text-h4 tabular-nums">{value}</strong><p className="text-caption text-muted-foreground">{label}</p></div>)}</div><Field label="Strategy"><Select value={strategy} onChange={e => setStrategy(e.target.value as typeof strategy)}><option value="unlink">Keep children and unlink</option><option value="reassign">Move to another phase</option><option value="cascade">Delete the entire tree</option></Select></Field>{strategy === 'reassign' && <Field label="Target phase"><Select required value={target} onChange={e => setTarget(e.target.value)}><option value="">Select phase…</option>{phases.filter(item => item.id !== phase.id).map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</Select></Field>}{strategy === 'cascade' && <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-4"><p className="text-body-sm">Type <strong>{phase.name}</strong> to confirm permanent cascade deletion.</p><Input className="mt-3" value={confirmation} onChange={e => setConfirmation(e.target.value)} /></div>}<div className="flex justify-end gap-2"><Button variant="outline" fullWidth={false} onClick={onClose}>Cancel</Button><Button variant="destructive" fullWidth={false} disabled={!canSubmit} isLoading={isLoading} onClick={() => onDelete(strategy, target ? Number(target) : undefined)}>Delete phase</Button></div></div>}</Modal>
+  return <Modal open onClose={onClose} title={t('deleteConfirm', { name: phase.name })} description={t('impact.description')}
+    footer={impact.data && <div className="flex justify-end gap-2">
+      <Button variant="outline" fullWidth={false} onClick={onClose}>{t('cancel')}</Button>
+      <Button variant="destructive" fullWidth={false} disabled={!canSubmit || impact.isLoading || impact.isError} isLoading={isLoading} onClick={() => onDelete(strategy, target ? Number(target) : undefined)}>{t('deletePhase')}</Button>
+    </div>}>
+    {impact.isLoading ? <SkeletonRegion label={t('impact.loading')} className="grid grid-cols-2 gap-2 sm:grid-cols-3">{[0, 1, 2, 3, 4, 5].map(i => <Skeleton key={i} className="h-16" />)}</SkeletonRegion>
+      : impact.isError ? <ErrorState message={t('impact.error')} retryLabel={t('retry')} onRetry={() => void impact.refetch()} />
+      : impact.data && <div className="space-y-6">
+        <div className="grid grid-cols-2 gap-2 text-body-sm sm:grid-cols-3">{Object.entries({ sprints: impact.data.sprint_count, tasks: impact.data.task_count, subtasks: impact.data.subtask_count, externalLinks: impact.data.external_dependency_count, assignments: impact.data.assignment_count, worklogs: impact.data.worklog_count }).map(([label, value]) => <div key={label} className="rounded-lg border bg-muted/40 p-3"><strong className="text-h4 tabular-nums">{value}</strong><p className="text-caption text-muted-foreground">{t(`impact.${label}`)}</p></div>)}</div>
+        <Field label={t('impact.strategy')}><Select value={strategy} onChange={e => setStrategy(e.target.value as typeof strategy)}>
+          <option value="unlink">{t('impact.unlink')}</option>
+          <option value="reassign">{t('impact.reassign')}</option>
+          <option value="cascade">{t('impact.cascade')}</option>
+        </Select></Field>
+        {strategy === 'reassign' && <Field label={t('impact.targetPhase')}><Select required value={target} onChange={e => setTarget(e.target.value)}><option value="">{t('impact.selectPhase')}</option>{phases.filter(item => item.id !== phase.id).map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</Select></Field>}
+        {strategy === 'cascade' && <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-4">
+          <Field label={t('impact.confirmCascade', { name: phase.name })}><Input value={confirmation} onChange={e => setConfirmation(e.target.value)} /></Field>
+        </div>}
+      </div>}
+  </Modal>
 }
 
 const TEXTAREA_CLASS = 'min-h-24 w-full rounded-lg border border-input bg-card p-3 text-body shadow-xs transition-[border-color,box-shadow] duration-150 hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:text-body-sm'
@@ -184,10 +192,11 @@ function statusTone(status: string): BadgeTone {
   if (['MISSED', 'CANCELLED'].includes(status)) return 'danger'
   return 'neutral'
 }
-function IconButton({ label, children, onClick, destructive = false }: { label: string; children: React.ReactNode; onClick: () => void; destructive?: boolean }) { return <button type="button" title={label} aria-label={label} onClick={event => { event.preventDefault(); event.stopPropagation(); onClick() }} className={cn('inline-flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring', destructive ? 'text-destructive hover:bg-destructive/10' : 'text-muted-foreground hover:text-foreground')}>{children}</button> }
+function IconButton({ label, children, onClick, destructive = false }: { label: string; children: React.ReactNode; onClick: () => void; destructive?: boolean }) { return <button type="button" title={label} aria-label={label} onClick={event => { event.preventDefault(); event.stopPropagation(); onClick() }} className={cn('inline-flex h-11 w-11 items-center justify-center rounded-lg transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring', destructive ? 'text-destructive hover:bg-destructive/10' : 'text-muted-foreground hover:text-foreground')}>{children}</button> }
 /** Khung xương trang WBS: tiêu đề, 2 phase, 2 card epic/milestone. */
 function WBSSkeleton() {
-  return <SkeletonRegion label="Loading work breakdown…" className="space-y-8">
+  const t = useTranslations('wbs')
+  return <SkeletonRegion label={t('loading')} className="space-y-4">
     <div className="space-y-2"><Skeleton className="h-7 w-48" /><Skeleton className="h-4 w-72 max-w-full" /></div>
     <div className="space-y-4">{[0, 1].map(i => <div key={i} className="rounded-xl border border-border/80 bg-card p-4 shadow-soft"><Skeleton className="h-5 w-1/3" /><SkeletonText lines={1} className="mt-3 w-1/2" /></div>)}</div>
     <div className="grid gap-6 xl:grid-cols-2"><SkeletonCard /><SkeletonCard /></div>

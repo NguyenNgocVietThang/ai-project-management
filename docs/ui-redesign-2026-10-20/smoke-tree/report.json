@@ -1,0 +1,988 @@
+{
+  "synthetic": true,
+  "source": "Actual local Next.js UI with fully intercepted synthetic API responses; no production reads/writes.",
+  "mode": "smoke-tree",
+  "started": "2026-10-20T15:13:29.251Z",
+  "cases": [
+    {
+      "route": "wbs",
+      "width": 320,
+      "locale": "vi",
+      "theme": "light",
+      "dialog": {
+        "width": 320,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 320,
+        "documentOverflow": false,
+        "overflowElements": [
+          {
+            "tag": "DIV",
+            "className": "absolute right-0 top-full z-20 mt-1 min-w-48 rounded-lg border bg-popover p-1 shadow-lg",
+            "text": "Thêm epicThêm cột mốc",
+            "rect": {
+              "top": 477,
+              "right": 143.4375,
+              "bottom": 575,
+              "left": -48.5625,
+              "width": 192,
+              "height": 98
+            }
+          },
+          {
+            "tag": "BUTTON",
+            "className": "inline-flex select-none items-center gap-2 whitespace-nowrap rounded-lg font-medium transition-[background-color,border-color,color,box-shadow,transform] duration-200 ease-out-soft active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 min-h-11 px-4 text-body-sm text-foreground hover:bg-accent hover:text-accent-foreground w-full justify-start",
+            "text": "Thêm epic",
+            "rect": {
+              "top": 482,
+              "right": 138.4375,
+              "bottom": 526,
+              "left": -43.5625,
+              "width": 182,
+              "height": 44
+            }
+          },
+          {
+            "tag": "BUTTON",
+            "className": "inline-flex select-none items-center gap-2 whitespace-nowrap rounded-lg font-medium transition-[background-color,border-color,color,box-shadow,transform] duration-200 ease-out-soft active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 min-h-11 px-4 text-body-sm text-foreground hover:bg-accent hover:text-accent-foreground w-full justify-start",
+            "text": "Thêm cột mốc",
+            "rect": {
+              "top": 526,
+              "right": 138.4375,
+              "bottom": 570,
+              "left": -43.5625,
+              "width": 182,
+              "height": 44
+            }
+          }
+        ],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 320,
+          "bottom": 1285,
+          "left": 0,
+          "width": 320,
+          "height": 1221
+        },
+        "dialog": {
+          "top": 146,
+          "right": 308,
+          "bottom": 698,
+          "left": 12,
+          "width": 296,
+          "height": 552
+        },
+        "ancestors": [
+          {
+            "tag": "DIV",
+            "className": "fixed inset-0 z-50 flex h-dvh items-center justify-center p-3 sm:p-4",
+            "rect": {
+              "top": 0,
+              "right": 320,
+              "bottom": 844,
+              "left": 0,
+              "width": 320,
+              "height": 844
+            },
+            "transform": "none",
+            "filter": "none",
+            "backdropFilter": "none",
+            "perspective": "none",
+            "contain": "none",
+            "position": "fixed",
+            "overflow": "visible",
+            "willChange": "auto"
+          },
+          {
+            "tag": "BODY",
+            "className": "",
+            "rect": {
+              "top": 0,
+              "right": 320,
+              "bottom": 1285,
+              "left": 0,
+              "width": 320,
+              "height": 1285
+            },
+            "transform": "none",
+            "filter": "none",
+            "backdropFilter": "none",
+            "perspective": "none",
+            "contain": "none",
+            "position": "static",
+            "overflow": "hidden",
+            "willChange": "auto"
+          },
+          {
+            "tag": "HTML",
+            "className": "__variable_5e14ba light",
+            "rect": {
+              "top": 0,
+              "right": 320,
+              "bottom": 1285,
+              "left": 0,
+              "width": 320,
+              "height": 1285
+            },
+            "transform": "none",
+            "filter": "none",
+            "backdropFilter": "none",
+            "perspective": "none",
+            "contain": "none",
+            "position": "static",
+            "overflow": "visible",
+            "willChange": "auto"
+          }
+        ],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "id": "wbs-320-vi-light-17-ready",
+      "geometry": {
+        "width": 320,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 320,
+        "documentOverflow": false,
+        "overflowElements": [
+          {
+            "tag": "DIV",
+            "className": "absolute right-0 top-full z-20 mt-1 min-w-48 rounded-lg border bg-popover p-1 shadow-lg",
+            "text": "Thêm epicThêm cột mốc",
+            "rect": {
+              "top": 477,
+              "right": 143.4375,
+              "bottom": 575,
+              "left": -48.5625,
+              "width": 192,
+              "height": 98
+            }
+          },
+          {
+            "tag": "BUTTON",
+            "className": "inline-flex select-none items-center gap-2 whitespace-nowrap rounded-lg font-medium transition-[background-color,border-color,color,box-shadow,transform] duration-200 ease-out-soft active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 min-h-11 px-4 text-body-sm text-foreground hover:bg-accent hover:text-accent-foreground w-full justify-start",
+            "text": "Thêm epic",
+            "rect": {
+              "top": 482,
+              "right": 138.4375,
+              "bottom": 526,
+              "left": -43.5625,
+              "width": 182,
+              "height": 44
+            }
+          },
+          {
+            "tag": "BUTTON",
+            "className": "inline-flex select-none items-center gap-2 whitespace-nowrap rounded-lg font-medium transition-[background-color,border-color,color,box-shadow,transform] duration-200 ease-out-soft active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 min-h-11 px-4 text-body-sm text-foreground hover:bg-accent hover:text-accent-foreground w-full justify-start",
+            "text": "Thêm cột mốc",
+            "rect": {
+              "top": 526,
+              "right": 138.4375,
+              "bottom": 570,
+              "left": -43.5625,
+              "width": 182,
+              "height": 44
+            }
+          }
+        ],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 320,
+          "bottom": 1285,
+          "left": 0,
+          "width": 320,
+          "height": 1221
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nPhân rã công việc\nNQ\nĐang hoạt động\nKết hợp\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nPhân rã công việc\n\nTổ chức giai đoạn, sprint, epic và cột mốc.\n\nThêm giai đoạn\nThêm loại khác\nGiai đoạn\nGiai đoạn\nSprint 1 - Khởi động và phân tích\n6 công việc\nChưa đặt ngày\nĐã lên kế hoạch\nGiai đoạn\nSprint 2 - Thiết kế và phát triển\n6 công việc\nChưa đặt ngày\nĐã lên kế hoạch\nGiai đoạn\nSprint 3 - Kiểm thử và triển khai\n5 công việc\nChưa đặt ngày\nĐã lên kế hoạch\nEpic\n\nChưa có epic nào.\n\nCột mốc\n\nChưa có cột mốc nào.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": null
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "openDocumentWidth": 320,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "openDocumentWidth": 320,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "wbsTree": {
+        "phaseCount": 3,
+        "rows": [
+          {
+            "label": "Giai đoạn Sprint 1 - Khởi động và phân tích",
+            "bounds": {
+              "x": 16,
+              "y": 525,
+              "width": 288,
+              "height": 138
+            },
+            "closedInitially": true,
+            "expandedWithEnter": true,
+            "closedWithEnter": true,
+            "metadata": "Giai đoạn\nSprint 1 - Khởi động và phân tích\n6 công việc\nChưa đặt ngày\nĐã lên kế hoạch",
+            "actions": {
+              "opened": true,
+              "noOverflow": true,
+              "closedWithEscape": true,
+              "focusRestored": true
+            }
+          },
+          {
+            "label": "Giai đoạn Sprint 2 - Thiết kế và phát triển",
+            "bounds": {
+              "x": 16,
+              "y": 671,
+              "width": 288,
+              "height": 138
+            },
+            "closedInitially": true,
+            "expandedWithEnter": true,
+            "closedWithEnter": true,
+            "metadata": "Giai đoạn\nSprint 2 - Thiết kế và phát triển\n6 công việc\nChưa đặt ngày\nĐã lên kế hoạch",
+            "actions": {
+              "opened": true,
+              "noOverflow": true,
+              "closedWithEscape": true,
+              "focusRestored": true
+            }
+          },
+          {
+            "label": "Giai đoạn Sprint 3 - Kiểm thử và triển khai",
+            "bounds": {
+              "x": 16,
+              "y": 817,
+              "width": 288,
+              "height": 138
+            },
+            "closedInitially": true,
+            "expandedWithEnter": true,
+            "closedWithEnter": true,
+            "metadata": "Giai đoạn\nSprint 3 - Kiểm thử và triển khai\n5 công việc\nChưa đặt ngày\nĐã lên kế hoạch",
+            "actions": {
+              "opened": true,
+              "noOverflow": true,
+              "closedWithEscape": true,
+              "focusRestored": true
+            }
+          }
+        ]
+      },
+      "focusInitiallyInside": true,
+      "focusTrap": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "escapeClosed": true,
+      "focusRestored": true,
+      "dialogAfterScroll": {
+        "width": 320,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 320,
+        "documentOverflow": false,
+        "overflowElements": [
+          {
+            "tag": "DIV",
+            "className": "absolute right-0 top-full z-20 mt-1 min-w-48 rounded-lg border bg-popover p-1 shadow-lg",
+            "text": "Thêm epicThêm cột mốc",
+            "rect": {
+              "top": 477,
+              "right": 143.4375,
+              "bottom": 575,
+              "left": -48.5625,
+              "width": 192,
+              "height": 98
+            }
+          },
+          {
+            "tag": "BUTTON",
+            "className": "inline-flex select-none items-center gap-2 whitespace-nowrap rounded-lg font-medium transition-[background-color,border-color,color,box-shadow,transform] duration-200 ease-out-soft active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 min-h-11 px-4 text-body-sm text-foreground hover:bg-accent hover:text-accent-foreground w-full justify-start",
+            "text": "Thêm epic",
+            "rect": {
+              "top": 482,
+              "right": 138.4375,
+              "bottom": 526,
+              "left": -43.5625,
+              "width": 182,
+              "height": 44
+            }
+          },
+          {
+            "tag": "BUTTON",
+            "className": "inline-flex select-none items-center gap-2 whitespace-nowrap rounded-lg font-medium transition-[background-color,border-color,color,box-shadow,transform] duration-200 ease-out-soft active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 min-h-11 px-4 text-body-sm text-foreground hover:bg-accent hover:text-accent-foreground w-full justify-start",
+            "text": "Thêm cột mốc",
+            "rect": {
+              "top": 526,
+              "right": 138.4375,
+              "bottom": 570,
+              "left": -43.5625,
+              "width": 182,
+              "height": 44
+            }
+          }
+        ],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 320,
+          "bottom": 1285,
+          "left": 0,
+          "width": 320,
+          "height": 1221
+        },
+        "dialog": {
+          "top": 146,
+          "right": 308,
+          "bottom": 698,
+          "left": 12,
+          "width": 296,
+          "height": 552
+        },
+        "ancestors": [
+          {
+            "tag": "DIV",
+            "className": "fixed inset-0 z-50 flex h-dvh items-center justify-center p-3 sm:p-4",
+            "rect": {
+              "top": 0,
+              "right": 320,
+              "bottom": 844,
+              "left": 0,
+              "width": 320,
+              "height": 844
+            },
+            "transform": "none",
+            "filter": "none",
+            "backdropFilter": "none",
+            "perspective": "none",
+            "contain": "none",
+            "position": "fixed",
+            "overflow": "visible",
+            "willChange": "auto"
+          },
+          {
+            "tag": "BODY",
+            "className": "",
+            "rect": {
+              "top": 0,
+              "right": 320,
+              "bottom": 1285,
+              "left": 0,
+              "width": 320,
+              "height": 1285
+            },
+            "transform": "none",
+            "filter": "none",
+            "backdropFilter": "none",
+            "perspective": "none",
+            "contain": "none",
+            "position": "static",
+            "overflow": "hidden",
+            "willChange": "auto"
+          },
+          {
+            "tag": "HTML",
+            "className": "__variable_5e14ba light",
+            "rect": {
+              "top": 0,
+              "right": 320,
+              "bottom": 1285,
+              "left": 0,
+              "width": 320,
+              "height": 1285
+            },
+            "transform": "none",
+            "filter": "none",
+            "backdropFilter": "none",
+            "perspective": "none",
+            "contain": "none",
+            "position": "static",
+            "overflow": "visible",
+            "willChange": "auto"
+          }
+        ],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "reverseFocusTrap": true,
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "dialogFitsViewport": true,
+        "forwardFocusTrap": true,
+        "reverseFocusTrap": true,
+        "escapeCloses": true,
+        "openerFocusRestored": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true,
+        "navigationNoOpenOverflow": true,
+        "wbs3Phases": true,
+        "wbsKeyboard": true
+      }
+    },
+    {
+      "route": "wbs",
+      "width": 390,
+      "locale": "vi",
+      "theme": "light",
+      "dialog": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 1153,
+          "left": 0,
+          "width": 390,
+          "height": 1089
+        },
+        "dialog": {
+          "top": 146,
+          "right": 378,
+          "bottom": 698,
+          "left": 12,
+          "width": 366,
+          "height": 552
+        },
+        "ancestors": [
+          {
+            "tag": "DIV",
+            "className": "fixed inset-0 z-50 flex h-dvh items-center justify-center p-3 sm:p-4",
+            "rect": {
+              "top": 0,
+              "right": 390,
+              "bottom": 844,
+              "left": 0,
+              "width": 390,
+              "height": 844
+            },
+            "transform": "none",
+            "filter": "none",
+            "backdropFilter": "none",
+            "perspective": "none",
+            "contain": "none",
+            "position": "fixed",
+            "overflow": "visible",
+            "willChange": "auto"
+          },
+          {
+            "tag": "BODY",
+            "className": "",
+            "rect": {
+              "top": 0,
+              "right": 390,
+              "bottom": 1153,
+              "left": 0,
+              "width": 390,
+              "height": 1153
+            },
+            "transform": "none",
+            "filter": "none",
+            "backdropFilter": "none",
+            "perspective": "none",
+            "contain": "none",
+            "position": "static",
+            "overflow": "hidden",
+            "willChange": "auto"
+          },
+          {
+            "tag": "HTML",
+            "className": "__variable_5e14ba light",
+            "rect": {
+              "top": 0,
+              "right": 390,
+              "bottom": 1153,
+              "left": 0,
+              "width": 390,
+              "height": 1153
+            },
+            "transform": "none",
+            "filter": "none",
+            "backdropFilter": "none",
+            "perspective": "none",
+            "contain": "none",
+            "position": "static",
+            "overflow": "visible",
+            "willChange": "auto"
+          }
+        ],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "id": "wbs-390-vi-light-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 1153,
+          "left": 0,
+          "width": 390,
+          "height": 1089
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nPhân rã công việc\nNQ\nĐang hoạt động\nKết hợp\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nPhân rã công việc\n\nTổ chức giai đoạn, sprint, epic và cột mốc.\n\nThêm giai đoạn\nThêm loại khác\nGiai đoạn\nGiai đoạn\nSprint 1 - Khởi động và phân tích\n6 công việc\nChưa đặt ngày\nĐã lên kế hoạch\nGiai đoạn\nSprint 2 - Thiết kế và phát triển\n6 công việc\nChưa đặt ngày\nĐã lên kế hoạch\nGiai đoạn\nSprint 3 - Kiểm thử và triển khai\n5 công việc\nChưa đặt ngày\nĐã lên kế hoạch\nEpic\n\nChưa có epic nào.\n\nCột mốc\n\nChưa có cột mốc nào.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": null
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "wbsTree": {
+        "phaseCount": 3,
+        "rows": [
+          {
+            "label": "Giai đoạn Sprint 1 - Khởi động và phân tích",
+            "bounds": {
+              "x": 16,
+              "y": 453,
+              "width": 358,
+              "height": 118
+            },
+            "closedInitially": true,
+            "expandedWithEnter": true,
+            "closedWithEnter": true,
+            "metadata": "Giai đoạn\nSprint 1 - Khởi động và phân tích\n6 công việc\nChưa đặt ngày\nĐã lên kế hoạch",
+            "actions": {
+              "opened": true,
+              "noOverflow": true,
+              "closedWithEscape": true,
+              "focusRestored": true
+            }
+          },
+          {
+            "label": "Giai đoạn Sprint 2 - Thiết kế và phát triển",
+            "bounds": {
+              "x": 16,
+              "y": 579,
+              "width": 358,
+              "height": 118
+            },
+            "closedInitially": true,
+            "expandedWithEnter": true,
+            "closedWithEnter": true,
+            "metadata": "Giai đoạn\nSprint 2 - Thiết kế và phát triển\n6 công việc\nChưa đặt ngày\nĐã lên kế hoạch",
+            "actions": {
+              "opened": true,
+              "noOverflow": true,
+              "closedWithEscape": true,
+              "focusRestored": true
+            }
+          },
+          {
+            "label": "Giai đoạn Sprint 3 - Kiểm thử và triển khai",
+            "bounds": {
+              "x": 16,
+              "y": 705,
+              "width": 358,
+              "height": 118
+            },
+            "closedInitially": true,
+            "expandedWithEnter": true,
+            "closedWithEnter": true,
+            "metadata": "Giai đoạn\nSprint 3 - Kiểm thử và triển khai\n5 công việc\nChưa đặt ngày\nĐã lên kế hoạch",
+            "actions": {
+              "opened": true,
+              "noOverflow": true,
+              "closedWithEscape": true,
+              "focusRestored": true
+            }
+          }
+        ]
+      },
+      "focusInitiallyInside": true,
+      "focusTrap": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "escapeClosed": true,
+      "focusRestored": true,
+      "dialogAfterScroll": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 1153,
+          "left": 0,
+          "width": 390,
+          "height": 1089
+        },
+        "dialog": {
+          "top": 146,
+          "right": 378,
+          "bottom": 698,
+          "left": 12,
+          "width": 366,
+          "height": 552
+        },
+        "ancestors": [
+          {
+            "tag": "DIV",
+            "className": "fixed inset-0 z-50 flex h-dvh items-center justify-center p-3 sm:p-4",
+            "rect": {
+              "top": 0,
+              "right": 390,
+              "bottom": 844,
+              "left": 0,
+              "width": 390,
+              "height": 844
+            },
+            "transform": "none",
+            "filter": "none",
+            "backdropFilter": "none",
+            "perspective": "none",
+            "contain": "none",
+            "position": "fixed",
+            "overflow": "visible",
+            "willChange": "auto"
+          },
+          {
+            "tag": "BODY",
+            "className": "",
+            "rect": {
+              "top": 0,
+              "right": 390,
+              "bottom": 1153,
+              "left": 0,
+              "width": 390,
+              "height": 1153
+            },
+            "transform": "none",
+            "filter": "none",
+            "backdropFilter": "none",
+            "perspective": "none",
+            "contain": "none",
+            "position": "static",
+            "overflow": "hidden",
+            "willChange": "auto"
+          },
+          {
+            "tag": "HTML",
+            "className": "__variable_5e14ba light",
+            "rect": {
+              "top": 0,
+              "right": 390,
+              "bottom": 1153,
+              "left": 0,
+              "width": 390,
+              "height": 1153
+            },
+            "transform": "none",
+            "filter": "none",
+            "backdropFilter": "none",
+            "perspective": "none",
+            "contain": "none",
+            "position": "static",
+            "overflow": "visible",
+            "willChange": "auto"
+          }
+        ],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "reverseFocusTrap": true,
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "dialogFitsViewport": true,
+        "forwardFocusTrap": true,
+        "reverseFocusTrap": true,
+        "escapeCloses": true,
+        "openerFocusRestored": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true,
+        "navigationNoOpenOverflow": true,
+        "wbs3Phases": true,
+        "wbsKeyboard": true
+      }
+    }
+  ],
+  "completed": "2026-10-20T15:16:01.167Z",
+  "summary": {
+    "cases": 2,
+    "passed": 2,
+    "failures": []
+  }
+}

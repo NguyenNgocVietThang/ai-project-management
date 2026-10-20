@@ -43,6 +43,14 @@ export interface GanttChartLabels {
   unscheduledHint: string
   /** Nội dung khi dự án không có task. */
   empty: string
+  timeline: string
+  scrollHint: string
+  nameColumnWidth: string
+  widthStandard: string
+  widthWide: string
+  widthExtraWide: string
+  taskDetails: string
+  selectionHint: string
 }
 
 export interface GanttChartProps {
@@ -59,8 +67,7 @@ export interface GanttChartProps {
   className?: string
 }
 
-const NAME_COLUMN_WIDTH = 240
-const HEADER_HEIGHT = 36
+const HEADER_HEIGHT = 44
 const BAR_HEIGHT = 18
 const RIGHT_PADDING = 24
 const ZOOMS: GanttZoom[] = ['day', 'week', 'month']
@@ -92,6 +99,10 @@ export function GanttChart({
   const [internalZoom, setInternalZoom] = useState<GanttZoom>(defaultZoom)
   const zoom = controlledZoom ?? internalZoom
   const [scrollTop, setScrollTop] = useState(0)
+  const [nameWidth, setNameWidth] = useState(320)
+  const [selectedId, setSelectedId] = useState<number | null>(null)
+  // Leave space for the timeline even when Gantt is chosen on a narrow screen.
+  const nameColumnWidth = `clamp(144px, 40vw, ${nameWidth}px)`
   // Task đang được rê chuột (thanh, mốc hoặc tên ở cột trái).
   const [hoveredId, setHoveredId] = useState<number | null>(null)
   // useId trả về dạng ":r0:"; bỏ ký tự đặc biệt để dùng được trong url(#...).
@@ -130,6 +141,7 @@ export function GanttChart({
   const onScroll = (event: UIEvent<HTMLDivElement>) => setScrollTop(event.currentTarget.scrollTop)
 
   const hoveredRow = hoveredId === null ? undefined : layout.rows.find((row) => row.task.id === hoveredId)
+  const selectedRow = selectedId === null ? undefined : layout.rows.find((row) => row.task.id === selectedId)
   const hoverHandlers = (id: number) => ({
     onMouseEnter: () => setHoveredId(id),
     onMouseLeave: () => setHoveredId((current) => (current === id ? null : current)),
@@ -164,7 +176,9 @@ export function GanttChart({
   }
 
   const timelineWidth = (layout.axis?.width ?? 0) + RIGHT_PADDING
-  const ticks = layout.axis?.ticks ?? []
+  const ticks = layout.axis && layout.axis.ticks.length === 0
+    ? [{ date: layout.axis.start, x: 0, major: true }]
+    : layout.axis?.ticks ?? []
 
   return (
     <section aria-label={labels.chart} className={cn('space-y-3', className)}>
@@ -177,7 +191,7 @@ export function GanttChart({
               aria-pressed={zoom === option}
               onClick={() => changeZoom(option)}
               className={cn(
-                'rounded px-3 py-1 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                'min-h-11 min-w-11 rounded px-3 py-2 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                 zoom === option ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-muted'
               )}
             >
@@ -185,6 +199,21 @@ export function GanttChart({
             </button>
           ))}
         </div>
+        {layout.rows.length > 0 && <label className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+          {labels.nameColumnWidth}
+          <select value={nameWidth} onChange={(event) => setNameWidth(Number(event.target.value))}
+            className="min-h-11 rounded-md border border-border bg-card px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            <option value={240}>{labels.widthStandard}</option>
+            <option value={320}>{labels.widthWide}</option>
+            <option value={400}>{labels.widthExtraWide}</option>
+          </select>
+        </label>}
+      </div>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        {layout.axis && <p className="text-sm font-medium text-foreground">
+          <time dateTime={layout.axis.start}>{dateFormatter.format(utcDate(layout.axis.start))}</time>
+          {' – '}<time dateTime={layout.axis.end}>{dateFormatter.format(utcDate(layout.axis.end))}</time>
+        </p>}
         <ul className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
           <li className="flex items-center gap-1.5">
             <svg width="22" height="12" aria-hidden="true">
@@ -214,6 +243,13 @@ export function GanttChart({
         </ul>
       </div>
 
+      {layout.rows.length > 0 && <>
+        <p id={`${idPrefix}-scroll-hint`} className="text-sm text-muted-foreground">{labels.scrollHint}</p>
+        <aside aria-label={labels.taskDetails} className="min-w-0 rounded-md border border-border bg-muted/40 px-3 py-2 text-sm">
+          {selectedRow ? <p className="break-words text-foreground">{describeRow(selectedRow)}</p> : <p className="text-muted-foreground">{labels.selectionHint}</p>}
+        </aside>
+      </>}
+
       {/* Định nghĩa dùng chung: hoa văn sọc cho đường găng và đầu mũi tên. */}
       <svg width="0" height="0" className="absolute" aria-hidden="true" focusable="false">
         <defs>
@@ -232,16 +268,20 @@ export function GanttChart({
       {layout.rows.length > 0 && (
         <div
           data-testid="gantt-scroll"
+          role="region"
+          aria-label={labels.timeline}
+          aria-describedby={`${idPrefix}-scroll-hint`}
+          tabIndex={0}
           onScroll={onScroll}
-          className="relative overflow-auto rounded-lg border border-border bg-card"
+          className="relative max-w-full overflow-auto rounded-lg border border-border bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           style={{ height: viewportHeight }}
         >
-          <div className="relative" style={{ width: NAME_COLUMN_WIDTH + timelineWidth }}>
+          <div className="relative" style={{ width: `calc(${nameColumnWidth} + ${timelineWidth}px)` }}>
             {/* Hàng tiêu đề: cột tên + trục thời gian, dính trên cùng khi cuộn dọc. */}
             <div className="sticky top-0 z-20 flex border-b border-border bg-card" style={{ height: HEADER_HEIGHT }}>
               <div
-                className="sticky left-0 z-30 flex items-center border-r border-border bg-card px-3 text-xs font-semibold text-muted-foreground"
-                style={{ width: NAME_COLUMN_WIDTH, minWidth: NAME_COLUMN_WIDTH }}
+                className="sticky left-0 z-30 flex items-center border-r border-border bg-card px-3 text-sm font-semibold text-muted-foreground"
+                style={{ width: nameColumnWidth, minWidth: nameColumnWidth }}
               >
                 {labels.task}
               </div>
@@ -255,7 +295,7 @@ export function GanttChart({
                       y2={HEADER_HEIGHT}
                       className="stroke-border"
                     />
-                    <text x={tick.x + 3} y={HEADER_HEIGHT - 10} className={cn('fill-muted-foreground text-[10px]', tick.major && 'font-semibold fill-foreground')}>
+                    <text x={tick.x + 3} y={HEADER_HEIGHT - 10} className={cn('fill-muted-foreground text-xs', tick.major && 'font-semibold fill-foreground')}>
                       {tickFormatter.format(utcDate(tick.date))}
                     </text>
                   </g>
@@ -269,7 +309,7 @@ export function GanttChart({
                 role="list"
                 aria-label={labels.task}
                 className="sticky left-0 z-10 border-r border-border bg-card"
-                style={{ width: NAME_COLUMN_WIDTH, minWidth: NAME_COLUMN_WIDTH, height: layout.height }}
+                style={{ width: nameColumnWidth, minWidth: nameColumnWidth, height: layout.height }}
               >
                 {visibleRows.map((row) => (
                   <div
@@ -280,20 +320,24 @@ export function GanttChart({
                     aria-label={describeRow(row)}
                     data-testid="gantt-row"
                     className={cn(
-                      'absolute left-0 right-0 flex items-center gap-2 border-b border-border/60 px-3 text-xs transition-colors duration-150',
-                      hoveredId === row.task.id && 'bg-muted/70'
+                      'absolute left-0 right-0 border-b border-border/60 text-sm transition-colors duration-150',
+                      (hoveredId === row.task.id || selectedId === row.task.id) && 'bg-muted/70'
                     )}
                     style={{ top: row.y, height: ROW_HEIGHT }}
                     {...hoverHandlers(row.task.id)}
                   >
+                    <button type="button" aria-label={describeRow(row)} aria-pressed={selectedId === row.task.id}
+                      onFocus={() => setSelectedId(row.task.id)} onClick={() => setSelectedId(row.task.id)}
+                      className="flex h-full w-full items-center gap-2 px-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring">
                     <span className={cn('truncate', row.critical ? 'font-semibold text-foreground' : 'text-foreground')} title={row.task.name}>
                       {row.task.name}
                     </span>
                     {row.critical && (
-                      <span className="shrink-0 rounded border border-destructive px-1 text-[10px] font-semibold uppercase tracking-wide text-destructive">
+                      <span className="shrink-0 rounded border border-destructive px-1 text-xs font-semibold text-destructive">
                         {labels.critical}
                       </span>
                     )}
+                    </button>
                   </div>
                 ))}
               </div>

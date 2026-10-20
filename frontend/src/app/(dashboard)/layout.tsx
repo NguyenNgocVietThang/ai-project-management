@@ -1,14 +1,14 @@
 'use client'
 import { useTranslations } from 'next-intl'
 
-import { ArrowUpRight, LogOut, Menu, Sparkles } from 'lucide-react'
+import { ChevronLeft, ChevronRight, LogOut, Menu } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Children, useEffect, useState } from 'react'
 import { Button } from '@/components/common/Button'
 import { FullPageSpinner } from '@/components/common/FullPageSpinner'
 import { BreadcrumbProvider, Breadcrumbs } from '@/components/layout/Breadcrumbs'
-import { FireworksToggle } from '@/components/background/FireworksToggle'
+import { cn } from '@/lib/utils'
 import { MainNav, MobileNav } from '@/components/layout/Navigation'
 import { LanguageToggle } from '@/components/layout/LanguageToggle'
 import { ThemeToggle } from '@/components/theme/ThemeToggle'
@@ -26,6 +26,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter()
   const [isClient, setIsClient] = useState(false)
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  useEffect(() => {
+    try { setSidebarCollapsed(localStorage.getItem('sidebar-collapsed') === 'true') } catch { /* private mode */ }
+    const desktop = window.matchMedia('(min-width: 1024px)')
+    const closeMobile = () => { if (desktop.matches) setMobileNavOpen(false) }
+    desktop.addEventListener('change', closeMobile)
+    return () => desktop.removeEventListener('change', closeMobile)
+  }, [])
+  const toggleSidebar = () => {
+    setSidebarCollapsed(value => {
+      try { localStorage.setItem('sidebar-collapsed', String(!value)) } catch { /* private mode */ }
+      return !value
+    })
+  }
   const [sessionError, setSessionError] = useState(false)
   const [sessionAttempt, setSessionAttempt] = useState(0)
   const t = useTranslations('nav')
@@ -91,27 +105,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <BreadcrumbProvider>
-      <div className="min-h-dvh lg:pl-64">
+      <div className={cn("min-h-dvh bg-background", sidebarCollapsed ? "lg:pl-20" : "lg:pl-60")}>
         <a href="#main-content" className="skip-link">{ts('skipContent')}</a>
 
         {/* ===== Sidebar cố định (desktop >= 1024px) ===== */}
-        <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col overflow-y-auto border-r bg-card/95 px-4 py-6 backdrop-blur-xl lg:flex">
-          <Link href="/dashboard" className="mb-8 shrink-0 rounded-lg px-2 transition-opacity duration-200 hover:opacity-80" aria-label={t('dashboard')}><Brand /></Link>
-          <MainNav isAdmin={isAdminUser(user)} isInvestor={canViewInvestorPortal(user)} />
+        <aside className={cn("fixed inset-y-0 left-0 z-30 hidden flex-col overflow-y-auto border-r bg-card px-3 py-4 lg:flex", sidebarCollapsed ? "w-20" : "w-60")}>
+          <Link href="/dashboard" className="mb-8 shrink-0 rounded-lg px-2 transition-opacity duration-200 hover:opacity-80" aria-label={t('dashboard')}>{sidebarCollapsed ? <span className="flex h-10 items-center justify-center text-lg font-semibold text-primary">AI.</span> : <Brand />}</Link>
+          <button type="button" onClick={toggleSidebar} aria-label={sidebarCollapsed ? ts('expandNavigation') : ts('collapseNavigation')} title={sidebarCollapsed ? ts('expandNavigation') : ts('collapseNavigation')} className="mb-4 flex min-h-11 items-center justify-center gap-2 rounded-lg text-sm text-muted-foreground hover:bg-muted">{sidebarCollapsed ? <ChevronRight className="h-5 w-5" aria-hidden="true" /> : <><ChevronLeft className="h-5 w-5" aria-hidden="true" />{ts('collapseNavigation')}</>}</button><MainNav collapsed={sidebarCollapsed} isAdmin={isAdminUser(user)} isInvestor={canViewInvestorPortal(user)} />
           <div className="mt-auto space-y-4 pt-8">
-            {/* Gợi ý AI: CTA phụ, nhẹ nhàng, không cạnh tranh với nội dung chính */}
-            <div className="sidebar-tip rounded-xl border border-primary/15 bg-gradient-to-br from-accent to-card p-4">
-              <span className="mb-3 flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10"><Sparkles className="h-4 w-4 text-primary" aria-hidden="true" /></span>
-              <p className="text-body-sm font-semibold">{ts('aiTitle')}</p>
-              <p className="mt-1 text-caption text-muted-foreground">{ts('aiDescription')}</p>
-              <Link href="/projects" className="group mt-3 inline-flex min-h-9 items-center gap-1 text-caption font-semibold text-primary">{ts('explore')}<ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" /></Link>
-            </div>
-            <div className="flex items-center justify-between border-t pt-4"><span className="text-caption text-muted-foreground">{ts('appearance')}</span><div className="flex items-center gap-2"><FireworksToggle label={ts('fireworks')} reducedMotionHint={ts('fireworksReducedMotion')} /><ThemeToggle /></div></div>
+<div className="flex items-center justify-between border-t pt-4">{!sidebarCollapsed && <span className="text-caption text-muted-foreground">{ts('appearance')}</span>}<ThemeToggle /></div>
           </div>
         </aside>
 
         {/* ===== Header dính trên cùng: breadcrumb + tiện ích ===== */}
-        <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b bg-background/80 px-4 backdrop-blur-xl sm:px-6 lg:px-8">
+        <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b bg-background px-4 sm:px-6 lg:px-8">
           <div className="flex min-w-0 items-center gap-2">
             <button type="button" onClick={() => setMobileNavOpen(true)} aria-label={t('openNavigation')} aria-expanded={mobileNavOpen} className="-ml-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-lg transition-colors duration-200 hover:bg-accent lg:hidden"><Menu className="h-5 w-5" aria-hidden="true" /></button>
             <Breadcrumbs />
@@ -130,7 +137,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <MobileNav open={mobileNavOpen} isAdmin={isAdminUser(user)} isInvestor={canViewInvestorPortal(user)} onClose={() => setMobileNavOpen(false)} />
 
         {/* ===== Nội dung chính ===== */}
-        <main id="main-content" tabIndex={-1} className="page-enter mx-auto w-full max-w-[1440px] space-y-6 px-4 py-6 outline-none sm:px-6 sm:py-8 lg:px-8">
+        <main id="main-content" tabIndex={-1} className="mx-auto min-w-0 w-full max-w-[1600px] space-y-4 px-4 py-4 outline-none sm:px-6 sm:py-6 lg:px-8">
           {user?.email_verified === false && (
             <EmailVerificationBanner
               email={user.email}

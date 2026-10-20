@@ -19,6 +19,9 @@ const labels: GanttChartLabels = {
   unscheduledTitle: 'Not scheduled',
   unscheduledHint: 'These tasks have no dates yet.',
   empty: 'No tasks to schedule yet.',
+  timeline: 'Project timeline', scrollHint: 'Focus the timeline and use arrow keys to scroll.',
+  nameColumnWidth: 'Task column width', widthStandard: 'Standard', widthWide: 'Wide', widthExtraWide: 'Extra wide',
+  taskDetails: 'Task details', selectionHint: 'Select a task to see details.',
 }
 
 function task(overrides: Partial<CPMTask> & { id: number }): CPMTask {
@@ -100,6 +103,32 @@ describe('GanttChart', () => {
     expect(widthOf()).toBeGreaterThan(weekWidth)
     fireEvent.click(screen.getByRole('button', { name: 'Month' }))
     expect(widthOf()).toBeLessThan(weekWidth)
+    expect(screen.getByRole('button', { name: 'Month' })).toHaveAttribute('aria-pressed', 'true')
+    expect(container.querySelector('[data-testid="gantt-scroll"] svg text')).toHaveTextContent('Oct 2026')
+  })
+
+  it('names the keyboard scroll region and reveals full task details on focus or selection', () => {
+    const longName = 'A complete task name that cannot fit into the task column but remains available through keyboard focus'
+    render(<GanttChart data={{ ...small, tasks: [{ ...small.tasks[0], name: longName }] }} labels={labels} />)
+    const timeline = screen.getByRole('region', { name: 'Project timeline' })
+    expect(timeline).toHaveAttribute('tabindex', '0')
+    expect(timeline).toHaveAccessibleDescription(labels.scrollHint)
+    const name = screen.getByRole('button', { name: new RegExp(`^${longName}`) })
+    fireEvent.focus(name)
+    const details = screen.getByRole('complementary', { name: 'Task details' })
+    expect(details).toHaveTextContent(longName)
+    expect(details).toHaveTextContent('Oct 5, 2026 - Oct 7, 2026')
+    expect(name).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  it('allows a wider task column without changing the time axis scale', () => {
+    const { container } = render(<GanttChart data={small} labels={labels} />)
+    const axis = () => container.querySelector('[data-testid="gantt-scroll"] svg')
+    const width = axis()?.getAttribute('width')
+    fireEvent.change(screen.getByRole('combobox', { name: 'Task column width' }), { target: { value: '400' } })
+    expect(screen.getByRole('combobox', { name: 'Task column width' })).toHaveValue('400')
+    expect(axis()?.getAttribute('width')).toBe(width)
+    expect(screen.getByRole('list', { name: 'Task' })).toHaveStyle({ width: 'clamp(144px, 40vw, 400px)' })
   })
 
   it('hiển thị trạng thái rỗng khi không có task', () => {

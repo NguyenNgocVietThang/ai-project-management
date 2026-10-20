@@ -1,6 +1,6 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { AlertTriangle, Download, FileText, Sparkles } from 'lucide-react'
 import { Button } from '@/components/common/Button'
@@ -36,12 +36,13 @@ function apiDetail(error: unknown): { status?: number; detail?: unknown } {
   return {}
 }
 
-function formatDateTime(value: string) {
+function formatDateTime(value: string, locale: string) {
   const date = new Date(value)
-  return Number.isNaN(date.getTime()) ? value : date.toLocaleString()
+  return Number.isNaN(date.getTime()) ? value : date.toLocaleString(locale)
 }
 
 export default function DocumentsPage() {
+  const locale = useLocale()
   const projectId = useNumericParam()
   const t = useTranslations('documents')
   const tc = useTranslations('clarifier')
@@ -149,7 +150,7 @@ export default function DocumentsPage() {
                       <div className="min-w-0">
                         <p className="break-words text-body font-semibold text-foreground">{t('docTitle', { type: doc.doc_type, version: doc.version })}</p>
                         <p className="text-caption text-muted-foreground">
-                          {t(`languages.${doc.language}`)} · <time dateTime={doc.created_at}>{formatDateTime(doc.created_at)}</time>
+                          {t(`languages.${doc.language}`)} · <time dateTime={doc.created_at}>{formatDateTime(doc.created_at, locale)}</time>
                         </p>
                       </div>
                     </div>
@@ -186,7 +187,7 @@ export default function DocumentsPage() {
 
                   {doc.warnings.length > 0 && (
                     <details className="text-body-sm">
-                      <summary className="flex min-h-9 cursor-pointer items-center gap-2 font-medium text-warning">
+                      <summary className="flex min-h-11 cursor-pointer items-center gap-2 rounded font-medium text-warning focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                         <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden="true" />
                         {t('warnings', { count: doc.warnings.length })}
                       </summary>

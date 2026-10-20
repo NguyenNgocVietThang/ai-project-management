@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Modal } from '@/components/common/Modal'
 import { ThemeToggle } from '@/components/theme/ThemeToggle'
-import { FireworksToggle } from '@/components/background/FireworksToggle'
 import { LanguageToggle } from './LanguageToggle'
 import { cn } from '@/lib/utils'
 
@@ -41,7 +40,7 @@ const GROUPS = [
   },
 ] as const
 
-export function MainNav({ isAdmin, isInvestor = false, onNavigate }: { isAdmin: boolean; isInvestor?: boolean; onNavigate?: () => void }) {
+export function MainNav({ isAdmin, isInvestor = false, onNavigate, collapsed = false }: { isAdmin: boolean; isInvestor?: boolean; onNavigate?: () => void; collapsed?: boolean }) {
   const pathname = usePathname()
   const t = useTranslations('nav')
   // Nhóm hiện theo đối tượng; backend vẫn kiểm tra quyền ở từng API.
@@ -51,7 +50,7 @@ export function MainNav({ isAdmin, isInvestor = false, onNavigate }: { isAdmin: 
     <nav aria-label={t('mainNavigation')} className="flex flex-col gap-6">
       {GROUPS.filter(group => visible(group.audience)).map(group => (
         <div key={group.key}>
-          <p className="eyebrow mb-2 px-3">{t(group.key)}</p>
+          <p className={cn('eyebrow mb-2 px-3', collapsed && 'sr-only')}>{t(group.key)}</p>
           <ul className="flex flex-col gap-1">
             {group.links.map(({ href, key, Icon }) => {
               const active = pathname === href || pathname.startsWith(`${href}/`)
@@ -61,8 +60,10 @@ export function MainNav({ isAdmin, isInvestor = false, onNavigate }: { isAdmin: 
                     href={href}
                     onClick={onNavigate}
                     aria-current={active ? 'page' : undefined}
+                    title={collapsed ? t(key) : undefined}
                     className={cn(
                       'group relative flex min-h-11 items-center gap-3 rounded-lg px-3 text-body-sm font-medium transition-colors duration-200',
+                      collapsed && 'justify-center px-0',
                       // Thanh dọc bên trái báo mục đang mở, không chỉ dựa vào màu nền.
                       'before:absolute before:left-0 before:top-1/2 before:h-5 before:w-1 before:-translate-y-1/2 before:rounded-r-full before:transition-colors before:duration-200',
                       active
@@ -71,7 +72,7 @@ export function MainNav({ isAdmin, isInvestor = false, onNavigate }: { isAdmin: 
                     )}
                   >
                     <Icon className={cn('h-5 w-5 transition-transform duration-200 group-hover:scale-110', active && 'text-primary')} strokeWidth={1.75} aria-hidden="true" />
-                    {t(key)}
+                    <span className={collapsed ? 'sr-only' : undefined}>{t(key)}</span>
                   </Link>
                 </li>
               )
@@ -85,9 +86,8 @@ export function MainNav({ isAdmin, isInvestor = false, onNavigate }: { isAdmin: 
 
 export function MobileNav({ open, isAdmin, isInvestor = false, onClose }: { open: boolean; isAdmin: boolean; isInvestor?: boolean; onClose: () => void }) {
   const t = useTranslations('nav')
-  const ts = useTranslations('shell')
   return <Modal open={open} onClose={onClose} title={t('mainNavigation')} className="max-w-sm">
     <MainNav isAdmin={isAdmin} isInvestor={isInvestor} onNavigate={onClose} />
-    <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t pt-6"><LanguageToggle /><div className="flex items-center gap-2"><FireworksToggle label={ts('fireworks')} reducedMotionHint={ts('fireworksReducedMotion')} /><ThemeToggle /></div></div>
+    <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t pt-6"><LanguageToggle /><ThemeToggle /></div>
   </Modal>
 }

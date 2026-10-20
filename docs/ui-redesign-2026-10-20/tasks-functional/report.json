@@ -1,0 +1,2278 @@
+{
+  "synthetic": true,
+  "source": "Actual local Next.js UI with fully intercepted synthetic API responses; no production reads/writes.",
+  "mode": "tasks-functional",
+  "started": "2026-10-20T15:04:55.873Z",
+  "cases": [
+    {
+      "width": 390,
+      "locale": "vi",
+      "theme": "light",
+      "route": "tasks",
+      "dialog": false,
+      "id": "tasks-390-vi-light-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 2493,
+          "left": 0,
+          "width": 390,
+          "height": 2429
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "firstTaskRect": {
+        "x": 33,
+        "y": 620,
+        "width": 324,
+        "height": 20
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nCông việc\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nCông việc\n\nLập kế hoạch, phân công và theo dõi công việc của dự án.\n\nBảng\nDanh sách\nSprint\nCông việc mới\nBộ lọc\n\n17 kết quả\n\nPhân tích yêu cầu nghiệp vụ\nĐang thực hiện\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nKhảo sát quy trình hiện tại\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nXác định phạm vi dự án\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nThiết kế kiến trúc hệ thống\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nThiết kế giao diện người dùng\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nXây dựng cơ sở dữ liệu\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nPhát triển đăng nhập và phân quyền\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nPhát triển quản lý dự án\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nPhát triển quản lý công việc\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nTích hợp lịch và biểu đồ Gantt\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nXây dựng báo cáo tiến độ\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nTích hợp dịch vụ AI\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nKiểm thử chức năng\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nKiểm thử tích hợp\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nĐào tạo người dùng\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nTriển khai thử nghiệm\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nNghiệm thu và bàn giao\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\n\nĐang hiển thị 17 công việc trên trang · 17 công việc phù hợp\n\nTrang trước\nTrang 1 / 1\nTrang sau",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": null
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "taskInteractions": {
+        "searchedCount": 1,
+        "searchUrl": "http://127.0.0.1:3000/projects/2/tasks?view=list&page=1&page_size=25&search=Ph%C3%A2n+t%C3%ADch",
+        "preservedAfter^(Bảng|Board)$": true,
+        "preservedAfter^(Danh sách|List)$": true,
+        "backRestoresBoard": true,
+        "forwardRestoresList": true,
+        "filterDialog": {
+          "width": 390,
+          "height": 844,
+          "scrollY": 0,
+          "documentWidth": 390,
+          "documentOverflow": false,
+          "overflowElements": [],
+          "title": "AI Project Management",
+          "main": {
+            "top": 64,
+            "right": 390,
+            "bottom": 893,
+            "left": 0,
+            "width": 390,
+            "height": 829
+          },
+          "dialog": {
+            "top": 12,
+            "right": 378,
+            "bottom": 832,
+            "left": 12,
+            "width": 366,
+            "height": 820
+          },
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "fixed inset-0 z-50 flex h-dvh items-center justify-center p-3 sm:p-4",
+              "rect": {
+                "top": 0,
+                "right": 390,
+                "bottom": 844,
+                "left": 0,
+                "width": 390,
+                "height": 844
+              },
+              "transform": "none",
+              "filter": "none",
+              "backdropFilter": "none",
+              "perspective": "none",
+              "contain": "none",
+              "position": "fixed",
+              "overflow": "visible",
+              "willChange": "auto"
+            },
+            {
+              "tag": "BODY",
+              "className": "",
+              "rect": {
+                "top": 0,
+                "right": 390,
+                "bottom": 893,
+                "left": 0,
+                "width": 390,
+                "height": 893
+              },
+              "transform": "none",
+              "filter": "none",
+              "backdropFilter": "none",
+              "perspective": "none",
+              "contain": "none",
+              "position": "static",
+              "overflow": "hidden",
+              "willChange": "auto"
+            },
+            {
+              "tag": "HTML",
+              "className": "__variable_5e14ba light",
+              "rect": {
+                "top": 0,
+                "right": 390,
+                "bottom": 893,
+                "left": 0,
+                "width": 390,
+                "height": 893
+              },
+              "transform": "none",
+              "filter": "none",
+              "backdropFilter": "none",
+              "perspective": "none",
+              "contain": "none",
+              "position": "static",
+              "overflow": "visible",
+              "willChange": "auto"
+            }
+          ],
+          "rawTranslationKeys": [],
+          "reducedMotion": true
+        },
+        "filterFocusTrap": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "filterFooterRect": {
+          "x": 236.078125,
+          "y": 771,
+          "width": 124.921875,
+          "height": 44
+        },
+        "filterClosedRestored": true,
+        "clearedCount": 17,
+        "drawerOpened": true,
+        "drawerGeometry": {
+          "width": 390,
+          "height": 844,
+          "scrollY": 0,
+          "documentWidth": 390,
+          "documentOverflow": false,
+          "overflowElements": [],
+          "title": "AI Project Management",
+          "main": {
+            "top": 64,
+            "right": 390,
+            "bottom": 2493,
+            "left": 0,
+            "width": 390,
+            "height": 2429
+          },
+          "dialog": {
+            "top": 12,
+            "right": 378,
+            "bottom": 832,
+            "left": 12,
+            "width": 366,
+            "height": 820
+          },
+          "ancestors": [
+            {
+              "tag": "DIV",
+              "className": "fixed inset-0 z-50 flex h-dvh items-center justify-center p-3 sm:p-4",
+              "rect": {
+                "top": 0,
+                "right": 390,
+                "bottom": 844,
+                "left": 0,
+                "width": 390,
+                "height": 844
+              },
+              "transform": "none",
+              "filter": "none",
+              "backdropFilter": "none",
+              "perspective": "none",
+              "contain": "none",
+              "position": "fixed",
+              "overflow": "visible",
+              "willChange": "auto"
+            },
+            {
+              "tag": "BODY",
+              "className": "",
+              "rect": {
+                "top": 0,
+                "right": 390,
+                "bottom": 2493,
+                "left": 0,
+                "width": 390,
+                "height": 2493
+              },
+              "transform": "none",
+              "filter": "none",
+              "backdropFilter": "none",
+              "perspective": "none",
+              "contain": "none",
+              "position": "static",
+              "overflow": "hidden",
+              "willChange": "auto"
+            },
+            {
+              "tag": "HTML",
+              "className": "__variable_5e14ba light",
+              "rect": {
+                "top": 0,
+                "right": 390,
+                "bottom": 2493,
+                "left": 0,
+                "width": 390,
+                "height": 2493
+              },
+              "transform": "none",
+              "filter": "none",
+              "backdropFilter": "none",
+              "perspective": "none",
+              "contain": "none",
+              "position": "static",
+              "overflow": "visible",
+              "willChange": "auto"
+            }
+          ],
+          "rawTranslationKeys": [],
+          "reducedMotion": true
+        },
+        "drawerFocusTrap": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "drawerFooterRect": {
+          "x": 234.828125,
+          "y": 771,
+          "width": 126.171875,
+          "height": 44
+        },
+        "drawerClosed": true,
+        "drawerFocusRestored": true
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "GET",
+          "path": "/users/me/worklogs/active"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/members"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/tasks/101"
+        },
+        {
+          "method": "GET",
+          "path": "/tasks/101/worklogs"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true,
+        "navigationNoOpenOverflow": true,
+        "taskSearchOneResult": true,
+        "taskClear17Results": true,
+        "taskDrawerOpensCloses": true,
+        "taskViewPreservesSearch": true,
+        "taskHistoryRestoresState": true,
+        "taskFilterKeyboard": true
+      }
+    },
+    {
+      "width": 390,
+      "locale": "vi",
+      "theme": "dark",
+      "route": "tasks",
+      "dialog": false,
+      "id": "tasks-390-vi-dark-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 2493,
+          "left": 0,
+          "width": 390,
+          "height": 2429
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "firstTaskRect": {
+        "x": 33,
+        "y": 620,
+        "width": 324,
+        "height": 20
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nCông việc\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nCông việc\n\nLập kế hoạch, phân công và theo dõi công việc của dự án.\n\nBảng\nDanh sách\nSprint\nCông việc mới\nBộ lọc\n\n17 kết quả\n\nPhân tích yêu cầu nghiệp vụ\nĐang thực hiện\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nKhảo sát quy trình hiện tại\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nXác định phạm vi dự án\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nThiết kế kiến trúc hệ thống\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nThiết kế giao diện người dùng\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nXây dựng cơ sở dữ liệu\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nPhát triển đăng nhập và phân quyền\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nPhát triển quản lý dự án\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nPhát triển quản lý công việc\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nTích hợp lịch và biểu đồ Gantt\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nXây dựng báo cáo tiến độ\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nTích hợp dịch vụ AI\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nKiểm thử chức năng\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nKiểm thử tích hợp\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nĐào tạo người dùng\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nTriển khai thử nghiệm\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nNghiệm thu và bàn giao\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\n\nĐang hiển thị 17 công việc trên trang · 17 công việc phù hợp\n\nTrang trước\nTrang 1 / 1\nTrang sau",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": null
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "GET",
+          "path": "/users/me/worklogs/active"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/members"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true,
+        "navigationNoOpenOverflow": true
+      }
+    },
+    {
+      "width": 390,
+      "locale": "en",
+      "theme": "light",
+      "route": "tasks",
+      "dialog": false,
+      "id": "tasks-390-en-light-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 2473,
+          "left": 0,
+          "width": 390,
+          "height": 2409
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "firstTaskRect": {
+        "x": 33,
+        "y": 600,
+        "width": 324,
+        "height": 20
+      },
+      "bodyText": "Skip to content\nDự án mẫu AI — Quản lý dự án và danh mục\nTasks\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nStandalone project\n\nOverview\nTasks\nPlanning\nMore\nTasks\n\nPlan, assign and track project work.\n\nBoard\nList\nSprint\nNew task\nFilters\n\n17 results\n\nPhân tích yêu cầu nghiệp vụ\nIn progress\nNguyễn QA\nDue date: Nov 10, 2026\nKhảo sát quy trình hiện tại\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nXác định phạm vi dự án\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nThiết kế kiến trúc hệ thống\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nThiết kế giao diện người dùng\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nXây dựng cơ sở dữ liệu\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nPhát triển đăng nhập và phân quyền\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nPhát triển quản lý dự án\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nPhát triển quản lý công việc\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nTích hợp lịch và biểu đồ Gantt\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nXây dựng báo cáo tiến độ\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nTích hợp dịch vụ AI\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nKiểm thử chức năng\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nKiểm thử tích hợp\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nĐào tạo người dùng\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nTriển khai thử nghiệm\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nNghiệm thu và bàn giao\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\n\nShowing 17 tasks on this page · 17 matching tasks\n\nPrevious\nPage 1 of 1\nNext",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": null
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Planning",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "More",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "GET",
+          "path": "/users/me/worklogs/active"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/members"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true,
+        "navigationNoOpenOverflow": true
+      }
+    },
+    {
+      "width": 390,
+      "locale": "en",
+      "theme": "dark",
+      "route": "tasks",
+      "dialog": false,
+      "id": "tasks-390-en-dark-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 2473,
+          "left": 0,
+          "width": 390,
+          "height": 2409
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "firstTaskRect": {
+        "x": 33,
+        "y": 600,
+        "width": 324,
+        "height": 20
+      },
+      "bodyText": "Skip to content\nDự án mẫu AI — Quản lý dự án và danh mục\nTasks\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nStandalone project\n\nOverview\nTasks\nPlanning\nMore\nTasks\n\nPlan, assign and track project work.\n\nBoard\nList\nSprint\nNew task\nFilters\n\n17 results\n\nPhân tích yêu cầu nghiệp vụ\nIn progress\nNguyễn QA\nDue date: Nov 10, 2026\nKhảo sát quy trình hiện tại\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nXác định phạm vi dự án\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nThiết kế kiến trúc hệ thống\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nThiết kế giao diện người dùng\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nXây dựng cơ sở dữ liệu\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nPhát triển đăng nhập và phân quyền\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nPhát triển quản lý dự án\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nPhát triển quản lý công việc\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nTích hợp lịch và biểu đồ Gantt\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nXây dựng báo cáo tiến độ\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nTích hợp dịch vụ AI\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nKiểm thử chức năng\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nKiểm thử tích hợp\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nĐào tạo người dùng\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nTriển khai thử nghiệm\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\nNghiệm thu và bàn giao\nTo do\nNguyễn QA\nDue date: Nov 10, 2026\n\nShowing 17 tasks on this page · 17 matching tasks\n\nPrevious\nPage 1 of 1\nNext",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": null
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Planning",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "More",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "GET",
+          "path": "/users/me/worklogs/active"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/members"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true,
+        "navigationNoOpenOverflow": true
+      }
+    },
+    {
+      "width": 390,
+      "locale": "vi",
+      "theme": "light",
+      "route": "tasks",
+      "count": 0,
+      "long": false,
+      "id": "tasks-390-vi-light-0-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 1005,
+          "left": 0,
+          "width": 390,
+          "height": 941
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nCông việc\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nCông việc\n\nLập kế hoạch, phân công và theo dõi công việc của dự án.\n\nBảng\nDanh sách\nSprint\nCông việc mới\nBộ lọc\n\n0 kết quả\n\nChưa có công việc\n\nKhông có công việc nào khớp bộ lọc hiện tại.\n\nCông việc mới\n\nĐang hiển thị 0 công việc trên trang · 0 công việc phù hợp\n\nTrang trước\nTrang 1 / 1\nTrang sau",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": null
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "GET",
+          "path": "/users/me/worklogs/active"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/members"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true,
+        "navigationNoOpenOverflow": true
+      }
+    },
+    {
+      "width": 390,
+      "locale": "vi",
+      "theme": "light",
+      "route": "tasks",
+      "count": 1,
+      "long": false,
+      "id": "tasks-390-vi-light-1-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 813,
+          "left": 0,
+          "width": 390,
+          "height": 749
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "firstTaskRect": {
+        "x": 33,
+        "y": 620,
+        "width": 324,
+        "height": 20
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nCông việc\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nCông việc\n\nLập kế hoạch, phân công và theo dõi công việc của dự án.\n\nBảng\nDanh sách\nSprint\nCông việc mới\nBộ lọc\n\n1 kết quả\n\nPhân tích yêu cầu nghiệp vụ\nĐang thực hiện\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\n\nĐang hiển thị 1 công việc trên trang · 1 công việc phù hợp\n\nTrang trước\nTrang 1 / 1\nTrang sau",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": null
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "GET",
+          "path": "/users/me/worklogs/active"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/members"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true,
+        "navigationNoOpenOverflow": true
+      }
+    },
+    {
+      "width": 390,
+      "locale": "vi",
+      "theme": "light",
+      "route": "tasks",
+      "count": 50,
+      "long": true,
+      "id": "tasks-390-vi-light-50-long-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 6333,
+          "left": 0,
+          "width": 390,
+          "height": 6269
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "firstTaskRect": {
+        "x": 33,
+        "y": 620,
+        "width": 324,
+        "height": 140
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nCông việc\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nCông việc\n\nLập kế hoạch, phân công và theo dõi công việc của dự án.\n\nBảng\nDanh sách\nSprint\nCông việc mới\nBộ lọc\n\n50 kết quả\n\nPhân tích yêu cầu nghiệp vụ — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nĐang thực hiện\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nKhảo sát quy trình hiện tại — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nXác định phạm vi dự án — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nThiết kế kiến trúc hệ thống — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nThiết kế giao diện người dùng — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nXây dựng cơ sở dữ liệu — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nPhát triển đăng nhập và phân quyền — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nPhát triển quản lý dự án — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nPhát triển quản lý công việc — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nTích hợp lịch và biểu đồ Gantt — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nXây dựng báo cáo tiến độ — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nTích hợp dịch vụ AI — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nKiểm thử chức năng — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nKiểm thử tích hợp — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nĐào tạo người dùng — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nTriển khai thử nghiệm — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nNghiệm thu và bàn giao — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nPhân tích yêu cầu nghiệp vụ 18 — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nKhảo sát quy trình hiện tại 19 — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nXác định phạm vi dự án 20 — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nThiết kế kiến trúc hệ thống 21 — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nThiết kế giao diện người dùng 22 — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nXây dựng cơ sở dữ liệu 23 — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nPhát triển đăng nhập và phân quyền 24 — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nPhát triển quản lý dự án 25 — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động — tên công việc rất dài để kiểm tra khả năng xuống dòng và truy cập trên thiết bị di động\nCần làm\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\n\nĐang hiển thị 25 công việc trên trang · 50 công việc phù hợp\n\nTrang trước\nTrang 1 / 2\nTrang sau",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": null
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "GET",
+          "path": "/users/me/worklogs/active"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/members"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true,
+        "navigationNoOpenOverflow": true
+      }
+    },
+    {
+      "width": 390,
+      "locale": "vi",
+      "theme": "light",
+      "route": "tasks",
+      "state": "loading",
+      "id": "tasks-390-vi-light-17-loading",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [
+          {
+            "tag": "DIV",
+            "className": "grid w-max min-w-full grid-cols-[repeat(5,minmax(16rem,1fr))] gap-4",
+            "text": "",
+            "rect": {
+              "top": 609,
+              "right": 1360,
+              "bottom": 1029,
+              "left": 16,
+              "width": 1344,
+              "height": 420
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "space-y-3 rounded-xl bg-muted/40 p-3",
+            "text": "",
+            "rect": {
+              "top": 609,
+              "right": 544,
+              "bottom": 1029,
+              "left": 288,
+              "width": 256,
+              "height": 420
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "skeleton-shimmer animate-shimmer bg-muted h-6 w-24 rounded-full",
+            "text": "",
+            "rect": {
+              "top": 621,
+              "right": 396,
+              "bottom": 645,
+              "left": 300,
+              "width": 96,
+              "height": 24
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "skeleton-shimmer animate-shimmer h-28 rounded-xl bg-card",
+            "text": "",
+            "rect": {
+              "top": 657,
+              "right": 532,
+              "bottom": 769,
+              "left": 300,
+              "width": 232,
+              "height": 112
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "skeleton-shimmer animate-shimmer h-28 rounded-xl bg-card",
+            "text": "",
+            "rect": {
+              "top": 781,
+              "right": 532,
+              "bottom": 893,
+              "left": 300,
+              "width": 232,
+              "height": 112
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "space-y-3 rounded-xl bg-muted/40 p-3",
+            "text": "",
+            "rect": {
+              "top": 609,
+              "right": 816,
+              "bottom": 1029,
+              "left": 560,
+              "width": 256,
+              "height": 420
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "skeleton-shimmer animate-shimmer bg-muted h-6 w-24 rounded-full",
+            "text": "",
+            "rect": {
+              "top": 621,
+              "right": 668,
+              "bottom": 645,
+              "left": 572,
+              "width": 96,
+              "height": 24
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "skeleton-shimmer animate-shimmer h-28 rounded-xl bg-card",
+            "text": "",
+            "rect": {
+              "top": 657,
+              "right": 804,
+              "bottom": 769,
+              "left": 572,
+              "width": 232,
+              "height": 112
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "skeleton-shimmer animate-shimmer h-28 rounded-xl bg-card",
+            "text": "",
+            "rect": {
+              "top": 781,
+              "right": 804,
+              "bottom": 893,
+              "left": 572,
+              "width": 232,
+              "height": 112
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "space-y-3 rounded-xl bg-muted/40 p-3",
+            "text": "",
+            "rect": {
+              "top": 609,
+              "right": 1088,
+              "bottom": 1029,
+              "left": 832,
+              "width": 256,
+              "height": 420
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "skeleton-shimmer animate-shimmer bg-muted h-6 w-24 rounded-full",
+            "text": "",
+            "rect": {
+              "top": 621,
+              "right": 940,
+              "bottom": 645,
+              "left": 844,
+              "width": 96,
+              "height": 24
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "skeleton-shimmer animate-shimmer h-28 rounded-xl bg-card",
+            "text": "",
+            "rect": {
+              "top": 657,
+              "right": 1076,
+              "bottom": 769,
+              "left": 844,
+              "width": 232,
+              "height": 112
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "space-y-3 rounded-xl bg-muted/40 p-3",
+            "text": "",
+            "rect": {
+              "top": 609,
+              "right": 1360,
+              "bottom": 1029,
+              "left": 1104,
+              "width": 256,
+              "height": 420
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "skeleton-shimmer animate-shimmer bg-muted h-6 w-24 rounded-full",
+            "text": "",
+            "rect": {
+              "top": 621,
+              "right": 1212,
+              "bottom": 645,
+              "left": 1116,
+              "width": 96,
+              "height": 24
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "skeleton-shimmer animate-shimmer h-28 rounded-xl bg-card",
+            "text": "",
+            "rect": {
+              "top": 657,
+              "right": 1348,
+              "bottom": 769,
+              "left": 1116,
+              "width": 232,
+              "height": 112
+            }
+          }
+        ],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 1045,
+          "left": 0,
+          "width": 390,
+          "height": 981
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nCông việc\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nĐang tải công việc…",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": null
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "GET",
+          "path": "/users/me/worklogs/active"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/members"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true,
+        "navigationNoOpenOverflow": true
+      }
+    },
+    {
+      "width": 390,
+      "locale": "vi",
+      "theme": "light",
+      "route": "tasks",
+      "state": "error",
+      "id": "tasks-390-vi-light-17-error",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [
+          {
+            "tag": "DIV",
+            "className": "grid w-max min-w-full grid-cols-[repeat(5,minmax(16rem,1fr))] gap-4",
+            "text": "",
+            "rect": {
+              "top": 609,
+              "right": 1360,
+              "bottom": 1029,
+              "left": 16,
+              "width": 1344,
+              "height": 420
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "space-y-3 rounded-xl bg-muted/40 p-3",
+            "text": "",
+            "rect": {
+              "top": 609,
+              "right": 544,
+              "bottom": 1029,
+              "left": 288,
+              "width": 256,
+              "height": 420
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "skeleton-shimmer animate-shimmer bg-muted h-6 w-24 rounded-full",
+            "text": "",
+            "rect": {
+              "top": 621,
+              "right": 396,
+              "bottom": 645,
+              "left": 300,
+              "width": 96,
+              "height": 24
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "skeleton-shimmer animate-shimmer h-28 rounded-xl bg-card",
+            "text": "",
+            "rect": {
+              "top": 657,
+              "right": 532,
+              "bottom": 769,
+              "left": 300,
+              "width": 232,
+              "height": 112
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "skeleton-shimmer animate-shimmer h-28 rounded-xl bg-card",
+            "text": "",
+            "rect": {
+              "top": 781,
+              "right": 532,
+              "bottom": 893,
+              "left": 300,
+              "width": 232,
+              "height": 112
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "space-y-3 rounded-xl bg-muted/40 p-3",
+            "text": "",
+            "rect": {
+              "top": 609,
+              "right": 816,
+              "bottom": 1029,
+              "left": 560,
+              "width": 256,
+              "height": 420
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "skeleton-shimmer animate-shimmer bg-muted h-6 w-24 rounded-full",
+            "text": "",
+            "rect": {
+              "top": 621,
+              "right": 668,
+              "bottom": 645,
+              "left": 572,
+              "width": 96,
+              "height": 24
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "skeleton-shimmer animate-shimmer h-28 rounded-xl bg-card",
+            "text": "",
+            "rect": {
+              "top": 657,
+              "right": 804,
+              "bottom": 769,
+              "left": 572,
+              "width": 232,
+              "height": 112
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "skeleton-shimmer animate-shimmer h-28 rounded-xl bg-card",
+            "text": "",
+            "rect": {
+              "top": 781,
+              "right": 804,
+              "bottom": 893,
+              "left": 572,
+              "width": 232,
+              "height": 112
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "space-y-3 rounded-xl bg-muted/40 p-3",
+            "text": "",
+            "rect": {
+              "top": 609,
+              "right": 1088,
+              "bottom": 1029,
+              "left": 832,
+              "width": 256,
+              "height": 420
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "skeleton-shimmer animate-shimmer bg-muted h-6 w-24 rounded-full",
+            "text": "",
+            "rect": {
+              "top": 621,
+              "right": 940,
+              "bottom": 645,
+              "left": 844,
+              "width": 96,
+              "height": 24
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "skeleton-shimmer animate-shimmer h-28 rounded-xl bg-card",
+            "text": "",
+            "rect": {
+              "top": 657,
+              "right": 1076,
+              "bottom": 769,
+              "left": 844,
+              "width": 232,
+              "height": 112
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "space-y-3 rounded-xl bg-muted/40 p-3",
+            "text": "",
+            "rect": {
+              "top": 609,
+              "right": 1360,
+              "bottom": 1029,
+              "left": 1104,
+              "width": 256,
+              "height": 420
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "skeleton-shimmer animate-shimmer bg-muted h-6 w-24 rounded-full",
+            "text": "",
+            "rect": {
+              "top": 621,
+              "right": 1212,
+              "bottom": 645,
+              "left": 1116,
+              "width": 96,
+              "height": 24
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "skeleton-shimmer animate-shimmer h-28 rounded-xl bg-card",
+            "text": "",
+            "rect": {
+              "top": 657,
+              "right": 1348,
+              "bottom": 769,
+              "left": 1116,
+              "width": 232,
+              "height": 112
+            }
+          }
+        ],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 1045,
+          "left": 0,
+          "width": 390,
+          "height": 981
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nCông việc\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nĐang tải công việc…",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": null
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "GET",
+          "path": "/users/me/worklogs/active"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/members"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [
+        "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+        "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+        "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+        "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+        "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+        "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+      ],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true,
+        "navigationNoOpenOverflow": true
+      }
+    }
+  ],
+  "completed": "2026-10-20T15:07:07.941Z",
+  "summary": {
+    "cases": 9,
+    "passed": 9,
+    "failures": []
+  }
+}

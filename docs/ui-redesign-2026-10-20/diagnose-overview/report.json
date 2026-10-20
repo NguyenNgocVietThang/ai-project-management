@@ -1,0 +1,1795 @@
+{
+  "synthetic": true,
+  "source": "Actual local Next.js UI with fully intercepted synthetic API responses; no production reads/writes.",
+  "mode": "diagnose-overview",
+  "started": "2026-10-20T14:56:57.788Z",
+  "cases": [
+    {
+      "width": 320,
+      "locale": "vi",
+      "theme": "light",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-320-vi-light-17-ready",
+      "geometry": {
+        "width": 320,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 365,
+        "documentOverflow": true,
+        "overflowElements": [
+          {
+            "tag": "DIV",
+            "className": "absolute top-full z-30 mt-2 max-h-[60dvh] w-56 max-w-[calc(100vw-2rem)] overflow-y-auto rounded-lg border bg-popover p-1 shadow-lg left-0",
+            "text": "Phân rã công việcGantt",
+            "rect": {
+              "top": 300,
+              "right": 386,
+              "bottom": 398,
+              "left": 162,
+              "width": 224,
+              "height": 98
+            }
+          },
+          {
+            "tag": "A",
+            "className": "flex min-h-11 min-w-0 items-center gap-1 rounded-md px-2 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-4 text-muted-foreground hover:bg-muted hover:text-foreground justify-start text-left",
+            "text": "Phân rã công việc",
+            "rect": {
+              "top": 305,
+              "right": 381,
+              "bottom": 349,
+              "left": 167,
+              "width": 214,
+              "height": 44
+            }
+          },
+          {
+            "tag": "A",
+            "className": "flex min-h-11 min-w-0 items-center gap-1 rounded-md px-2 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-4 text-muted-foreground hover:bg-muted hover:text-foreground justify-start text-left",
+            "text": "Gantt",
+            "rect": {
+              "top": 349,
+              "right": 381,
+              "bottom": 393,
+              "left": 167,
+              "width": 214,
+              "height": 44
+            }
+          },
+          {
+            "tag": "SECTION",
+            "className": "relative rounded-xl border border-border/80 bg-card text-card-foreground shadow-soft p-4 sm:p-6",
+            "text": "PhasesSprint 1 - Khởi động và phân tíchPlannedNot set – Not setSprint 2 - Thiết kế và phát triểnPlan",
+            "rect": {
+              "top": 2141,
+              "right": 365.28125,
+              "bottom": 2437,
+              "left": 16,
+              "width": 349.28125,
+              "height": 296
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "mb-4 flex flex-wrap items-start justify-between gap-3",
+            "text": "Phases",
+            "rect": {
+              "top": 2158,
+              "right": 348.28125,
+              "bottom": 2182,
+              "left": 33,
+              "width": 315.28125,
+              "height": 24
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "space-y-3",
+            "text": "Sprint 1 - Khởi động và phân tíchPlannedNot set – Not setSprint 2 - Thiết kế và phát triểnPlannedNot",
+            "rect": {
+              "top": 2198,
+              "right": 348.28125,
+              "bottom": 2420,
+              "left": 33,
+              "width": 315.28125,
+              "height": 222
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "rounded-lg border p-3 transition-colors hover:bg-muted/40",
+            "text": "Sprint 1 - Khởi động và phân tíchPlannedNot set – Not set",
+            "rect": {
+              "top": 2198,
+              "right": 348.28125,
+              "bottom": 2264,
+              "left": 33,
+              "width": 315.28125,
+              "height": 66
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "flex items-center justify-between gap-3",
+            "text": "Sprint 1 - Khởi động và phân tíchPlanned",
+            "rect": {
+              "top": 2211,
+              "right": 335.28125,
+              "bottom": 2231,
+              "left": 46,
+              "width": 289.28125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "SPAN",
+            "className": "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border font-medium h-5 px-2 text-overline normal-case tracking-normal border-border bg-muted text-muted-foreground",
+            "text": "Planned",
+            "rect": {
+              "top": 2211,
+              "right": 335.28125,
+              "bottom": 2231,
+              "left": 274.703125,
+              "width": 60.578125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "P",
+            "className": "mt-1 text-caption text-muted-foreground",
+            "text": "Not set – Not set",
+            "rect": {
+              "top": 2235,
+              "right": 335.28125,
+              "bottom": 2251,
+              "left": 46,
+              "width": 289.28125,
+              "height": 16
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "rounded-lg border p-3 transition-colors hover:bg-muted/40",
+            "text": "Sprint 2 - Thiết kế và phát triểnPlannedNot set – Not set",
+            "rect": {
+              "top": 2276,
+              "right": 348.28125,
+              "bottom": 2342,
+              "left": 33,
+              "width": 315.28125,
+              "height": 66
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "flex items-center justify-between gap-3",
+            "text": "Sprint 2 - Thiết kế và phát triểnPlanned",
+            "rect": {
+              "top": 2289,
+              "right": 335.28125,
+              "bottom": 2309,
+              "left": 46,
+              "width": 289.28125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "SPAN",
+            "className": "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border font-medium h-5 px-2 text-overline normal-case tracking-normal border-border bg-muted text-muted-foreground",
+            "text": "Planned",
+            "rect": {
+              "top": 2289,
+              "right": 335.28125,
+              "bottom": 2309,
+              "left": 274.703125,
+              "width": 60.578125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "P",
+            "className": "mt-1 text-caption text-muted-foreground",
+            "text": "Not set – Not set",
+            "rect": {
+              "top": 2313,
+              "right": 335.28125,
+              "bottom": 2329,
+              "left": 46,
+              "width": 289.28125,
+              "height": 16
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "rounded-lg border p-3 transition-colors hover:bg-muted/40",
+            "text": "Sprint 3 - Kiểm thử và triển khaiPlannedNot set – Not set",
+            "rect": {
+              "top": 2354,
+              "right": 348.28125,
+              "bottom": 2420,
+              "left": 33,
+              "width": 315.28125,
+              "height": 66
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "flex items-center justify-between gap-3",
+            "text": "Sprint 3 - Kiểm thử và triển khaiPlanned",
+            "rect": {
+              "top": 2367,
+              "right": 335.28125,
+              "bottom": 2387,
+              "left": 46,
+              "width": 289.28125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "SPAN",
+            "className": "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border font-medium h-5 px-2 text-overline normal-case tracking-normal border-border bg-muted text-muted-foreground",
+            "text": "Planned",
+            "rect": {
+              "top": 2367,
+              "right": 335.28125,
+              "bottom": 2387,
+              "left": 274.703125,
+              "width": 60.578125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "P",
+            "className": "mt-1 text-caption text-muted-foreground",
+            "text": "Not set – Not set",
+            "rect": {
+              "top": 2391,
+              "right": 335.28125,
+              "bottom": 2407,
+              "left": 46,
+              "width": 289.28125,
+              "height": 16
+            }
+          },
+          {
+            "tag": "SECTION",
+            "className": "relative rounded-xl border border-border/80 bg-card text-card-foreground shadow-soft p-4 sm:p-6",
+            "text": "MilestonesNo milestones yet.",
+            "rect": {
+              "top": 2461,
+              "right": 365.28125,
+              "bottom": 2605,
+              "left": 16,
+              "width": 349.28125,
+              "height": 144
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "mb-4 flex flex-wrap items-start justify-between gap-3",
+            "text": "Milestones",
+            "rect": {
+              "top": 2478,
+              "right": 348.28125,
+              "bottom": 2502,
+              "left": 33,
+              "width": 315.28125,
+              "height": 24
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "space-y-3",
+            "text": "No milestones yet.",
+            "rect": {
+              "top": 2518,
+              "right": 348.28125,
+              "bottom": 2588,
+              "left": 33,
+              "width": 315.28125,
+              "height": 70
+            }
+          },
+          {
+            "tag": "P",
+            "className": "rounded-lg border border-dashed p-6 text-center text-body-sm text-muted-foreground",
+            "text": "No milestones yet.",
+            "rect": {
+              "top": 2518,
+              "right": 348.28125,
+              "bottom": 2588,
+              "left": 33,
+              "width": 315.28125,
+              "height": 70
+            }
+          }
+        ],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 320,
+          "bottom": 2797,
+          "left": 0,
+          "width": 320,
+          "height": 2733
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nTổng quan\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nNgôn ngữ báo cáo\nTiếng Việt\nTiếng Anh\nXuất XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nTask Status\n17Tasks\nTodoIn progress\nTodo: 16 (94%)\nIn progress: 1 (6%)\n\nTotal: 17\n\nDone: 0\n\nOverdue: 0\n\nCritical: 3\n\nBudget\n0%Utilization\nSpentRemaining\nSpent: ₫0 (0%)\nRemaining: ₫100,000,000 (100%)\n\nSpent: ₫0\n\nBudget: ₫100,000,000\n\nUtilization: 0%\n\n14-day Burndown\nNo burndown data\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": false,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    },
+    {
+      "width": 320,
+      "locale": "vi",
+      "theme": "dark",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-320-vi-dark-17-ready",
+      "geometry": {
+        "width": 320,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 365,
+        "documentOverflow": true,
+        "overflowElements": [
+          {
+            "tag": "DIV",
+            "className": "absolute top-full z-30 mt-2 max-h-[60dvh] w-56 max-w-[calc(100vw-2rem)] overflow-y-auto rounded-lg border bg-popover p-1 shadow-lg left-0",
+            "text": "Phân rã công việcGantt",
+            "rect": {
+              "top": 300,
+              "right": 386,
+              "bottom": 398,
+              "left": 162,
+              "width": 224,
+              "height": 98
+            }
+          },
+          {
+            "tag": "A",
+            "className": "flex min-h-11 min-w-0 items-center gap-1 rounded-md px-2 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-4 text-muted-foreground hover:bg-muted hover:text-foreground justify-start text-left",
+            "text": "Phân rã công việc",
+            "rect": {
+              "top": 305,
+              "right": 381,
+              "bottom": 349,
+              "left": 167,
+              "width": 214,
+              "height": 44
+            }
+          },
+          {
+            "tag": "A",
+            "className": "flex min-h-11 min-w-0 items-center gap-1 rounded-md px-2 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-4 text-muted-foreground hover:bg-muted hover:text-foreground justify-start text-left",
+            "text": "Gantt",
+            "rect": {
+              "top": 349,
+              "right": 381,
+              "bottom": 393,
+              "left": 167,
+              "width": 214,
+              "height": 44
+            }
+          },
+          {
+            "tag": "SECTION",
+            "className": "relative rounded-xl border border-border/80 bg-card text-card-foreground shadow-soft p-4 sm:p-6",
+            "text": "PhasesSprint 1 - Khởi động và phân tíchPlannedNot set – Not setSprint 2 - Thiết kế và phát triểnPlan",
+            "rect": {
+              "top": 1947,
+              "right": 365.28125,
+              "bottom": 2243,
+              "left": 16,
+              "width": 349.28125,
+              "height": 296
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "mb-4 flex flex-wrap items-start justify-between gap-3",
+            "text": "Phases",
+            "rect": {
+              "top": 1964,
+              "right": 348.28125,
+              "bottom": 1988,
+              "left": 33,
+              "width": 315.28125,
+              "height": 24
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "space-y-3",
+            "text": "Sprint 1 - Khởi động và phân tíchPlannedNot set – Not setSprint 2 - Thiết kế và phát triểnPlannedNot",
+            "rect": {
+              "top": 2004,
+              "right": 348.28125,
+              "bottom": 2226,
+              "left": 33,
+              "width": 315.28125,
+              "height": 222
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "rounded-lg border p-3 transition-colors hover:bg-muted/40",
+            "text": "Sprint 1 - Khởi động và phân tíchPlannedNot set – Not set",
+            "rect": {
+              "top": 2004,
+              "right": 348.28125,
+              "bottom": 2070,
+              "left": 33,
+              "width": 315.28125,
+              "height": 66
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "flex items-center justify-between gap-3",
+            "text": "Sprint 1 - Khởi động và phân tíchPlanned",
+            "rect": {
+              "top": 2017,
+              "right": 335.28125,
+              "bottom": 2037,
+              "left": 46,
+              "width": 289.28125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "SPAN",
+            "className": "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border font-medium h-5 px-2 text-overline normal-case tracking-normal border-border bg-muted text-muted-foreground",
+            "text": "Planned",
+            "rect": {
+              "top": 2017,
+              "right": 335.28125,
+              "bottom": 2037,
+              "left": 274.703125,
+              "width": 60.578125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "P",
+            "className": "mt-1 text-caption text-muted-foreground",
+            "text": "Not set – Not set",
+            "rect": {
+              "top": 2041,
+              "right": 335.28125,
+              "bottom": 2057,
+              "left": 46,
+              "width": 289.28125,
+              "height": 16
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "rounded-lg border p-3 transition-colors hover:bg-muted/40",
+            "text": "Sprint 2 - Thiết kế và phát triểnPlannedNot set – Not set",
+            "rect": {
+              "top": 2082,
+              "right": 348.28125,
+              "bottom": 2148,
+              "left": 33,
+              "width": 315.28125,
+              "height": 66
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "flex items-center justify-between gap-3",
+            "text": "Sprint 2 - Thiết kế và phát triểnPlanned",
+            "rect": {
+              "top": 2095,
+              "right": 335.28125,
+              "bottom": 2115,
+              "left": 46,
+              "width": 289.28125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "SPAN",
+            "className": "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border font-medium h-5 px-2 text-overline normal-case tracking-normal border-border bg-muted text-muted-foreground",
+            "text": "Planned",
+            "rect": {
+              "top": 2095,
+              "right": 335.28125,
+              "bottom": 2115,
+              "left": 274.703125,
+              "width": 60.578125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "P",
+            "className": "mt-1 text-caption text-muted-foreground",
+            "text": "Not set – Not set",
+            "rect": {
+              "top": 2119,
+              "right": 335.28125,
+              "bottom": 2135,
+              "left": 46,
+              "width": 289.28125,
+              "height": 16
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "rounded-lg border p-3 transition-colors hover:bg-muted/40",
+            "text": "Sprint 3 - Kiểm thử và triển khaiPlannedNot set – Not set",
+            "rect": {
+              "top": 2160,
+              "right": 348.28125,
+              "bottom": 2226,
+              "left": 33,
+              "width": 315.28125,
+              "height": 66
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "flex items-center justify-between gap-3",
+            "text": "Sprint 3 - Kiểm thử và triển khaiPlanned",
+            "rect": {
+              "top": 2173,
+              "right": 335.28125,
+              "bottom": 2193,
+              "left": 46,
+              "width": 289.28125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "SPAN",
+            "className": "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border font-medium h-5 px-2 text-overline normal-case tracking-normal border-border bg-muted text-muted-foreground",
+            "text": "Planned",
+            "rect": {
+              "top": 2173,
+              "right": 335.28125,
+              "bottom": 2193,
+              "left": 274.703125,
+              "width": 60.578125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "P",
+            "className": "mt-1 text-caption text-muted-foreground",
+            "text": "Not set – Not set",
+            "rect": {
+              "top": 2197,
+              "right": 335.28125,
+              "bottom": 2213,
+              "left": 46,
+              "width": 289.28125,
+              "height": 16
+            }
+          },
+          {
+            "tag": "SECTION",
+            "className": "relative rounded-xl border border-border/80 bg-card text-card-foreground shadow-soft p-4 sm:p-6",
+            "text": "MilestonesNo milestones yet.",
+            "rect": {
+              "top": 2267,
+              "right": 365.28125,
+              "bottom": 2411,
+              "left": 16,
+              "width": 349.28125,
+              "height": 144
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "mb-4 flex flex-wrap items-start justify-between gap-3",
+            "text": "Milestones",
+            "rect": {
+              "top": 2284,
+              "right": 348.28125,
+              "bottom": 2308,
+              "left": 33,
+              "width": 315.28125,
+              "height": 24
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "space-y-3",
+            "text": "No milestones yet.",
+            "rect": {
+              "top": 2324,
+              "right": 348.28125,
+              "bottom": 2394,
+              "left": 33,
+              "width": 315.28125,
+              "height": 70
+            }
+          },
+          {
+            "tag": "P",
+            "className": "rounded-lg border border-dashed p-6 text-center text-body-sm text-muted-foreground",
+            "text": "No milestones yet.",
+            "rect": {
+              "top": 2324,
+              "right": 348.28125,
+              "bottom": 2394,
+              "left": 33,
+              "width": 315.28125,
+              "height": 70
+            }
+          }
+        ],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 320,
+          "bottom": 2603,
+          "left": 0,
+          "width": 320,
+          "height": 2539
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nTổng quan\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nNgôn ngữ báo cáo\nTiếng Việt\nTiếng Anh\nXuất XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": false,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    },
+    {
+      "width": 320,
+      "locale": "en",
+      "theme": "light",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-320-en-light-17-ready",
+      "geometry": {
+        "width": 320,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 365,
+        "documentOverflow": true,
+        "overflowElements": [
+          {
+            "tag": "DIV",
+            "className": "absolute top-full z-30 mt-2 max-h-[60dvh] w-56 max-w-[calc(100vw-2rem)] overflow-y-auto rounded-lg border bg-popover p-1 shadow-lg left-0",
+            "text": "Work BreakdownGantt",
+            "rect": {
+              "top": 280,
+              "right": 386,
+              "bottom": 378,
+              "left": 162,
+              "width": 224,
+              "height": 98
+            }
+          },
+          {
+            "tag": "A",
+            "className": "flex min-h-11 min-w-0 items-center gap-1 rounded-md px-2 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-4 text-muted-foreground hover:bg-muted hover:text-foreground justify-start text-left",
+            "text": "Work Breakdown",
+            "rect": {
+              "top": 285,
+              "right": 381,
+              "bottom": 329,
+              "left": 167,
+              "width": 214,
+              "height": 44
+            }
+          },
+          {
+            "tag": "A",
+            "className": "flex min-h-11 min-w-0 items-center gap-1 rounded-md px-2 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-4 text-muted-foreground hover:bg-muted hover:text-foreground justify-start text-left",
+            "text": "Gantt",
+            "rect": {
+              "top": 329,
+              "right": 381,
+              "bottom": 373,
+              "left": 167,
+              "width": 214,
+              "height": 44
+            }
+          },
+          {
+            "tag": "SECTION",
+            "className": "relative rounded-xl border border-border/80 bg-card text-card-foreground shadow-soft p-4 sm:p-6",
+            "text": "PhasesSprint 1 - Khởi động và phân tíchPlannedNot set – Not setSprint 2 - Thiết kế và phát triểnPlan",
+            "rect": {
+              "top": 2173,
+              "right": 365.28125,
+              "bottom": 2469,
+              "left": 16,
+              "width": 349.28125,
+              "height": 296
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "mb-4 flex flex-wrap items-start justify-between gap-3",
+            "text": "Phases",
+            "rect": {
+              "top": 2190,
+              "right": 348.28125,
+              "bottom": 2214,
+              "left": 33,
+              "width": 315.28125,
+              "height": 24
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "space-y-3",
+            "text": "Sprint 1 - Khởi động và phân tíchPlannedNot set – Not setSprint 2 - Thiết kế và phát triểnPlannedNot",
+            "rect": {
+              "top": 2230,
+              "right": 348.28125,
+              "bottom": 2452,
+              "left": 33,
+              "width": 315.28125,
+              "height": 222
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "rounded-lg border p-3 transition-colors hover:bg-muted/40",
+            "text": "Sprint 1 - Khởi động và phân tíchPlannedNot set – Not set",
+            "rect": {
+              "top": 2230,
+              "right": 348.28125,
+              "bottom": 2296,
+              "left": 33,
+              "width": 315.28125,
+              "height": 66
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "flex items-center justify-between gap-3",
+            "text": "Sprint 1 - Khởi động và phân tíchPlanned",
+            "rect": {
+              "top": 2243,
+              "right": 335.28125,
+              "bottom": 2263,
+              "left": 46,
+              "width": 289.28125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "SPAN",
+            "className": "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border font-medium h-5 px-2 text-overline normal-case tracking-normal border-border bg-muted text-muted-foreground",
+            "text": "Planned",
+            "rect": {
+              "top": 2243,
+              "right": 335.28125,
+              "bottom": 2263,
+              "left": 274.703125,
+              "width": 60.578125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "P",
+            "className": "mt-1 text-caption text-muted-foreground",
+            "text": "Not set – Not set",
+            "rect": {
+              "top": 2267,
+              "right": 335.28125,
+              "bottom": 2283,
+              "left": 46,
+              "width": 289.28125,
+              "height": 16
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "rounded-lg border p-3 transition-colors hover:bg-muted/40",
+            "text": "Sprint 2 - Thiết kế và phát triểnPlannedNot set – Not set",
+            "rect": {
+              "top": 2308,
+              "right": 348.28125,
+              "bottom": 2374,
+              "left": 33,
+              "width": 315.28125,
+              "height": 66
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "flex items-center justify-between gap-3",
+            "text": "Sprint 2 - Thiết kế và phát triểnPlanned",
+            "rect": {
+              "top": 2321,
+              "right": 335.28125,
+              "bottom": 2341,
+              "left": 46,
+              "width": 289.28125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "SPAN",
+            "className": "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border font-medium h-5 px-2 text-overline normal-case tracking-normal border-border bg-muted text-muted-foreground",
+            "text": "Planned",
+            "rect": {
+              "top": 2321,
+              "right": 335.28125,
+              "bottom": 2341,
+              "left": 274.703125,
+              "width": 60.578125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "P",
+            "className": "mt-1 text-caption text-muted-foreground",
+            "text": "Not set – Not set",
+            "rect": {
+              "top": 2345,
+              "right": 335.28125,
+              "bottom": 2361,
+              "left": 46,
+              "width": 289.28125,
+              "height": 16
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "rounded-lg border p-3 transition-colors hover:bg-muted/40",
+            "text": "Sprint 3 - Kiểm thử và triển khaiPlannedNot set – Not set",
+            "rect": {
+              "top": 2386,
+              "right": 348.28125,
+              "bottom": 2452,
+              "left": 33,
+              "width": 315.28125,
+              "height": 66
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "flex items-center justify-between gap-3",
+            "text": "Sprint 3 - Kiểm thử và triển khaiPlanned",
+            "rect": {
+              "top": 2399,
+              "right": 335.28125,
+              "bottom": 2419,
+              "left": 46,
+              "width": 289.28125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "SPAN",
+            "className": "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border font-medium h-5 px-2 text-overline normal-case tracking-normal border-border bg-muted text-muted-foreground",
+            "text": "Planned",
+            "rect": {
+              "top": 2399,
+              "right": 335.28125,
+              "bottom": 2419,
+              "left": 274.703125,
+              "width": 60.578125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "P",
+            "className": "mt-1 text-caption text-muted-foreground",
+            "text": "Not set – Not set",
+            "rect": {
+              "top": 2423,
+              "right": 335.28125,
+              "bottom": 2439,
+              "left": 46,
+              "width": 289.28125,
+              "height": 16
+            }
+          },
+          {
+            "tag": "SECTION",
+            "className": "relative rounded-xl border border-border/80 bg-card text-card-foreground shadow-soft p-4 sm:p-6",
+            "text": "MilestonesNo milestones yet.",
+            "rect": {
+              "top": 2493,
+              "right": 365.28125,
+              "bottom": 2637,
+              "left": 16,
+              "width": 349.28125,
+              "height": 144
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "mb-4 flex flex-wrap items-start justify-between gap-3",
+            "text": "Milestones",
+            "rect": {
+              "top": 2510,
+              "right": 348.28125,
+              "bottom": 2534,
+              "left": 33,
+              "width": 315.28125,
+              "height": 24
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "space-y-3",
+            "text": "No milestones yet.",
+            "rect": {
+              "top": 2550,
+              "right": 348.28125,
+              "bottom": 2620,
+              "left": 33,
+              "width": 315.28125,
+              "height": 70
+            }
+          },
+          {
+            "tag": "P",
+            "className": "rounded-lg border border-dashed p-6 text-center text-body-sm text-muted-foreground",
+            "text": "No milestones yet.",
+            "rect": {
+              "top": 2550,
+              "right": 348.28125,
+              "bottom": 2620,
+              "left": 33,
+              "width": 315.28125,
+              "height": 70
+            }
+          }
+        ],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 320,
+          "bottom": 2829,
+          "left": 0,
+          "width": 320,
+          "height": 2765
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Skip to content\nDự án mẫu AI — Quản lý dự án và danh mục\nOverview\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nStandalone project\n\nOverview\nTasks\nPlanning\nMore\nReport language\nVietnamese\nEnglish\nExport XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nTask Status\n17Tasks\nTodoIn progress\nTodo: 16 (94%)\nIn progress: 1 (6%)\n\nTotal: 17\n\nDone: 0\n\nOverdue: 0\n\nCritical: 3\n\nBudget\n0%Utilization\nSpentRemaining\nSpent: ₫0 (0%)\nRemaining: ₫100,000,000 (100%)\n\nSpent: ₫0\n\nBudget: ₫100,000,000\n\nUtilization: 0%\n\n14-day Burndown\nNo burndown data\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Planning",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "More",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": false,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    },
+    {
+      "width": 320,
+      "locale": "en",
+      "theme": "dark",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-320-en-dark-17-ready",
+      "geometry": {
+        "width": 320,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 365,
+        "documentOverflow": true,
+        "overflowElements": [
+          {
+            "tag": "DIV",
+            "className": "absolute top-full z-30 mt-2 max-h-[60dvh] w-56 max-w-[calc(100vw-2rem)] overflow-y-auto rounded-lg border bg-popover p-1 shadow-lg left-0",
+            "text": "Work BreakdownGantt",
+            "rect": {
+              "top": 280,
+              "right": 386,
+              "bottom": 378,
+              "left": 162,
+              "width": 224,
+              "height": 98
+            }
+          },
+          {
+            "tag": "A",
+            "className": "flex min-h-11 min-w-0 items-center gap-1 rounded-md px-2 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-4 text-muted-foreground hover:bg-muted hover:text-foreground justify-start text-left",
+            "text": "Work Breakdown",
+            "rect": {
+              "top": 285,
+              "right": 381,
+              "bottom": 329,
+              "left": 167,
+              "width": 214,
+              "height": 44
+            }
+          },
+          {
+            "tag": "A",
+            "className": "flex min-h-11 min-w-0 items-center gap-1 rounded-md px-2 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-4 text-muted-foreground hover:bg-muted hover:text-foreground justify-start text-left",
+            "text": "Gantt",
+            "rect": {
+              "top": 329,
+              "right": 381,
+              "bottom": 373,
+              "left": 167,
+              "width": 214,
+              "height": 44
+            }
+          },
+          {
+            "tag": "SECTION",
+            "className": "relative rounded-xl border border-border/80 bg-card text-card-foreground shadow-soft p-4 sm:p-6",
+            "text": "PhasesSprint 1 - Khởi động và phân tíchPlannedNot set – Not setSprint 2 - Thiết kế và phát triểnPlan",
+            "rect": {
+              "top": 2173,
+              "right": 365.28125,
+              "bottom": 2469,
+              "left": 16,
+              "width": 349.28125,
+              "height": 296
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "mb-4 flex flex-wrap items-start justify-between gap-3",
+            "text": "Phases",
+            "rect": {
+              "top": 2190,
+              "right": 348.28125,
+              "bottom": 2214,
+              "left": 33,
+              "width": 315.28125,
+              "height": 24
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "space-y-3",
+            "text": "Sprint 1 - Khởi động và phân tíchPlannedNot set – Not setSprint 2 - Thiết kế và phát triểnPlannedNot",
+            "rect": {
+              "top": 2230,
+              "right": 348.28125,
+              "bottom": 2452,
+              "left": 33,
+              "width": 315.28125,
+              "height": 222
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "rounded-lg border p-3 transition-colors hover:bg-muted/40",
+            "text": "Sprint 1 - Khởi động và phân tíchPlannedNot set – Not set",
+            "rect": {
+              "top": 2230,
+              "right": 348.28125,
+              "bottom": 2296,
+              "left": 33,
+              "width": 315.28125,
+              "height": 66
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "flex items-center justify-between gap-3",
+            "text": "Sprint 1 - Khởi động và phân tíchPlanned",
+            "rect": {
+              "top": 2243,
+              "right": 335.28125,
+              "bottom": 2263,
+              "left": 46,
+              "width": 289.28125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "SPAN",
+            "className": "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border font-medium h-5 px-2 text-overline normal-case tracking-normal border-border bg-muted text-muted-foreground",
+            "text": "Planned",
+            "rect": {
+              "top": 2243,
+              "right": 335.28125,
+              "bottom": 2263,
+              "left": 274.703125,
+              "width": 60.578125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "P",
+            "className": "mt-1 text-caption text-muted-foreground",
+            "text": "Not set – Not set",
+            "rect": {
+              "top": 2267,
+              "right": 335.28125,
+              "bottom": 2283,
+              "left": 46,
+              "width": 289.28125,
+              "height": 16
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "rounded-lg border p-3 transition-colors hover:bg-muted/40",
+            "text": "Sprint 2 - Thiết kế và phát triểnPlannedNot set – Not set",
+            "rect": {
+              "top": 2308,
+              "right": 348.28125,
+              "bottom": 2374,
+              "left": 33,
+              "width": 315.28125,
+              "height": 66
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "flex items-center justify-between gap-3",
+            "text": "Sprint 2 - Thiết kế và phát triểnPlanned",
+            "rect": {
+              "top": 2321,
+              "right": 335.28125,
+              "bottom": 2341,
+              "left": 46,
+              "width": 289.28125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "SPAN",
+            "className": "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border font-medium h-5 px-2 text-overline normal-case tracking-normal border-border bg-muted text-muted-foreground",
+            "text": "Planned",
+            "rect": {
+              "top": 2321,
+              "right": 335.28125,
+              "bottom": 2341,
+              "left": 274.703125,
+              "width": 60.578125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "P",
+            "className": "mt-1 text-caption text-muted-foreground",
+            "text": "Not set – Not set",
+            "rect": {
+              "top": 2345,
+              "right": 335.28125,
+              "bottom": 2361,
+              "left": 46,
+              "width": 289.28125,
+              "height": 16
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "rounded-lg border p-3 transition-colors hover:bg-muted/40",
+            "text": "Sprint 3 - Kiểm thử và triển khaiPlannedNot set – Not set",
+            "rect": {
+              "top": 2386,
+              "right": 348.28125,
+              "bottom": 2452,
+              "left": 33,
+              "width": 315.28125,
+              "height": 66
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "flex items-center justify-between gap-3",
+            "text": "Sprint 3 - Kiểm thử và triển khaiPlanned",
+            "rect": {
+              "top": 2399,
+              "right": 335.28125,
+              "bottom": 2419,
+              "left": 46,
+              "width": 289.28125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "SPAN",
+            "className": "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border font-medium h-5 px-2 text-overline normal-case tracking-normal border-border bg-muted text-muted-foreground",
+            "text": "Planned",
+            "rect": {
+              "top": 2399,
+              "right": 335.28125,
+              "bottom": 2419,
+              "left": 274.703125,
+              "width": 60.578125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "P",
+            "className": "mt-1 text-caption text-muted-foreground",
+            "text": "Not set – Not set",
+            "rect": {
+              "top": 2423,
+              "right": 335.28125,
+              "bottom": 2439,
+              "left": 46,
+              "width": 289.28125,
+              "height": 16
+            }
+          },
+          {
+            "tag": "SECTION",
+            "className": "relative rounded-xl border border-border/80 bg-card text-card-foreground shadow-soft p-4 sm:p-6",
+            "text": "MilestonesNo milestones yet.",
+            "rect": {
+              "top": 2493,
+              "right": 365.28125,
+              "bottom": 2637,
+              "left": 16,
+              "width": 349.28125,
+              "height": 144
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "mb-4 flex flex-wrap items-start justify-between gap-3",
+            "text": "Milestones",
+            "rect": {
+              "top": 2510,
+              "right": 348.28125,
+              "bottom": 2534,
+              "left": 33,
+              "width": 315.28125,
+              "height": 24
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "space-y-3",
+            "text": "No milestones yet.",
+            "rect": {
+              "top": 2550,
+              "right": 348.28125,
+              "bottom": 2620,
+              "left": 33,
+              "width": 315.28125,
+              "height": 70
+            }
+          },
+          {
+            "tag": "P",
+            "className": "rounded-lg border border-dashed p-6 text-center text-body-sm text-muted-foreground",
+            "text": "No milestones yet.",
+            "rect": {
+              "top": 2550,
+              "right": 348.28125,
+              "bottom": 2620,
+              "left": 33,
+              "width": 315.28125,
+              "height": 70
+            }
+          }
+        ],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 320,
+          "bottom": 2829,
+          "left": 0,
+          "width": 320,
+          "height": 2765
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Skip to content\nDự án mẫu AI — Quản lý dự án và danh mục\nOverview\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nStandalone project\n\nOverview\nTasks\nPlanning\nMore\nReport language\nVietnamese\nEnglish\nExport XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nTask Status\n17Tasks\nTodoIn progress\nTodo: 16 (94%)\nIn progress: 1 (6%)\n\nTotal: 17\n\nDone: 0\n\nOverdue: 0\n\nCritical: 3\n\nBudget\n0%Utilization\nSpentRemaining\nSpent: ₫0 (0%)\nRemaining: ₫100,000,000 (100%)\n\nSpent: ₫0\n\nBudget: ₫100,000,000\n\nUtilization: 0%\n\n14-day Burndown\nNo burndown data\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Planning",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "More",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": false,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    }
+  ],
+  "completed": "2026-10-20T14:57:41.880Z",
+  "summary": {
+    "cases": 4,
+    "passed": 0,
+    "failures": [
+      {
+        "id": "overview-320-vi-light-17-ready",
+        "failedChecks": [
+          "noDocumentOverflow"
+        ]
+      },
+      {
+        "id": "overview-320-vi-dark-17-ready",
+        "failedChecks": [
+          "noDocumentOverflow"
+        ]
+      },
+      {
+        "id": "overview-320-en-light-17-ready",
+        "failedChecks": [
+          "noDocumentOverflow"
+        ]
+      },
+      {
+        "id": "overview-320-en-dark-17-ready",
+        "failedChecks": [
+          "noDocumentOverflow"
+        ]
+      }
+    ]
+  }
+}

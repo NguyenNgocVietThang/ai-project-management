@@ -1,6 +1,7 @@
 'use client'
 
 import { useQueryClient } from '@tanstack/react-query'
+import { useTranslations } from 'next-intl'
 import { MessageSquare, Send } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/common/Button'
@@ -21,12 +22,15 @@ interface Props {
 }
 
 export function ChatPanel({ projectId }: Props) {
+  const t = useTranslations('remainingUi')
   const currentUserId = useAuthStore((s) => s.user?.id)
   const qc = useQueryClient()
   const history = useChatHistory(projectId)
   const postMessage = usePostChatMessage(projectId)
   const markRead = useMarkChatRead(projectId)
   const [draft, setDraft] = useState('')
+  const [sendFailed, setSendFailed] = useState(false)
+  const sendingRef = useRef(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
 
@@ -65,20 +69,29 @@ export function ChatPanel({ projectId }: Props) {
 
   async function handleSend() {
     const content = draft.trim()
-    if (!content) return
-    setDraft('')
-    const sentOverSocket = sendMessage(content)
-    if (!sentOverSocket) {
-      // WS chưa kết nối — chuyển sang REST để không mất tin nhắn.
-      const message = await postMessage.mutateAsync(content)
-      appendLiveMessage(message)
+    if (!content || sendingRef.current) return
+    setSendFailed(false)
+    sendingRef.current = true
+    const submittedDraft = draft
+    try {
+      const sentOverSocket = sendMessage(content)
+      if (!sentOverSocket) {
+        // Only fall back when the socket declined the send; never auto-retry an ambiguous send.
+        const message = await postMessage.mutateAsync(content)
+        appendLiveMessage(message)
+      }
+      setDraft((current) => current === submittedDraft ? '' : current)
+    } catch {
+      setSendFailed(true)
+    } finally {
+      sendingRef.current = false
     }
   }
 
   // Khung xương có dạng khung chat (đầu, vài bong bóng xen kẽ hai bên, ô nhập) để không nhảy bố cục.
   if (history.isLoading) {
     return (
-      <SkeletonRegion label="Loading chat…">
+      <SkeletonRegion label={t('chat.loading')}>
         <Card flush className="flex h-[calc(100dvh-260px)] min-h-[420px] flex-col overflow-hidden">
           <div className="flex items-center justify-between border-b px-4 py-3">
             <Skeleton className="h-5 w-32" />
@@ -98,21 +111,21 @@ export function ChatPanel({ projectId }: Props) {
     )
   }
   if (history.isError) {
-    return <ErrorState message={getApiErrorMessage(history.error, 'Could not load chat history.')} onRetry={() => void history.refetch()} />
+    return <ErrorState message={getApiErrorMessage(history.error, t('chat.historyError'))} retryLabel={t('retry')} onRetry={() => void history.refetch()} />
   }
 
   return (
     <Card flush className="flex h-[calc(100dvh-260px)] min-h-[420px] flex-col overflow-hidden">
       {/* ===== Đầu khung chat: tiêu đề + trạng thái kết nối WebSocket ===== */}
       <div className="flex items-center justify-between gap-3 border-b px-4 py-3">
-        <h2 className="text-h4">Project chat</h2>
+        <h2 className="text-h4">{t('chat.title')}</h2>
         <Badge tone={isConnected ? 'success' : 'neutral'} dot>
-          {isConnected ? 'Live' : 'Connecting…'}
+          {isConnected ? t('chat.live') : t('chat.connecting')}
         </Badge>
       </div>
 
       {/* ===== Vùng tin nhắn: tự cuộn, ô nhập luôn nằm ở đáy khung ===== */}
-      <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
+      <div ref={scrollRef} role="region" aria-label={t('chat.history')} tabIndex={0} className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring">
         {history.hasNextPage && (
           <div className="flex justify-center pb-2">
             <Button
@@ -123,15 +136,15 @@ export function ChatPanel({ projectId }: Props) {
               disabled={history.isFetchingNextPage}
               className="text-muted-foreground"
             >
-              {history.isFetchingNextPage ? 'Loading…' : 'Load earlier messages'}
+              {history.isFetchingNextPage ? t('chat.loadingEarlier') : t('chat.earlier')}
             </Button>
           </div>
         )}
         {messages.length === 0 && (
           <EmptyState
             icon={MessageSquare}
-            title="No messages yet"
-            description="Start the conversation and say hi to the team."
+            title={t('chat.empty')}
+            description={t('chat.emptyDescription')}
             className="min-h-0 border-0 bg-transparent py-8"
           />
         )}
@@ -141,7 +154,9 @@ export function ChatPanel({ projectId }: Props) {
         <div ref={bottomRef} />
       </div>
 
-      <div className="sticky bottom-0 flex items-end gap-2 border-t bg-card p-3">
+      <div className="sticky bottom-0 border-t bg-card p-3">
+        {sendFailed && <p role="alert" className="mb-2 text-body-sm text-destructive">{t('chat.sendError')}</p>}
+        <div className="flex items-end gap-2">
         <textarea
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
@@ -151,21 +166,22 @@ export function ChatPanel({ projectId }: Props) {
               handleSend()
             }
           }}
-          placeholder="Write a message…"
-          aria-label="Write a message"
+          placeholder={t('chat.placeholder')}
+          aria-label={t('chat.compose')}
           rows={1}
           className="max-h-32 min-h-11 flex-1 resize-none rounded-lg border border-input bg-card px-3 py-2 text-body shadow-xs transition-[border-color,box-shadow] duration-150 placeholder:text-muted-foreground hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:text-body-sm"
         />
         <Button
           onClick={handleSend}
-          disabled={!draft.trim()}
+          disabled={!draft.trim() || postMessage.isPending}
           isLoading={postMessage.isPending}
           size="icon"
           fullWidth={false}
-          aria-label="Send message"
+          aria-label={t('chat.send')}
         >
           {!postMessage.isPending && <Send className="h-4 w-4" aria-hidden="true" />}
         </Button>
+        </div>
       </div>
     </Card>
   )

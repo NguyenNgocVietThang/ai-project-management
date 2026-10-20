@@ -1,0 +1,3003 @@
+{
+  "synthetic": true,
+  "source": "Actual local Next.js UI with fully intercepted synthetic API responses; no production reads/writes.",
+  "mode": "broad-before",
+  "started": "2026-10-20T15:10:42.075Z",
+  "cases": [
+    {
+      "path": "/dashboard",
+      "route": "dashboard",
+      "width": 390,
+      "locale": "vi",
+      "theme": "light",
+      "id": "dashboard-390-vi-light-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 1434,
+          "left": 0,
+          "width": 390,
+          "height": 1370
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nBảng điều khiển\nNQ\n\nTỔNG QUAN KHÔNG GIAN LÀM VIỆC\n\nChào buổi tối, QA.\n\nTheo dõi dự án, công việc ưu tiên và tiến độ của bạn.\n\n20 thg 10, 2026\nXem danh mục\n\nDự án đang hoạt động\n\n1\n\nTổng công việc\n\n17\n\nCông việc quá hạn\n\n0\n\nGiờ làm tuần này\n\n6h\n\nDự án đang hoạt động\n\nNắm bắt tiến độ những dự án quan trọng.\n\nXem dự án\nDự án mẫu AI — Quản lý dự án và danh mục\nĐang hoạt động\nTiến độ\n1%\nCông việc: 0/17\nCòn 56 ngày\nNgân sách\n0%\n₫0\n₫100,000,000\nCông việc ưu tiên\n3\n\nPhân tích yêu cầu nghiệp vụ\n\nDự án mẫu AI — Quản lý dự án và danh mục\n\nHigh\nNov 10, 2026\n\nKhảo sát quy trình hiện tại\n\nDự án mẫu AI — Quản lý dự án và danh mục\n\nMedium\nNov 10, 2026\n\nXác định phạm vi dự án\n\nDự án mẫu AI — Quản lý dự án và danh mục\n\nMedium\nNov 10, 2026\nHoạt động gần đây\n\nKhởi tạo dự án tổng hợp QA.\n\nNguyễn QA · Project · khoảng 12 giờ trước",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/summary"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true
+      }
+    },
+    {
+      "path": "/dashboard",
+      "route": "dashboard",
+      "width": 1440,
+      "locale": "vi",
+      "theme": "light",
+      "id": "dashboard-1440-vi-light-17-ready",
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1440,
+          "bottom": 1057,
+          "left": 240,
+          "width": 1200,
+          "height": 993
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nAI Project.\nKẾ HOẠCH & DANH MỤC\nThu gọn điều hướng\n\nKHÔNG GIAN LÀM VIỆC\n\nBảng điều khiển\nDanh mục\nDự án\n\nCÁ NHÂN\n\nThông báo\nHồ sơ\n\nNHÀ ĐẦU TƯ\n\nCổng nhà đầu tư\n\nQUẢN TRỊ\n\nQuản trị\nGiao diện\nBảng điều khiển\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nNguyễn QA\n\nTỔNG QUAN KHÔNG GIAN LÀM VIỆC\n\nChào buổi tối, QA.\n\nTheo dõi dự án, công việc ưu tiên và tiến độ của bạn.\n\n20 thg 10, 2026\nXem danh mục\n\nDự án đang hoạt động\n\n1\n\nTổng công việc\n\n17\n\nCông việc quá hạn\n\n0\n\nGiờ làm tuần này\n\n6h\n\nDự án đang hoạt động\n\nNắm bắt tiến độ những dự án quan trọng.\n\nXem dự án\nDự án mẫu AI — Quản lý dự án và danh mục\nĐang hoạt động\nTiến độ\n1%\nCông việc: 0/17\nCòn 56 ngày\nNgân sách\n0%\n₫0\n₫100,000,000\nCông việc ưu tiên\n3\n\nPhân tích yêu cầu nghiệp vụ\n\nDự án mẫu AI — Quản lý dự án và danh mục\n\nHigh\nNov 10, 2026\n\nKhảo sát quy trình hiện tại\n\nDự án mẫu AI — Quản lý dự án và danh mục\n\nMedium\nNov 10, 2026\n\nXác định phạm vi dự án\n\nDự án mẫu AI — Quản lý dự án và danh mục\n\nMedium\nNov 10, 2026\nHoạt động gần đây\n\nKhởi tạo dự án tổng hợp QA.\n\nNguyễn QA · Project · khoảng 12 giờ trước",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/summary"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true
+      }
+    },
+    {
+      "path": "/portfolios",
+      "route": "portfolios",
+      "width": 390,
+      "locale": "vi",
+      "theme": "light",
+      "id": "portfolios-390-vi-light-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 422,
+        "documentOverflow": true,
+        "overflowElements": [
+          {
+            "tag": "ARTICLE",
+            "className": "relative rounded-xl border border-border/80 bg-card text-card-foreground shadow-soft p-4 sm:p-6 transition-[transform,box-shadow,border-color] duration-200 ease-out-soft hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-soft-md focus-within:border-primary/40 group flex flex-col animate-fade-up",
+            "text": "ActiveDanh mục chuyển đổi số — mẫu QADanh mục tổng hợp phục vụ kiểm tra cục bộ.Projects1Budget₫500,0",
+            "rect": {
+              "top": 434,
+              "right": 422.390625,
+              "bottom": 763,
+              "left": 16,
+              "width": 406.390625,
+              "height": 329
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "flex items-start justify-between gap-4",
+            "text": "ActiveDanh mục chuyển đổi số — mẫu QADanh mục tổng hợp phục vụ kiểm tra cục bộ.",
+            "rect": {
+              "top": 451,
+              "right": 405.390625,
+              "bottom": 558,
+              "left": 33,
+              "width": 372.390625,
+              "height": 107
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "relative z-10 -mr-2 -mt-2 flex shrink-0 gap-1",
+            "text": "",
+            "rect": {
+              "top": 443,
+              "right": 413.390625,
+              "bottom": 487,
+              "left": 321.390625,
+              "width": 92,
+              "height": 44
+            }
+          },
+          {
+            "tag": "BUTTON",
+            "className": "inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium transition-[background-color,border-color,color,box-shadow,transform] duration-200 ease-out-soft active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 h-11 w-11 shrink-0 p-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive",
+            "text": "",
+            "rect": {
+              "top": 443,
+              "right": 413.390625,
+              "bottom": 487,
+              "left": 369.390625,
+              "width": 44,
+              "height": 44
+            }
+          },
+          {
+            "tag": "svg",
+            "className": "h-4 w-4",
+            "text": "",
+            "rect": {
+              "top": 457,
+              "right": 399.390625,
+              "bottom": 473,
+              "left": 383.390625,
+              "width": 16,
+              "height": 16
+            }
+          },
+          {
+            "tag": "path",
+            "className": "",
+            "text": "",
+            "rect": {
+              "top": 461,
+              "right": 397.390625,
+              "bottom": 461,
+              "left": 385.390625,
+              "width": 12,
+              "height": 0
+            }
+          },
+          {
+            "tag": "path",
+            "className": "",
+            "text": "",
+            "rect": {
+              "top": 461,
+              "right": 396.0572814941406,
+              "bottom": 471.6666564941406,
+              "left": 386.7239685058594,
+              "width": 9.33331298828125,
+              "height": 10.666656494140625
+            }
+          },
+          {
+            "tag": "path",
+            "className": "",
+            "text": "",
+            "rect": {
+              "top": 458.3333435058594,
+              "right": 394.0572814941406,
+              "bottom": 461,
+              "left": 388.7239685058594,
+              "width": 5.33331298828125,
+              "height": 2.666656494140625
+            }
+          },
+          {
+            "tag": "DL",
+            "className": "mt-6 grid grid-cols-2 gap-4",
+            "text": "Projects1Budget₫500,000,000",
+            "rect": {
+              "top": 582,
+              "right": 405.390625,
+              "bottom": 622,
+              "left": 33,
+              "width": 372.390625,
+              "height": 40
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "min-w-0",
+            "text": "Budget₫500,000,000",
+            "rect": {
+              "top": 582,
+              "right": 405.390625,
+              "bottom": 622,
+              "left": 227.1875,
+              "width": 178.203125,
+              "height": 40
+            }
+          },
+          {
+            "tag": "DT",
+            "className": "text-caption text-muted-foreground",
+            "text": "Budget",
+            "rect": {
+              "top": 582,
+              "right": 405.390625,
+              "bottom": 598,
+              "left": 227.1875,
+              "width": 178.203125,
+              "height": 16
+            }
+          },
+          {
+            "tag": "DD",
+            "className": "mt-1 truncate text-body-sm font-medium tabular-nums",
+            "text": "₫500,000,000",
+            "rect": {
+              "top": 602,
+              "right": 405.390625,
+              "bottom": 622,
+              "left": 227.1875,
+              "width": 178.203125,
+              "height": 20
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "mt-4",
+            "text": "Average progress1%",
+            "rect": {
+              "top": 638,
+              "right": 405.390625,
+              "bottom": 670,
+              "left": 33,
+              "width": 372.390625,
+              "height": 32
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "mb-2 flex justify-between text-caption",
+            "text": "Average progress1%",
+            "rect": {
+              "top": 638,
+              "right": 405.390625,
+              "bottom": 654,
+              "left": 33,
+              "width": 372.390625,
+              "height": 16
+            }
+          },
+          {
+            "tag": "SPAN",
+            "className": "font-medium tabular-nums",
+            "text": "1%",
+            "rect": {
+              "top": 638,
+              "right": 405.390625,
+              "bottom": 654,
+              "left": 385.4375,
+              "width": 19.953125,
+              "height": 16
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "h-2 overflow-hidden rounded-full bg-muted",
+            "text": "",
+            "rect": {
+              "top": 662,
+              "right": 405.390625,
+              "bottom": 670,
+              "left": 33,
+              "width": 372.390625,
+              "height": 8
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "mt-4 flex items-center gap-2 text-caption text-muted-foreground",
+            "text": "Oct 20, 2026 – Dec 15, 2026",
+            "rect": {
+              "top": 686,
+              "right": 405.390625,
+              "bottom": 702,
+              "left": 33,
+              "width": 372.390625,
+              "height": 16
+            }
+          },
+          {
+            "tag": "SPAN",
+            "className": "mt-auto inline-flex items-center gap-2 pt-6 text-body-sm font-medium text-primary",
+            "text": "View portfolio ",
+            "rect": {
+              "top": 702,
+              "right": 405.390625,
+              "bottom": 746,
+              "left": 33,
+              "width": 372.390625,
+              "height": 44
+            }
+          }
+        ],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 779,
+          "left": 0,
+          "width": 390,
+          "height": 715
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDanh mục\nNQ\n\nPORTFOLIO MANAGEMENT\n\nPortfolios\n\nGroup related projects, budgets, and timelines in one place.\n\nNew portfolio\nAll statuses\nPlanning\nActive\nArchived\nActive\nDanh mục chuyển đổi số — mẫu QA\n\nDanh mục tổng hợp phục vụ kiểm tra cục bộ.\n\nProjects\n1\nBudget\n₫500,000,000\nAverage progress\n1%\nOct 20, 2026 – Dec 15, 2026\nView portfolio",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/portfolios"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": false,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true
+      }
+    },
+    {
+      "path": "/portfolios",
+      "route": "portfolios",
+      "width": 1440,
+      "locale": "vi",
+      "theme": "light",
+      "id": "portfolios-1440-vi-light-17-ready",
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1440,
+          "bottom": 699,
+          "left": 240,
+          "width": 1200,
+          "height": 635
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nAI Project.\nKẾ HOẠCH & DANH MỤC\nThu gọn điều hướng\n\nKHÔNG GIAN LÀM VIỆC\n\nBảng điều khiển\nDanh mục\nDự án\n\nCÁ NHÂN\n\nThông báo\nHồ sơ\n\nNHÀ ĐẦU TƯ\n\nCổng nhà đầu tư\n\nQUẢN TRỊ\n\nQuản trị\nGiao diện\nDanh mục\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nNguyễn QA\n\nPORTFOLIO MANAGEMENT\n\nPortfolios\n\nGroup related projects, budgets, and timelines in one place.\n\nNew portfolio\nAll statuses\nPlanning\nActive\nArchived\nActive\nDanh mục chuyển đổi số — mẫu QA\n\nDanh mục tổng hợp phục vụ kiểm tra cục bộ.\n\nProjects\n1\nBudget\n₫500,000,000\nAverage progress\n1%\nOct 20, 2026 – Dec 15, 2026\nView portfolio",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/portfolios"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true
+      }
+    },
+    {
+      "path": "/portfolios/21",
+      "route": "portfolios-21",
+      "width": 390,
+      "locale": "vi",
+      "theme": "light",
+      "id": "portfolios-21-390-vi-light-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [
+          {
+            "tag": "TABLE",
+            "className": "w-full min-w-[560px] text-body-sm",
+            "text": "ProjectProgressOverdueBudget usedDự án mẫu AI — Quản lý dự án và danh mục1%00%",
+            "rect": {
+              "top": 1304,
+              "right": 594,
+              "bottom": 1425,
+              "left": 34,
+              "width": 560,
+              "height": 121
+            }
+          },
+          {
+            "tag": "THEAD",
+            "className": "bg-muted/50 text-left text-caption uppercase text-muted-foreground",
+            "text": "ProjectProgressOverdueBudget used",
+            "rect": {
+              "top": 1304,
+              "right": 594,
+              "bottom": 1360.5,
+              "left": 34,
+              "width": 560,
+              "height": 56.5
+            }
+          },
+          {
+            "tag": "TR",
+            "className": "",
+            "text": "ProjectProgressOverdueBudget used",
+            "rect": {
+              "top": 1304,
+              "right": 594,
+              "bottom": 1360.5,
+              "left": 34,
+              "width": 560,
+              "height": 56.5
+            }
+          },
+          {
+            "tag": "TH",
+            "className": "px-4 py-3 font-medium",
+            "text": "Overdue",
+            "rect": {
+              "top": 1304,
+              "right": 483.015625,
+              "bottom": 1360.5,
+              "left": 391,
+              "width": 92.015625,
+              "height": 56.5
+            }
+          },
+          {
+            "tag": "TH",
+            "className": "px-4 py-3 font-medium",
+            "text": "Budget used",
+            "rect": {
+              "top": 1304,
+              "right": 594,
+              "bottom": 1360.5,
+              "left": 483.015625,
+              "width": 110.984375,
+              "height": 56.5
+            }
+          },
+          {
+            "tag": "TBODY",
+            "className": "",
+            "text": "Dự án mẫu AI — Quản lý dự án và danh mục1%00%",
+            "rect": {
+              "top": 1360.5,
+              "right": 594,
+              "bottom": 1425,
+              "left": 34,
+              "width": 560,
+              "height": 64.5
+            }
+          },
+          {
+            "tag": "TR",
+            "className": "border-t transition-colors hover:bg-muted/40",
+            "text": "Dự án mẫu AI — Quản lý dự án và danh mục1%00%",
+            "rect": {
+              "top": 1360.5,
+              "right": 594,
+              "bottom": 1425,
+              "left": 34,
+              "width": 560,
+              "height": 64.5
+            }
+          },
+          {
+            "tag": "TD",
+            "className": "px-4 py-3 tabular-nums",
+            "text": "0",
+            "rect": {
+              "top": 1360.5,
+              "right": 483.015625,
+              "bottom": 1425,
+              "left": 391,
+              "width": 92.015625,
+              "height": 64.5
+            }
+          },
+          {
+            "tag": "TD",
+            "className": "px-4 py-3 tabular-nums",
+            "text": "0%",
+            "rect": {
+              "top": 1360.5,
+              "right": 594,
+              "bottom": 1425,
+              "left": 483.015625,
+              "width": 110.984375,
+              "height": 64.5
+            }
+          }
+        ],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 1947,
+          "left": 0,
+          "width": 390,
+          "height": 1883
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDanh mục\nDanh mục chuyển đổi số — mẫu QA\nNQ\nBack to portfolios\nActive\nPortfolio #21\nDanh mục chuyển đổi số — mẫu QA\n\nDanh mục tổng hợp phục vụ kiểm tra cục bộ.\n\nEdit\nDelete\nPROJECTS\n\n1\n\nBUDGET\n\n₫500,000,000\n\nTIMELINE\n\nOct 20, 2026 – Dec 15, 2026\n\nAverage project progress\n1%\nPortfolio health\nACTIVE\n\n1\n\nCOMPLETED\n\n0\n\nOVERALL PROGRESS\n\n1%\n\nPROJECT\tPROGRESS\tOVERDUE\tBUDGET USED\nDự án mẫu AI — Quản lý dự án và danh mục\t1%\t0\t0%\nNhà đầu tư\n\nNhà đầu tư được xem chỉ đọc số liệu của portfolio này.\n\nEmail nhà đầu tư\nCấp quyền\nProjects\nDự án mẫu AI — Quản lý dự án và danh mục\nĐang hoạt động\n\nHybrid · Dec 15, 2026",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/portfolios/21"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/portfolios/21/health"
+        },
+        {
+          "method": "GET",
+          "path": "/portfolios/21/investors"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/portfolios/21/investors"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": false
+      }
+    },
+    {
+      "path": "/portfolios/21",
+      "route": "portfolios-21",
+      "width": 1440,
+      "locale": "vi",
+      "theme": "light",
+      "id": "portfolios-21-1440-vi-light-17-ready",
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1440,
+          "bottom": 1319,
+          "left": 240,
+          "width": 1200,
+          "height": 1255
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nAI Project.\nKẾ HOẠCH & DANH MỤC\nThu gọn điều hướng\n\nKHÔNG GIAN LÀM VIỆC\n\nBảng điều khiển\nDanh mục\nDự án\n\nCÁ NHÂN\n\nThông báo\nHồ sơ\n\nNHÀ ĐẦU TƯ\n\nCổng nhà đầu tư\n\nQUẢN TRỊ\n\nQuản trị\nGiao diện\nDanh mục\nDanh mục chuyển đổi số — mẫu QA\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nNguyễn QA\nBack to portfolios\nActive\nPortfolio #21\nDanh mục chuyển đổi số — mẫu QA\n\nDanh mục tổng hợp phục vụ kiểm tra cục bộ.\n\nEdit\nDelete\nPROJECTS\n\n1\n\nBUDGET\n\n₫500,000,000\n\nTIMELINE\n\nOct 20, 2026 – Dec 15, 2026\n\nAverage project progress\n1%\nPortfolio health\nACTIVE\n\n1\n\nCOMPLETED\n\n0\n\nOVERALL PROGRESS\n\n1%\n\nPROJECT\tPROGRESS\tOVERDUE\tBUDGET USED\nDự án mẫu AI — Quản lý dự án và danh mục\t1%\t0\t0%\nNhà đầu tư\n\nNhà đầu tư được xem chỉ đọc số liệu của portfolio này.\n\nEmail nhà đầu tư\nCấp quyền\nProjects\nDự án mẫu AI — Quản lý dự án và danh mục\nĐang hoạt động\n\nHybrid · Dec 15, 2026",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/portfolios/21"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/portfolios/21/health"
+        },
+        {
+          "method": "GET",
+          "path": "/portfolios/21/investors"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/portfolios/21/investors"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": false
+      }
+    },
+    {
+      "path": "/projects",
+      "route": "projects",
+      "width": 390,
+      "locale": "vi",
+      "theme": "light",
+      "id": "projects-390-vi-light-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 1198,
+          "left": 0,
+          "width": 390,
+          "height": 1134
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDự án\nNQ\n\nPROJECT WORKSPACE\n\nProjects\n\nPlan, staff, and monitor projects across portfolios.\n\nGenerate with AI\nNew project\nAll statuses\nPlanning\nActive\nOn hold\nCompleted\nCancelled\nAll methods\nAgile\nWaterfall\nHybrid\nAll portfolios\nDanh mục chuyển đổi số — mẫu QA\nStarts on/after\nEnds on/before\nĐang hoạt động\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nStandalone project\n\nProgress\n1%\nBudget\n₫100,000,000\nMembers\n1\nOct 20, 2026 – Dec 15, 2026\nOpen project",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects"
+        },
+        {
+          "method": "GET",
+          "path": "/portfolios"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true
+      }
+    },
+    {
+      "path": "/projects",
+      "route": "projects",
+      "width": 1440,
+      "locale": "vi",
+      "theme": "light",
+      "id": "projects-1440-vi-light-17-ready",
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1440,
+          "bottom": 840,
+          "left": 240,
+          "width": 1200,
+          "height": 776
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nAI Project.\nKẾ HOẠCH & DANH MỤC\nThu gọn điều hướng\n\nKHÔNG GIAN LÀM VIỆC\n\nBảng điều khiển\nDanh mục\nDự án\n\nCÁ NHÂN\n\nThông báo\nHồ sơ\n\nNHÀ ĐẦU TƯ\n\nCổng nhà đầu tư\n\nQUẢN TRỊ\n\nQuản trị\nGiao diện\nDự án\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nNguyễn QA\n\nPROJECT WORKSPACE\n\nProjects\n\nPlan, staff, and monitor projects across portfolios.\n\nGenerate with AI\nNew project\nAll statuses\nPlanning\nActive\nOn hold\nCompleted\nCancelled\nAll methods\nAgile\nWaterfall\nHybrid\nAll portfolios\nDanh mục chuyển đổi số — mẫu QA\nStarts on/after\nEnds on/before\nĐang hoạt động\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nStandalone project\n\nProgress\n1%\nBudget\n₫100,000,000\nMembers\n1\nOct 20, 2026 – Dec 15, 2026\nOpen project",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects"
+        },
+        {
+          "method": "GET",
+          "path": "/portfolios"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true
+      }
+    },
+    {
+      "path": "/projects/2/timesheet",
+      "route": "projects-2-timesheet",
+      "width": 390,
+      "locale": "vi",
+      "theme": "light",
+      "id": "projects-2-timesheet-390-vi-light-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [
+          {
+            "tag": "TABLE",
+            "className": "w-full min-w-[640px] text-body-sm",
+            "text": "Các bản ghi công việc đã thực hiệnNgàyThành viênSố giờGhi chúOct 20, 2026Nguyễn QA6.00Rà soát yêu cầ",
+            "rect": {
+              "top": 1326,
+              "right": 657,
+              "bottom": 1411,
+              "left": 17,
+              "width": 640,
+              "height": 85
+            }
+          },
+          {
+            "tag": "THEAD",
+            "className": "sticky top-0 z-10 bg-muted text-left text-caption uppercase text-muted-foreground",
+            "text": "NgàyThành viênSố giờGhi chú",
+            "rect": {
+              "top": 1326,
+              "right": 657,
+              "bottom": 1366,
+              "left": 17,
+              "width": 640,
+              "height": 40
+            }
+          },
+          {
+            "tag": "TR",
+            "className": "",
+            "text": "NgàyThành viênSố giờGhi chú",
+            "rect": {
+              "top": 1326,
+              "right": 657,
+              "bottom": 1366,
+              "left": 17,
+              "width": 640,
+              "height": 40
+            }
+          },
+          {
+            "tag": "TH",
+            "className": "px-4 py-3 font-medium",
+            "text": "Ghi chú",
+            "rect": {
+              "top": 1326,
+              "right": 657,
+              "bottom": 1366,
+              "left": 345.6875,
+              "width": 311.3125,
+              "height": 40
+            }
+          },
+          {
+            "tag": "TBODY",
+            "className": "",
+            "text": "Oct 20, 2026Nguyễn QA6.00Rà soát yêu cầu và chuẩn bị dữ liệu QA.",
+            "rect": {
+              "top": 1366.5,
+              "right": 657,
+              "bottom": 1411,
+              "left": 17,
+              "width": 640,
+              "height": 44.5
+            }
+          },
+          {
+            "tag": "TR",
+            "className": "border-t transition-colors hover:bg-muted/40",
+            "text": "Oct 20, 2026Nguyễn QA6.00Rà soát yêu cầu và chuẩn bị dữ liệu QA.",
+            "rect": {
+              "top": 1366.5,
+              "right": 657,
+              "bottom": 1411,
+              "left": 17,
+              "width": 640,
+              "height": 44.5
+            }
+          },
+          {
+            "tag": "TD",
+            "className": "px-4 py-3 text-muted-foreground",
+            "text": "Rà soát yêu cầu và chuẩn bị dữ liệu QA.",
+            "rect": {
+              "top": 1366.5,
+              "right": 657,
+              "bottom": 1411,
+              "left": 345.6875,
+              "width": 311.3125,
+              "height": 44.5
+            }
+          }
+        ],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 1428,
+          "left": 0,
+          "width": 390,
+          "height": 1364
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nChấm công\nNQ\nĐang hoạt động\nKết hợp\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nChấm công\n\nSố giờ đã ghi nhận cho dự án này, và nơi nhóm đang bị quá tải.\n\nThành viên\nTất cả\nNguyễn QA\nTừ ngày\nĐến ngày\nTỔNG SỐ GIỜ\n\n6.0h\n\nSỐ BẢN GHI\n\n1\n\nCẢNH BÁO QUÁ TẢI\n\n1\n\nCảnh báo nhân sự\nOct 20, 2026\nNguyễn QA: 10 giờ được phân bổ cho một ngày 8 giờ\nCác bản ghi công việc đã thực hiện\nNGÀY\tTHÀNH VIÊN\tSỐ GIỜ\tGHI CHÚ\nOct 20, 2026\tNguyễn QA\t6.00\tRà soát yêu cầu và chuẩn bị dữ liệu QA.\nSố giờ theo thành viên\nNguyễn QA\n6.0h",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": null
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/worklogs"
+        },
+        {
+          "method": "GET",
+          "path": "/resource-leveling/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/members"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true,
+        "navigationNoOpenOverflow": true
+      }
+    },
+    {
+      "path": "/projects/2/timesheet",
+      "route": "projects-2-timesheet",
+      "width": 1440,
+      "locale": "vi",
+      "theme": "light",
+      "id": "projects-2-timesheet-1440-vi-light-17-ready",
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1440,
+          "bottom": 901,
+          "left": 240,
+          "width": 1200,
+          "height": 837
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nAI Project.\nKẾ HOẠCH & DANH MỤC\nThu gọn điều hướng\n\nKHÔNG GIAN LÀM VIỆC\n\nBảng điều khiển\nDanh mục\nDự án\n\nCÁ NHÂN\n\nThông báo\nHồ sơ\n\nNHÀ ĐẦU TƯ\n\nCổng nhà đầu tư\n\nQUẢN TRỊ\n\nQuản trị\nGiao diện\nDự án\nDự án mẫu AI — Quản lý dự án và danh mục\nChấm công\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nNguyễn QA\nĐang hoạt động\nKết hợp\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nChấm công\n\nSố giờ đã ghi nhận cho dự án này, và nơi nhóm đang bị quá tải.\n\nThành viên\nTất cả\nNguyễn QA\nTừ ngày\nĐến ngày\nTỔNG SỐ GIỜ\n\n6.0h\n\nSỐ BẢN GHI\n\n1\n\nCẢNH BÁO QUÁ TẢI\n\n1\n\nCảnh báo nhân sự\nOct 20, 2026\nNguyễn QA: 10 giờ được phân bổ cho một ngày 8 giờ\nCác bản ghi công việc đã thực hiện\nNGÀY\tTHÀNH VIÊN\tSỐ GIỜ\tGHI CHÚ\nOct 20, 2026\tNguyễn QA\t6.00\tRà soát yêu cầu và chuẩn bị dữ liệu QA.\nSố giờ theo thành viên\nNguyễn QA\n6.0h",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": null
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "openDocumentWidth": 1440,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "openDocumentWidth": 1440,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/worklogs"
+        },
+        {
+          "method": "GET",
+          "path": "/resource-leveling/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/members"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true,
+        "navigationNoOpenOverflow": true
+      }
+    },
+    {
+      "path": "/projects/2/members",
+      "route": "projects-2-members",
+      "width": 390,
+      "locale": "vi",
+      "theme": "light",
+      "id": "projects-2-members-390-vi-light-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [
+          {
+            "tag": "TABLE",
+            "className": "w-full min-w-[680px] text-left text-body-sm",
+            "text": "MemberRoleJoinedActionNQNguyễn QAOwnerqa@example.invalidPMOct 19, 2026",
+            "rect": {
+              "top": 426,
+              "right": 697,
+              "bottom": 531,
+              "left": 17,
+              "width": 680,
+              "height": 105
+            }
+          },
+          {
+            "tag": "THEAD",
+            "className": "bg-muted/50 text-caption uppercase text-muted-foreground",
+            "text": "MemberRoleJoinedAction",
+            "rect": {
+              "top": 426,
+              "right": 697,
+              "bottom": 466.5,
+              "left": 17,
+              "width": 680,
+              "height": 40.5
+            }
+          },
+          {
+            "tag": "TR",
+            "className": "",
+            "text": "MemberRoleJoinedAction",
+            "rect": {
+              "top": 426,
+              "right": 697,
+              "bottom": 466.5,
+              "left": 17,
+              "width": 680,
+              "height": 40.5
+            }
+          },
+          {
+            "tag": "TH",
+            "className": "px-4 py-3 font-medium",
+            "text": "Role",
+            "rect": {
+              "top": 426,
+              "right": 420.265625,
+              "bottom": 466.5,
+              "left": 320.328125,
+              "width": 99.9375,
+              "height": 40.5
+            }
+          },
+          {
+            "tag": "TH",
+            "className": "px-4 py-3 font-medium",
+            "text": "Joined",
+            "rect": {
+              "top": 426,
+              "right": 586.21875,
+              "bottom": 466.5,
+              "left": 420.265625,
+              "width": 165.953125,
+              "height": 40.5
+            }
+          },
+          {
+            "tag": "TH",
+            "className": "px-4 py-3 text-right font-medium",
+            "text": "Action",
+            "rect": {
+              "top": 426,
+              "right": 697,
+              "bottom": 466.5,
+              "left": 586.21875,
+              "width": 110.78125,
+              "height": 40.5
+            }
+          },
+          {
+            "tag": "TBODY",
+            "className": "",
+            "text": "NQNguyễn QAOwnerqa@example.invalidPMOct 19, 2026",
+            "rect": {
+              "top": 466.5,
+              "right": 697,
+              "bottom": 531,
+              "left": 17,
+              "width": 680,
+              "height": 64.5
+            }
+          },
+          {
+            "tag": "TR",
+            "className": "border-t transition-colors hover:bg-muted/40",
+            "text": "NQNguyễn QAOwnerqa@example.invalidPMOct 19, 2026",
+            "rect": {
+              "top": 466.5,
+              "right": 697,
+              "bottom": 531,
+              "left": 17,
+              "width": 680,
+              "height": 64.5
+            }
+          },
+          {
+            "tag": "TD",
+            "className": "px-4 py-3",
+            "text": "PM",
+            "rect": {
+              "top": 466.5,
+              "right": 420.265625,
+              "bottom": 531,
+              "left": 320.328125,
+              "width": 99.9375,
+              "height": 64.5
+            }
+          },
+          {
+            "tag": "TD",
+            "className": "px-4 py-3 text-muted-foreground",
+            "text": "Oct 19, 2026",
+            "rect": {
+              "top": 466.5,
+              "right": 586.21875,
+              "bottom": 531,
+              "left": 420.265625,
+              "width": 165.953125,
+              "height": 64.5
+            }
+          },
+          {
+            "tag": "TD",
+            "className": "px-4 py-3 text-right",
+            "text": "",
+            "rect": {
+              "top": 466.5,
+              "right": 697,
+              "bottom": 531,
+              "left": 586.21875,
+              "width": 110.78125,
+              "height": 64.5
+            }
+          }
+        ],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 548,
+          "left": 0,
+          "width": 390,
+          "height": 484
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nThành viên\nNQ\nĐang hoạt động\nKết hợp\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nProject members\n\nPeople with access and their project-specific roles.\n\nInvite member\nMEMBER\tROLE\tJOINED\tACTION\n\nNQ\n\nNguyễn QA\nOwner\n\nqa@example.invalid\n\n\tPM\tOct 19, 2026\t",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": null
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/members"
+        },
+        {
+          "method": "GET",
+          "path": "/roles"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true,
+        "navigationNoOpenOverflow": true
+      }
+    },
+    {
+      "path": "/projects/2/members",
+      "route": "projects-2-members",
+      "width": 1440,
+      "locale": "vi",
+      "theme": "light",
+      "id": "projects-2-members-1440-vi-light-17-ready",
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1440,
+          "bottom": 476,
+          "left": 240,
+          "width": 1200,
+          "height": 412
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nAI Project.\nKẾ HOẠCH & DANH MỤC\nThu gọn điều hướng\n\nKHÔNG GIAN LÀM VIỆC\n\nBảng điều khiển\nDanh mục\nDự án\n\nCÁ NHÂN\n\nThông báo\nHồ sơ\n\nNHÀ ĐẦU TƯ\n\nCổng nhà đầu tư\n\nQUẢN TRỊ\n\nQuản trị\nGiao diện\nDự án\nDự án mẫu AI — Quản lý dự án và danh mục\nThành viên\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nNguyễn QA\nĐang hoạt động\nKết hợp\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nProject members\n\nPeople with access and their project-specific roles.\n\nInvite member\nMEMBER\tROLE\tJOINED\tACTION\n\nNQ\n\nNguyễn QA\nOwner\n\nqa@example.invalid\n\n\tPM\tOct 19, 2026\t",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": null
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "openDocumentWidth": 1440,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "openDocumentWidth": 1440,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/members"
+        },
+        {
+          "method": "GET",
+          "path": "/roles"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true,
+        "navigationNoOpenOverflow": true
+      }
+    },
+    {
+      "path": "/projects/2/chat",
+      "route": "projects-2-chat",
+      "width": 390,
+      "locale": "vi",
+      "theme": "light",
+      "id": "projects-2-chat-390-vi-light-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 897,
+          "left": 0,
+          "width": 390,
+          "height": 833
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nTrò chuyện\nNQ\nĐang hoạt động\nKết hợp\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nProject chat\nConnecting…\nNT\nNguyễn thành viên có tên dài để kiểm tra metadata tin nhắn trên điện thoại\n10:00\n\nĐã chuẩn bị bộ dữ liệu tổng hợp để kiểm tra giao diện. Xin rà soát kế hoạch và các công việc cần phối hợp.\n\nNQ\nNguyễn QA\n10:00\n\nTôi sẽ kiểm tra danh sách công việc và cập nhật kết quả.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": null
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "openDocumentWidth": 390,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/messages"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/projects/2/read"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true,
+        "navigationNoOpenOverflow": true
+      }
+    },
+    {
+      "path": "/projects/2/chat",
+      "route": "projects-2-chat",
+      "width": 1440,
+      "locale": "vi",
+      "theme": "light",
+      "id": "projects-2-chat-1440-vi-light-17-ready",
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1440,
+          "bottom": 933,
+          "left": 240,
+          "width": 1200,
+          "height": 869
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nAI Project.\nKẾ HOẠCH & DANH MỤC\nThu gọn điều hướng\n\nKHÔNG GIAN LÀM VIỆC\n\nBảng điều khiển\nDanh mục\nDự án\n\nCÁ NHÂN\n\nThông báo\nHồ sơ\n\nNHÀ ĐẦU TƯ\n\nCổng nhà đầu tư\n\nQUẢN TRỊ\n\nQuản trị\nGiao diện\nDự án\nDự án mẫu AI — Quản lý dự án và danh mục\nTrò chuyện\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nNguyễn QA\nĐang hoạt động\nKết hợp\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nProject chat\nConnecting…\nNT\nNguyễn thành viên có tên dài để kiểm tra metadata tin nhắn trên điện thoại\n10:00\n\nĐã chuẩn bị bộ dữ liệu tổng hợp để kiểm tra giao diện. Xin rà soát kế hoạch và các công việc cần phối hợp.\n\nNQ\nNguyễn QA\n10:00\n\nTôi sẽ kiểm tra danh sách công việc và cập nhật kết quả.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": null
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "openDocumentWidth": 1440,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "openDocumentWidth": 1440,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/messages"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/projects/2/read"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true,
+        "navigationNoOpenOverflow": true
+      }
+    },
+    {
+      "path": "/projects/2/documents",
+      "route": "projects-2-documents",
+      "width": 390,
+      "locale": "vi",
+      "theme": "light",
+      "id": "projects-2-documents-390-vi-light-17-ready",
+      "failure": "locator.waitFor: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('main') to be visible\u001b[22m\n",
+      "traffic": [],
+      "errors": [
+        "Invalid or unexpected token"
+      ],
+      "checks": {
+        "loaded": false,
+        "noDocumentOverflow": false,
+        "noRawTranslationKeys": false,
+        "reducedMotion": false,
+        "noUnexpectedRuntimeErrors": false
+      }
+    },
+    {
+      "path": "/projects/2/documents",
+      "route": "projects-2-documents",
+      "width": 1440,
+      "locale": "vi",
+      "theme": "light",
+      "id": "projects-2-documents-1440-vi-light-17-ready",
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1440,
+          "bottom": 834,
+          "left": 240,
+          "width": 1200,
+          "height": 770
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nAI Project.\nKẾ HOẠCH & DANH MỤC\nThu gọn điều hướng\n\nKHÔNG GIAN LÀM VIỆC\n\nBảng điều khiển\nDanh mục\nDự án\n\nCÁ NHÂN\n\nThông báo\nHồ sơ\n\nNHÀ ĐẦU TƯ\n\nCổng nhà đầu tư\n\nQUẢN TRỊ\n\nQuản trị\nGiao diện\nDự án\nDự án mẫu AI — Quản lý dự án và danh mục\nTài liệu\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nNguyễn QA\nĐang hoạt động\nKết hợp\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nTài liệu\n\nSinh tài liệu SRS và BRD từ hồ sơ yêu cầu của dự án và tải về dạng DOCX.\n\nSinh tài liệu\n\nViệc sinh chạy nền. Theo dõi trong mục Công việc gần đây; tải lại trang vẫn giữ tiến độ.\n\nNgôn ngữ tài liệu\nTiếng Việt\nTiếng Anh\nSinh SRS\nSinh BRD\nTài liệu đã sinh\n\nSRS v1\n\nTiếng Việt · 10:00:00 20/10/2026\n\nSẵn sàng\n\nĐã viết 4/4 nhóm mục\n\nTải DOCX\n\nBRD v1\n\nTiếng Việt · 10:00:00 20/10/2026\n\nThất bại\n\nĐã viết 1/4 nhóm mục\n\nSinh tài liệu thất bại (lý do: ai_quota_exceeded). Có thể yêu cầu lại; các phần đã xong được giữ.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": null
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "openDocumentWidth": 1440,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "openDocumentWidth": 1440,
+            "noOpenOverflow": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/documents"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true,
+        "navigationNoOpenOverflow": true
+      }
+    },
+    {
+      "path": "/admin",
+      "route": "admin",
+      "width": 390,
+      "locale": "vi",
+      "theme": "light",
+      "id": "admin-390-vi-light-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 995,
+          "left": 0,
+          "width": 390,
+          "height": 931
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nQuản trị\nNQ\nUsers\nRoles & Permissions\nAudit Log\n\nADMIN\n\nAdministration\n\nManage who can sign in, what they are allowed to do, and review every change made across the system.\n\nManage users\nUsers\n\nCreate accounts, assign roles, and activate or deactivate access.\n\nOpen\nRoles & permissions\n\nCompose roles from the fixed permission catalog and see who holds each one.\n\nOpen\nAudit log\n\nA read-only, append-only trail of every change made across the system.\n\nOpen",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true
+      }
+    },
+    {
+      "path": "/admin",
+      "route": "admin",
+      "width": 1440,
+      "locale": "vi",
+      "theme": "light",
+      "id": "admin-1440-vi-light-17-ready",
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1440,
+          "bottom": 527,
+          "left": 240,
+          "width": 1200,
+          "height": 463
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nAI Project.\nKẾ HOẠCH & DANH MỤC\nThu gọn điều hướng\n\nKHÔNG GIAN LÀM VIỆC\n\nBảng điều khiển\nDanh mục\nDự án\n\nCÁ NHÂN\n\nThông báo\nHồ sơ\n\nNHÀ ĐẦU TƯ\n\nCổng nhà đầu tư\n\nQUẢN TRỊ\n\nQuản trị\nGiao diện\nQuản trị\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nNguyễn QA\nUsers\nRoles & Permissions\nAudit Log\n\nADMIN\n\nAdministration\n\nManage who can sign in, what they are allowed to do, and review every change made across the system.\n\nManage users\nUsers\n\nCreate accounts, assign roles, and activate or deactivate access.\n\nOpen\nRoles & permissions\n\nCompose roles from the fixed permission catalog and see who holds each one.\n\nOpen\nAudit log\n\nA read-only, append-only trail of every change made across the system.\n\nOpen",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true
+      }
+    },
+    {
+      "path": "/admin/users",
+      "route": "admin-users",
+      "width": 390,
+      "locale": "vi",
+      "theme": "light",
+      "id": "admin-users-390-vi-light-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [
+          {
+            "tag": "TABLE",
+            "className": "w-full min-w-[820px] text-left text-body-sm",
+            "text": "UserRolesStatusJoinedActionsNQNguyễn QASuperuserYouqa@example.invalidPMActiveOct 20, 2026",
+            "rect": {
+              "top": 560,
+              "right": 837,
+              "bottom": 669,
+              "left": 17,
+              "width": 820,
+              "height": 109
+            }
+          },
+          {
+            "tag": "THEAD",
+            "className": "sticky top-0 z-10 bg-card text-caption uppercase text-muted-foreground",
+            "text": "UserRolesStatusJoinedActions",
+            "rect": {
+              "top": 560,
+              "right": 837,
+              "bottom": 600.5,
+              "left": 17,
+              "width": 820,
+              "height": 40.5
+            }
+          },
+          {
+            "tag": "TR",
+            "className": "bg-muted/50",
+            "text": "UserRolesStatusJoinedActions",
+            "rect": {
+              "top": 560,
+              "right": 837,
+              "bottom": 600.5,
+              "left": 17,
+              "width": 820,
+              "height": 40.5
+            }
+          },
+          {
+            "tag": "TH",
+            "className": "px-4 py-3 font-medium",
+            "text": "Roles",
+            "rect": {
+              "top": 560,
+              "right": 433.796875,
+              "bottom": 600.5,
+              "left": 349.34375,
+              "width": 84.453125,
+              "height": 40.5
+            }
+          },
+          {
+            "tag": "TH",
+            "className": "px-4 py-3 font-medium",
+            "text": "Status",
+            "rect": {
+              "top": 560,
+              "right": 553.015625,
+              "bottom": 600.5,
+              "left": 433.796875,
+              "width": 119.21875,
+              "height": 40.5
+            }
+          },
+          {
+            "tag": "TH",
+            "className": "px-4 py-3 font-medium",
+            "text": "Joined",
+            "rect": {
+              "top": 560,
+              "right": 693.265625,
+              "bottom": 600.5,
+              "left": 553.015625,
+              "width": 140.25,
+              "height": 40.5
+            }
+          },
+          {
+            "tag": "TH",
+            "className": "px-4 py-3 text-right font-medium",
+            "text": "Actions",
+            "rect": {
+              "top": 560,
+              "right": 837,
+              "bottom": 600.5,
+              "left": 693.265625,
+              "width": 143.734375,
+              "height": 40.5
+            }
+          },
+          {
+            "tag": "TBODY",
+            "className": "",
+            "text": "NQNguyễn QASuperuserYouqa@example.invalidPMActiveOct 20, 2026",
+            "rect": {
+              "top": 600.5,
+              "right": 837,
+              "bottom": 669,
+              "left": 17,
+              "width": 820,
+              "height": 68.5
+            }
+          },
+          {
+            "tag": "TR",
+            "className": "border-t transition-colors hover:bg-muted/40",
+            "text": "NQNguyễn QASuperuserYouqa@example.invalidPMActiveOct 20, 2026",
+            "rect": {
+              "top": 600.5,
+              "right": 837,
+              "bottom": 669,
+              "left": 17,
+              "width": 820,
+              "height": 68.5
+            }
+          },
+          {
+            "tag": "TD",
+            "className": "px-4 py-3",
+            "text": "PM",
+            "rect": {
+              "top": 600.5,
+              "right": 433.796875,
+              "bottom": 669,
+              "left": 349.34375,
+              "width": 84.453125,
+              "height": 68.5
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "flex flex-wrap gap-1",
+            "text": "PM",
+            "rect": {
+              "top": 623,
+              "right": 417.796875,
+              "bottom": 647,
+              "left": 365.34375,
+              "width": 52.453125,
+              "height": 24
+            }
+          },
+          {
+            "tag": "SPAN",
+            "className": "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border font-medium h-6 px-2.5 text-caption border-border bg-muted text-muted-foreground",
+            "text": "PM",
+            "rect": {
+              "top": 623,
+              "right": 406.234375,
+              "bottom": 647,
+              "left": 365.34375,
+              "width": 40.890625,
+              "height": 24
+            }
+          },
+          {
+            "tag": "TD",
+            "className": "px-4 py-3",
+            "text": "Active",
+            "rect": {
+              "top": 600.5,
+              "right": 553.015625,
+              "bottom": 669,
+              "left": 433.796875,
+              "width": 119.21875,
+              "height": 68.5
+            }
+          },
+          {
+            "tag": "SPAN",
+            "className": "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border font-medium h-6 px-2.5 text-caption border-success/20 bg-success-soft text-success",
+            "text": "Active",
+            "rect": {
+              "top": 623,
+              "right": 520.6875,
+              "bottom": 647,
+              "left": 449.796875,
+              "width": 70.890625,
+              "height": 24
+            }
+          },
+          {
+            "tag": "SPAN",
+            "className": "h-1.5 w-1.5 rounded-full bg-current",
+            "text": "",
+            "rect": {
+              "top": 632,
+              "right": 466.796875,
+              "bottom": 638,
+              "left": 460.796875,
+              "width": 6,
+              "height": 6
+            }
+          },
+          {
+            "tag": "TD",
+            "className": "whitespace-nowrap px-4 py-3 text-muted-foreground",
+            "text": "Oct 20, 2026",
+            "rect": {
+              "top": 600.5,
+              "right": 693.265625,
+              "bottom": 669,
+              "left": 553.015625,
+              "width": 140.25,
+              "height": 68.5
+            }
+          },
+          {
+            "tag": "TD",
+            "className": "px-4 py-3",
+            "text": "",
+            "rect": {
+              "top": 600.5,
+              "right": 837,
+              "bottom": 669,
+              "left": 693.265625,
+              "width": 143.734375,
+              "height": 68.5
+            }
+          },
+          {
+            "tag": "DIV",
+            "className": "flex justify-end gap-1",
+            "text": "",
+            "rect": {
+              "top": 613,
+              "right": 821,
+              "bottom": 657,
+              "left": 709.265625,
+              "width": 111.734375,
+              "height": 44
+            }
+          },
+          {
+            "tag": "BUTTON",
+            "className": "inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium transition-[background-color,border-color,color,box-shadow,transform] duration-200 ease-out-soft active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 h-11 w-11 shrink-0 p-0 hover:bg-accent hover:text-accent-foreground text-muted-foreground",
+            "text": "",
+            "rect": {
+              "top": 613,
+              "right": 773,
+              "bottom": 657,
+              "left": 729,
+              "width": 44,
+              "height": 44
+            }
+          },
+          {
+            "tag": "svg",
+            "className": "h-4 w-4",
+            "text": "",
+            "rect": {
+              "top": 627,
+              "right": 759,
+              "bottom": 643,
+              "left": 743,
+              "width": 16,
+              "height": 16
+            }
+          },
+          {
+            "tag": "path",
+            "className": "",
+            "text": "",
+            "rect": {
+              "top": 628.3270263671875,
+              "right": 757.68798828125,
+              "bottom": 641.6666870117188,
+              "left": 744.3333129882812,
+              "width": 13.35467529296875,
+              "height": 13.33966064453125
+            }
+          },
+          {
+            "tag": "path",
+            "className": "",
+            "text": "",
+            "rect": {
+              "top": 630.3333129882812,
+              "right": 755.6666870117188,
+              "bottom": 633,
+              "left": 753,
+              "width": 2.66668701171875,
+              "height": 2.66668701171875
+            }
+          },
+          {
+            "tag": "BUTTON",
+            "className": "inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium transition-[background-color,border-color,color,box-shadow,transform] duration-200 ease-out-soft active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 h-11 w-11 shrink-0 p-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive",
+            "text": "",
+            "rect": {
+              "top": 613,
+              "right": 821,
+              "bottom": 657,
+              "left": 777,
+              "width": 44,
+              "height": 44
+            }
+          },
+          {
+            "tag": "svg",
+            "className": "h-4 w-4",
+            "text": "",
+            "rect": {
+              "top": 627,
+              "right": 807,
+              "bottom": 643,
+              "left": 791,
+              "width": 16,
+              "height": 16
+            }
+          },
+          {
+            "tag": "path",
+            "className": "",
+            "text": "",
+            "rect": {
+              "top": 637,
+              "right": 801.6666870117188,
+              "bottom": 641,
+              "left": 792.3333129882812,
+              "width": 9.3333740234375,
+              "height": 4
+            }
+          },
+          {
+            "tag": "circle",
+            "className": "",
+            "text": "",
+            "rect": {
+              "top": 629,
+              "right": 799.6666870117188,
+              "bottom": 634.3333129882812,
+              "left": 794.3333129882812,
+              "width": 5.3333740234375,
+              "height": 5.33331298828125
+            }
+          },
+          {
+            "tag": "line",
+            "className": "",
+            "text": "",
+            "rect": {
+              "top": 632.3333129882812,
+              "right": 805.6666870117188,
+              "bottom": 635.6666870117188,
+              "left": 802.3333129882812,
+              "width": 3.3333740234375,
+              "height": 3.3333740234375
+            }
+          },
+          {
+            "tag": "line",
+            "className": "",
+            "text": "",
+            "rect": {
+              "top": 632.3333129882812,
+              "right": 805.6666870117188,
+              "bottom": 635.6666870117188,
+              "left": 802.3333129882812,
+              "width": 3.3333740234375,
+              "height": 3.3333740234375
+            }
+          }
+        ],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 686,
+          "left": 0,
+          "width": 390,
+          "height": 622
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nQuản trị\nNgười dùng\nNQ\nUsers\nRoles & Permissions\nAudit Log\n\nADMIN\n\nUsers\n\nCreate accounts, assign roles, and activate or deactivate access.\n\nNew user\nAll roles\nPM\nAll statuses\nActive\nInactive\nUSER\tROLES\tSTATUS\tJOINED\tACTIONS\n\nNQ\n\nNguyễn QA\n\nSuperuser\nYou\n\nqa@example.invalid\n\n\t\nPM\n\t\nActive\tOct 20, 2026\t",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/roles"
+        },
+        {
+          "method": "GET",
+          "path": "/users"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true
+      }
+    },
+    {
+      "path": "/admin/users",
+      "route": "admin-users",
+      "width": 1440,
+      "locale": "vi",
+      "theme": "light",
+      "id": "admin-users-1440-vi-light-17-ready",
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1440,
+          "bottom": 530,
+          "left": 240,
+          "width": 1200,
+          "height": 466
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nAI Project.\nKẾ HOẠCH & DANH MỤC\nThu gọn điều hướng\n\nKHÔNG GIAN LÀM VIỆC\n\nBảng điều khiển\nDanh mục\nDự án\n\nCÁ NHÂN\n\nThông báo\nHồ sơ\n\nNHÀ ĐẦU TƯ\n\nCổng nhà đầu tư\n\nQUẢN TRỊ\n\nQuản trị\nGiao diện\nQuản trị\nNgười dùng\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nNguyễn QA\nUsers\nRoles & Permissions\nAudit Log\n\nADMIN\n\nUsers\n\nCreate accounts, assign roles, and activate or deactivate access.\n\nNew user\nAll roles\nPM\nAll statuses\nActive\nInactive\nUSER\tROLES\tSTATUS\tJOINED\tACTIONS\n\nNQ\n\nNguyễn QA\n\nSuperuser\nYou\n\nqa@example.invalid\n\n\t\nPM\n\t\nActive\tOct 20, 2026\t",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/roles"
+        },
+        {
+          "method": "GET",
+          "path": "/users"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true
+      }
+    }
+  ]
+}

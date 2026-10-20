@@ -1,0 +1,3059 @@
+{
+  "synthetic": true,
+  "source": "Actual local Next.js UI with fully intercepted synthetic API responses; no production reads/writes.",
+  "mode": "smoke-overview",
+  "started": "2026-10-20T14:54:24.797Z",
+  "cases": [
+    {
+      "width": 320,
+      "locale": "vi",
+      "theme": "light",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-320-vi-light-17-ready",
+      "geometry": {
+        "width": 320,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 365,
+        "documentOverflow": true,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 320,
+          "bottom": 2797,
+          "left": 0,
+          "width": 320,
+          "height": 2733
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nTổng quan\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nNgôn ngữ báo cáo\nTiếng Việt\nTiếng Anh\nXuất XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nTask Status\n17Tasks\nTodoIn progress\nTodo: 16 (94%)\nIn progress: 1 (6%)\n\nTotal: 17\n\nDone: 0\n\nOverdue: 0\n\nCritical: 3\n\nBudget\n0%Utilization\nSpentRemaining\nSpent: ₫0 (0%)\nRemaining: ₫100,000,000 (100%)\n\nSpent: ₫0\n\nBudget: ₫100,000,000\n\nUtilization: 0%\n\n14-day Burndown\nNo burndown data\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": false,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    },
+    {
+      "width": 320,
+      "locale": "vi",
+      "theme": "dark",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-320-vi-dark-17-ready",
+      "geometry": {
+        "width": 320,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 365,
+        "documentOverflow": true,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 320,
+          "bottom": 2797,
+          "left": 0,
+          "width": 320,
+          "height": 2733
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nTổng quan\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nNgôn ngữ báo cáo\nTiếng Việt\nTiếng Anh\nXuất XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nTask Status\n17Tasks\nTodoIn progress\nTodo: 16 (94%)\nIn progress: 1 (6%)\n\nTotal: 17\n\nDone: 0\n\nOverdue: 0\n\nCritical: 3\n\nBudget\n0%Utilization\nSpentRemaining\nSpent: ₫0 (0%)\nRemaining: ₫100,000,000 (100%)\n\nSpent: ₫0\n\nBudget: ₫100,000,000\n\nUtilization: 0%\n\n14-day Burndown\nNo burndown data\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": false,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    },
+    {
+      "width": 320,
+      "locale": "en",
+      "theme": "light",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-320-en-light-17-ready",
+      "geometry": {
+        "width": 320,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 365,
+        "documentOverflow": true,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 320,
+          "bottom": 2829,
+          "left": 0,
+          "width": 320,
+          "height": 2765
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Skip to content\nDự án mẫu AI — Quản lý dự án và danh mục\nOverview\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nStandalone project\n\nOverview\nTasks\nPlanning\nMore\nReport language\nVietnamese\nEnglish\nExport XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nTask Status\n17Tasks\nTodoIn progress\nTodo: 16 (94%)\nIn progress: 1 (6%)\n\nTotal: 17\n\nDone: 0\n\nOverdue: 0\n\nCritical: 3\n\nBudget\n0%Utilization\nSpentRemaining\nSpent: ₫0 (0%)\nRemaining: ₫100,000,000 (100%)\n\nSpent: ₫0\n\nBudget: ₫100,000,000\n\nUtilization: 0%\n\n14-day Burndown\nNo burndown data\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Planning",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "More",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": false,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    },
+    {
+      "width": 320,
+      "locale": "en",
+      "theme": "dark",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-320-en-dark-17-ready",
+      "geometry": {
+        "width": 320,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 365,
+        "documentOverflow": true,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 320,
+          "bottom": 2829,
+          "left": 0,
+          "width": 320,
+          "height": 2765
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Skip to content\nDự án mẫu AI — Quản lý dự án và danh mục\nOverview\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nStandalone project\n\nOverview\nTasks\nPlanning\nMore\nReport language\nVietnamese\nEnglish\nExport XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nTask Status\n17Tasks\nTodoIn progress\nTodo: 16 (94%)\nIn progress: 1 (6%)\n\nTotal: 17\n\nDone: 0\n\nOverdue: 0\n\nCritical: 3\n\nBudget\n0%Utilization\nSpentRemaining\nSpent: ₫0 (0%)\nRemaining: ₫100,000,000 (100%)\n\nSpent: ₫0\n\nBudget: ₫100,000,000\n\nUtilization: 0%\n\n14-day Burndown\nNo burndown data\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Planning",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "More",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": false,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    },
+    {
+      "width": 390,
+      "locale": "vi",
+      "theme": "light",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-390-vi-light-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 2777,
+          "left": 0,
+          "width": 390,
+          "height": 2713
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nTổng quan\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nNgôn ngữ báo cáo\nTiếng Việt\nTiếng Anh\nXuất XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nTask Status\n17Tasks\nTodoIn progress\nTodo: 16 (94%)\nIn progress: 1 (6%)\n\nTotal: 17\n\nDone: 0\n\nOverdue: 0\n\nCritical: 3\n\nBudget\n0%Utilization\nSpentRemaining\nSpent: ₫0 (0%)\nRemaining: ₫100,000,000 (100%)\n\nSpent: ₫0\n\nBudget: ₫100,000,000\n\nUtilization: 0%\n\n14-day Burndown\nNo burndown data\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    },
+    {
+      "width": 390,
+      "locale": "vi",
+      "theme": "dark",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-390-vi-dark-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 2777,
+          "left": 0,
+          "width": 390,
+          "height": 2713
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nTổng quan\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nNgôn ngữ báo cáo\nTiếng Việt\nTiếng Anh\nXuất XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nTask Status\n17Tasks\nTodoIn progress\nTodo: 16 (94%)\nIn progress: 1 (6%)\n\nTotal: 17\n\nDone: 0\n\nOverdue: 0\n\nCritical: 3\n\nBudget\n0%Utilization\nSpentRemaining\nSpent: ₫0 (0%)\nRemaining: ₫100,000,000 (100%)\n\nSpent: ₫0\n\nBudget: ₫100,000,000\n\nUtilization: 0%\n\n14-day Burndown\nNo burndown data\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    },
+    {
+      "width": 390,
+      "locale": "en",
+      "theme": "light",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-390-en-light-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 2777,
+          "left": 0,
+          "width": 390,
+          "height": 2713
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Skip to content\nDự án mẫu AI — Quản lý dự án và danh mục\nOverview\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nStandalone project\n\nOverview\nTasks\nPlanning\nMore\nReport language\nVietnamese\nEnglish\nExport XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nTask Status\n17Tasks\nTodoIn progress\nTodo: 16 (94%)\nIn progress: 1 (6%)\n\nTotal: 17\n\nDone: 0\n\nOverdue: 0\n\nCritical: 3\n\nBudget\n0%Utilization\nSpentRemaining\nSpent: ₫0 (0%)\nRemaining: ₫100,000,000 (100%)\n\nSpent: ₫0\n\nBudget: ₫100,000,000\n\nUtilization: 0%\n\n14-day Burndown\nNo burndown data\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Planning",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "More",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    },
+    {
+      "width": 390,
+      "locale": "en",
+      "theme": "dark",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-390-en-dark-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 2777,
+          "left": 0,
+          "width": 390,
+          "height": 2713
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Skip to content\nDự án mẫu AI — Quản lý dự án và danh mục\nOverview\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nStandalone project\n\nOverview\nTasks\nPlanning\nMore\nReport language\nVietnamese\nEnglish\nExport XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nTask Status\n17Tasks\nTodoIn progress\nTodo: 16 (94%)\nIn progress: 1 (6%)\n\nTotal: 17\n\nDone: 0\n\nOverdue: 0\n\nCritical: 3\n\nBudget\n0%Utilization\nSpentRemaining\nSpent: ₫0 (0%)\nRemaining: ₫100,000,000 (100%)\n\nSpent: ₫0\n\nBudget: ₫100,000,000\n\nUtilization: 0%\n\n14-day Burndown\nNo burndown data\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Planning",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "More",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    },
+    {
+      "width": 768,
+      "locale": "vi",
+      "theme": "light",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-768-vi-light-17-ready",
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 768,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 768,
+          "bottom": 2597,
+          "left": 0,
+          "width": 768,
+          "height": 2533
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDự án\nDự án mẫu AI — Quản lý dự án và danh mục\nTổng quan\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nNgôn ngữ báo cáo\nTiếng Việt\nTiếng Anh\nXuất XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nTask Status\n17Tasks\nTodoIn progress\nTodo: 16 (94%)\nIn progress: 1 (6%)\n\nTotal: 17\n\nDone: 0\n\nOverdue: 0\n\nCritical: 3\n\nBudget\n0%Utilization\nSpentRemaining\nSpent: ₫0 (0%)\nRemaining: ₫100,000,000 (100%)\n\nSpent: ₫0\n\nBudget: ₫100,000,000\n\nUtilization: 0%\n\n14-day Burndown\nNo burndown data\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    },
+    {
+      "width": 768,
+      "locale": "vi",
+      "theme": "dark",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-768-vi-dark-17-ready",
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 768,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 768,
+          "bottom": 2403,
+          "left": 0,
+          "width": 768,
+          "height": 2339
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDự án\nDự án mẫu AI — Quản lý dự án và danh mục\nTổng quan\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nNgôn ngữ báo cáo\nTiếng Việt\nTiếng Anh\nXuất XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    },
+    {
+      "width": 768,
+      "locale": "en",
+      "theme": "light",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-768-en-light-17-ready",
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 768,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 768,
+          "bottom": 2597,
+          "left": 0,
+          "width": 768,
+          "height": 2533
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Skip to content\nProjects\nDự án mẫu AI — Quản lý dự án và danh mục\nOverview\nLanguage\nTiếng Việt\nEnglish\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nStandalone project\n\nOverview\nTasks\nPlanning\nMore\nReport language\nVietnamese\nEnglish\nExport XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nTask Status\n17Tasks\nTodoIn progress\nTodo: 16 (94%)\nIn progress: 1 (6%)\n\nTotal: 17\n\nDone: 0\n\nOverdue: 0\n\nCritical: 3\n\nBudget\n0%Utilization\nSpentRemaining\nSpent: ₫0 (0%)\nRemaining: ₫100,000,000 (100%)\n\nSpent: ₫0\n\nBudget: ₫100,000,000\n\nUtilization: 0%\n\n14-day Burndown\nNo burndown data\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Planning",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "More",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    },
+    {
+      "width": 768,
+      "locale": "en",
+      "theme": "dark",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-768-en-dark-17-ready",
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 768,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 768,
+          "bottom": 2403,
+          "left": 0,
+          "width": 768,
+          "height": 2339
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Skip to content\nProjects\nDự án mẫu AI — Quản lý dự án và danh mục\nOverview\nLanguage\nTiếng Việt\nEnglish\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nStandalone project\n\nOverview\nTasks\nPlanning\nMore\nReport language\nVietnamese\nEnglish\nExport XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Planning",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "More",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    },
+    {
+      "width": 1024,
+      "locale": "vi",
+      "theme": "light",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-1024-vi-light-17-ready",
+      "geometry": {
+        "width": 1024,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1024,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1024,
+          "bottom": 2597,
+          "left": 240,
+          "width": 784,
+          "height": 2533
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nAI Project.\nKẾ HOẠCH & DANH MỤC\nThu gọn điều hướng\n\nKHÔNG GIAN LÀM VIỆC\n\nBảng điều khiển\nDanh mục\nDự án\n\nCÁ NHÂN\n\nThông báo\nHồ sơ\n\nNHÀ ĐẦU TƯ\n\nCổng nhà đầu tư\n\nQUẢN TRỊ\n\nQuản trị\nGiao diện\nDự án\nDự án mẫu AI — Quản lý dự án và danh mục\nTổng quan\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nNgôn ngữ báo cáo\nTiếng Việt\nTiếng Anh\nXuất XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nTask Status\n17Tasks\nTodoIn progress\nTodo: 16 (94%)\nIn progress: 1 (6%)\n\nTotal: 17\n\nDone: 0\n\nOverdue: 0\n\nCritical: 3\n\nBudget\n0%Utilization\nSpentRemaining\nSpent: ₫0 (0%)\nRemaining: ₫100,000,000 (100%)\n\nSpent: ₫0\n\nBudget: ₫100,000,000\n\nUtilization: 0%\n\n14-day Burndown\nNo burndown data\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    },
+    {
+      "width": 1024,
+      "locale": "vi",
+      "theme": "dark",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-1024-vi-dark-17-ready",
+      "geometry": {
+        "width": 1024,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1024,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1024,
+          "bottom": 2597,
+          "left": 240,
+          "width": 784,
+          "height": 2533
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nAI Project.\nKẾ HOẠCH & DANH MỤC\nThu gọn điều hướng\n\nKHÔNG GIAN LÀM VIỆC\n\nBảng điều khiển\nDanh mục\nDự án\n\nCÁ NHÂN\n\nThông báo\nHồ sơ\n\nNHÀ ĐẦU TƯ\n\nCổng nhà đầu tư\n\nQUẢN TRỊ\n\nQuản trị\nGiao diện\nDự án\nDự án mẫu AI — Quản lý dự án và danh mục\nTổng quan\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nNgôn ngữ báo cáo\nTiếng Việt\nTiếng Anh\nXuất XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nTask Status\n17Tasks\nTodoIn progress\nTodo: 16 (94%)\nIn progress: 1 (6%)\n\nTotal: 17\n\nDone: 0\n\nOverdue: 0\n\nCritical: 3\n\nBudget\n0%Utilization\nSpentRemaining\nSpent: ₫0 (0%)\nRemaining: ₫100,000,000 (100%)\n\nSpent: ₫0\n\nBudget: ₫100,000,000\n\nUtilization: 0%\n\n14-day Burndown\nNo burndown data\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    },
+    {
+      "width": 1024,
+      "locale": "en",
+      "theme": "light",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-1024-en-light-17-ready",
+      "geometry": {
+        "width": 1024,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1024,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1024,
+          "bottom": 2403,
+          "left": 240,
+          "width": 784,
+          "height": 2339
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Skip to content\nAI Project.\nPLANNING & PORTFOLIO\nCollapse navigation\n\nWORKSPACE\n\nDashboard\nPortfolios\nProjects\n\nPERSONAL\n\nNotifications\nProfile\n\nINVESTOR\n\nInvestor portal\n\nADMINISTRATION\n\nAdmin\nTheme\nProjects\nDự án mẫu AI — Quản lý dự án và danh mục\nOverview\nLanguage\nTiếng Việt\nEnglish\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nStandalone project\n\nOverview\nTasks\nPlanning\nMore\nReport language\nVietnamese\nEnglish\nExport XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Planning",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "More",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    },
+    {
+      "width": 1024,
+      "locale": "en",
+      "theme": "dark",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-1024-en-dark-17-ready",
+      "geometry": {
+        "width": 1024,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1024,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1024,
+          "bottom": 2597,
+          "left": 240,
+          "width": 784,
+          "height": 2533
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Skip to content\nAI Project.\nPLANNING & PORTFOLIO\nCollapse navigation\n\nWORKSPACE\n\nDashboard\nPortfolios\nProjects\n\nPERSONAL\n\nNotifications\nProfile\n\nINVESTOR\n\nInvestor portal\n\nADMINISTRATION\n\nAdmin\nTheme\nProjects\nDự án mẫu AI — Quản lý dự án và danh mục\nOverview\nLanguage\nTiếng Việt\nEnglish\nNQ\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nStandalone project\n\nOverview\nTasks\nPlanning\nMore\nReport language\nVietnamese\nEnglish\nExport XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nTask Status\n17Tasks\nTodoIn progress\nTodo: 16 (94%)\nIn progress: 1 (6%)\n\nTotal: 17\n\nDone: 0\n\nOverdue: 0\n\nCritical: 3\n\nBudget\n0%Utilization\nSpentRemaining\nSpent: ₫0 (0%)\nRemaining: ₫100,000,000 (100%)\n\nSpent: ₫0\n\nBudget: ₫100,000,000\n\nUtilization: 0%\n\n14-day Burndown\nNo burndown data\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Planning",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "More",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    },
+    {
+      "width": 1440,
+      "locale": "vi",
+      "theme": "light",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-1440-vi-light-17-ready",
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1440,
+          "bottom": 1555,
+          "left": 240,
+          "width": 1200,
+          "height": 1491
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nAI Project.\nKẾ HOẠCH & DANH MỤC\nThu gọn điều hướng\n\nKHÔNG GIAN LÀM VIỆC\n\nBảng điều khiển\nDanh mục\nDự án\n\nCÁ NHÂN\n\nThông báo\nHồ sơ\n\nNHÀ ĐẦU TƯ\n\nCổng nhà đầu tư\n\nQUẢN TRỊ\n\nQuản trị\nGiao diện\nDự án\nDự án mẫu AI — Quản lý dự án và danh mục\nTổng quan\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nNguyễn QA\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nNgôn ngữ báo cáo\nTiếng Việt\nTiếng Anh\nXuất XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nTask Status\n17Tasks\nTodoIn progress\nTodo: 16 (94%)\nIn progress: 1 (6%)\n\nTotal: 17\n\nDone: 0\n\nOverdue: 0\n\nCritical: 3\n\nBudget\n0%Utilization\nSpentRemaining\nSpent: ₫0 (0%)\nRemaining: ₫100,000,000 (100%)\n\nSpent: ₫0\n\nBudget: ₫100,000,000\n\nUtilization: 0%\n\n14-day Burndown\nNo burndown data\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    },
+    {
+      "width": 1440,
+      "locale": "vi",
+      "theme": "dark",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-1440-vi-dark-17-ready",
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1440,
+          "bottom": 1555,
+          "left": 240,
+          "width": 1200,
+          "height": 1491
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nAI Project.\nKẾ HOẠCH & DANH MỤC\nThu gọn điều hướng\n\nKHÔNG GIAN LÀM VIỆC\n\nBảng điều khiển\nDanh mục\nDự án\n\nCÁ NHÂN\n\nThông báo\nHồ sơ\n\nNHÀ ĐẦU TƯ\n\nCổng nhà đầu tư\n\nQUẢN TRỊ\n\nQuản trị\nGiao diện\nDự án\nDự án mẫu AI — Quản lý dự án và danh mục\nTổng quan\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nNguyễn QA\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nDự án độc lập\n\nTổng quan\nCông việc\nKế hoạch\nThêm\nNgôn ngữ báo cáo\nTiếng Việt\nTiếng Anh\nXuất XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nTask Status\n17Tasks\nTodoIn progress\nTodo: 16 (94%)\nIn progress: 1 (6%)\n\nTotal: 17\n\nDone: 0\n\nOverdue: 0\n\nCritical: 3\n\nBudget\n0%Utilization\nSpentRemaining\nSpent: ₫0 (0%)\nRemaining: ₫100,000,000 (100%)\n\nSpent: ₫0\n\nBudget: ₫100,000,000\n\nUtilization: 0%\n\n14-day Burndown\nNo burndown data\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Kế hoạch",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "Thêm",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    },
+    {
+      "width": 1440,
+      "locale": "en",
+      "theme": "light",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-1440-en-light-17-ready",
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1440,
+          "bottom": 1469,
+          "left": 240,
+          "width": 1200,
+          "height": 1405
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Skip to content\nAI Project.\nPLANNING & PORTFOLIO\nCollapse navigation\n\nWORKSPACE\n\nDashboard\nPortfolios\nProjects\n\nPERSONAL\n\nNotifications\nProfile\n\nINVESTOR\n\nInvestor portal\n\nADMINISTRATION\n\nAdmin\nTheme\nProjects\nDự án mẫu AI — Quản lý dự án và danh mục\nOverview\nLanguage\nTiếng Việt\nEnglish\nNQ\nNguyễn QA\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nStandalone project\n\nOverview\nTasks\nPlanning\nMore\nReport language\nVietnamese\nEnglish\nExport XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Planning",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "More",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    },
+    {
+      "width": 1440,
+      "locale": "en",
+      "theme": "dark",
+      "route": "overview",
+      "dialog": false,
+      "id": "overview-1440-en-dark-17-ready",
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "documentOverflow": false,
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1440,
+          "bottom": 1469,
+          "left": 240,
+          "width": 1200,
+          "height": 1405
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Skip to content\nAI Project.\nPLANNING & PORTFOLIO\nCollapse navigation\n\nWORKSPACE\n\nDashboard\nPortfolios\nProjects\n\nPERSONAL\n\nNotifications\nProfile\n\nINVESTOR\n\nInvestor portal\n\nADMINISTRATION\n\nAdmin\nTheme\nProjects\nDự án mẫu AI — Quản lý dự án và danh mục\nOverview\nLanguage\nTiếng Việt\nEnglish\nNQ\nNguyễn QA\nActive\nHybrid\nDự án mẫu AI — Quản lý dự án và danh mục\n\nStandalone project\n\nOverview\nTasks\nPlanning\nMore\nReport language\nVietnamese\nEnglish\nExport XLSX\n\nDự án tổng hợp phục vụ kiểm tra giao diện. Không phải dữ liệu dự án thật.\n\nOct 20, 2026\n1% complete\nDec 15, 2026\nTasks completed\n\n0 / 17\n\nBudget used\n\n₫0 / ₫100,000,000\n\nMembers\n\n1\n\nDays remaining\n\n56\n\nPhases\nSprint 1 - Khởi động và phân tích\nPlanned\n\nNot set – Not set\n\nSprint 2 - Thiết kế và phát triển\nPlanned\n\nNot set – Not set\n\nSprint 3 - Kiểm thử và triển khai\nPlanned\n\nNot set – Not set\n\nMilestones\n\nNo milestones yet.\n\nRecent activity\n\nNo activity has been recorded.",
+      "navigation": {
+        "links": [
+          {
+            "href": "/projects/2/overview",
+            "current": "page"
+          },
+          {
+            "href": "/projects/2/tasks",
+            "current": null
+          },
+          {
+            "href": "/projects/2/wbs",
+            "current": null
+          },
+          {
+            "href": "/projects/2/gantt",
+            "current": null
+          },
+          {
+            "href": "/projects/2/timesheet",
+            "current": null
+          },
+          {
+            "href": "/projects/2/members",
+            "current": null
+          },
+          {
+            "href": "/projects/2/chat",
+            "current": null
+          },
+          {
+            "href": "/projects/2/change-requests",
+            "current": null
+          },
+          {
+            "href": "/projects/2/versions",
+            "current": null
+          },
+          {
+            "href": "/projects/2/documents",
+            "current": null
+          },
+          {
+            "href": "/projects/2/process",
+            "current": null
+          },
+          {
+            "href": "/projects/2/ai-insights",
+            "current": null
+          },
+          {
+            "href": "/projects/2/settings",
+            "current": null
+          }
+        ],
+        "groups": [
+          {
+            "label": "Planning",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          },
+          {
+            "label": "More",
+            "openedWithEnter": true,
+            "closedWithEscape": true,
+            "focusRestored": true
+          }
+        ]
+      },
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/projects/2/stats"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true,
+        "navigationHas13Links": true,
+        "navigationKeyboard": true
+      }
+    }
+  ],
+  "completed": "2026-10-20T14:57:41.108Z",
+  "summary": {
+    "cases": 20,
+    "passed": 16,
+    "failures": [
+      {
+        "id": "overview-320-vi-light-17-ready",
+        "failedChecks": [
+          "noDocumentOverflow"
+        ]
+      },
+      {
+        "id": "overview-320-vi-dark-17-ready",
+        "failedChecks": [
+          "noDocumentOverflow"
+        ]
+      },
+      {
+        "id": "overview-320-en-light-17-ready",
+        "failedChecks": [
+          "noDocumentOverflow"
+        ]
+      },
+      {
+        "id": "overview-320-en-dark-17-ready",
+        "failedChecks": [
+          "noDocumentOverflow"
+        ]
+      }
+    ]
+  }
+}
