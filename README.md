@@ -21,6 +21,8 @@ Demo được thiết kế cho Render Free + Supabase Free, dùng Next.js Node s
 
 ## Mục lục
 
+📐 [Design system — token, component và minh họa động](docs/design-system.md)
+
 1. [Tổng quan dự án](#1-tổng-quan-dự-án)
 2. [Kiến trúc hệ thống](#2-kiến-trúc-hệ-thống)
 3. [Ngăn xếp công nghệ](#3-technology-stack)
