@@ -1,5 +1,7 @@
 'use client'
 
+import { useLocale, useTranslations } from 'next-intl'
+
 import { ChevronRight, ScrollText } from 'lucide-react'
 import { Fragment, useState } from 'react'
 import { Button } from '@/components/common/Button'
@@ -23,16 +25,18 @@ function actionTone(action: string): BadgeTone {
   return ACTION_TONES[action] ?? 'neutral'
 }
 
-function formatTimestamp(value: string): string {
-  return `${formatDate(value)} ${new Date(value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+function formatTimestamp(value: string, locale: string): string {
+  return `${formatDate(value, locale)} ${new Date(value).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}`
 }
 
 export function AuditLogTable({ logs }: { logs: AuditLog[] }) {
+  const locale = useLocale()
+  const tAccount = useTranslations('accountUi')
   const [expanded, setExpanded] = useState<number | null>(null)
 
   if (logs.length === 0) {
     return (
-      <EmptyState icon={ScrollText} title="No audit log entries" description="Nothing matches the current filters yet." />
+      <EmptyState icon={ScrollText} title={tAccount('noAuditLogEntries')} description={tAccount('nothingMatchesTheCurrentFiltersYet')} />
     )
   }
 
@@ -44,13 +48,13 @@ export function AuditLogTable({ logs }: { logs: AuditLog[] }) {
           <thead className="sticky top-0 z-10 bg-card text-caption uppercase text-muted-foreground">
             <tr className="bg-muted/50">
               <th scope="col" className="w-12 px-2 py-3">
-                <span className="sr-only">Details</span>
+                <span className="sr-only"> {tAccount('details')} </span>
               </th>
-              <th scope="col" className="px-4 py-3 font-medium">When</th>
-              <th scope="col" className="px-4 py-3 font-medium">Actor</th>
-              <th scope="col" className="px-4 py-3 font-medium">Action</th>
-              <th scope="col" className="px-4 py-3 font-medium">Entity</th>
-              <th scope="col" className="px-4 py-3 font-medium">Description</th>
+              <th scope="col" className="px-4 py-3 font-medium"> {tAccount('when')} </th>
+              <th scope="col" className="px-4 py-3 font-medium"> {tAccount('actor')} </th>
+              <th scope="col" className="px-4 py-3 font-medium"> {tAccount('action')} </th>
+              <th scope="col" className="px-4 py-3 font-medium"> {tAccount('entity')} </th>
+              <th scope="col" className="px-4 py-3 font-medium"> {tAccount('description')} </th>
             </tr>
           </thead>
           <tbody>
@@ -77,7 +81,7 @@ export function AuditLogTable({ logs }: { logs: AuditLog[] }) {
                           size="icon"
                           fullWidth={false}
                           aria-expanded={isOpen}
-                          aria-label={isOpen ? 'Hide change details' : 'Show change details'}
+                          aria-label={isOpen ? tAccount('hideChangeDetails') : tAccount('showChangeDetails')}
                           className="text-muted-foreground"
                           onClick={(event) => {
                             event.stopPropagation()
@@ -91,7 +95,7 @@ export function AuditLogTable({ logs }: { logs: AuditLog[] }) {
                         </Button>
                       )}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">{formatTimestamp(log.created_at)}</td>
+                    <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">{formatTimestamp(log.created_at, locale)}</td>
                     <td className="px-4 py-3">
                       {log.user ? (
                         <div>
@@ -99,11 +103,11 @@ export function AuditLogTable({ logs }: { logs: AuditLog[] }) {
                           <p className="text-caption text-muted-foreground">{log.user.email}</p>
                         </div>
                       ) : (
-                        <span className="text-caption text-muted-foreground">System</span>
+                        <span className="text-caption text-muted-foreground"> {tAccount('system')} </span>
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <Badge tone={actionTone(log.action)}>{log.action}</Badge>
+                      <Badge tone={actionTone(log.action)}>{tAccount.has(`auditActions.${log.action}`) ? tAccount(`auditActions.${log.action}`) : log.action}</Badge>
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
                       {log.entity_type}
@@ -118,7 +122,7 @@ export function AuditLogTable({ logs }: { logs: AuditLog[] }) {
                         <div className="grid gap-3 sm:grid-cols-2">
                           {log.old_values && (
                             <div>
-                              <p className="mb-1 text-overline uppercase text-muted-foreground">Before</p>
+                              <p className="mb-1 text-overline uppercase text-muted-foreground"> {tAccount('before')} </p>
                               <pre className="max-h-48 overflow-auto rounded-lg border bg-background p-3 text-caption">
                                 {JSON.stringify(log.old_values, null, 2)}
                               </pre>
@@ -126,7 +130,7 @@ export function AuditLogTable({ logs }: { logs: AuditLog[] }) {
                           )}
                           {log.new_values && (
                             <div>
-                              <p className="mb-1 text-overline uppercase text-muted-foreground">After</p>
+                              <p className="mb-1 text-overline uppercase text-muted-foreground"> {tAccount('after')} </p>
                               <pre className="max-h-48 overflow-auto rounded-lg border bg-background p-3 text-caption">
                                 {JSON.stringify(log.new_values, null, 2)}
                               </pre>

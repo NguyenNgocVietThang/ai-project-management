@@ -1,5 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { NextIntlClientProvider } from 'next-intl'
+import messages from '../../../../messages/en.json'
 import type { User } from '@/types/auth.types'
 import InvestorLayout from './layout'
 
@@ -14,14 +16,14 @@ beforeEach(() => vi.clearAllMocks())
 describe('chặn cổng nhà đầu tư theo role', () => {
   it('PM bị chuyển về dashboard', () => {
     mocks.user = asUser(['PM'])
-    render(<InvestorLayout><p>Secret</p></InvestorLayout>)
+    render(<NextIntlClientProvider locale="en" messages={messages}><InvestorLayout><p>Secret</p></InvestorLayout></NextIntlClientProvider>)
     expect(mocks.replace).toHaveBeenCalledWith('/dashboard')
     expect(screen.queryByText('Secret')).not.toBeInTheDocument()
   })
 
   it('investor xem được nội dung', () => {
     mocks.user = asUser(['Investor'])
-    render(<InvestorLayout><p>Secret</p></InvestorLayout>)
+    render(<NextIntlClientProvider locale="en" messages={messages}><InvestorLayout><p>Secret</p></InvestorLayout></NextIntlClientProvider>)
     expect(screen.getByText('Secret')).toBeInTheDocument()
     expect(mocks.replace).not.toHaveBeenCalled()
   })

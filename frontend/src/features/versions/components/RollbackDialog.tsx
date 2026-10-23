@@ -8,7 +8,7 @@ import { AlertTriangle, CheckCircle2, RotateCcw } from 'lucide-react'
 import { VersionDiffView } from '@/features/versions/components/VersionDiffView'
 import { useRollbackVersion, useVersionDiff } from '@/features/versions/hooks/useVersions'
 import type { ProjectVersion } from '@/features/versions/types'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 
 interface RollbackDialogProps {
   projectId: number
@@ -23,6 +23,7 @@ interface RollbackDialogProps {
  * khôi phục sẽ hoàn tác chúng. Task có worklog/comment không bị xóa mà được lưu trữ.
  */
 export function RollbackDialog({ projectId, version, onClose }: RollbackDialogProps) {
+  const getApiErrorMessage = useApiErrorMessage()
   const t = useTranslations('versions')
   const diff = useVersionDiff(projectId, version.id, 'current')
   const rollback = useRollbackVersion(projectId)

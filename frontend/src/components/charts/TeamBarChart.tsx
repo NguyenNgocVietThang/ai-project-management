@@ -7,6 +7,7 @@
  * Có bảng sr-only để thông tin không chỉ nằm trong hình.
  */
 import { useMemo, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import {
   Bar,
   BarChart,
@@ -43,20 +44,13 @@ export interface TeamBarChartLabels {
 interface TeamBarChartProps {
   data: TeamMemberUtilization[]
   height?: number
-  /** Chuỗi hiển thị; bỏ trống thì dùng tiếng Anh mặc định (giữ tương thích). */
+  /** Ghi đè nhãn; mặc định theo ngôn ngữ đang chọn. */
   labels?: Partial<TeamBarChartLabels>
 }
 
-const DEFAULT_LABELS: TeamBarChartLabels = {
-  estimated: 'Estimated',
-  logged: 'Logged',
-  member: 'Member',
-  empty: 'No team data available',
-  summary: 'Team utilization: estimated versus logged hours per member',
-}
-
 export function TeamBarChart({ data, height = 220, labels }: TeamBarChartProps) {
-  const text = { ...DEFAULT_LABELS, ...labels }
+  const t = useTranslations('chartsUi')
+  const text = { estimated: t('estimated'), logged: t('logged'), member: t('member'), empty: t('teamEmpty'), summary: t('teamSummary'), ...labels }
   const reducedMotion = usePrefersReducedMotion()
   const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined)
   // Giữ nguyên tham chiếu mảng giữa các lần render để hover không kích hoạt lại animation vào.
@@ -100,12 +94,12 @@ export function TeamBarChart({ data, height = 220, labels }: TeamBarChartProps) 
           >
             <CartesianGrid {...gridProps} vertical={false} />
             <XAxis dataKey="name" {...axisProps} />
-            <YAxis {...axisProps} unit="h" />
+            <YAxis {...axisProps} unit={t('hourUnit')} />
             <Tooltip
               cursor={<BandCursor />}
               content={
                 <ChartTooltip
-                  valueFormatter={(value) => `${value}h`}
+                  valueFormatter={(value) => t('hours', { value })}
                   labelFormatter={(label, payload) => (payload[0]?.payload?.fullName as string | undefined) ?? label}
                 />
               }
@@ -159,8 +153,8 @@ export function TeamBarChart({ data, height = 220, labels }: TeamBarChartProps) 
           {chartData.map((m, index) => (
             <tr key={`${m.fullName}-${index}`}>
               <th scope="row">{m.fullName}</th>
-              <td>{m.estimated}h</td>
-              <td>{m.logged}h</td>
+              <td>{t('hours', { value: m.estimated })}</td>
+              <td>{t('hours', { value: m.logged })}</td>
             </tr>
           ))}
         </tbody>

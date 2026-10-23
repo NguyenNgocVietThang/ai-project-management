@@ -1,4 +1,5 @@
 'use client'
+import { useTranslations } from 'next-intl'
 
 import { useRouter } from 'next/navigation'
 import { useNumericParam } from '@/hooks/useNumericParam'
@@ -14,12 +15,13 @@ import { Skeleton, SkeletonRegion } from '@/components/ui/Skeleton'
 import { usePortfolios } from '@/features/portfolios/hooks/usePortfolios'
 import { ProjectForm } from '@/features/projects/components/ProjectForm'
 import { useDeleteProject, useProjectDetail, useUpdateProject } from '@/features/projects/hooks/useProjects'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 import type { ProjectUpdate } from '@/types/project.types'
 
-const HEADER = <SectionHeader title="Project settings" description="Update scope, timeline, budget, methodology, and status." />
-
 export default function ProjectSettingsPage() {
+  const getApiErrorMessage = useApiErrorMessage()
+  const tw = useTranslations('workflowUi')
+  const HEADER = <SectionHeader title={tw('settingsTitle')} description={tw('settingsDescription')} />
   const id = useNumericParam()
   const router = useRouter()
   const [confirmDelete, setConfirmDelete] = useState(false)
@@ -33,7 +35,7 @@ export default function ProjectSettingsPage() {
     return (
       <div className="space-y-8">
         {HEADER}
-        <SkeletonRegion label="Loading settings…" className="space-y-6 rounded-xl border border-border/80 bg-card p-4 shadow-soft sm:p-6">
+        <SkeletonRegion label={tw('loadingSettings')} className="space-y-6 rounded-xl border border-border/80 bg-card p-4 shadow-soft sm:p-6">
           <Skeleton className="h-5 w-40" />
           <div className="grid gap-4 md:grid-cols-2">
             {[0, 1, 2, 3, 4, 5].map((i) => (
@@ -60,7 +62,7 @@ export default function ProjectSettingsPage() {
     return (
       <div className="space-y-8">
         {HEADER}
-        <Alert>You have read-only access to this project. Project PM privileges are required to change settings.</Alert>
+        <Alert>{tw('settingsReadOnly')}</Alert>
       </div>
     )
   }
@@ -73,8 +75,8 @@ export default function ProjectSettingsPage() {
       <Card as="section" aria-labelledby="settings-general">
         <CardHeader className="mb-6">
           <div className="min-w-0">
-            <CardTitle as="h3" id="settings-general">General</CardTitle>
-            <CardDescription>Name, description, portfolio, timeline, budget, methodology and status of the project.</CardDescription>
+            <CardTitle as="h3" id="settings-general">{tw('general')}</CardTitle>
+            <CardDescription>{tw('generalDescription')}</CardDescription>
           </div>
         </CardHeader>
         <ProjectForm
@@ -97,26 +99,26 @@ export default function ProjectSettingsPage() {
                 <AlertTriangle className="h-5 w-5 text-destructive" />
               </span>
               <div className="min-w-0">
-                <CardTitle as="h3" id="settings-danger">Danger zone</CardTitle>
-                <CardDescription>Soft-delete this project. Restore is not available in Phase 1.</CardDescription>
+                <CardTitle as="h3" id="settings-danger">{tw('dangerZone')}</CardTitle>
+                <CardDescription>{tw('deleteDescription')}</CardDescription>
               </div>
             </div>
             <Button variant="destructive" fullWidth={false} className="w-full shrink-0 sm:w-auto" onClick={() => setConfirmDelete(true)}>
               <Trash2 className="h-4 w-4" aria-hidden="true" />
-              Delete project
+              {tw('deleteProject')}
             </Button>
           </div>
         </Card>
       )}
 
-      <Modal open={confirmDelete} onClose={() => setConfirmDelete(false)} title="Delete project" description="The project will disappear for every member." className="max-w-lg">
+      <Modal open={confirmDelete} onClose={() => setConfirmDelete(false)} title={tw('deleteProject')} description={tw('deleteModalDescription')} className="max-w-lg">
         {deleteMutation.isError && <Alert className="mb-4">{getApiErrorMessage(deleteMutation.error)}</Alert>}
         <p className="text-body-sm text-muted-foreground">
-          Delete <strong className="text-foreground">{project.data.name}</strong>?
+          {tw('deleteConfirm', { name: project.data.name })}
         </p>
         <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <Button variant="outline" fullWidth={false} className="w-full sm:w-auto" onClick={() => setConfirmDelete(false)}>
-            Cancel
+            {tw('cancel')}
           </Button>
           <Button
             variant="destructive"
@@ -128,7 +130,7 @@ export default function ProjectSettingsPage() {
               router.push('/projects')
             }}
           >
-            Delete project
+            {tw('deleteProject')}
           </Button>
         </div>
       </Modal>

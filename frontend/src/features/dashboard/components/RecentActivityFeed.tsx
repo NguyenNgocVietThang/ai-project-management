@@ -8,7 +8,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import { vi, enUS } from 'date-fns/locale'
 import { Activity } from 'lucide-react'
 import { Card, CardTitle } from '@/components/ui/Card'
-import { formatStatus } from '@/lib/format'
+import { localizeActivityAction, localizeEntityType, localizeSystemText } from '@/i18n/systemMessages'
 import { cn } from '@/lib/utils'
 import type { RecentActivityItem } from '@/features/dashboard/types/dashboard.types'
 
@@ -32,6 +32,7 @@ function timeAgo(dateStr: string, locale: string): string {
 function ActivityRow({ item }: { item: RecentActivityItem }) {
   const locale = useLocale()
   const t = useTranslations('home')
+  const ts = useTranslations('systemUi')
   const color = ENTITY_COLOR[item.entity_type] ?? 'bg-muted-foreground'
   return (
     <div className="flex gap-3 py-2">
@@ -41,12 +42,12 @@ function ActivityRow({ item }: { item: RecentActivityItem }) {
       </div>
       <div className="min-w-0 pb-2">
         <p className="break-words text-body-sm text-foreground">
-          {item.description || formatStatus(item.action)}
+          {item.description ? localizeSystemText(item.description, ts, locale) : localizeActivityAction(item.action, ts, locale)}
         </p>
         <p className="mt-1 text-caption text-muted-foreground">
           <span className="font-medium">{item.actor_name ?? t('system')}</span>
           {' · '}
-          <span className="capitalize">{item.entity_type}</span>
+          <span className="capitalize">{localizeEntityType(item.entity_type, ts)}</span>
           {' · '}
           {timeAgo(item.created_at, locale)}
         </p>

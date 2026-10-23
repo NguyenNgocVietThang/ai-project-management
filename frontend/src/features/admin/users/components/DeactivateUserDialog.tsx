@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import { Alert } from '@/components/common/Alert'
 import { Button } from '@/components/common/Button'
 import { Modal } from '@/components/common/Modal'
@@ -18,25 +20,24 @@ export function DeactivateUserDialog({
   isLoading: boolean
   error?: string | null
 }) {
+  const tAccount = useTranslations('accountUi')
   return (
     <Modal
       open={Boolean(user)}
       onClose={onClose}
-      title="Deactivate user"
-      description="They immediately lose the ability to sign in. You can reactivate them later."
+      title={tAccount('deactivateUser')}
+      description={tAccount('theyImmediatelyLoseTheAbilityToSignInYouCanReactivateThemLater')}
       className="max-w-lg"
     >
       {error && <Alert className="mb-4">{error}</Alert>}
       <p className="text-body-sm text-muted-foreground">
-        Deactivate <strong className="text-foreground">{user?.full_name}</strong> ({user?.email})?
+         {tAccount('deactivate')} <strong className="text-foreground">{user?.full_name}</strong> ({user?.email})?
       </p>
       <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <Button type="button" variant="outline" className="sm:w-auto" onClick={onClose}>
-          Cancel
-        </Button>
+           {tAccount('cancel')} </Button>
         <Button type="button" variant="destructive" className="sm:w-auto" isLoading={isLoading} onClick={onConfirm}>
-          Deactivate user
-        </Button>
+           {tAccount('deactivateUser')} </Button>
       </div>
     </Modal>
   )

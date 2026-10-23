@@ -1,5 +1,5 @@
 'use client'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 
 import { AlertTriangle, CalendarRange, Clock3 } from 'lucide-react'
 import { useState } from 'react'
@@ -16,7 +16,7 @@ import { useProjectMembers } from '@/features/projects/hooks/useProjectMembers'
 import { useProjectWorklogs, useResourceLeveling } from '@/features/tasks/hooks/useTimesheet'
 import { useNumericParam } from '@/hooks/useNumericParam'
 import { formatDate } from '@/lib/format'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 
 /**
  * Timesheet của dự án và cảnh báo quá tải nhân sự.
@@ -26,6 +26,9 @@ import { getApiErrorMessage } from '@/types/api.types'
  * trong ngăn chi tiết của từng task, và không có cách nào xem tổng hợp.
  */
 export default function TimesheetPage() {
+  const getApiErrorMessage = useApiErrorMessage()
+  const tw = useTranslations('workflowUi')
+  const locale = useLocale()
   const projectId = useNumericParam()
   const [userId, setUserId] = useState('')
   const [startDate, setStartDate] = useState('')
@@ -45,12 +48,12 @@ export default function TimesheetPage() {
   const t = useTranslations('timesheet')
 
   const nameFor = (id: number) =>
-    members.data?.find((member) => member.user.id === id)?.user.full_name ?? `User #${id}`
+    members.data?.find((member) => member.user.id === id)?.user.full_name ?? tw('userFallback', { id })
 
   if (worklogs.isLoading) {
     // Khung xương đúng bố cục thật: bộ lọc, 3 chỉ số, bảng ghi nhận.
     return (
-      <SkeletonRegion label="Loading timesheet…" className="space-y-6">
+      <SkeletonRegion label={tw('loadingTimesheet')} className="space-y-6">
         <Skeleton className="h-7 w-40" />
         <Skeleton className="h-24 w-full rounded-xl" />
         <SkeletonStatGrid count={3} />
@@ -106,12 +109,12 @@ export default function TimesheetPage() {
       </Card>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <Metric icon={<Clock3 className="h-5 w-5" aria-hidden="true" />} label={t('totalHours')} value={`${data?.total_hours.toFixed(1) ?? '0.0'}h`} />
-        <Metric icon={<CalendarRange className="h-5 w-5" aria-hidden="true" />} label={t('entries')} value={String(data?.items.length ?? 0)} />
+        <Metric icon={<Clock3 className="h-5 w-5" aria-hidden="true" />} label={t('totalHours')} value={tw('hoursValue', { hours: new Intl.NumberFormat(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(data?.total_hours ?? 0) })} />
+        <Metric icon={<CalendarRange className="h-5 w-5" aria-hidden="true" />} label={t('entries')} value={new Intl.NumberFormat(locale).format(data?.items.length ?? 0)} />
         <Metric
           icon={<AlertTriangle className="h-5 w-5" aria-hidden="true" />}
           label={t('overloadWarnings')}
-          value={String(warnings.length)}
+          value={new Intl.NumberFormat(locale).format(warnings.length)}
           alert={warnings.length > 0}
         />
       </div>
@@ -126,13 +129,13 @@ export default function TimesheetPage() {
             {warnings.map((warning) => (
               <li key={`${warning.user_id}-${warning.date}-${warning.reason}`} className="flex flex-wrap items-center gap-2">
                 <Badge tone={warning.reason === 'on_leave' ? 'info' : 'warning'} size="sm" dot>
-                  {formatDate(warning.date)}
+                  {formatDate(warning.date, locale)}
                 </Badge>
                 <span>
                   <strong className="font-medium">{nameFor(warning.user_id)}</strong>:{' '}
                   {warning.reason === 'on_leave'
                     ? t('onLeave')
-                    : t('overloaded', { hours: warning.total_hours, max: warning.max_hours })}
+                    : t('overloaded', { hours: new Intl.NumberFormat(locale).format(warning.total_hours), max: new Intl.NumberFormat(locale).format(warning.max_hours) })}
                 </span>
               </li>
             ))}
@@ -164,9 +167,9 @@ export default function TimesheetPage() {
                 <tbody>
                   {data.items.map((item) => (
                     <tr key={item.id} className="border-t transition-colors hover:bg-muted/40">
-                      <td className="whitespace-nowrap px-4 py-3 tabular-nums">{formatDate(item.log_date)}</td>
+                      <td className="whitespace-nowrap px-4 py-3 tabular-nums">{formatDate(item.log_date, locale)}</td>
                       <td className="px-4 py-3">{item.user?.full_name ?? nameFor(item.user_id)}</td>
-                      <td className="px-4 py-3 text-right font-medium tabular-nums">{item.hours.toFixed(2)}</td>
+                      <td className="px-4 py-3 text-right font-medium tabular-nums">{new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(item.hours)}</td>
                       <td className="px-4 py-3 text-muted-foreground">{item.description || '—'}</td>
                     </tr>
                   ))}
@@ -183,7 +186,7 @@ export default function TimesheetPage() {
               {Object.entries(data.by_user).map(([id, hours]) => (
                 <li key={id} className="flex items-center justify-between gap-3 py-2">
                   <span className="min-w-0 truncate">{nameFor(Number(id))}</span>
-                  <span className="font-medium tabular-nums">{hours.toFixed(1)}h</span>
+                  <span className="font-medium tabular-nums">{tw('hoursValue', { hours: new Intl.NumberFormat(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(hours) })}</span>
                 </li>
               ))}
             </ul>

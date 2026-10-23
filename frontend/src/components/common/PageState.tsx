@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslations } from 'next-intl'
 import { AlertCircle, FolderOpen, RotateCcw, type LucideIcon } from 'lucide-react'
 import { Skeleton, SkeletonCard, SkeletonRegion, SkeletonTable, SkeletonText } from '@/components/ui/Skeleton'
 import { Button } from '@/components/common/Button'
@@ -9,9 +12,10 @@ type LoadingVariant = 'inline' | 'cards' | 'table' | 'page'
  * Trạng thái đang tải bằng khung xương thay cho spinner: giữ chỗ đúng bố cục
  * nên nội dung thật xuất hiện không làm nhảy trang. Giữ nguyên API cũ (`label`).
  */
-export function LoadingState({ label = 'Loading…', variant = 'inline', className }: { label?: string; variant?: LoadingVariant; className?: string }) {
+export function LoadingState({ label, variant = 'inline', className }: { label?: string; variant?: LoadingVariant; className?: string }) {
+  const t = useTranslations('common')
   return (
-    <SkeletonRegion label={label} className={cn('w-full', className)}>
+    <SkeletonRegion label={label ?? t('loading')} className={cn('w-full', className)}>
       {variant === 'inline' && (
         <div className="space-y-4 rounded-xl border border-border/80 bg-card p-6 shadow-soft">
           <Skeleton className="h-5 w-1/3" />
@@ -34,7 +38,8 @@ export function LoadingState({ label = 'Loading…', variant = 'inline', classNa
 }
 
 /** Lỗi tải dữ liệu; có nút thử lại khi truyền `onRetry`. */
-export function ErrorState({ message, onRetry, retryLabel = 'Try again' }: { message: string; onRetry?: () => void; retryLabel?: string }) {
+export function ErrorState({ message, onRetry, retryLabel }: { message: string; onRetry?: () => void; retryLabel?: string }) {
+  const t = useTranslations('common')
   return (
     <div role="alert" className="flex min-h-48 flex-col items-center justify-center gap-4 rounded-xl border border-destructive/25 bg-destructive/5 p-8 text-center">
       <span className="flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
@@ -44,7 +49,7 @@ export function ErrorState({ message, onRetry, retryLabel = 'Try again' }: { mes
       {onRetry && (
         <Button variant="outline" fullWidth={false} onClick={onRetry}>
           <RotateCcw className="h-4 w-4" aria-hidden="true" />
-          {retryLabel}
+          {retryLabel ?? t('retry')}
         </Button>
       )}
     </div>

@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import { Button } from '@/components/common/Button'
 import { API_BASE_URL } from '@/services/api'
 
@@ -7,7 +9,8 @@ interface SocialLoginButtonsProps {
   dividerText?: string
 }
 
-export function SocialLoginButtons({ dividerText = 'Or continue with' }: SocialLoginButtonsProps) {
+export function SocialLoginButtons({ dividerText }: SocialLoginButtonsProps) {
+  const tAccount = useTranslations('accountUi')
   const handleGoogleLogin = () => {
     window.location.href = `${API_BASE_URL}/oauth/google/login`
   }
@@ -18,7 +21,7 @@ export function SocialLoginButtons({ dividerText = 'Or continue with' }: SocialL
           nên hiển thị đúng trên cả thẻ kính mờ lẫn nền trong suốt. */}
       <div className="flex items-center gap-3">
         <span className="h-px flex-1 bg-border" aria-hidden="true" />
-        <span className="text-caption text-muted-foreground">{dividerText}</span>
+        <span className="text-caption text-muted-foreground">{dividerText ?? tAccount('orContinueWith')}</span>
         <span className="h-px flex-1 bg-border" aria-hidden="true" />
       </div>
 

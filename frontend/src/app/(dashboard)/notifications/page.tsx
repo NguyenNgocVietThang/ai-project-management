@@ -14,7 +14,7 @@ import {
   useMarkRead,
   useNotifications,
 } from '@/features/notifications/hooks/useNotifications'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 
 const PAGE_SIZE = 25
 
@@ -25,6 +25,7 @@ const PAGE_SIZE = 25
  * xem xa hơn — thông báo cũ hơn thì đơn giản là không truy cập được.
  */
 export default function NotificationsPage() {
+  const getApiErrorMessage = useApiErrorMessage()
   const [page, setPage] = useState(1)
   const [unreadOnly, setUnreadOnly] = useState(false)
   const t = useTranslations('notifications')

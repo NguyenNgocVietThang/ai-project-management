@@ -3,8 +3,9 @@ import type { Metadata } from 'next'
 import { Alert } from '@/components/common/Alert'
 import { LoginForm } from '@/features/auth/components/LoginForm'
 
-export const metadata: Metadata = {
-  title: 'Sign in',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('accountUi')
+  return { title: t('signIn') }
 }
 
 interface LoginPageProps {

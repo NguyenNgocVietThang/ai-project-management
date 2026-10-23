@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { Alert } from '@/components/common/Alert'
@@ -22,6 +24,7 @@ interface RoleFormProps {
 }
 
 export function RoleForm({ role, onSubmit, onCancel, isLoading, error }: RoleFormProps) {
+  const tAccount = useTranslations('accountUi')
   const permissionsQuery = usePermissionCatalog()
   const {
     register,
@@ -69,20 +72,20 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading, error }: RoleFor
     >
       {error && <Alert>{error}</Alert>}
       {isProtected && (
-        <Alert variant="success">The built-in &quot;Admin&quot; role always has every permission and cannot be renamed.</Alert>
+        <Alert variant="success"> {tAccount('theBuiltInAdminRoleAlwaysHasEveryPermissionAndCannotBeRenamed')} </Alert>
       )}
       <div>
-        <Label htmlFor="role-name">Name</Label>
+        <Label htmlFor="role-name"> {tAccount('name')} </Label>
         <Input
           id="role-name"
           disabled={isProtected}
           hasError={Boolean(errors.name)}
           {...register('name')}
         />
-        {errors.name && <p id="role-name-error" role="alert" className="mt-1 text-body-sm text-destructive">{errors.name.message}</p>}
+        {errors.name && <p id="role-name-error" role="alert" className="mt-1 text-body-sm text-destructive">{errors.name.message && tAccount(errors.name.message)}</p>}
       </div>
       <div>
-        <Label htmlFor="role-description">Description</Label>
+        <Label htmlFor="role-description"> {tAccount('description')} </Label>
         <textarea
           id="role-description"
           rows={3}
@@ -91,9 +94,9 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading, error }: RoleFor
         />
       </div>
       <div>
-        <Label>Permissions</Label>
+        <Label> {tAccount('permissions')} </Label>
         {permissionsQuery.isLoading && (
-          <SkeletonRegion label="Loading permissions…" className="mb-3">
+          <SkeletonRegion label={tAccount('loadingPermissions')} className="mb-3">
             <SkeletonText lines={3} />
           </SkeletonRegion>
         )}
@@ -103,7 +106,7 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading, error }: RoleFor
             .map(([resource, permissions]) => (
               <div key={resource}>
                 <p className="mb-2 text-overline uppercase text-muted-foreground">
-                  {resource}
+                  {tAccount.has(`resources.${resource}`) ? tAccount(`resources.${resource}`) : resource}
                 </p>
                 <div className="grid gap-1 sm:grid-cols-2">
                   {permissions.map((permission) => (
@@ -115,7 +118,7 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading, error }: RoleFor
                         checked={isProtected || selected.includes(permission.id)}
                         onChange={() => toggle(permission.id)}
                       />
-                      {permission.action}
+                      {tAccount.has(`permissionActions.${permission.action}`) ? tAccount(`permissionActions.${permission.action}`) : permission.action}
                     </label>
                   ))}
                 </div>
@@ -125,10 +128,9 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading, error }: RoleFor
       </div>
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <Button type="button" variant="outline" className="sm:w-auto" onClick={onCancel}>
-          Cancel
-        </Button>
+           {tAccount('cancel')} </Button>
         <Button type="submit" isLoading={isLoading} className="sm:w-auto">
-          {role ? 'Save changes' : 'Create role'}
+          {role ? tAccount('saveChanges') : tAccount('createRole')}
         </Button>
       </div>
     </form>

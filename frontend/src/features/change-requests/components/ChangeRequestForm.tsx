@@ -1,4 +1,5 @@
 'use client'
+import { useTranslations } from 'next-intl'
 
 import { useId, useState } from 'react'
 import { Alert } from '@/components/common/Alert'
@@ -8,7 +9,7 @@ import { Label } from '@/components/common/Label'
 import { Modal } from '@/components/common/Modal'
 import { useCreateChangeRequest } from '@/features/change-requests/hooks/useChangeRequests'
 import type { ChangeRequest } from '@/types/change-request.types'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 
 // Ô nhập nhiều dòng cùng kiểu với Input (bo 8px, viền input, focus ring).
 const TEXTAREA_CLASSES =
@@ -25,6 +26,8 @@ export function ChangeRequestForm({
   onClose: () => void
   onCreated: (item: ChangeRequest) => void
 }) {
+  const getApiErrorMessage = useApiErrorMessage()
+  const tw = useTranslations('workflowUi')
   const titleId = useId()
   const descriptionId = useId()
   const reasonId = useId()
@@ -72,14 +75,14 @@ export function ChangeRequestForm({
     <Modal
       open={open}
       onClose={close}
-      title="New change request"
-      description="Describe the proposed change — you can run an AI impact analysis on it afterwards."
+      title={tw('newChangeRequest')}
+      description={tw('changeRequestFormDescription')}
     >
       <form onSubmit={submit} className="space-y-4">
         {createMutation.isError && <Alert>{getApiErrorMessage(createMutation.error)}</Alert>}
 
         <div>
-          <Label htmlFor={titleId}>Title</Label>
+          <Label htmlFor={titleId}>{tw('title')}</Label>
           <Input
             id={titleId}
             required
@@ -91,7 +94,7 @@ export function ChangeRequestForm({
         </div>
 
         <div>
-          <Label htmlFor={descriptionId}>Description</Label>
+          <Label htmlFor={descriptionId}>{tw('description')}</Label>
           <textarea
             id={descriptionId}
             rows={4}
@@ -103,7 +106,7 @@ export function ChangeRequestForm({
         </div>
 
         <div>
-          <Label htmlFor={reasonId}>Reason (optional)</Label>
+          <Label htmlFor={reasonId}>{tw('reasonOptional')}</Label>
           <textarea
             id={reasonId}
             rows={2}
@@ -114,7 +117,7 @@ export function ChangeRequestForm({
         </div>
 
         <div>
-          <Label htmlFor={impactId}>Impact description (optional)</Label>
+          <Label htmlFor={impactId}>{tw('impactOptional')}</Label>
           <textarea
             id={impactId}
             rows={2}
@@ -126,10 +129,10 @@ export function ChangeRequestForm({
 
         <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
           <Button type="button" variant="outline" fullWidth={false} className="w-full sm:w-auto" onClick={close}>
-            Cancel
+            {tw('cancel')}
           </Button>
           <Button type="submit" fullWidth={false} className="w-full sm:w-auto" isLoading={createMutation.isPending}>
-            Create
+            {tw('create')}
           </Button>
         </div>
       </form>

@@ -8,13 +8,14 @@
  * "Đề xuất nhân sự" để tránh card lồng card. */
 import { Sparkles, User as UserIcon } from 'lucide-react'
 import { useState } from 'react'
+import { useLocale, useTranslations } from 'next-intl'
 import { Alert } from '@/components/common/Alert'
 import { Button } from '@/components/common/Button'
 import { Badge } from '@/components/ui/Badge'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { formatMoney } from '@/lib/format'
 import { cn } from '@/lib/utils'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 import { JobConnectionNotice } from '@/features/jobs/components/JobConnectionNotice'
 import {
   useRequestResourceRecommendation,
@@ -29,6 +30,9 @@ export interface ResourceRecommendationPanelProps {
 }
 
 export function ResourceRecommendationPanel({ taskId, taskLabel, className }: ResourceRecommendationPanelProps) {
+  const t = useTranslations('insightsUi')
+  const locale = useLocale()
+  const getApiErrorMessage = useApiErrorMessage()
   const [jobId, setJobId] = useState<string | null>(null)
   const requestMutation = useRequestResourceRecommendation()
   const job = useResourceRecommendationJob(jobId)
@@ -51,7 +55,7 @@ export function ResourceRecommendationPanel({ taskId, taskLabel, className }: Re
     <div className={cn('space-y-4 rounded-xl border bg-muted/30 p-4', className)}>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
-          <h4 className="text-overline uppercase text-muted-foreground">Suggest assignees</h4>
+          <h4 className="text-overline uppercase text-muted-foreground">{t('suggestAssignees')}</h4>
           {taskLabel && <p className="mt-1 break-words text-body-sm font-medium text-foreground">{taskLabel}</p>}
         </div>
         <Button
@@ -63,13 +67,13 @@ export function ResourceRecommendationPanel({ taskId, taskLabel, className }: Re
           disabled={busy}
         >
           {!busy && <Sparkles className="h-4 w-4" aria-hidden="true" />}
-          Suggest assignees
+          {t('suggestAssignees')}
         </Button>
       </div>
 
       {isFailed && (
         <Alert>
-          {job.data?.error ?? getApiErrorMessage(requestMutation.error, 'AI resource recommendation failed.')}
+          {job.data?.error ? getApiErrorMessage({ message: job.data.error }, t('resourceFailed')) : getApiErrorMessage(requestMutation.error, t('resourceFailed'))}
         </Alert>
       )}
 
@@ -78,7 +82,7 @@ export function ResourceRecommendationPanel({ taskId, taskLabel, className }: Re
         // Khung xương có hình dạng danh sách ứng viên (hạng, tên, thanh điểm phù hợp).
         <div role="status" className="space-y-3">
           <p className="text-body-sm text-muted-foreground">
-            {job.data?.status === 'PROCESSING' ? 'AI is ranking candidates…' : 'Queued…'}
+            {t(job.data?.status === 'PROCESSING' ? 'rankingCandidates' : 'queued')}
           </p>
           <div aria-hidden="true" className="space-y-2">
             {[0, 1, 2].map((i) => (
@@ -118,7 +122,7 @@ export function ResourceRecommendationPanel({ taskId, taskLabel, className }: Re
                     </div>
                   </div>
                   <div className="flex shrink-0 flex-col items-end gap-1">
-                    {item.on_leave && <Badge tone="warning" size="sm">On leave</Badge>}
+                    {item.on_leave && <Badge tone="warning" size="sm">{t('onLeave')}</Badge>}
                     <span className="text-h4 tabular-nums text-foreground">{Math.round(item.fit_score)}%</span>
                   </div>
                 </div>
@@ -133,8 +137,8 @@ export function ResourceRecommendationPanel({ taskId, taskLabel, className }: Re
                 {item.reason && <p className="mt-2 text-caption text-muted-foreground">{item.reason}</p>}
 
                 <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-caption text-muted-foreground">
-                  <span>Workload: {item.current_workload_hours}h</span>
-                  <span>Rate: {formatMoney(item.hourly_rate)}</span>
+                  <span>{t('workload', { hours: item.current_workload_hours })}</span>
+                  <span>{t('hourlyRate', { amount: formatMoney(item.hourly_rate, 'VND', locale) })}</span>
                 </div>
               </li>
             ))}

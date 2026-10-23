@@ -1,6 +1,6 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
 import { GitCompare, History, RotateCcw, Save } from 'lucide-react'
 import { Button } from '@/components/common/Button'
@@ -18,7 +18,7 @@ import { RollbackDialog } from '@/features/versions/components/RollbackDialog'
 import { VersionDiffView } from '@/features/versions/components/VersionDiffView'
 import { useCreateBaseline, useProjectVersions, useVersionDiff } from '@/features/versions/hooks/useVersions'
 import type { DiffTarget, ProjectVersion } from '@/features/versions/types'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 
 const KNOWN_KINDS = ['manual_baseline', 'change_request_approved', 'pre_rollback', 'rollback'] as const
 
@@ -26,12 +26,14 @@ const KNOWN_KINDS = ['manual_baseline', 'change_request_approved', 'pre_rollback
 // để giữ đúng một CTA chính trên trang.
 const TOGGLE_ON = 'border-primary/50 bg-accent text-accent-foreground'
 
-function formatDateTime(value: string) {
+function formatDateTime(value: string, locale: string) {
   const date = new Date(value)
-  return Number.isNaN(date.getTime()) ? value : date.toLocaleString()
+  return Number.isNaN(date.getTime()) ? value : date.toLocaleString(locale)
 }
 
 export default function VersionsPage() {
+  const locale = useLocale()
+  const getApiErrorMessage = useApiErrorMessage()
   const projectId = useNumericParam()
   const t = useTranslations('versions')
   const tc = useTranslations('common')
@@ -141,7 +143,7 @@ export default function VersionsPage() {
                       {version.is_baseline && <Badge tone="primary" size="sm">{t('baseline')}</Badge>}
                     </div>
                     <p className="mt-1 text-caption text-muted-foreground">
-                      {kindLabel(version.kind)} · {formatDateTime(version.created_at)}
+                      {kindLabel(version.kind)} · {formatDateTime(version.created_at, locale)}
                       {version.change_request_id !== null && <> · {t('relatedCr', { id: version.change_request_id })}</>}
                     </p>
                     <div className="mt-3 flex flex-wrap gap-2">

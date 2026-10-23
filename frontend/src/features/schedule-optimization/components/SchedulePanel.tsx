@@ -3,6 +3,7 @@
 // SOP-AI-003: panel tối ưu lịch trình bằng AI (fast-track / crash / cân bằng workload). Nhận
 // `tasks` từ component cha để tra tên task theo task_id.
 import { useId, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { CalendarClock, Sparkles } from 'lucide-react'
 import { Alert } from '@/components/common/Alert'
 import { Button } from '@/components/common/Button'
@@ -15,21 +16,9 @@ import {
   useOptimizeSchedule,
   useScheduleOptimizationJob,
 } from '@/features/schedule-optimization/hooks/useScheduleOptimization'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 import { JobConnectionNotice } from '@/features/jobs/components/JobConnectionNotice'
 import type { ScheduleSuggestion } from '@/types/schedule-optimization.types'
-
-const STATUS_LABEL: Record<string, string> = {
-  PENDING: 'Đang xếp hàng…',
-  PROCESSING: 'AI đang phân tích lịch trình…',
-}
-
-const ACTION_LABEL: Record<ScheduleSuggestion['action'], string> = {
-  CRASH: 'Rút ngắn (Crash)',
-  FAST_TRACK: 'Chạy song song (Fast-track)',
-  REASSIGN: 'Phân công lại',
-  OTHER: 'Khác',
-}
 
 // Loại hành động -> tông Badge (token ngữ nghĩa).
 const ACTION_TONE: Record<ScheduleSuggestion['action'], BadgeTone> = {
@@ -58,6 +47,8 @@ export interface SchedulePanelProps {
  * xương khi đang chạy, và bảng đề xuất khi có kết quả. PM xem xét rồi tự áp dụng thủ công
  * qua các API chỉnh sửa task đã có — panel này không ghi gì cả. */
 export function SchedulePanel({ projectId, tasks = [], className }: SchedulePanelProps) {
+  const t = useTranslations('insightsUi')
+  const getApiErrorMessage = useApiErrorMessage()
   const constraintsId = useId()
   const [constraintsText, setConstraintsText] = useState('')
   const [jobId, setJobId] = useState<string | null>(null)
@@ -95,11 +86,9 @@ export function SchedulePanel({ projectId, tasks = [], className }: SchedulePane
             <CalendarClock className="h-5 w-5 text-accent-foreground" />
           </span>
           <div className="min-w-0">
-            <CardTitle as="h3" id={`${constraintsId}-title`}>Tối ưu lịch trình bằng AI</CardTitle>
+            <CardTitle as="h3" id={`${constraintsId}-title`}>{t('scheduleTitle')}</CardTitle>
             <CardDescription>
-              AI đề xuất rút ngắn (crash), chạy song song (fast-track) hoặc phân công lại dựa trên
-              đường găng (CPM) hiện tại của dự án. Đây chỉ là gợi ý tham khảo — bạn xem xét và tự áp
-              dụng qua các màn hình chỉnh sửa task như bình thường.
+              {t('scheduleDescription')}
             </CardDescription>
           </div>
         </div>
@@ -110,19 +99,19 @@ export function SchedulePanel({ projectId, tasks = [], className }: SchedulePane
           <div className="space-y-4">
             {optimizeMutation.isError && <Alert>{getApiErrorMessage(optimizeMutation.error)}</Alert>}
             <div>
-              <Label htmlFor={constraintsId}>Ràng buộc bổ sung (tuỳ chọn)</Label>
+              <Label htmlFor={constraintsId}>{t('constraints')}</Label>
               <textarea
                 id={constraintsId}
                 rows={3}
                 value={constraintsText}
                 onChange={(event) => setConstraintsText(event.target.value)}
-                placeholder="Ví dụ: không được rút ngắn giai đoạn kiểm thử, ưu tiên giữ nguyên nhóm backend"
+                placeholder={t('constraintsPlaceholder')}
                 className={TEXTAREA_CLASSES}
               />
             </div>
             <Button type="button" fullWidth={false} className="w-full sm:w-auto" isLoading={optimizeMutation.isPending} onClick={() => void run()}>
               {!optimizeMutation.isPending && <Sparkles className="h-4 w-4" aria-hidden="true" />}
-              Chạy tối ưu lịch trình
+              {t('optimizeSchedule')}
             </Button>
           </div>
         )}
@@ -131,7 +120,7 @@ export function SchedulePanel({ projectId, tasks = [], className }: SchedulePane
           <div className="space-y-3">
             <JobConnectionNotice error={job.error} />
             <Button type="button" variant="outline" fullWidth={false} className="w-full sm:w-auto" isLoading={job.isFetching} onClick={() => void job.refetch()}>
-              Thử kiểm tra lại
+              {t('checkAgain')}
             </Button>
           </div>
         )}
@@ -139,7 +128,7 @@ export function SchedulePanel({ projectId, tasks = [], className }: SchedulePane
         {jobId && !job.isError && isRunning && (
           // Khung xương có hình dạng kết quả: thông báo tóm tắt + bảng đề xuất.
           <div role="status" className="space-y-4">
-            <p className="text-body-sm text-muted-foreground">{STATUS_LABEL[job.data?.status ?? 'PENDING']}</p>
+            <p className="text-body-sm text-muted-foreground">{t(job.data?.status === 'PROCESSING' ? 'scheduleProcessing' : 'queued')}</p>
             <div aria-hidden="true" className="space-y-3">
               <Skeleton className="h-12 w-full" />
               <SkeletonText lines={4} />
@@ -149,9 +138,9 @@ export function SchedulePanel({ projectId, tasks = [], className }: SchedulePane
 
         {jobId && job.data?.status === 'FAILED' && (
           <div className="space-y-3">
-            <Alert>{job.data.error ?? 'Tối ưu lịch trình bằng AI thất bại.'}</Alert>
+            <Alert>{getApiErrorMessage({ message: job.data.error }, t('scheduleFailed'))}</Alert>
             <Button type="button" variant="outline" fullWidth={false} className="w-full sm:w-auto" onClick={reset}>
-              Thử lại
+              {t('retry')}
             </Button>
           </div>
         )}
@@ -159,15 +148,15 @@ export function SchedulePanel({ projectId, tasks = [], className }: SchedulePane
         {jobId && job.data?.status === 'COMPLETED' && result && (
           <div className="space-y-4 animate-fade-up">
             <Alert variant="success">
-              {result.summary || 'Đã có đề xuất tối ưu lịch trình.'}
+              {result.summary || t('scheduleReady')}
               {result.estimated_days_saved > 0 && (
-                <> Ước tính tiết kiệm khoảng {result.estimated_days_saved} ngày nếu áp dụng toàn bộ.</>
+                <> {t('daysSaved', { days: result.estimated_days_saved })}</>
               )}
             </Alert>
 
             {result.suggestions.length === 0 ? (
               <p className="text-body-sm text-muted-foreground">
-                AI không tìm thấy đề xuất nào phù hợp cho lịch trình hiện tại.
+                {t('scheduleEmpty')}
               </p>
             ) : (
               // Bảng tự cuộn ngang trong khung, trang không bị cuộn ngang trên mobile.
@@ -176,20 +165,20 @@ export function SchedulePanel({ projectId, tasks = [], className }: SchedulePane
                   <table className="w-full min-w-[560px] text-left text-body-sm">
                     <thead className="bg-muted/50 text-caption uppercase text-muted-foreground">
                       <tr>
-                        <th className="px-4 py-3 font-medium">Task</th>
-                        <th className="px-4 py-3 font-medium">Hành động</th>
-                        <th className="px-4 py-3 font-medium">Chi tiết</th>
-                        <th className="px-4 py-3 text-right font-medium">Ngày tiết kiệm</th>
+                        <th className="px-4 py-3 font-medium">{t('task')}</th>
+                        <th className="px-4 py-3 font-medium">{t('action')}</th>
+                        <th className="px-4 py-3 font-medium">{t('details')}</th>
+                        <th className="px-4 py-3 text-right font-medium">{t('daysSavedColumn')}</th>
                       </tr>
                     </thead>
                     <tbody>
                       {result.suggestions.map((suggestion, index) => (
                         <tr key={`${suggestion.task_id}-${index}`} className="border-t transition-colors hover:bg-muted/40">
                           <td className="px-4 py-3 align-top font-medium text-foreground">
-                            {taskNameById.get(suggestion.task_id) ?? `Task #${suggestion.task_id}`}
+                            {taskNameById.get(suggestion.task_id) ?? t('taskId', { id: suggestion.task_id })}
                           </td>
                           <td className="px-4 py-3 align-top">
-                            <Badge tone={ACTION_TONE[suggestion.action]} size="sm">{ACTION_LABEL[suggestion.action]}</Badge>
+                            <Badge tone={ACTION_TONE[suggestion.action]} size="sm">{t(`scheduleAction.${suggestion.action}`)}</Badge>
                           </td>
                           <td className="px-4 py-3 align-top text-muted-foreground">{suggestion.detail}</td>
                           <td className="px-4 py-3 text-right align-top tabular-nums">{suggestion.estimated_days_saved}</td>
@@ -203,7 +192,7 @@ export function SchedulePanel({ projectId, tasks = [], className }: SchedulePane
 
             <div className="flex justify-end">
               <Button type="button" variant="outline" fullWidth={false} className="w-full sm:w-auto" onClick={reset}>
-                Chạy lại
+                {t('runAgain')}
               </Button>
             </div>
           </div>

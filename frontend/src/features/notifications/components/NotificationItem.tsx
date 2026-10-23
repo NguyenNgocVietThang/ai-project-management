@@ -1,6 +1,10 @@
 'use client'
 
+import { useLocale, useTranslations } from 'next-intl'
+
 import { formatDistanceToNow, parseISO } from 'date-fns'
+import { enUS, vi } from 'date-fns/locale'
+import { localizeSystemText } from '@/i18n/systemMessages'
 import {
   AlertTriangle,
   Bell,
@@ -55,9 +59,12 @@ const TYPE_META: Record<NotificationType, { Icon: LucideIcon; tone: keyof typeof
 const ACTION_BUTTON = buttonClasses({ variant: 'ghost', size: 'icon', className: 'h-8 w-8 text-muted-foreground' })
 
 export function NotificationItem({ notification, onMarkRead, onDelete }: Props) {
+  const tw = useTranslations('workspaceUi')
+  const locale = useLocale()
+  const ts = useTranslations('systemUi')
   const meta = TYPE_META[notification.notification_type] ?? TYPE_META.SYSTEM
   const { Icon } = meta
-  const timeAgo = formatDistanceToNow(parseISO(notification.created_at), { addSuffix: true })
+  const timeAgo = formatDistanceToNow(parseISO(notification.created_at), { addSuffix: true, locale: locale === 'vi' ? vi : enUS })
   const unread = !notification.is_read
 
   const inner = (
@@ -87,7 +94,7 @@ export function NotificationItem({ notification, onMarkRead, onDelete }: Props) 
               unread ? 'font-semibold text-foreground' : 'text-muted-foreground'
             )}
           >
-            {notification.title}
+            {localizeSystemText(notification.title, ts, locale)}
           </p>
           {/* focus-within cùng với group-hover: nếu chỉ ẩn theo hover thì người
               dùng bàn phím không bao giờ nhìn thấy các nút này, dù vẫn tab tới được. */}
@@ -101,8 +108,8 @@ export function NotificationItem({ notification, onMarkRead, onDelete }: Props) 
                   onMarkRead(notification.id)
                 }}
                 className={ACTION_BUTTON}
-                title="Mark as read"
-                aria-label="Mark as read"
+                title={tw('markAsRead')}
+                aria-label={tw('markAsRead')}
               >
                 <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
               </button>
@@ -116,15 +123,15 @@ export function NotificationItem({ notification, onMarkRead, onDelete }: Props) 
                   onDelete(notification.id)
                 }}
                 className={cn(ACTION_BUTTON, 'hover:bg-destructive/10 hover:text-destructive')}
-                title="Delete"
-                aria-label="Delete"
+                title={tw('delete')}
+                aria-label={tw('delete')}
               >
                 <X className="h-4 w-4" aria-hidden="true" />
               </button>
             )}
           </div>
         </div>
-        <p className="mt-1 line-clamp-2 text-caption text-muted-foreground">{notification.message}</p>
+        <p className="mt-1 line-clamp-2 text-caption text-muted-foreground">{localizeSystemText(notification.message, ts, locale)}</p>
         <p className="mt-1 text-caption text-muted-foreground/80">{timeAgo}</p>
       </div>
     </div>

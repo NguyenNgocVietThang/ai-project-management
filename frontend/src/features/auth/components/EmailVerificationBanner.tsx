@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import { MailWarning } from 'lucide-react'
 import { Alert } from '@/components/common/Alert'
 import { Button } from '@/components/common/Button'
@@ -20,6 +22,7 @@ export function EmailVerificationBanner({
   successMessage,
   errorMessage,
 }: EmailVerificationBannerProps) {
+  const tAccount = useTranslations('accountUi')
   const handleResend = async () => {
     try {
       await onResend()
@@ -41,12 +44,9 @@ export function EmailVerificationBanner({
           </span>
           <div className="min-w-0">
             <h2 id="email-verification-title" className="text-body font-semibold text-foreground">
-              Verify your email address
-            </h2>
+               {tAccount('verifyYourEmailAddress')} </h2>
             <p className="mt-1 max-w-prose-ui break-words text-body-sm text-muted-foreground">
-              We sent a verification link to {email}. You can continue using your account while
-              you verify it.
-            </p>
+               {tAccount('weSentAVerificationLinkTo')} {email} {tAccount('youCanContinueUsingYourAccountWhileYouVerifyIt')} </p>
           </div>
         </div>
         <Button
@@ -56,14 +56,13 @@ export function EmailVerificationBanner({
           isLoading={isResending}
           onClick={handleResend}
         >
-          {isResending ? 'Sending…' : 'Resend email'}
+          {isResending ? tAccount('sending') : tAccount('resendEmail')}
         </Button>
       </div>
 
       {successMessage && (
         <Alert variant="success" className="mt-4">
-          {successMessage}. Check your inbox for the new link.
-        </Alert>
+          {tAccount('verificationSent')} </Alert>
       )}
       {errorMessage && <Alert className="mt-4">{errorMessage}</Alert>}
     </section>

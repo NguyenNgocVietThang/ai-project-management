@@ -2,14 +2,19 @@
 
 import { QueryClient, QueryClientProvider, MutationCache } from '@tanstack/react-query'
 import { useState } from 'react'
-import { Toaster } from 'sonner'
+import { Toaster, toast } from 'sonner'
 import { ThemeProvider, useTheme } from '@/components/theme/ThemeProvider'
-import { notifyError } from '@/lib/notify'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 import { AppBackground } from '@/components/background/AppBackground'
 
 function ThemedToaster() {
   const { resolved } = useTheme()
   return <Toaster theme={resolved} position="top-right" richColors closeButton />
+}
+
+function MutationError({ error, fallback }: { error: unknown; fallback?: string }) {
+  const message = useApiErrorMessage()
+  return <>{message(error, fallback)}</>
 }
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -21,7 +26,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         mutationCache: new MutationCache({
           onError: (error, _variables, _context, mutation) => {
             if (mutation.meta?.silent) return
-            notifyError(error, mutation.meta?.errorMessage as string | undefined)
+            toast.error(<MutationError error={error} fallback={mutation.meta?.errorMessage as string | undefined} />)
           },
         }),
         defaultOptions: {

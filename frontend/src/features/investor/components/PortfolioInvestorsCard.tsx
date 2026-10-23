@@ -8,12 +8,13 @@ import { Input } from '@/components/common/Input'
 import { Label } from '@/components/common/Label'
 import { Modal } from '@/components/common/Modal'
 import { Card, CardHeader, CardTitle } from '@/components/ui/Card'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 import { useGrantInvestor, usePortfolioInvestors, useRevokeInvestor } from '../hooks/useInvestor'
 import type { InvestorGrant } from '../types/investor.types'
 
 /** Chủ portfolio hoặc admin cấp/thu hồi quyền xem chỉ đọc cho nhà đầu tư. */
 export function PortfolioInvestorsCard({ portfolioId }: { portfolioId: number }) {
+  const getApiErrorMessage = useApiErrorMessage()
   const t = useTranslations('investor.grants')
   const format = useFormatter()
   const grants = usePortfolioInvestors(portfolioId, true)

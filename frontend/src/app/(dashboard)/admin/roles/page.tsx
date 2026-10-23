@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/common/Button'
@@ -10,10 +12,12 @@ import { DeleteRoleDialog } from '@/features/admin/roles/components/DeleteRoleDi
 import { RoleForm } from '@/features/admin/roles/components/RoleForm'
 import { RoleTable } from '@/features/admin/roles/components/RoleTable'
 import { useAdminRoles, useCreateRole, useDeleteRole, useUpdateRole } from '@/features/admin/roles/hooks/useAdminRoles'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 import type { Role, RoleCreate, RoleUpdate } from '@/types/admin.types'
 
 export default function AdminRolesPage() {
+  const getApiErrorMessage = useApiErrorMessage()
+  const tAccount = useTranslations('accountUi')
   const [creating, setCreating] = useState(false)
   const [editing, setEditing] = useState<Role | null>(null)
   const [deleting, setDeleting] = useState<Role | null>(null)
@@ -26,18 +30,17 @@ export default function AdminRolesPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        eyebrow="Admin"
-        title="Roles & permissions"
-        description="Compose roles from the fixed permission catalog and see who holds each one."
+        eyebrow={tAccount('admin')}
+        title={tAccount('rolesPermissionsLabel')}
+        description={tAccount('composeRolesFromTheFixedPermissionCatalogAndSeeWhoHoldsEachOne')}
         actions={
           <Button fullWidth={false} onClick={() => setCreating(true)}>
             <Plus className="h-4 w-4" aria-hidden="true" />
-            New role
-          </Button>
+             {tAccount('newRole')} </Button>
         }
       />
 
-      {query.isLoading && <LoadingState variant="table" label="Loading roles…" />}
+      {query.isLoading && <LoadingState variant="table" label={tAccount('loadingRoles')} />}
       {query.isError && (
         <ErrorState message={getApiErrorMessage(query.error)} onRetry={() => void query.refetch()} />
       )}
@@ -49,8 +52,7 @@ export default function AdminRolesPage() {
           emptyAction={
             <Button fullWidth={false} onClick={() => setCreating(true)}>
               <Plus className="h-4 w-4" aria-hidden="true" />
-              New role
-            </Button>
+               {tAccount('newRole')} </Button>
           }
         />
       )}
@@ -58,8 +60,8 @@ export default function AdminRolesPage() {
       <Modal
         open={creating}
         onClose={() => setCreating(false)}
-        title="New role"
-        description="Name the role and choose which permissions it grants."
+        title={tAccount('newRole')}
+        description={tAccount('nameTheRoleAndChooseWhichPermissionsItGrants')}
       >
         <RoleForm
           onCancel={() => setCreating(false)}
@@ -75,8 +77,8 @@ export default function AdminRolesPage() {
       <Modal
         open={Boolean(editing)}
         onClose={() => setEditing(null)}
-        title="Edit role"
-        description="Update the role name, description, or permission set."
+        title={tAccount('editRole')}
+        description={tAccount('updateTheRoleNameDescriptionOrPermissionSet')}
       >
         {editing && (
           <RoleForm

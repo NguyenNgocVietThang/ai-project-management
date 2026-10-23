@@ -7,6 +7,7 @@
  * Có bảng sr-only để thông tin không chỉ nằm trong hình.
  */
 import { useId, useMemo } from 'react'
+import { useLocale, useTranslations } from 'next-intl'
 import {
   Area,
   CartesianGrid,
@@ -42,33 +43,27 @@ export interface BurndownChartLabels {
 interface BurndownChartProps {
   data: BurndownPoint[]
   height?: number
-  /** Chuỗi hiển thị; bỏ trống thì dùng tiếng Anh mặc định (giữ tương thích). */
+  /** Ghi đè nhãn; mặc định theo ngôn ngữ đang chọn. */
   labels?: Partial<BurndownChartLabels>
 }
 
-const DEFAULT_LABELS: BurndownChartLabels = {
-  ideal: 'Ideal',
-  remaining: 'Remaining',
-  date: 'Date',
-  empty: 'No burndown data',
-  summary: 'Burndown: remaining tasks versus the ideal line by day',
-}
-
-function formatDate(dateStr: string): string {
+function formatDate(dateStr: string, locale: string): string {
   const d = new Date(dateStr)
   if (Number.isNaN(d.getTime())) return dateStr
-  return `${d.getMonth() + 1}/${d.getDate()}`
+  return new Intl.DateTimeFormat(locale, { month: 'numeric', day: 'numeric', timeZone: 'UTC' }).format(d)
 }
 
 export function BurndownChart({ data, height = 260, labels }: BurndownChartProps) {
-  const text = { ...DEFAULT_LABELS, ...labels }
+  const locale = useLocale()
+  const t = useTranslations('chartsUi')
+  const text = { ideal: t('ideal'), remaining: t('remaining'), date: t('date'), empty: t('burndownEmpty'), summary: t('burndownSummary'), ...labels }
   const reducedMotion = usePrefersReducedMotion()
   // useId trả về dạng ":r0:"; bỏ ký tự đặc biệt để dùng trong url(#...).
   const gradientId = `burndown-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
   // Giữ nguyên tham chiếu mảng để render lại không kích hoạt lại animation vào.
   const chartData = useMemo(
-    () => (data ?? []).map((p) => ({ ...p, dateLabel: formatDate(p.date) })),
-    [data]
+    () => (data ?? []).map((p) => ({ ...p, dateLabel: formatDate(p.date, locale) })),
+    [data, locale]
   )
 
   if (!data || data.length === 0) {
@@ -141,7 +136,7 @@ export function BurndownChart({ data, height = 260, labels }: BurndownChartProps
         <tbody>
           {chartData.map((p) => (
             <tr key={p.date}>
-              <th scope="row">{p.date}</th>
+              <th scope="row">{p.dateLabel}</th>
               <td>{p.remaining}</td>
               <td>{p.ideal}</td>
             </tr>

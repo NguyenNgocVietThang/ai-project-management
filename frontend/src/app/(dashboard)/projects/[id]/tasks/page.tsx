@@ -1,5 +1,6 @@
 'use client'
-import { useTranslations } from 'next-intl'
+
+import { useLocale, useTranslations } from 'next-intl'
 
 import { useMemo, useState } from 'react'
 import {
@@ -37,7 +38,7 @@ import { MobileTaskList } from '@/features/tasks/components/MobileTaskList'
 import { useProjectMembers } from '@/features/projects/hooks/useProjectMembers'
 import { useProjectDetail } from '@/features/projects/hooks/useProjects'
 import { formatDate, formatStatus } from '@/lib/format'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 import type { Task, TaskCreate, TaskPriority, TaskStatus } from '@/types/task.types'
 
 const STATUSES: TaskStatus[] = ['TODO', 'IN_PROGRESS', 'IN_REVIEW', 'DONE', 'BLOCKED']
@@ -47,6 +48,8 @@ const STATUS_TONE: Record<TaskStatus, BadgeTone> = { TODO: 'neutral', IN_PROGRES
 const PRIORITY_TONE: Record<TaskPriority, BadgeTone> = { LOW: 'neutral', MEDIUM: 'info', HIGH: 'warning', CRITICAL: 'danger' }
 
 export default function TasksPage() {
+  const locale = useLocale()
+  const getApiErrorMessage = useApiErrorMessage()
   const projectId = useNumericParam()
   const { filters, queryFilters, view, mobile, setFilter, changePage: navigatePage, changeView: navigateView, reset } = useTaskListState()
   const [selectedTask, setSelectedTask] = useState<number | null>(null)
@@ -78,7 +81,7 @@ export default function TasksPage() {
     {timer.data && <div role="status" className="flex flex-col gap-3 rounded-xl border border-primary/30 bg-accent p-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-3">
         <span className="relative flex h-3 w-3" aria-hidden="true"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75 motion-reduce:animate-none" /><span className="relative inline-flex h-3 w-3 rounded-full bg-primary" /></span>
-        <div><strong className="text-body-sm font-semibold text-accent-foreground">{t('timerRunning')}</strong><p className="text-caption tabular-nums text-muted-foreground">{t('timerStarted', { time: timer.data.start_time ? new Date(timer.data.start_time).toLocaleTimeString() : '', id: timer.data.task_id })}</p></div>
+        <div><strong className="text-body-sm font-semibold text-accent-foreground">{t('timerRunning')}</strong><p className="text-caption tabular-nums text-muted-foreground">{t('timerStarted', { time: timer.data.start_time ? new Date(timer.data.start_time).toLocaleTimeString(locale) : '', id: timer.data.task_id })}</p></div>
       </div>
       <Button fullWidth={false} variant="outline" onClick={() => actions.stopTimer.mutate(timer.data!.id)}><Timer className="h-4 w-4" aria-hidden="true" />{t('stopTimer')}</Button>
     </div>}
@@ -140,6 +143,7 @@ function KanbanColumn({ status, tasks, onOpen }: { status: TaskStatus; tasks: Ta
 
 /** Thẻ task kéo được (dnd-kit). Tắt transition khi đang kéo để thẻ bám sát con trỏ. */
 function TaskCard({ task, onOpen }: { task: Task; onOpen: (id: number) => void }) {
+  const locale = useLocale()
   const t = useTranslations('tasks')
   const tCommon = useTranslations('common')
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: task.id, disabled: !task.capabilities.can_change_status })
@@ -154,7 +158,7 @@ function TaskCard({ task, onOpen }: { task: Task; onOpen: (id: number) => void }
           {task.labels.slice(0, 2).map(label => <Badge key={label} tone="neutral" size="sm">{label}</Badge>)}
         </div>
         <div className="mt-3 flex items-center justify-between gap-2 text-caption text-muted-foreground">
-          <span className="flex items-center gap-1 tabular-nums"><CalendarDays className="h-3 w-3" aria-hidden="true" />{task.due_date ? formatDate(task.due_date) : t('noDate')}</span>
+          <span className="flex items-center gap-1 tabular-nums"><CalendarDays className="h-3 w-3" aria-hidden="true" />{task.due_date ? formatDate(task.due_date, locale) : t('noDate')}</span>
           <span className="truncate">{task.primary_assignee?.full_name?.split(' ')[0] || tCommon('unassigned')}</span>
         </div>
       </button>
@@ -164,6 +168,7 @@ function TaskCard({ task, onOpen }: { task: Task; onOpen: (id: number) => void }
 
 /** Chế độ danh sách: bảng trong Card tràn viền, thanh chọn hàng loạt phía trên, tiêu đề cột dính. */
 function TaskTable({ tasks, selected, setSelected, onOpen, onBulkStatus }: { tasks: Task[]; selected: number[]; setSelected: (ids: number[]) => void; onOpen: (id: number) => void; onBulkStatus: (status: TaskStatus) => void }) {
+  const locale = useLocale()
   const t = useTranslations('tasks')
   const tCommon = useTranslations('common')
   return <Card flush className="overflow-hidden">
@@ -185,7 +190,7 @@ function TaskTable({ tasks, selected, setSelected, onOpen, onBulkStatus }: { tas
           <td className="px-4 py-3"><Badge tone={STATUS_TONE[task.status]} size="sm" dot>{t(`statuses.${task.status}`)}</Badge></td>
           <td className="px-4 py-3"><Badge tone={PRIORITY_TONE[task.priority]} size="sm">{t(`priorities.${task.priority}`)}</Badge></td>
           <td className="px-4 py-3">{task.primary_assignee?.full_name || tCommon('unassigned')}</td>
-          <td className="whitespace-nowrap px-4 py-3 tabular-nums">{task.due_date ? formatDate(task.due_date) : t('noDate')}</td>
+          <td className="whitespace-nowrap px-4 py-3 tabular-nums">{task.due_date ? formatDate(task.due_date, locale) : t('noDate')}</td>
           <td className="whitespace-nowrap px-4 py-3 text-right tabular-nums">{task.actual_hours.toFixed(1)} / {task.estimated_hours ?? 0}</td>
         </tr>)}</tbody>
       </table>
@@ -195,6 +200,7 @@ function TaskTable({ tasks, selected, setSelected, onOpen, onBulkStatus }: { tas
 
 /** Chế độ theo sprint: mỗi sprint (và backlog) là một Card chứa danh sách task. */
 function SprintView({ tasks, sprints, onOpen }: { tasks: Task[]; sprints: Array<{ id: number; name: string; status: string }>; onOpen: (id: number) => void }) {
+  const locale = useLocale()
   const t = useTranslations('tasks')
   const tCommon = useTranslations('common')
   const groups = [{ id: 0, name: t('backlog'), status: 'UNPLANNED' }, ...sprints]
@@ -202,7 +208,7 @@ function SprintView({ tasks, sprints, onOpen }: { tasks: Task[]; sprints: Array<
     const items = tasks.filter(task => sprint.id === 0 ? task.sprint_id === null : task.sprint_id === sprint.id)
     return <Card key={sprint.id} flush as="section" className="overflow-hidden">
       <header className="flex flex-wrap items-center justify-between gap-2 border-b bg-muted/50 px-4 py-3">
-        <div className="min-w-0"><h3 className="text-h4">{sprint.name}</h3><p className="text-caption tabular-nums text-muted-foreground">{formatStatus(sprint.status)} · {t('points', { count: items.reduce((sum, task) => sum + (task.story_points || 0), 0) })}</p></div>
+        <div className="min-w-0"><h3 className="text-h4">{sprint.name}</h3><p className="text-caption tabular-nums text-muted-foreground">{formatStatus(sprint.status, locale)} · {t('points', { count: items.reduce((sum, task) => sum + (task.story_points || 0), 0) })}</p></div>
         <Badge tone="neutral" size="sm">{t('taskCount', { count: items.length })}</Badge>
       </header>
       <div className="divide-y">

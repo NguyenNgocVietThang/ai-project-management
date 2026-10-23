@@ -19,7 +19,7 @@ function setup(onGlobalError = vi.fn()) {
   const client = new QueryClient({ mutationCache, defaultOptions: { queries: { retry: false }, mutations: { retry: false } } })
   return render(
     <QueryClientProvider client={client}>
-      <NextIntlClientProvider locale="vi" messages={messages}><PortfolioInvestorsCard portfolioId={7} /></NextIntlClientProvider>
+      <NextIntlClientProvider locale="vi" messages={messages} timeZone="UTC"><PortfolioInvestorsCard portfolioId={7} /></NextIntlClientProvider>
     </QueryClientProvider>,
   )
 }
@@ -55,11 +55,11 @@ describe('thẻ quản lý nhà đầu tư', () => {
     setup(onGlobalError)
     await userEvent.type(await screen.findByLabelText('Email nhà đầu tư'), 'a@example.com')
     await userEvent.click(screen.getByRole('button', { name: 'Cấp quyền' }))
-    expect(await screen.findAllByText('User does not have the Investor role')).toHaveLength(1)
+    expect(await screen.findAllByText('Người dùng chưa có vai trò Nhà đầu tư.')).toHaveLength(1)
     expect(onGlobalError).not.toHaveBeenCalled()
     // Sửa email thì lỗi cũ biến mất.
     await userEvent.type(screen.getByLabelText('Email nhà đầu tư'), 'x')
-    await waitFor(() => expect(screen.queryByText('User does not have the Investor role')).toBeNull())
+    await waitFor(() => expect(screen.queryByText('Người dùng chưa có vai trò Nhà đầu tư.')).toBeNull())
   })
 
   it('cấp quyền thành công thì xóa ô email', async () => {
@@ -90,12 +90,12 @@ describe('thẻ quản lý nhà đầu tư', () => {
     await userEvent.click(await screen.findByRole('button', { name: 'Thu hồi' }))
     let dialog = await screen.findByRole('dialog')
     await userEvent.click(within(dialog).getByRole('button', { name: 'Thu hồi' }))
-    expect(await screen.findAllByText('Investor access not found')).toHaveLength(1)
+    expect(await screen.findAllByText('Không tìm thấy quyền truy cập của nhà đầu tư.')).toHaveLength(1)
     expect(onGlobalError).not.toHaveBeenCalled()
     await userEvent.click(within(dialog).getByRole('button', { name: 'Hủy' }))
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
     await userEvent.click(screen.getByRole('button', { name: 'Thu hồi' }))
     dialog = await screen.findByRole('dialog')
-    expect(within(dialog).queryByText('Investor access not found')).toBeNull()
+    expect(within(dialog).queryByText('Không tìm thấy quyền truy cập của nhà đầu tư.')).toBeNull()
   })
 })

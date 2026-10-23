@@ -16,18 +16,20 @@ import { useTasks } from '@/features/tasks/hooks/useTasks'
 import { RiskWidget } from '@/features/risk-analysis/components/RiskWidget'
 import { SchedulePanel } from '@/features/schedule-optimization/components/SchedulePanel'
 import { ResourceRecommendationPanel } from '@/features/resource-recommendation/components/ResourceRecommendationPanel'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 
 export default function AIInsightsPage() {
   const projectId = useNumericParam()
   const t = useTranslations('project')
+  const ui = useTranslations('insightsUi')
+  const getApiErrorMessage = useApiErrorMessage()
   const tasksQuery = useTasks(projectId, useMemo(() => ({ page_size: 200 }), []))
   const [selectedTaskId, setSelectedTaskId] = useState<number | ''>('')
 
   const header = (
     <SectionHeader
       title={t('aiInsights')}
-      description="Phân tích rủi ro, tối ưu lịch trình và đề xuất nhân sự bằng AI. Mọi kết quả chỉ là gợi ý để bạn xem xét."
+      description={ui('description')}
     />
   )
 
@@ -36,7 +38,7 @@ export default function AIInsightsPage() {
     return (
       <div className="space-y-6">
         {header}
-        <SkeletonRegion label="Đang tải công việc của dự án…" className="space-y-6">
+        <SkeletonRegion label={ui('loadingTasks')} className="space-y-6">
           <div className="grid gap-6 xl:grid-cols-2">
             <SkeletonCard />
             <SkeletonCard />
@@ -50,7 +52,7 @@ export default function AIInsightsPage() {
     return (
       <div className="space-y-6">
         {header}
-        <ErrorState message={getApiErrorMessage(tasksQuery.error)} onRetry={() => void tasksQuery.refetch()} retryLabel="Thử lại" />
+        <ErrorState message={getApiErrorMessage(tasksQuery.error)} onRetry={() => void tasksQuery.refetch()} retryLabel={ui('retry')} />
       </div>
     )
   }
@@ -75,22 +77,22 @@ export default function AIInsightsPage() {
               <Users className="h-5 w-5 text-accent-foreground" />
             </span>
             <div className="min-w-0">
-              <CardTitle as="h3" id="resource-recommendation-title">Đề xuất nhân sự</CardTitle>
+              <CardTitle as="h3" id="resource-recommendation-title">{ui('resourceTitle')}</CardTitle>
               <CardDescription>
-                Chọn một công việc để AI đề xuất người phù hợp nhất theo kỹ năng, khối lượng công việc hiện tại và chi phí.
+                {ui('resourceDescription')}
               </CardDescription>
             </div>
           </div>
         </CardHeader>
         <div className="space-y-4">
           <div className="max-w-md">
-            <Label htmlFor="resource-recommendation-task">Công việc</Label>
+            <Label htmlFor="resource-recommendation-task">{ui('task')}</Label>
             <Select
               id="resource-recommendation-task"
               value={selectedTaskId}
               onChange={(event) => setSelectedTaskId(event.target.value ? Number(event.target.value) : '')}
             >
-              <option value="">— Chọn công việc —</option>
+              <option value="">{ui('selectTask')}</option>
               {tasks.map((task) => (
                 <option key={task.id} value={task.id}>{task.name}</option>
               ))}

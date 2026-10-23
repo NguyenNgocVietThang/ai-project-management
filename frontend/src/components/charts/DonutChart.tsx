@@ -8,6 +8,7 @@
  * Không dùng con trỏ/tooltip vì nhãn giữa đã hiển thị thông tin.
  */
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import {
   Cell,
   Label,
@@ -56,8 +57,9 @@ export function DonutChart({
   showLegend = true,
   valueFormatter,
   summaryLabel,
-  emptyLabel = 'No data available',
+  emptyLabel,
 }: DonutChartProps) {
+  const t = useTranslations('chartsUi')
   const reducedMotion = usePrefersReducedMotion()
   const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined)
   const total = data.reduce((sum, d) => sum + d.value, 0)
@@ -66,7 +68,7 @@ export function DonutChart({
   if (total === 0) {
     return (
       <div className="flex items-center justify-center text-body-sm text-muted-foreground" style={{ height }}>
-        {emptyLabel}
+        {emptyLabel ?? t('empty')}
       </div>
     )
   }
@@ -147,7 +149,7 @@ export function DonutChart({
         </ResponsiveContainer>
       </div>
       {/* Danh sách cho trình đọc màn hình: tên, giá trị và tỉ lệ từng lát. */}
-      <ul className="sr-only" aria-label={summaryLabel ?? centerLabel}>
+      <ul className="sr-only" aria-label={summaryLabel ?? centerLabel ?? t('donutSummary')}>
         {data.map((entry) => (
           <li key={entry.name}>
             {entry.name}: {format(entry.value)} ({Math.round((entry.value / total) * 100)}%)

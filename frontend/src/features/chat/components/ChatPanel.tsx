@@ -11,7 +11,7 @@ import { Card } from '@/components/ui/Card'
 import { Skeleton, SkeletonRegion } from '@/components/ui/Skeleton'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 import { chatKeys, useChatHistory, useMarkChatRead, usePostChatMessage } from '../hooks/useChat'
 import { useChatSocket } from '../hooks/useChatSocket'
 import type { ChatHistoryResponse, ChatMessage } from '../types/chat.types'
@@ -22,6 +22,7 @@ interface Props {
 }
 
 export function ChatPanel({ projectId }: Props) {
+  const getApiErrorMessage = useApiErrorMessage()
   const t = useTranslations('remainingUi')
   const currentUserId = useAuthStore((s) => s.user?.id)
   const qc = useQueryClient()

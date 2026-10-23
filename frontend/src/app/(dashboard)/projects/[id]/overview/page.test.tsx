@@ -31,7 +31,7 @@ describe.each([{ locale: 'en', messages: en }, { locale: 'vi', messages: viMessa
     expect(screen.queryByTestId('charts')).not.toBeInTheDocument()
     const details = screen.getByText(messages.projectOverview.charts).closest('details')!
     details.open = true
-    fireEvent.toggle(details)
+    fireEvent(details, new Event('toggle'))
     expect(await screen.findByTestId('charts')).toBeInTheDocument()
     expect(onError).not.toHaveBeenCalled()
   })

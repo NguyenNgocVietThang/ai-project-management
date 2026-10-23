@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import { X } from 'lucide-react'
 import { Button } from '@/components/common/Button'
 import { Input } from '@/components/common/Input'
@@ -14,31 +16,32 @@ export function AuditLogFilters({
   value: AuditLogListParams
   onChange: (value: AuditLogListParams) => void
 }) {
+  const tAccount = useTranslations('accountUi')
   const hasFilters = Boolean(value.entity_type || value.action || value.date_from || value.date_to)
 
   return (
     // Thanh bộ lọc: 1 cột trên mobile, 2 cột tablet, 4 trường + nút xoá trên desktop
     <Card className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[repeat(4,minmax(0,1fr))_auto] xl:items-end">
       <div>
-        <Label htmlFor="audit-entity-type">Entity type</Label>
+        <Label htmlFor="audit-entity-type"> {tAccount('entityType')} </Label>
         <Input
           id="audit-entity-type"
-          placeholder="e.g. User, Project"
+          placeholder={tAccount('eGUserProject')}
           value={value.entity_type ?? ''}
           onChange={(event) => onChange({ ...value, entity_type: event.target.value || undefined })}
         />
       </div>
       <div>
-        <Label htmlFor="audit-action">Action</Label>
+        <Label htmlFor="audit-action"> {tAccount('action')} </Label>
         <Input
           id="audit-action"
-          placeholder="e.g. CREATE, UPDATE"
+          placeholder={tAccount('eGCREATEUPDATE')}
           value={value.action ?? ''}
           onChange={(event) => onChange({ ...value, action: event.target.value || undefined })}
         />
       </div>
       <div>
-        <Label htmlFor="audit-date-from">From</Label>
+        <Label htmlFor="audit-date-from"> {tAccount('from')} </Label>
         <Input
           id="audit-date-from"
           type="date"
@@ -47,7 +50,7 @@ export function AuditLogFilters({
         />
       </div>
       <div>
-        <Label htmlFor="audit-date-to">To</Label>
+        <Label htmlFor="audit-date-to"> {tAccount('to')} </Label>
         <Input
           id="audit-date-to"
           type="date"
@@ -63,8 +66,7 @@ export function AuditLogFilters({
         onClick={() => onChange({})}
       >
         <X className="h-4 w-4" aria-hidden="true" />
-        Clear filters
-      </Button>
+         {tAccount('clearFilters')} </Button>
     </Card>
   )
 }

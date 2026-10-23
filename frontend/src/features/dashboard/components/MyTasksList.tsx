@@ -1,11 +1,12 @@
 'use client'
 
+import { useLocale, useTranslations } from 'next-intl'
+
 /**
  * MyTasksList – các task được giao cho người dùng hiện tại (chưa hoàn thành)
  * Hiển thị tối đa 20 task, kèm badge quá hạn và mức nghiêm trọng
  */
 import Link from 'next/link'
-import { useTranslations } from 'next-intl'
 import { AlertTriangle, Flag } from 'lucide-react'
 import { Badge, type BadgeTone } from '@/components/ui/Badge'
 import { Card, CardTitle } from '@/components/ui/Card'
@@ -31,6 +32,8 @@ const STATUS_DOT: Record<string, string> = {
 }
 
 function TaskRow({ task }: { task: MyTaskItem }) {
+  const locale = useLocale()
+  const t = useTranslations('dashboard')
   return (
     <Link
       href={`/projects/${task.project_id}/tasks`}
@@ -49,16 +52,16 @@ function TaskRow({ task }: { task: MyTaskItem }) {
       <div className="flex shrink-0 flex-col items-end gap-1">
         <Badge size="sm" tone={PRIORITY_TONE[task.priority.toLowerCase()] ?? 'neutral'}>
           <Flag className="h-3 w-3" aria-hidden="true" />
-          {formatStatus(task.priority)}
+          {formatStatus(task.priority, locale)}
         </Badge>
         {task.is_overdue && (
           <span className="flex items-center gap-1 text-caption font-medium text-destructive">
             <AlertTriangle className="h-3 w-3" aria-hidden="true" />
-            {task.due_date ? formatDate(task.due_date) : 'Overdue'}
+            {task.due_date ? formatDate(task.due_date, locale) : t('overdue')}
           </span>
         )}
         {!task.is_overdue && task.due_date && (
-          <span className="text-caption text-muted-foreground">{formatDate(task.due_date)}</span>
+          <span className="text-caption text-muted-foreground">{formatDate(task.due_date, locale)}</span>
         )}
       </div>
     </Link>

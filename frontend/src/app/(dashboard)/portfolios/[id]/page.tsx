@@ -1,5 +1,8 @@
 'use client'
 
+import { useLocale, useTranslations } from 'next-intl'
+
+
 import { ArrowLeft, CalendarDays, CheckCircle2, FolderKanban, Gauge, Pencil, PlayCircle, Trash2, WalletCards, type LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -21,7 +24,7 @@ import { usePortfolioHealth } from '@/features/dashboard/hooks/useDashboard'
 import { useDeletePortfolio, usePortfolio, useUpdatePortfolio } from '@/features/portfolios/hooks/usePortfolios'
 import { formatDate, formatMoney, formatStatus } from '@/lib/format'
 import { cn } from '@/lib/utils'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 import type { PortfolioUpdate } from '@/types/portfolio.types'
 
 /** Thanh tiến độ cao 8px, chiều rộng chuyển động mượt 500ms. */
@@ -35,6 +38,9 @@ function ProgressBar({ value }: { value: number }) {
 }
 
 export default function PortfolioDetailPage() {
+  const locale = useLocale()
+  const getApiErrorMessage = useApiErrorMessage()
+  const tw = useTranslations('workspaceUi')
   const id = useNumericParam()
   const router = useRouter()
   const query = usePortfolio(id)
@@ -45,46 +51,46 @@ export default function PortfolioDetailPage() {
   const [deleting, setDeleting] = useState(false)
   // Hiện tên danh mục trên breadcrumb thay cho mã số
   useBreadcrumbLabel(`/portfolios/${id}`, query.data?.name)
-  if (query.isLoading) return <LoadingState variant="page" label="Loading portfolio…" />
-  if (query.isError || !query.data) return <ErrorState message={getApiErrorMessage(query.error, 'Portfolio not found.')} onRetry={() => void query.refetch()} />
+  if (query.isLoading) return <LoadingState variant="page" label={tw('loadingPortfolio')} />
+  if (query.isError || !query.data) return <ErrorState message={getApiErrorMessage(query.error, tw('portfolioNotFound'))} onRetry={() => void query.refetch()} />
   const portfolio = query.data
   return <div className="space-y-8">
-    <Link href="/portfolios" className="-mb-4 inline-flex min-h-11 items-center gap-2 text-body-sm text-muted-foreground transition-colors hover:text-foreground"><ArrowLeft className="h-4 w-4" aria-hidden="true" />Back to portfolios</Link>
+    <Link href="/portfolios" className="-mb-4 inline-flex min-h-11 items-center gap-2 text-body-sm text-muted-foreground transition-colors hover:text-foreground"><ArrowLeft className="h-4 w-4" aria-hidden="true" />{tw('backToPortfolios')}</Link>
 
     <PageHeader
-      meta={<><PortfolioStatusBadge status={portfolio.status} /><span className="text-caption text-muted-foreground">Portfolio #{portfolio.id}</span></>}
+      meta={<><PortfolioStatusBadge status={portfolio.status} /><span className="text-caption text-muted-foreground">{tw('portfolioReference', { id: portfolio.id })}</span></>}
       title={portfolio.name}
-      description={portfolio.description || 'No description provided.'}
+      description={portfolio.description || tw('noDescriptionProvided')}
       actions={(portfolio.capabilities.can_update || portfolio.capabilities.can_delete) && <>
-        {portfolio.capabilities.can_update && <Button variant="outline" fullWidth={false} onClick={() => setEditing(true)}><Pencil className="h-4 w-4" aria-hidden="true" />Edit</Button>}
-        {portfolio.capabilities.can_delete && <Button variant="destructive" fullWidth={false} onClick={() => setDeleting(true)}><Trash2 className="h-4 w-4" aria-hidden="true" />Delete</Button>}
+        {portfolio.capabilities.can_update && <Button variant="outline" fullWidth={false} onClick={() => setEditing(true)}><Pencil className="h-4 w-4" aria-hidden="true" />{tw('edit')}</Button>}
+        {portfolio.capabilities.can_delete && <Button variant="destructive" fullWidth={false} onClick={() => setDeleting(true)}><Trash2 className="h-4 w-4" aria-hidden="true" />{tw('delete')}</Button>}
       </>}
     />
 
     <Reveal stagger={60} className="grid gap-4 md:grid-cols-3">
-      <Metric icon={FolderKanban} label="Projects" value={portfolio.project_count.toString()} />
-      <Metric icon={WalletCards} label="Budget" value={formatMoney(portfolio.budget, portfolio.currency)} />
-      <Metric icon={CalendarDays} label="Timeline" value={`${formatDate(portfolio.start_date)} – ${formatDate(portfolio.end_date)}`} />
+      <Metric icon={FolderKanban} label={tw('projects')} value={portfolio.project_count.toString()} />
+      <Metric icon={WalletCards} label={tw('budget')} value={formatMoney(portfolio.budget, portfolio.currency, locale)} />
+      <Metric icon={CalendarDays} label={tw('timeline')} value={`${formatDate(portfolio.start_date, locale)} – ${formatDate(portfolio.end_date, locale)}`} />
     </Reveal>
 
     <Card>
-      <div className="mb-2 flex justify-between gap-3 text-body-sm"><span className="text-muted-foreground">Average project progress</span><span className="font-medium tabular-nums">{Math.round(portfolio.progress_percent)}%</span></div>
+      <div className="mb-2 flex justify-between gap-3 text-body-sm"><span className="text-muted-foreground">{tw('averageProjectProgress')}</span><span className="font-medium tabular-nums">{Math.round(portfolio.progress_percent)}%</span></div>
       <ProgressBar value={portfolio.progress_percent} />
     </Card>
 
     {health.data && <Card as="section" aria-labelledby="portfolio-health-title">
-      <CardHeader className="mb-6"><CardTitle id="portfolio-health-title" className="sm:text-h3">Portfolio health</CardTitle></CardHeader>
+      <CardHeader className="mb-6"><CardTitle id="portfolio-health-title" className="sm:text-h3">{tw('portfolioHealth')}</CardTitle></CardHeader>
       <div className="grid gap-4 sm:grid-cols-3">
-        <Metric icon={PlayCircle} label="Active" value={health.data.active_projects.toString()} nested />
-        <Metric icon={CheckCircle2} label="Completed" value={health.data.completed_projects.toString()} nested />
-        <Metric icon={Gauge} label="Overall progress" value={`${Math.round(health.data.overall_progress)}%`} nested />
+        <Metric icon={PlayCircle} label={tw('active')} value={health.data.active_projects.toString()} nested />
+        <Metric icon={CheckCircle2} label={tw('completed')} value={health.data.completed_projects.toString()} nested />
+        <Metric icon={Gauge} label={tw('overallProgress')} value={`${Math.round(health.data.overall_progress)}%`} nested />
       </div>
       {health.data.projects.length > 0 && <Card flush className="mt-6 overflow-hidden shadow-none">
         {/* Bảng tự cuộn ngang trong khung, trang không bị cuộn ngang */}
         <div className="overflow-x-auto">
           <table className="w-full min-w-[560px] text-body-sm">
             <thead className="bg-muted/50 text-left text-caption uppercase text-muted-foreground">
-              <tr><th scope="col" className="px-4 py-3 font-medium">Project</th><th scope="col" className="px-4 py-3 font-medium">Progress</th><th scope="col" className="px-4 py-3 font-medium">Overdue</th><th scope="col" className="px-4 py-3 font-medium">Budget used</th></tr>
+              <tr><th scope="col" className="px-4 py-3 font-medium">{tw('project')}</th><th scope="col" className="px-4 py-3 font-medium">{tw('progress')}</th><th scope="col" className="px-4 py-3 font-medium">{tw('overdue')}</th><th scope="col" className="px-4 py-3 font-medium">{tw('budgetUsed')}</th></tr>
             </thead>
             <tbody>
               {health.data.projects.map(item => <tr key={item.project_id} className="border-t transition-colors hover:bg-muted/40">
@@ -102,9 +108,9 @@ export default function PortfolioDetailPage() {
     {portfolio.capabilities.can_update && <PortfolioInvestorsCard portfolioId={portfolio.id} />}
 
     <section aria-labelledby="portfolio-projects-title">
-      <SectionHeader id="portfolio-projects-title" title="Projects" />
+      <SectionHeader id="portfolio-projects-title" title={tw('projects')} />
       {portfolio.projects.length === 0
-        ? <EmptyState icon={FolderKanban} title="No projects in this portfolio yet." description="Projects you add to this portfolio will appear here." action={<ButtonLink href="/projects">View projects</ButtonLink>} />
+        ? <EmptyState icon={FolderKanban} title={tw('noProjectsInThisPortfolioYet')} description={tw('projectsYouAddToThisPortfolioWillAppearHere')} action={<ButtonLink href="/projects">{tw('viewProjects')}</ButtonLink>} />
         : <Reveal stagger={60} className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">{portfolio.projects.map((project) => <Card key={project.id} as="article" interactive className="group">
             <div className="flex items-start justify-between gap-3">
               <h3 className="min-w-0 text-h4">
@@ -113,12 +119,12 @@ export default function PortfolioDetailPage() {
               </h3>
               <ProjectStatusBadge status={project.status} />
             </div>
-            <p className="mt-2 text-caption text-muted-foreground">{formatStatus(project.methodology)} · {formatDate(project.end_date)}</p>
+            <p className="mt-2 text-caption text-muted-foreground">{formatStatus(project.methodology, locale)} · {formatDate(project.end_date, locale)}</p>
             <div className="mt-4"><ProgressBar value={project.progress_percent} /></div>
           </Card>)}</Reveal>}
     </section>
 
-    <Modal open={editing} onClose={() => setEditing(false)} title="Edit portfolio"><PortfolioForm portfolio={portfolio} onCancel={() => setEditing(false)} isLoading={updateMutation.isPending} error={updateMutation.isError ? getApiErrorMessage(updateMutation.error) : null} onSubmit={async (body) => { await updateMutation.mutateAsync({ id, body: body as PortfolioUpdate }); setEditing(false) }} /></Modal>
+    <Modal open={editing} onClose={() => setEditing(false)} title={tw('editPortfolio')}><PortfolioForm portfolio={portfolio} onCancel={() => setEditing(false)} isLoading={updateMutation.isPending} error={updateMutation.isError ? getApiErrorMessage(updateMutation.error) : null} onSubmit={async (body) => { await updateMutation.mutateAsync({ id, body: body as PortfolioUpdate }); setEditing(false) }} /></Modal>
     <DeletePortfolioDialog portfolio={deleting ? portfolio : null} onClose={() => setDeleting(false)} isLoading={deleteMutation.isPending} error={deleteMutation.isError ? getApiErrorMessage(deleteMutation.error) : null} onConfirm={async () => { await deleteMutation.mutateAsync(id); router.push('/portfolios') }} />
   </div>
 }

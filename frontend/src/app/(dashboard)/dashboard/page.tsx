@@ -13,9 +13,10 @@ import { RecentActivityFeed } from '@/features/dashboard/components/RecentActivi
 import { StatsRow } from '@/features/dashboard/components/StatsRow'
 import { useDashboardSummary } from '@/features/dashboard/hooks/useDashboard'
 import { useAuth } from '@/hooks/useAuth'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 
 export default function DashboardPage() {
+  const getApiErrorMessage = useApiErrorMessage()
   const { user } = useAuth()
   const { data, isLoading, isError, error, refetch } = useDashboardSummary()
   const t = useTranslations('home')

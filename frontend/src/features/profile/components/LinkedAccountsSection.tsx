@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import { Link2 } from 'lucide-react'
 import { Alert } from '@/components/common/Alert'
 import { Button } from '@/components/common/Button'
@@ -28,10 +30,11 @@ export function LinkedAccountsSection({
   error,
   successMessage,
 }: LinkedAccountsSectionProps) {
+  const tAccount = useTranslations('accountUi')
   return (
     <SectionCard
-      title="Linked accounts"
-      description="Connect another sign-in method, or remove one you no longer use."
+      title={tAccount('linkedAccounts')}
+      description={tAccount('connectAnotherSignInMethodOrRemoveOneYouNoLongerUse')}
     >
       <div className="space-y-4">
         {error && <Alert>{error}</Alert>}
@@ -48,7 +51,7 @@ export function LinkedAccountsSection({
                 <div className="min-w-0 flex-1">
                   <p className="font-medium text-foreground">{provider.label}</p>
                   <Badge tone={connected ? 'success' : 'neutral'} size="sm" dot className="mt-1">
-                    {connected ? 'Connected' : 'Not connected'}
+                    {connected ? tAccount('connected') : tAccount('notConnected')}
                   </Badge>
                 </div>
               </div>
@@ -58,7 +61,7 @@ export function LinkedAccountsSection({
                 isLoading={pendingProvider === provider.id}
                 onClick={() => (connected ? onDisconnect(provider.id) : onConnect(provider.id))}
               >
-                {connected ? 'Disconnect' : 'Connect'}
+                {connected ? tAccount('disconnect') : tAccount('connect')}
               </Button>
             </div>
           )

@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import Link from 'next/link'
 import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -12,12 +14,13 @@ import { Label } from '@/components/common/Label'
 import { useAuth } from '@/hooks/useAuth'
 
 const forgotPasswordSchema = z.object({
-  email: z.string().min(1, 'Email is required').email('Enter a valid email address'),
+  email: z.string().min(1, 'emailIsRequired').email('enterAValidEmailAddress'),
 })
 
 type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>
 
 export function ForgotPasswordForm() {
+  const tAccount = useTranslations('accountUi')
   const { forgotPassword, isRequestingPasswordReset, forgotPasswordError } = useAuth()
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const {
@@ -30,8 +33,8 @@ export function ForgotPasswordForm() {
 
   const onSubmit = handleSubmit(async ({ email }) => {
     try {
-      const response = await forgotPassword(email)
-      setSuccessMessage(response.message)
+      await forgotPassword(email)
+      setSuccessMessage('resetLinkSent')
     } catch {
       // Lỗi của mutation được hiển thị bên dưới.
     }
@@ -40,16 +43,14 @@ export function ForgotPasswordForm() {
   if (successMessage) {
     return (
       <div className="space-y-6">
-        <Alert variant="success">{successMessage}</Alert>
+        <Alert variant="success">{tAccount(successMessage)}</Alert>
         <p className="text-body-sm text-muted-foreground">
-          Check your inbox and follow the link within one hour. You can close this page safely.
-        </p>
+           {tAccount('checkYourInboxAndFollowTheLinkWithinOneHourYouCanCloseThisPageSafely')} </p>
         <Link
           href="/login"
           className={buttonClasses({ size: 'lg', fullWidth: true })}
         >
-          Back to sign in
-        </Link>
+           {tAccount('backToSignIn')} </Link>
       </div>
     )
   }
@@ -59,7 +60,7 @@ export function ForgotPasswordForm() {
       {forgotPasswordError && <Alert>{forgotPasswordError}</Alert>}
 
       <div>
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email"> {tAccount('email')} </Label>
         <Input
           id="email"
           type="email"
@@ -70,20 +71,19 @@ export function ForgotPasswordForm() {
         />
         {errors.email && (
           <p id="email-error" className="mt-2 text-body-sm text-destructive">
-            {errors.email.message}
+            {errors.email.message && tAccount(errors.email.message)}
           </p>
         )}
       </div>
 
       <Button type="submit" size="lg" isLoading={isRequestingPasswordReset}>
-        {isRequestingPasswordReset ? 'Sending reset link…' : 'Send reset link'}
+        {isRequestingPasswordReset ? tAccount('sendingResetLink') : tAccount('sendResetLink')}
       </Button>
 
       <p className="text-center text-body-sm text-muted-foreground">
-        Remember your password?{' '}
+         {tAccount('rememberYourPassword')} {' '}
         <Link href="/login" className="font-medium text-primary underline-offset-4 hover:underline">
-          Sign in
-        </Link>
+           {tAccount('signIn')} </Link>
       </p>
     </form>
   )

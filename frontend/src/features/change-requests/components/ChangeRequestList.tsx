@@ -1,4 +1,5 @@
 'use client'
+import { useLocale, useTranslations } from 'next-intl'
 
 import { FileEdit, Plus } from 'lucide-react'
 import { Button } from '@/components/common/Button'
@@ -7,7 +8,7 @@ import { Card } from '@/components/ui/Card'
 import { Skeleton, SkeletonRegion } from '@/components/ui/Skeleton'
 import { formatDate } from '@/lib/format'
 import { cn } from '@/lib/utils'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 import { useChangeRequests } from '@/features/change-requests/hooks/useChangeRequests'
 import { ChangeRequestStatusBadge } from './ChangeRequestStatusBadge'
 
@@ -26,11 +27,14 @@ export function ChangeRequestList({
   onSelect: (id: number) => void
   onCreate: () => void
 }) {
+  const getApiErrorMessage = useApiErrorMessage()
+  const tw = useTranslations('workflowUi')
+  const locale = useLocale()
   const query = useChangeRequests(projectId)
 
   if (query.isLoading) {
     return (
-      <SkeletonRegion label="Loading change requests…" className="space-y-3">
+      <SkeletonRegion label={tw('loadingChangeRequests')} className="space-y-3">
         {[0, 1, 2, 3].map((i) => (
           <div key={i} className="space-y-3 rounded-xl border border-border/80 bg-card p-4 shadow-soft">
             <div className="flex items-center justify-between gap-3">
@@ -52,12 +56,12 @@ export function ChangeRequestList({
     return (
       <EmptyState
         icon={FileEdit}
-        title="No change requests yet"
-        description="Create one to start an AI impact analysis."
+        title={tw('noChangeRequests')}
+        description={tw('noChangeRequestsDescription')}
         action={
           <Button type="button" variant="outline" fullWidth={false} onClick={onCreate}>
             <Plus className="h-4 w-4" aria-hidden="true" />
-            New change request
+            {tw('newChangeRequest')}
           </Button>
         }
       />
@@ -65,7 +69,7 @@ export function ChangeRequestList({
   }
 
   return (
-    <Card as="section" aria-label="Change requests" className="p-2 sm:p-2">
+    <Card as="section" aria-label={tw('changeRequestsTitle')} className="p-2 sm:p-2">
       <ul className="space-y-1">
         {query.data?.map((item) => {
           const selected = selectedId === item.id
@@ -85,7 +89,7 @@ export function ChangeRequestList({
                   <h3 className="min-w-0 break-words text-body-sm font-medium text-foreground">{item.title}</h3>
                   <ChangeRequestStatusBadge status={item.status} />
                 </div>
-                <p className="mt-1 text-caption text-muted-foreground">{formatDate(item.created_at)}</p>
+                <p className="mt-1 text-caption text-muted-foreground">{formatDate(item.created_at, locale)}</p>
               </button>
             </li>
           )

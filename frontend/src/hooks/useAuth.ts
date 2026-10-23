@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { authService } from '@/services/auth.service'
 import { useAuthStore } from '@/store/authStore'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 import type {
   LoginCredentials,
   RegisterCredentials,
@@ -16,6 +16,7 @@ import type {
  * Việc lưu trữ/refresh token nằm ở `store/authStore.ts` + `services/api.ts`.
  */
 export function useAuth() {
+  const getApiErrorMessage = useApiErrorMessage()
   const router = useRouter()
   const queryClient = useQueryClient()
   const { accessToken, user, setTokens, setUser, clear, isAuthenticated } = useAuthStore()
@@ -91,10 +92,10 @@ export function useAuth() {
     isAuthenticated: isAuthenticated(),
     login: loginMutation.mutateAsync,
     isLoggingIn: loginMutation.isPending,
-    loginError: loginMutation.error ? getApiErrorMessage(loginMutation.error, 'Invalid email or password.') : null,
+    loginError: loginMutation.error ? getApiErrorMessage(loginMutation.error) : null,
     register,
     isRegistering: registerMutation.isPending,
-    registerError: registerMutation.error ? getApiErrorMessage(registerMutation.error, 'Registration failed. Email or username may already be taken.') : null,
+    registerError: registerMutation.error ? getApiErrorMessage(registerMutation.error) : null,
     forgotPassword: forgotPasswordMutation.mutateAsync,
     isRequestingPasswordReset: forgotPasswordMutation.isPending,
     forgotPasswordError: forgotPasswordMutation.error
@@ -103,7 +104,7 @@ export function useAuth() {
     resetPassword: resetPasswordMutation.mutateAsync,
     isResettingPassword: resetPasswordMutation.isPending,
     resetPasswordError: resetPasswordMutation.error
-      ? getApiErrorMessage(resetPasswordMutation.error, 'Invalid or expired reset token.')
+      ? getApiErrorMessage(resetPasswordMutation.error)
       : null,
     resendEmailVerification: resendEmailVerificationMutation.mutateAsync,
     isResendingEmailVerification: resendEmailVerificationMutation.isPending,

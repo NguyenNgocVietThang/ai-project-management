@@ -1,6 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
+
 import { ArrowUpRight, Check, Workflow } from 'lucide-react'
 import { Brand } from '@/components/layout/Brand'
 import { ThemeToggle } from '@/components/theme/ThemeToggle'
@@ -16,8 +17,9 @@ const STEP_ICONS = [Check, Workflow, ArrowUpRight] as const
 
 /** Khung xương của cột form xác thực, hiển thị trong lúc store đăng nhập đang hydrate. */
 function AuthLoadingSkeleton() {
+  const tAccount = useTranslations('accountUi')
   return (
-    <SkeletonRegion label="Loading…" className="flex min-h-dvh items-center justify-center bg-background/80 px-4">
+    <SkeletonRegion label={tAccount('loading')} className="flex min-h-dvh items-center justify-center bg-background/80 px-4">
       <div className="w-full max-w-sm space-y-6">
         <Skeleton className="h-10 w-36" />
         <div className="space-y-3">
@@ -35,6 +37,7 @@ function AuthLoadingSkeleton() {
 }
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
+  const tAccount = useTranslations('accountUi')
   const router = useRouter()
   const t = useTranslations('authIntro')
   const ts = useTranslations('shell')
@@ -117,7 +120,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             {children}
           </div>
         </div>
-        <p className="text-center text-caption text-muted-foreground">AI Project Planning & Portfolio Management</p>
+        <p className="text-center text-caption text-muted-foreground"> {tAccount('aIProjectPlanningPortfolioManagement')} </p>
       </main>
     </div>
   )

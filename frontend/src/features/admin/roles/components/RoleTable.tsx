@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import { Lock, Pencil, ShieldCheck, Trash2 } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Button } from '@/components/common/Button'
@@ -22,12 +24,13 @@ export function RoleTable({
   /** CTA hiển thị khi chưa có vai trò nào. */
   emptyAction?: ReactNode
 }) {
+  const tAccount = useTranslations('accountUi')
   if (roles.length === 0) {
     return (
       <EmptyState
         icon={ShieldCheck}
-        title="No roles found"
-        description="Create a role to get started."
+        title={tAccount('noRolesFound')}
+        description={tAccount('createARoleToGetStarted')}
         action={emptyAction}
       />
     )
@@ -40,10 +43,10 @@ export function RoleTable({
         <table className="w-full min-w-[720px] text-left text-body-sm">
           <thead className="sticky top-0 z-10 bg-card text-caption uppercase text-muted-foreground">
             <tr className="bg-muted/50">
-              <th scope="col" className="px-4 py-3 font-medium">Role</th>
-              <th scope="col" className="px-4 py-3 font-medium">Permissions</th>
-              <th scope="col" className="px-4 py-3 font-medium">Users</th>
-              <th scope="col" className="px-4 py-3 text-right font-medium">Actions</th>
+              <th scope="col" className="px-4 py-3 font-medium"> {tAccount('role')} </th>
+              <th scope="col" className="px-4 py-3 font-medium"> {tAccount('permissions')} </th>
+              <th scope="col" className="px-4 py-3 font-medium"> {tAccount('users')} </th>
+              <th scope="col" className="px-4 py-3 text-right font-medium"> {tAccount('actions')} </th>
             </tr>
           </thead>
           <tbody>
@@ -54,18 +57,17 @@ export function RoleTable({
                 <tr key={role.id} className="border-t transition-colors hover:bg-muted/40">
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="font-medium text-foreground">{role.name}</p>
+                      <p className="font-medium text-foreground">{tAccount.has(`roleNames.${role.name}`) ? tAccount(`roleNames.${role.name}`) : role.name}</p>
                       {isProtected && (
                         <Badge tone="primary" size="sm">
                           <Lock className="h-3 w-3" aria-hidden="true" />
-                          Built-in
-                        </Badge>
+                           {tAccount('builtIn')} </Badge>
                       )}
                     </div>
                     {role.description && <p className="mt-1 text-caption text-muted-foreground">{role.description}</p>}
                   </td>
                   <td className="px-4 py-3">
-                    <Badge tone="info">{role.permissions.length} permissions</Badge>
+                    <Badge tone="info">{role.permissions.length}  {tAccount('permissionsLabel')} </Badge>
                   </td>
                   <td className="px-4 py-3 tabular-nums text-muted-foreground">{role.user_count}</td>
                   <td className="px-4 py-3">
@@ -77,7 +79,7 @@ export function RoleTable({
                         fullWidth={false}
                         onClick={() => onEdit(role)}
                         className="text-muted-foreground"
-                        aria-label={`Edit ${role.name}`}
+                        aria-label={tAccount('editNamed', { name: role.name })}
                       >
                         <Pencil className="h-4 w-4" aria-hidden="true" />
                       </Button>
@@ -90,13 +92,13 @@ export function RoleTable({
                         disabled={!canDelete}
                         title={
                           isProtected
-                            ? 'The built-in Admin role cannot be deleted'
+                            ? tAccount('theBuiltInAdminRoleCannotBeDeleted')
                             : role.user_count > 0
-                              ? 'Reassign every user before deleting this role'
+                              ? tAccount('reassignEveryUserBeforeDeletingThisRole')
                               : undefined
                         }
                         className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                        aria-label={`Delete ${role.name}`}
+                        aria-label={tAccount('deleteNamed', { name: role.name })}
                       >
                         <Trash2 className="h-4 w-4" aria-hidden="true" />
                       </Button>

@@ -1,7 +1,8 @@
 'use client'
 
+import { useLocale, useTranslations } from 'next-intl'
+
 import { useMemo, useState } from 'react'
-import { useTranslations } from 'next-intl'
 import { Users } from 'lucide-react'
 import {
   Bar,
@@ -142,6 +143,8 @@ function TeamUtilizationChart({ data }: { data: TeamMemberUtilization[] }) {
 }
 
 export function ProjectOverviewCharts({ stats }: { stats: ProjectDashboardStats }) {
+  const locale = useLocale()
+  const tw = useTranslations('workspaceUi')
   const t = useTranslations('projectOverview')
   const tt = useTranslations('tasks')
   // Màu trạng thái lấy từ token theme (thay hex backend) để biểu đồ không vỡ ở dark mode.
@@ -167,7 +170,7 @@ export function ProjectOverviewCharts({ stats }: { stats: ProjectDashboardStats 
     [stats.budget.spent, stats.budget.budget, t]
   )
 
-  const money = (value: number) => formatMoney(value, stats.budget.currency)
+  const money = (value: number) => formatMoney(value, stats.budget.currency, locale)
 
   return (
     <>
@@ -186,10 +189,10 @@ export function ProjectOverviewCharts({ stats }: { stats: ProjectDashboardStats 
             <p>{t('total')}: <strong>{stats.total_tasks}</strong></p>
             <p>{t('done')}: <strong>{stats.completed_tasks}</strong></p>
             <p className={stats.overdue_tasks > 0 ? 'font-medium text-destructive' : ''}>
-              Overdue: <strong>{stats.overdue_tasks}</strong>
+              {tw('overdueLabel')} <strong>{stats.overdue_tasks}</strong>
             </p>
             <p className={stats.critical_tasks > 0 ? 'font-medium text-warning' : ''}>
-              Critical: <strong>{stats.critical_tasks}</strong>
+              {tw('critical')} <strong>{stats.critical_tasks}</strong>
             </p>
           </div>
         </section>
@@ -215,7 +218,7 @@ export function ProjectOverviewCharts({ stats }: { stats: ProjectDashboardStats 
                 <p>{t('budget')}: <strong>{money(stats.budget.budget)}</strong></p>
                 {stats.budget.utilization_pct !== null && (
                   <p className={stats.budget.utilization_pct > 90 ? 'font-medium text-destructive' : ''}>
-                    Utilization: <strong>{stats.budget.utilization_pct}%</strong>
+                    {tw('utilization')} <strong>{stats.budget.utilization_pct}%</strong>
                   </p>
                 )}
               </div>

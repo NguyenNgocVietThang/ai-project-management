@@ -1,3 +1,6 @@
+'use client'
+
+import { useLocale } from 'next-intl'
 import { Badge, type BadgeTone } from '@/components/ui/Badge'
 import { formatStatus } from '@/lib/format'
 
@@ -9,5 +12,6 @@ const TONES: Record<string, BadgeTone> = {
 }
 
 export function PortfolioStatusBadge({ status, className }: { status: string; className?: string }) {
-  return <Badge tone={TONES[status] ?? 'neutral'} dot className={className}>{formatStatus(status)}</Badge>
+  const locale = useLocale()
+  return <Badge tone={TONES[status] ?? 'neutral'} dot className={className}>{formatStatus(status, locale)}</Badge>
 }

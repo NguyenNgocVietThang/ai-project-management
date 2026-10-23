@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { Alert } from '@/components/common/Alert'
@@ -32,9 +34,10 @@ function RoleCheckboxes({
   selected: number[]
   onToggle: (roleId: number) => void
 }) {
+  const tAccount = useTranslations('accountUi')
   return (
     <div>
-      <Label>Roles</Label>
+      <Label> {tAccount('roles')} </Label>
       <div className="grid gap-2 rounded-lg border p-3 sm:grid-cols-2">
         {roles.map((role) => (
           <label key={role.id} className="flex min-h-9 items-center gap-2 text-body-sm">
@@ -44,7 +47,7 @@ function RoleCheckboxes({
               checked={selected.includes(role.id)}
               onChange={() => onToggle(role.id)}
             />
-            {role.name}
+            {tAccount.has(`roleNames.${role.name}`) ? tAccount(`roleNames.${role.name}`) : role.name}
           </label>
         ))}
       </div>
@@ -77,6 +80,7 @@ function CreateUserForm({
   isLoading,
   error,
 }: Omit<UserFormProps, 'user'>) {
+  const tAccount = useTranslations('accountUi')
   const {
     register,
     handleSubmit,
@@ -99,26 +103,26 @@ function CreateUserForm({
     >
       {error && <Alert>{error}</Alert>}
       <div>
-        <Label htmlFor="user-email">Email</Label>
+        <Label htmlFor="user-email"> {tAccount('email')} </Label>
         <Input id="user-email" type="email" hasError={Boolean(errors.email)} {...register('email')} />
-        {errors.email && <p id="user-email-error" role="alert" className="mt-1 text-body-sm text-destructive">{errors.email.message}</p>}
+        {errors.email && <p id="user-email-error" role="alert" className="mt-1 text-body-sm text-destructive">{errors.email.message && tAccount(errors.email.message)}</p>}
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <Label htmlFor="user-username">Username</Label>
+          <Label htmlFor="user-username"> {tAccount('username')} </Label>
           <Input id="user-username" hasError={Boolean(errors.username)} {...register('username')} />
-          {errors.username && <p id="user-username-error" role="alert" className="mt-1 text-body-sm text-destructive">{errors.username.message}</p>}
+          {errors.username && <p id="user-username-error" role="alert" className="mt-1 text-body-sm text-destructive">{errors.username.message && tAccount(errors.username.message)}</p>}
         </div>
         <div>
-          <Label htmlFor="user-full-name">Full name</Label>
+          <Label htmlFor="user-full-name"> {tAccount('fullName')} </Label>
           <Input id="user-full-name" hasError={Boolean(errors.full_name)} {...register('full_name')} />
-          {errors.full_name && <p id="user-full-name-error" role="alert" className="mt-1 text-body-sm text-destructive">{errors.full_name.message}</p>}
+          {errors.full_name && <p id="user-full-name-error" role="alert" className="mt-1 text-body-sm text-destructive">{errors.full_name.message && tAccount(errors.full_name.message)}</p>}
         </div>
       </div>
       <div>
-        <Label htmlFor="user-password">Temporary password</Label>
+        <Label htmlFor="user-password"> {tAccount('temporaryPassword')} </Label>
         <Input id="user-password" type="password" hasError={Boolean(errors.password)} {...register('password')} />
-        {errors.password && <p id="user-password-error" role="alert" className="mt-1 text-body-sm text-destructive">{errors.password.message}</p>}
+        {errors.password && <p id="user-password-error" role="alert" className="mt-1 text-body-sm text-destructive">{errors.password.message && tAccount(errors.password.message)}</p>}
       </div>
       <RoleCheckboxes
         roles={roles}
@@ -134,15 +138,12 @@ function CreateUserForm({
       />
       <label className="flex min-h-9 items-center gap-2 text-body-sm">
         <input type="checkbox" className="h-4 w-4 rounded border-input" {...register('is_active')} />
-        Active immediately
-      </label>
+         {tAccount('activeImmediately')} </label>
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <Button type="button" variant="outline" className="sm:w-auto" onClick={onCancel}>
-          Cancel
-        </Button>
+           {tAccount('cancel')} </Button>
         <Button type="submit" isLoading={isLoading} className="sm:w-auto">
-          Create user
-        </Button>
+           {tAccount('createUser')} </Button>
       </div>
     </form>
   )
@@ -156,6 +157,7 @@ function EditUserForm({
   isLoading,
   error,
 }: UserFormProps & { user: AdminUser }) {
+  const tAccount = useTranslations('accountUi')
   const {
     register,
     handleSubmit,
@@ -196,27 +198,27 @@ function EditUserForm({
       </Alert>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <Label htmlFor="user-username">Username</Label>
+          <Label htmlFor="user-username"> {tAccount('username')} </Label>
           <Input id="user-username" hasError={Boolean(errors.username)} {...register('username')} />
-          {errors.username && <p id="user-username-error" role="alert" className="mt-1 text-body-sm text-destructive">{errors.username.message}</p>}
+          {errors.username && <p id="user-username-error" role="alert" className="mt-1 text-body-sm text-destructive">{errors.username.message && tAccount(errors.username.message)}</p>}
         </div>
         <div>
-          <Label htmlFor="user-full-name">Full name</Label>
+          <Label htmlFor="user-full-name"> {tAccount('fullName')} </Label>
           <Input id="user-full-name" hasError={Boolean(errors.full_name)} {...register('full_name')} />
-          {errors.full_name && <p id="user-full-name-error" role="alert" className="mt-1 text-body-sm text-destructive">{errors.full_name.message}</p>}
+          {errors.full_name && <p id="user-full-name-error" role="alert" className="mt-1 text-body-sm text-destructive">{errors.full_name.message && tAccount(errors.full_name.message)}</p>}
         </div>
       </div>
       <div className="grid gap-4 sm:grid-cols-3">
         <div>
-          <Label htmlFor="user-phone">Phone</Label>
+          <Label htmlFor="user-phone"> {tAccount('phone')} </Label>
           <Input id="user-phone" {...register('phone')} />
         </div>
         <div>
-          <Label htmlFor="user-position">Position</Label>
+          <Label htmlFor="user-position"> {tAccount('position')} </Label>
           <Input id="user-position" {...register('position')} />
         </div>
         <div>
-          <Label htmlFor="user-department">Department</Label>
+          <Label htmlFor="user-department"> {tAccount('department')} </Label>
           <Input id="user-department" {...register('department')} />
         </div>
       </div>
@@ -235,20 +237,16 @@ function EditUserForm({
       <div className="flex flex-wrap gap-6">
         <label className="flex min-h-9 items-center gap-2 text-body-sm">
           <input type="checkbox" className="h-4 w-4 rounded border-input" {...register('is_active')} />
-          Active
-        </label>
+           {tAccount('active')} </label>
         <label className="flex min-h-9 items-center gap-2 text-body-sm">
           <input type="checkbox" className="h-4 w-4 rounded border-input" {...register('is_superuser')} />
-          Superuser (bypasses all permission checks)
-        </label>
+           {tAccount('superuserBypassesAllPermissionChecks')} </label>
       </div>
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <Button type="button" variant="outline" className="sm:w-auto" onClick={onCancel}>
-          Cancel
-        </Button>
+           {tAccount('cancel')} </Button>
         <Button type="submit" isLoading={isLoading} className="sm:w-auto">
-          Save changes
-        </Button>
+           {tAccount('saveChanges')} </Button>
       </div>
     </form>
   )

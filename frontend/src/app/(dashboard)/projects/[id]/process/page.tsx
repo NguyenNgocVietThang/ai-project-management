@@ -1,6 +1,6 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { AlertTriangle, GitBranch, Sparkles } from 'lucide-react'
 import { Button } from '@/components/common/Button'
@@ -17,7 +17,7 @@ import { ProcessDiagram } from '@/features/process/components/ProcessDiagram'
 import { isNotFound, useGenerateProcess, useProcessJob, useProcessModel } from '@/features/process/hooks/useProcessModel'
 import type { ProcessLanguage } from '@/features/process/types'
 import { useNumericParam } from '@/hooks/useNumericParam'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 
 const KNOWN_ERRORS = ['process_generation_pending', 'ai_quota_exceeded'] as const
 
@@ -29,12 +29,14 @@ function apiDetail(error: unknown): { status?: number; detail?: unknown } {
   return {}
 }
 
-function formatDateTime(value: string) {
+function formatDateTime(value: string, locale: string) {
   const date = new Date(value)
-  return Number.isNaN(date.getTime()) ? value : date.toLocaleString()
+  return Number.isNaN(date.getTime()) ? value : date.toLocaleString(locale)
 }
 
 export default function ProcessPage() {
+  const locale = useLocale()
+  const getApiErrorMessage = useApiErrorMessage()
   const projectId = useNumericParam()
   const t = useTranslations('process')
   const tc = useTranslations('clarifier')
@@ -136,7 +138,7 @@ export default function ProcessPage() {
               <h3 id="process-current" className="break-words text-h4 text-foreground sm:text-h3">{record.model.name || t('untitled')}</h3>
               <p className="mt-1 text-caption text-muted-foreground">
                 {t('meta', { version: record.version, language: t(`languages.${record.language}`) })}{' '}
-                <time dateTime={record.created_at}>{formatDateTime(record.created_at)}</time>
+                <time dateTime={record.created_at}>{formatDateTime(record.created_at, locale)}</time>
               </p>
             </div>
           </CardHeader>

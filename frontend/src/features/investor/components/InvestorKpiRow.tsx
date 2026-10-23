@@ -12,9 +12,9 @@ export function InvestorKpiRow({ totals, currency }: { totals: Metrics; currency
   const locale = useLocale()
   const missing = t('notEnoughData')
   const items = [
-    { key: 'bac', value: totals.bac === null ? missing : formatMoney(totals.bac, currency) },
-    { key: 'ac', value: formatMoney(totals.ac, currency) },
-    { key: 'eac', value: totals.eac === null ? missing : formatMoney(totals.eac, currency) },
+    { key: 'bac', value: totals.bac === null ? missing : formatMoney(totals.bac, currency, locale) },
+    { key: 'ac', value: formatMoney(totals.ac, currency, locale) },
+    { key: 'eac', value: totals.eac === null ? missing : formatMoney(totals.eac, currency, locale) },
     { key: 'cpi', value: totals.cpi === null ? missing : formatRatio(totals.cpi, locale) },
     { key: 'spi', value: totals.spi === null ? missing : formatRatio(totals.spi, locale) },
     { key: 'roi', value: totals.roi === null ? missing : formatPercent(totals.roi, locale), hint: totals.roi_basis ? t(`roiBasis.${totals.roi_basis}`) : null },

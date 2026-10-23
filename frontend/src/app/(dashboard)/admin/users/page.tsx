@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import { Plus, Search } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/common/Button'
@@ -21,10 +23,12 @@ import {
 } from '@/features/admin/users/hooks/useAdminUsers'
 import { useAdminRoles } from '@/features/admin/roles/hooks/useAdminRoles'
 import { useAuth } from '@/hooks/useAuth'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 import type { AdminUser, AdminUserCreate, AdminUserUpdate } from '@/types/admin.types'
 
 export default function AdminUsersPage() {
+  const getApiErrorMessage = useApiErrorMessage()
+  const tAccount = useTranslations('accountUi')
   const { user: currentUser } = useAuth()
   const [search, setSearch] = useState('')
   const [roleId, setRoleId] = useState<number | ''>('')
@@ -52,14 +56,13 @@ export default function AdminUsersPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        eyebrow="Admin"
-        title="Users"
-        description="Create accounts, assign roles, and activate or deactivate access."
+        eyebrow={tAccount('admin')}
+        title={tAccount('users')}
+        description={tAccount('createAccountsAssignRolesAndActivateOrDeactivateAccess')}
         actions={
           <Button fullWidth={false} onClick={() => setCreating(true)}>
             <Plus className="h-4 w-4" aria-hidden="true" />
-            New user
-          </Button>
+             {tAccount('newUser')} </Button>
         }
       />
 
@@ -71,37 +74,37 @@ export default function AdminUsersPage() {
             aria-hidden="true"
           />
           <Input
-            aria-label="Search users"
+            aria-label={tAccount('searchUsers')}
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             className="pl-9"
-            placeholder="Search by name, username, or email"
+            placeholder={tAccount('searchByNameUsernameOrEmail')}
           />
         </div>
         <Select
-          aria-label="Filter by role"
+          aria-label={tAccount('filterByRole')}
           value={roleId}
           onChange={(event) => setRoleId(event.target.value ? Number(event.target.value) : '')}
         >
-          <option value="">All roles</option>
+          <option value=""> {tAccount('allRoles')} </option>
           {roles.map((role) => (
             <option key={role.id} value={role.id}>
-              {role.name}
+              {tAccount.has(`roleNames.${role.name}`) ? tAccount(`roleNames.${role.name}`) : role.name}
             </option>
           ))}
         </Select>
         <Select
-          aria-label="Filter by status"
+          aria-label={tAccount('filterByStatus')}
           value={isActive}
           onChange={(event) => setIsActive(event.target.value as '' | 'true' | 'false')}
         >
-          <option value="">All statuses</option>
-          <option value="true">Active</option>
-          <option value="false">Inactive</option>
+          <option value=""> {tAccount('allStatuses')} </option>
+          <option value="true"> {tAccount('active')} </option>
+          <option value="false"> {tAccount('inactive')} </option>
         </Select>
       </Card>
 
-      {query.isLoading && <LoadingState variant="table" label="Loading users…" />}
+      {query.isLoading && <LoadingState variant="table" label={tAccount('loadingUsers')} />}
       {query.isError && (
         <ErrorState message={getApiErrorMessage(query.error)} onRetry={() => void query.refetch()} />
       )}
@@ -125,13 +128,11 @@ export default function AdminUsersPage() {
                   setIsActive('')
                 }}
               >
-                Clear filters
-              </Button>
+                 {tAccount('clearFilters')} </Button>
             ) : (
               <Button fullWidth={false} onClick={() => setCreating(true)}>
                 <Plus className="h-4 w-4" aria-hidden="true" />
-                New user
-              </Button>
+                 {tAccount('newUser')} </Button>
             )
           }
         />
@@ -140,8 +141,8 @@ export default function AdminUsersPage() {
       <Modal
         open={creating}
         onClose={() => setCreating(false)}
-        title="New user"
-        description="Create an account and assign it to one or more roles."
+        title={tAccount('newUser')}
+        description={tAccount('createAnAccountAndAssignItToOneOrMoreRoles')}
       >
         <UserForm
           roles={roles}
@@ -158,8 +159,8 @@ export default function AdminUsersPage() {
       <Modal
         open={Boolean(editing)}
         onClose={() => setEditing(null)}
-        title="Edit user"
-        description="Update profile details, role assignment, and account status."
+        title={tAccount('editUser')}
+        description={tAccount('updateProfileDetailsRoleAssignmentAndAccountStatus')}
       >
         {editing && (
           <UserForm

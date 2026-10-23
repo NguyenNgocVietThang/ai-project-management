@@ -10,9 +10,10 @@ import { formatRatio, HEALTH_TEXT_CLASS } from '@/features/investor/components/m
 import { useInvestorPortfolios } from '@/features/investor/hooks/useInvestor'
 import { formatMoney } from '@/lib/format'
 import { cn } from '@/lib/utils'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 
 export default function InvestorHomePage() {
+  const getApiErrorMessage = useApiErrorMessage()
   const t = useTranslations('investor')
   const locale = useLocale()
   const query = useInvestorPortfolios()
@@ -32,8 +33,8 @@ export default function InvestorHomePage() {
                 </h2>
                 <p className="mt-1 text-caption text-muted-foreground">{t('projects', { count: item.project_count })}</p>
                 <dl className="mt-4 grid grid-cols-2 gap-3 text-body-sm">
-                  <div><dt className="text-muted-foreground">{t('kpi.bac')}</dt><dd className="tabular-nums">{item.total_bac === null ? t('notEnoughData') : formatMoney(item.total_bac, item.currency)}</dd></div>
-                  <div><dt className="text-muted-foreground">{t('kpi.ac')}</dt><dd className="tabular-nums">{formatMoney(item.total_ac, item.currency)}</dd></div>
+                  <div><dt className="text-muted-foreground">{t('kpi.bac')}</dt><dd className="tabular-nums">{item.total_bac === null ? t('notEnoughData') : formatMoney(item.total_bac, item.currency, locale)}</dd></div>
+                  <div><dt className="text-muted-foreground">{t('kpi.ac')}</dt><dd className="tabular-nums">{formatMoney(item.total_ac, item.currency, locale)}</dd></div>
                   <div><dt className="text-muted-foreground">{t('kpi.cpi')}</dt><dd className="tabular-nums">{item.cpi === null ? t('notEnoughData') : formatRatio(item.cpi, locale)}</dd></div>
                   <div><dt className="text-muted-foreground">{t('kpi.spi')}</dt><dd className="tabular-nums">{item.spi === null ? t('notEnoughData') : formatRatio(item.spi, locale)}</dd></div>
                 </dl>

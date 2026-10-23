@@ -1,4 +1,5 @@
 'use client'
+import { useTranslations } from 'next-intl'
 
 import { useState } from 'react'
 import { MousePointerClick, Plus } from 'lucide-react'
@@ -11,6 +12,7 @@ import { ChangeRequestForm } from '@/features/change-requests/components/ChangeR
 import { ChangeRequestList } from '@/features/change-requests/components/ChangeRequestList'
 
 export default function ChangeRequestsPage() {
+  const tw = useTranslations('workflowUi')
   const projectId = useNumericParam()
   const [selectedId, setSelectedId] = useState<number | null>(null)
   const [formOpen, setFormOpen] = useState(false)
@@ -19,12 +21,12 @@ export default function ChangeRequestsPage() {
     <div className="space-y-6">
       {/* Trang con nằm trong layout dự án (đã có H1) nên chỉ dùng H2 + CTA chính. */}
       <SectionHeader
-        title="Change requests"
-        description="Propose scope changes, run an AI impact analysis and track the approval chain."
+        title={tw('changeRequestsTitle')}
+        description={tw('changeRequestsDescription')}
         action={
           <Button type="button" fullWidth={false} onClick={() => setFormOpen(true)}>
             <Plus className="h-4 w-4" aria-hidden="true" />
-            New change request
+            {tw('newChangeRequest')}
           </Button>
         }
       />
@@ -39,8 +41,8 @@ export default function ChangeRequestsPage() {
         {selectedId === null ? (
           <EmptyState
             icon={MousePointerClick}
-            title="Select a change request"
-            description="Choose a change request from the list to view details and run an AI impact analysis."
+            title={tw('selectChangeRequest')}
+            description={tw('selectChangeRequestDescription')}
           />
         ) : (
           <ChangeRequestDetail changeRequestId={selectedId} variant="embedded" />

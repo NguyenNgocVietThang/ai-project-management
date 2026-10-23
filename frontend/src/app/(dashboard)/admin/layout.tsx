@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
@@ -9,12 +11,13 @@ import { isAdminUser } from '@/lib/rbac'
 import { cn } from '@/lib/utils'
 
 const TABS = [
-  { href: '/admin/users', label: 'Users' },
-  { href: '/admin/roles', label: 'Roles & Permissions' },
-  { href: '/admin/audit', label: 'Audit Log' },
+  { href: '/admin/users', label: 'users' },
+  { href: '/admin/roles', label: 'rolesPermissions' },
+  { href: '/admin/audit', label: 'auditLogLabel' },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const tAccount = useTranslations('accountUi')
   const router = useRouter()
   const pathname = usePathname()
   const { user } = useAuth()
@@ -34,7 +37,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="space-y-6">
-      <nav aria-label="Admin navigation" className="flex gap-1 border-b">
+      <nav aria-label={tAccount('adminNavigation')} className="flex gap-1 border-b">
         {TABS.map((tab) => (
           <Link
             key={tab.href}
@@ -46,7 +49,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 : 'border-transparent text-muted-foreground hover:text-foreground'
             )}
           >
-            {tab.label}
+            {tAccount(tab.label)}
           </Link>
         ))}
       </nav>

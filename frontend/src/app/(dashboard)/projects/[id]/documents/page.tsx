@@ -16,7 +16,7 @@ import { BRIEF_ITEM_KEYS, type BriefItemKey } from '@/features/ai/types/requirem
 import { useDownloadDocument, useGenerateDocument, useProjectDocuments } from '@/features/documents/hooks/useDocuments'
 import type { DocumentLanguage, DocumentStatus, DocumentType, GeneratedDocument } from '@/features/documents/types'
 import { useNumericParam } from '@/hooks/useNumericParam'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 
 const KNOWN_ERRORS = ['document_generation_pending', 'ai_quota_exceeded', 'document_not_ready'] as const
 // Trạng thái tài liệu -> tông Badge theo token ngữ nghĩa.
@@ -42,6 +42,7 @@ function formatDateTime(value: string, locale: string) {
 }
 
 export default function DocumentsPage() {
+  const getApiErrorMessage = useApiErrorMessage()
   const locale = useLocale()
   const projectId = useNumericParam()
   const t = useTranslations('documents')

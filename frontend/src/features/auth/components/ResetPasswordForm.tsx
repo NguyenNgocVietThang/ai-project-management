@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import Link from 'next/link'
 import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -18,10 +20,10 @@ const STRENGTH_TONES = ['bg-muted', 'bg-destructive', 'bg-warning', 'bg-success'
 const resetPasswordSchema = z
   .object({
     new_password: passwordSchema,
-    confirm_password: z.string().min(1, 'Please confirm your password'),
+    confirm_password: z.string().min(1, 'pleaseConfirmYourPassword'),
   })
   .refine((data) => data.new_password === data.confirm_password, {
-    message: 'Passwords do not match',
+    message: 'passwordsDoNotMatch',
     path: ['confirm_password'],
   })
 
@@ -32,6 +34,7 @@ interface ResetPasswordFormProps {
 }
 
 export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
+  const tAccount = useTranslations('accountUi')
   const { resetPassword, isResettingPassword, resetPasswordError } = useAuth()
   const [passwordInput, setPasswordInput] = useState('')
   const {
@@ -47,13 +50,12 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   if (!token) {
     return (
       <div className="space-y-6">
-        <Alert>This password reset link is missing its token.</Alert>
+        <Alert> {tAccount('thisPasswordResetLinkIsMissingItsToken')} </Alert>
         <Link
           href="/forgot-password"
           className={buttonClasses({ size: 'lg', fullWidth: true })}
         >
-          Request a new link
-        </Link>
+           {tAccount('requestANewLink')} </Link>
       </div>
     )
   }
@@ -71,7 +73,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
       {resetPasswordError && <Alert>{resetPasswordError}</Alert>}
 
       <div>
-        <Label htmlFor="new_password">New password</Label>
+        <Label htmlFor="new_password"> {tAccount('newPassword')} </Label>
         <Input
           id="new_password"
           type="password"
@@ -83,7 +85,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         />
         {errors.new_password && (
           <p id="new_password-error" className="mt-2 text-body-sm text-destructive">
-            {errors.new_password.message}
+            {errors.new_password.message && tAccount(errors.new_password.message)}
           </p>
         )}
         {passwordInput && (
@@ -95,14 +97,14 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
               />
             </div>
             <p className="text-caption text-muted-foreground">
-              Password strength: <span className="font-medium text-foreground">{strength.label}</span>
+               {tAccount('passwordStrength')} <span className="font-medium text-foreground">{strength.label && tAccount(strength.label)}</span>
             </p>
           </div>
         )}
       </div>
 
       <div>
-        <Label htmlFor="confirm_password">Confirm new password</Label>
+        <Label htmlFor="confirm_password"> {tAccount('confirmNewPassword')} </Label>
         <Input
           id="confirm_password"
           type="password"
@@ -112,19 +114,18 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         />
         {errors.confirm_password && (
           <p id="confirm_password-error" className="mt-2 text-body-sm text-destructive">
-            {errors.confirm_password.message}
+            {errors.confirm_password.message && tAccount(errors.confirm_password.message)}
           </p>
         )}
       </div>
 
       <Button type="submit" size="lg" isLoading={isResettingPassword}>
-        {isResettingPassword ? 'Resetting password…' : 'Reset password'}
+        {isResettingPassword ? tAccount('resettingPassword') : tAccount('resetPassword')}
       </Button>
 
       <p className="text-center text-body-sm text-muted-foreground">
         <Link href="/login" className="font-medium text-primary underline-offset-4 hover:underline">
-          Back to sign in
-        </Link>
+           {tAccount('backToSignIn')} </Link>
       </p>
     </form>
   )

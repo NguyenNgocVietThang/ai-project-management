@@ -1,5 +1,6 @@
 'use client'
-import { useTranslations } from 'next-intl'
+
+import { useLocale, useTranslations } from 'next-intl'
 
 import { usePathname } from 'next/navigation'
 import { useNumericParam } from '@/hooks/useNumericParam'
@@ -13,9 +14,11 @@ import { useChatUnreadCount } from '@/features/chat/hooks/useChat'
 import { ProjectStatusBadge } from '@/features/projects/components/ProjectStatusBadge'
 import { useProjectDetail } from '@/features/projects/hooks/useProjects'
 import { formatStatus } from '@/lib/format'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 
 export default function ProjectLayout({ children }: { children: React.ReactNode }) {
+  const locale = useLocale()
+  const getApiErrorMessage = useApiErrorMessage()
   const id = useNumericParam()
   const pathname = usePathname()
   const query = useProjectDetail(id)
@@ -44,7 +47,7 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
       <PageHeader
         title={project.name}
         description={project.portfolio_name || t('standalone')}
-        meta={<><ProjectStatusBadge status={project.status} /><Badge tone="primary">{t.has(`methodologies.${project.methodology}`) ? t(`methodologies.${project.methodology}`) : formatStatus(project.methodology)}</Badge></>}
+        meta={<><ProjectStatusBadge status={project.status} /><Badge tone="primary">{t.has(`methodologies.${project.methodology}`) ? t(`methodologies.${project.methodology}`) : formatStatus(project.methodology, locale)}</Badge></>}
       />
       {/* ===== Thanh tab dính ngay dưới header ứng dụng (cao 64px) ===== */}
       <div className="sticky top-16 z-10 -mx-4 bg-background px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">

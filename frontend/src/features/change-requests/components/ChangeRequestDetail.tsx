@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Send, Sparkles } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { Alert } from '@/components/common/Alert'
 import { Button } from '@/components/common/Button'
 import { ErrorState } from '@/components/common/PageState'
@@ -10,7 +10,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/Ca
 import { Skeleton, SkeletonRegion, SkeletonText } from '@/components/ui/Skeleton'
 import { formatDate, formatMoney } from '@/lib/format'
 import { cn } from '@/lib/utils'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 import {
   useChangeRequest,
   useImpactAnalysisJob,
@@ -60,6 +60,9 @@ export function ChangeRequestDetail({
   variant?: 'page' | 'embedded'
 }) {
   const [jobId, setJobId] = useState<string | null>(null)
+  const getApiErrorMessage = useApiErrorMessage()
+  const tw = useTranslations('workflowUi')
+  const locale = useLocale()
   const query = useChangeRequest(changeRequestId)
   const runAnalysis = useRunImpactAnalysis()
   const submitMutation = useSubmitChangeRequest()
@@ -78,7 +81,7 @@ export function ChangeRequestDetail({
   if (query.isLoading) {
     // Khung xương cùng bố cục 2 cột với nội dung thật để tránh nhảy trang.
     return (
-      <SkeletonRegion label="Loading change request…" className={LAYOUT_CLASSES[variant]}>
+      <SkeletonRegion label={tw('loadingChangeRequest')} className={LAYOUT_CLASSES[variant]}>
         <div className="min-w-0 space-y-6">
           <div className="space-y-4 rounded-xl border border-border/80 bg-card p-6 shadow-soft">
             <Skeleton className="h-6 w-2/3" />
@@ -135,7 +138,7 @@ export function ChangeRequestDetail({
                 onClick={() => submitMutation.mutate(changeRequest.id)}
               >
                 {!submitMutation.isPending && <Send className="h-4 w-4" aria-hidden="true" />}
-                Submit
+                {tw('submit')}
               </Button>
             )}
           </CardHeader>
@@ -145,7 +148,7 @@ export function ChangeRequestDetail({
               {(() => {
                 // 422 missing_roles: nêu rõ vai trò còn thiếu trong dự án.
                 const roles = parseMissingRoles(submitMutation.error)
-                return roles ? t('missingRoles', { roles: roles.join(', ') }) : getApiErrorMessage(submitMutation.error)
+                return roles ? t('missingRoles', { roles: roles.map((role) => t(`role.${role}`)).join(', ') }) : getApiErrorMessage(submitMutation.error)
               })()}
             </Alert>
           )}
@@ -157,14 +160,14 @@ export function ChangeRequestDetail({
 
             {changeRequest.reason && (
               <div>
-                <h4 className="text-overline uppercase text-muted-foreground">Reason</h4>
+                <h4 className="text-overline uppercase text-muted-foreground">{tw('reason')}</h4>
                 <p className="mt-2 max-w-prose-ui break-words text-body-sm text-foreground">{changeRequest.reason}</p>
               </div>
             )}
 
             {changeRequest.impact_description && (
               <div>
-                <h4 className="text-overline uppercase text-muted-foreground">Impact (as reported)</h4>
+                <h4 className="text-overline uppercase text-muted-foreground">{tw('reportedImpact')}</h4>
                 <p className="mt-2 max-w-prose-ui break-words text-body-sm text-foreground">{changeRequest.impact_description}</p>
               </div>
             )}
@@ -176,9 +179,9 @@ export function ChangeRequestDetail({
             <div className="min-w-0">
               <CardTitle as={variant === 'page' ? 'h3' : 'h4'} id={`cr-impact-${changeRequest.id}`} className="flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-primary" aria-hidden="true" />
-                AI impact analysis
+                {tw('impactAnalysis')}
               </CardTitle>
-              <CardDescription>Estimate schedule, cost and risk impact of this change before it is approved.</CardDescription>
+              <CardDescription>{tw('impactAnalysisDescription')}</CardDescription>
             </div>
             <Button
               type="button"
@@ -188,7 +191,7 @@ export function ChangeRequestDetail({
               isLoading={runAnalysis.isPending}
             >
               {!runAnalysis.isPending && <Sparkles className="h-4 w-4" aria-hidden="true" />}
-              Run impact analysis
+              {tw('runImpactAnalysis')}
             </Button>
           </CardHeader>
 
@@ -200,7 +203,7 @@ export function ChangeRequestDetail({
             {isAnalyzing && (
               // Khung xương có hình dạng của báo cáo tác động trong lúc job AI chạy.
               <div role="status" className="space-y-4 rounded-lg border border-dashed p-4">
-                <p className="text-body-sm text-muted-foreground">Analyzing impact…</p>
+                <p className="text-body-sm text-muted-foreground">{tw('analyzingImpact')}</p>
                 <div aria-hidden="true" className="space-y-3">
                   <Skeleton className="h-6 w-24 rounded-full" />
                   <div className="grid gap-3 sm:grid-cols-2">
@@ -212,30 +215,30 @@ export function ChangeRequestDetail({
               </div>
             )}
 
-            {jobId && job.data?.status === 'FAILED' && <Alert>{job.data.error ?? 'Impact analysis failed.'}</Alert>}
+            {jobId && job.data?.status === 'FAILED' && <Alert>{getApiErrorMessage(new Error(job.data.error ?? ''), tw('impactAnalysisFailed'))}</Alert>}
 
             {report && (
               <div className="space-y-4 rounded-lg border bg-muted/30 p-4 animate-fade-up">
                 <div className="flex flex-wrap items-center gap-3">
                   <RiskLevelBadge level={report.risk_level} />
-                  <span className="text-body-sm text-muted-foreground">Risk score: {report.risk_score.toFixed(1)} / 10</span>
+                  <span className="text-body-sm text-muted-foreground">{tw('riskScore', { score: new Intl.NumberFormat(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(report.risk_score) })}</span>
                 </div>
                 <dl className="grid gap-3 sm:grid-cols-2">
                   <div className="rounded-lg border bg-card p-3">
-                    <dt className="text-overline uppercase text-muted-foreground">Schedule impact</dt>
+                    <dt className="text-overline uppercase text-muted-foreground">{tw('scheduleImpact')}</dt>
                     <dd className="mt-1 text-h4 tabular-nums text-foreground">
                       {report.schedule_impact_days > 0 ? '+' : ''}
-                      {report.schedule_impact_days} days
+                      {tw('daysValue', { days: report.schedule_impact_days })}
                     </dd>
                   </div>
                   <div className="rounded-lg border bg-card p-3">
-                    <dt className="text-overline uppercase text-muted-foreground">Cost impact</dt>
-                    <dd className="mt-1 text-h4 tabular-nums text-foreground">{formatMoney(report.cost_impact)}</dd>
+                    <dt className="text-overline uppercase text-muted-foreground">{tw('costImpact')}</dt>
+                    <dd className="mt-1 text-h4 tabular-nums text-foreground">{formatMoney(report.cost_impact, undefined, locale)}</dd>
                   </div>
                 </dl>
                 {report.summary && (
                   <div>
-                    <p className="text-overline uppercase text-muted-foreground">Summary</p>
+                    <p className="text-overline uppercase text-muted-foreground">{tw('summary')}</p>
                     <p className="mt-1 max-w-prose-ui text-body-sm text-muted-foreground">{report.summary}</p>
                   </div>
                 )}
@@ -248,13 +251,13 @@ export function ChangeRequestDetail({
       {/* ===== Cột phụ: thông tin meta và chuỗi phê duyệt ===== */}
       <aside className="min-w-0 space-y-6">
         <Card>
-          <CardTitle as={variant === 'page' ? 'h3' : 'h4'} className="mb-4">Details</CardTitle>
+          <CardTitle as={variant === 'page' ? 'h3' : 'h4'} className="mb-4">{tw('details')}</CardTitle>
           <dl className="divide-y">
-            <MetaRow label="Reference">
+            <MetaRow label={tw('reference')}>
               <span className="tabular-nums">CR #{changeRequest.id}</span>
             </MetaRow>
-            <MetaRow label="Created">{formatDate(changeRequest.created_at)}</MetaRow>
-            {changeRequest.applied_at && <MetaRow label="Applied">{formatDate(changeRequest.applied_at)}</MetaRow>}
+            <MetaRow label={tw('created')}>{formatDate(changeRequest.created_at, locale)}</MetaRow>
+            {changeRequest.applied_at && <MetaRow label={tw('applied')}>{formatDate(changeRequest.applied_at, locale)}</MetaRow>}
           </dl>
         </Card>
 

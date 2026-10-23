@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import { Suspense, useEffect, useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { CheckCircle2, XCircle } from 'lucide-react'
@@ -8,12 +10,12 @@ import { ButtonLink } from '@/components/common/Button'
 import { Skeleton, SkeletonRegion } from '@/components/ui/Skeleton'
 import { authService } from '@/services/auth.service'
 import { useAuthStore } from '@/store/authStore'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 
 type VerificationState =
   | { status: 'loading'; message: string }
   | { status: 'success'; message: string }
-  | { status: 'error'; message: string }
+  | { status: 'error'; message: string; error?: unknown }
 
 /** Khung xương giữ chỗ cho ô biểu tượng, tiêu đề và mô tả trong lúc chờ. */
 function VerifyEmailSkeleton({ label }: { label: string }) {
@@ -29,6 +31,8 @@ function VerifyEmailSkeleton({ label }: { label: string }) {
 }
 
 function VerifyEmailContent() {
+  const getApiErrorMessage = useApiErrorMessage()
+  const tAccount = useTranslations('accountUi')
   const searchParams = useSearchParams()
   const queryClient = useQueryClient()
   const accessToken = useAuthStore((state) => state.accessToken)
@@ -36,7 +40,7 @@ function VerifyEmailContent() {
   const started = useRef(false)
   const [state, setState] = useState<VerificationState>({
     status: 'loading',
-    message: 'Verifying your email address…',
+    message: 'verifyingYourEmailAddress',
   })
 
   useEffect(() => {
@@ -47,14 +51,14 @@ function VerifyEmailContent() {
     if (!token) {
       setState({
         status: 'error',
-        message: 'This verification link is invalid or has expired.',
+        message: 'thisVerificationLinkIsInvalidOrHasExpired',
       })
       return
     }
 
     async function verify() {
       try {
-        const response = await authService.verifyEmail(token as string)
+        await authService.verifyEmail(token as string)
 
         if (accessToken) {
           try {
@@ -66,14 +70,12 @@ function VerifyEmailContent() {
           }
         }
 
-        setState({ status: 'success', message: response.message })
+        setState({ status: 'success', message: 'verificationComplete' })
       } catch (error) {
         setState({
           status: 'error',
-          message: getApiErrorMessage(
-            error,
-            'This verification link is invalid or has expired.'
-          ),
+          message: 'thisVerificationLinkIsInvalidOrHasExpired',
+          error,
         })
       }
     }
@@ -107,21 +109,20 @@ function VerifyEmailContent() {
 
       <div className="space-y-2">
         <h1 className="text-h2 text-foreground">
-          {state.status === 'loading' && 'Verifying email'}
-          {state.status === 'success' && 'Email verified'}
-          {state.status === 'error' && 'Verification failed'}
+          {state.status === 'loading' && tAccount('verifyingEmail')}
+          {state.status === 'success' && tAccount('emailVerified')}
+          {state.status === 'error' && tAccount('verificationFailed')}
         </h1>
-        <p className="text-body-sm text-muted-foreground">{state.message}</p>
+        <p className="text-body-sm text-muted-foreground">{state.status === 'error' && state.error ? getApiErrorMessage(state.error, tAccount(state.message)) : tAccount(state.message)}</p>
         {state.status === 'error' && accessToken && (
           <p className="text-body-sm text-muted-foreground">
-            Return to the dashboard to request a fresh verification email.
-          </p>
+             {tAccount('returnToTheDashboardToRequestAFreshVerificationEmail')} </p>
         )}
       </div>
 
       {state.status !== 'loading' && (
         <ButtonLink href={destination} size="lg" fullWidth>
-          {accessToken ? 'Go to dashboard' : isSuccess ? 'Sign in' : 'Back to sign in'}
+          {accessToken ? tAccount('goToDashboard') : isSuccess ? tAccount('signIn') : tAccount('backToSignIn')}
         </ButtonLink>
       )}
     </div>
@@ -129,9 +130,10 @@ function VerifyEmailContent() {
 }
 
 export default function VerifyEmailPage() {
+  const tAccount = useTranslations('accountUi')
   return (
     <Suspense
-      fallback={<VerifyEmailSkeleton label="Loading verification link…" />}
+      fallback={<VerifyEmailSkeleton label={tAccount('loadingVerificationLink')} />}
     >
       <VerifyEmailContent />
     </Suspense>

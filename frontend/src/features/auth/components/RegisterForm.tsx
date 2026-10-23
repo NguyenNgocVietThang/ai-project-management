@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import Link from 'next/link'
 import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -18,24 +20,25 @@ const STRENGTH_TONES = ['bg-muted', 'bg-destructive', 'bg-warning', 'bg-success'
 
 const registerSchema = z
   .object({
-    full_name: z.string().min(2, 'Full name must be at least 2 characters'),
+    full_name: z.string().min(2, 'fullNameMustBeAtLeast2Characters'),
     username: z
       .string()
-      .min(3, 'Username must be at least 3 characters')
-      .max(50, 'Username must be at most 50 characters')
-      .regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'),
-    email: z.string().min(1, 'Email is required').email('Enter a valid email address'),
+      .min(3, 'usernameMustBeAtLeast3Characters')
+      .max(50, 'usernameMustBeAtMost50Characters')
+      .regex(/^[a-zA-Z0-9_]+$/, 'usernameCanOnlyContainLettersNumbersAndUnderscores'),
+    email: z.string().min(1, 'emailIsRequired').email('enterAValidEmailAddress'),
     password: passwordSchema,
-    confirm_password: z.string().min(1, 'Please confirm your password'),
+    confirm_password: z.string().min(1, 'pleaseConfirmYourPassword'),
   })
   .refine((data) => data.password === data.confirm_password, {
-    message: 'Passwords do not match',
+    message: 'passwordsDoNotMatch',
     path: ['confirm_password'],
   })
 
 type RegisterFormValues = z.infer<typeof registerSchema>
 
 export function RegisterForm() {
+  const tAccount = useTranslations('accountUi')
   const { register: registerUser, isRegistering, registerError } = useAuth()
   const [passwordInput, setPasswordInput] = useState('')
 
@@ -67,41 +70,41 @@ export function RegisterForm() {
       {registerError && <Alert>{registerError}</Alert>}
 
       <div>
-        <Label htmlFor="full_name">Full Name</Label>
+        <Label htmlFor="full_name"> {tAccount('fullNameLabel')} </Label>
         <Input
           id="full_name"
           type="text"
-          placeholder="John Doe"
+          placeholder={tAccount('johnDoe')}
           autoComplete="name"
           hasError={Boolean(errors.full_name)}
           {...register('full_name')}
         />
         {errors.full_name && (
           <p id="full_name-error" className="mt-2 text-body-sm text-destructive">
-            {errors.full_name.message}
+            {errors.full_name.message && tAccount(errors.full_name.message)}
           </p>
         )}
       </div>
 
       <div>
-        <Label htmlFor="username">Username</Label>
+        <Label htmlFor="username"> {tAccount('username')} </Label>
         <Input
           id="username"
           type="text"
-          placeholder="johndoe"
+          placeholder={tAccount('usernameExample')}
           autoComplete="username"
           hasError={Boolean(errors.username)}
           {...register('username')}
         />
         {errors.username && (
           <p id="username-error" className="mt-2 text-body-sm text-destructive">
-            {errors.username.message}
+            {errors.username.message && tAccount(errors.username.message)}
           </p>
         )}
       </div>
 
       <div>
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email"> {tAccount('email')} </Label>
         <Input
           id="email"
           type="email"
@@ -112,13 +115,13 @@ export function RegisterForm() {
         />
         {errors.email && (
           <p id="email-error" className="mt-2 text-body-sm text-destructive">
-            {errors.email.message}
+            {errors.email.message && tAccount(errors.email.message)}
           </p>
         )}
       </div>
 
       <div>
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="password"> {tAccount('password')} </Label>
         <Input
           id="password"
           type="password"
@@ -130,7 +133,7 @@ export function RegisterForm() {
         />
         {errors.password && (
           <p id="password-error" className="mt-2 text-body-sm text-destructive">
-            {errors.password.message}
+            {errors.password.message && tAccount(errors.password.message)}
           </p>
         )}
         {passwordInput && (
@@ -142,14 +145,14 @@ export function RegisterForm() {
               />
             </div>
             <p className="text-caption text-muted-foreground">
-              Password strength: <span className="font-medium text-foreground">{strength.label}</span>
+               {tAccount('passwordStrength')} <span className="font-medium text-foreground">{strength.label && tAccount(strength.label)}</span>
             </p>
           </div>
         )}
       </div>
 
       <div>
-        <Label htmlFor="confirm_password">Confirm Password</Label>
+        <Label htmlFor="confirm_password"> {tAccount('confirmPassword')} </Label>
         <Input
           id="confirm_password"
           type="password"
@@ -159,22 +162,21 @@ export function RegisterForm() {
         />
         {errors.confirm_password && (
           <p id="confirm_password-error" className="mt-2 text-body-sm text-destructive">
-            {errors.confirm_password.message}
+            {errors.confirm_password.message && tAccount(errors.confirm_password.message)}
           </p>
         )}
       </div>
 
       <Button type="submit" size="lg" isLoading={isRegistering}>
-        {isRegistering ? 'Creating account…' : 'Create account'}
+        {isRegistering ? tAccount('creatingAccount') : tAccount('createAccount')}
       </Button>
 
-      <SocialLoginButtons dividerText="Or sign up with" />
+      <SocialLoginButtons dividerText={tAccount('orSignUpWith')} />
 
       <p className="text-center text-body-sm text-muted-foreground">
-        Already have an account?{' '}
+         {tAccount('alreadyHaveAnAccount')} {' '}
         <Link href="/login" className="font-medium text-primary underline-offset-4 hover:underline">
-          Sign in
-        </Link>
+           {tAccount('signIn')} </Link>
       </p>
     </form>
   )

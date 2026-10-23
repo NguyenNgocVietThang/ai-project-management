@@ -16,9 +16,10 @@ import { InvestorKpiRow } from '@/features/investor/components/InvestorKpiRow'
 import { InvestorProjectTable } from '@/features/investor/components/InvestorProjectTable'
 import { useInvestorPortfolio } from '@/features/investor/hooks/useInvestor'
 import { useNumericParam } from '@/hooks/useNumericParam'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 
 export default function InvestorPortfolioPage() {
+  const getApiErrorMessage = useApiErrorMessage()
   const id = useNumericParam()
   const router = useRouter()
   const t = useTranslations('investor')

@@ -2,16 +2,16 @@ import { z } from 'zod'
 
 export const passwordSchema = z
   .string()
-  .min(12, 'Password must be at least 12 characters')
+  .min(12, 'passwordMustBeAtLeast12Characters')
   .refine((password) => new TextEncoder().encode(password).length <= 72, {
-    message: 'Password must not exceed 72 bytes',
+    message: 'passwordMustNotExceed72Bytes',
   })
   .refine(
     (password) =>
       Array.from(password).some(
         (character) => /\p{N}/u.test(character) || !/[\p{L}\p{N}\s]/u.test(character)
       ),
-    { message: 'Password must contain at least one number or special character' }
+    { message: 'passwordMustContainAtLeastOneNumberOrSpecialCharacter' }
   )
 
 export function getPasswordStrength(password: string): {
@@ -27,7 +27,7 @@ export function getPasswordStrength(password: string): {
   if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score += 1
   if (/[^a-zA-Z0-9]/.test(password)) score += 1
 
-  if (score <= 1) return { score: 1, label: 'Weak', color: 'bg-destructive' }
-  if (score <= 3) return { score: 2, label: 'Medium', color: 'bg-yellow-500' }
-  return { score: 3, label: 'Strong', color: 'bg-emerald-500' }
+  if (score <= 1) return { score: 1, label: 'weak', color: 'bg-destructive' }
+  if (score <= 3) return { score: 2, label: 'medium', color: 'bg-yellow-500' }
+  return { score: 3, label: 'strong', color: 'bg-emerald-500' }
 }

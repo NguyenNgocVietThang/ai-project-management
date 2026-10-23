@@ -1,11 +1,12 @@
 'use client'
 
+import { useLocale, useTranslations } from 'next-intl'
+
 /**
  * BudgetVsEacChart – thanh ngang so sánh ngân sách (BAC) với chi phí dự báo (EAC)
  * theo dự án. Chỉ vẽ dự án được tính vào tổng (cùng tiền tệ, có ngân sách); có bảng
  * sr-only để thông tin không chỉ nằm trong hình.
  */
-import { useTranslations } from 'next-intl'
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { ChartTooltip } from '@/components/charts/ChartTooltip'
 import { animationProps, axisProps, chartColors, gridProps, usePrefersReducedMotion } from '@/components/charts/chartTheme'
@@ -13,6 +14,7 @@ import { formatMoney } from '@/lib/format'
 import type { InvestorProjectRow } from '../types/investor.types'
 
 export function BudgetVsEacChart({ projects, currency }: { projects: InvestorProjectRow[]; currency: string }) {
+  const locale = useLocale()
   const t = useTranslations('investor')
   const reducedMotion = usePrefersReducedMotion()
   const data = projects
@@ -20,7 +22,7 @@ export function BudgetVsEacChart({ projects, currency }: { projects: InvestorPro
     .map((project) => ({ name: project.name, bac: project.metrics.bac ?? 0, eac: project.metrics.eac }))
   if (data.length === 0) return <p className="text-body-sm text-muted-foreground">{t('noComparableProjects')}</p>
   // ChartTooltip truyền giá trị dạng number | string, nên ép về number trước khi định dạng.
-  const money = (value: number | string) => formatMoney(Number(value), currency)
+  const money = (value: number | string) => formatMoney(Number(value), currency, locale)
   return (
     <>
       <ResponsiveContainer width="100%" height={Math.max(160, data.length * 48)}>

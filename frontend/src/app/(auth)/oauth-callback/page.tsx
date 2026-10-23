@@ -1,10 +1,13 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Alert } from '@/components/common/Alert'
 import { ButtonLink } from '@/components/common/Button'
 import { Skeleton, SkeletonRegion } from '@/components/ui/Skeleton'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 import { authService } from '@/services/auth.service'
 import { useAuthStore } from '@/store/authStore'
 
@@ -25,11 +28,13 @@ function OAuthPendingState({ label }: { label: string }) {
 }
 
 function OAuthCallbackContent() {
+  const tAccount = useTranslations('accountUi')
+  const getApiErrorMessage = useApiErrorMessage()
   const router = useRouter()
   const searchParams = useSearchParams()
   const { setTokens, setUser } = useAuthStore()
 
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [errorMessage, setErrorMessage] = useState<unknown>(null)
   const [isProcessing, setIsProcessing] = useState(true)
 
   useEffect(() => {
@@ -44,7 +49,7 @@ function OAuthCallbackContent() {
       }
 
       if (!code) {
-        setErrorMessage('Invalid response from authentication server.')
+        setErrorMessage(new Error('Invalid response from authentication server.'))
         setIsProcessing(false)
         return
       }
@@ -58,8 +63,7 @@ function OAuthCallbackContent() {
         setUser(user)
         router.replace('/dashboard')
       } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : 'Failed to complete login.'
-        setErrorMessage(message)
+        setErrorMessage(err)
         setIsProcessing(false)
       }
     }
@@ -68,32 +72,31 @@ function OAuthCallbackContent() {
   }, [searchParams, router, setTokens, setUser])
 
   if (isProcessing) {
-    return <OAuthPendingState label="Completing sign in…" />
+    return <OAuthPendingState label={tAccount('completingSignIn')} />
   }
 
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <h1 className="text-h2 text-foreground">Authentication Failed</h1>
+        <h1 className="text-h2 text-foreground"> {tAccount('authenticationFailed')} </h1>
         <p className="text-body-sm text-muted-foreground">
-          We encountered an issue while signing you in with your social account.
-        </p>
+           {tAccount('weEncounteredAnIssueWhileSigningYouInWithYourSocialAccount')} </p>
       </div>
 
-      {errorMessage && <Alert>{errorMessage}</Alert>}
+      {Boolean(errorMessage) && <Alert>{getApiErrorMessage(errorMessage, tAccount('failedToCompleteLogin'))}</Alert>}
 
       {/* Liên kết mang hình thức nút: tránh lồng <button> trong <a> như trước. */}
       <ButtonLink href="/login" size="lg" fullWidth>
-        Return to Sign in
-      </ButtonLink>
+         {tAccount('returnToSignIn')} </ButtonLink>
     </div>
   )
 }
 
 export default function OAuthCallbackPage() {
+  const tAccount = useTranslations('accountUi')
   return (
     <Suspense
-      fallback={<OAuthPendingState label="Loading authentication status…" />}
+      fallback={<OAuthPendingState label={tAccount('loadingAuthenticationStatus')} />}
     >
       <OAuthCallbackContent />
     </Suspense>

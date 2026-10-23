@@ -128,7 +128,7 @@ describe('GanttChart', () => {
     fireEvent.change(screen.getByRole('combobox', { name: 'Task column width' }), { target: { value: '400' } })
     expect(screen.getByRole('combobox', { name: 'Task column width' })).toHaveValue('400')
     expect(axis()?.getAttribute('width')).toBe(width)
-    expect(screen.getByRole('list', { name: 'Task' })).toHaveStyle({ width: 'clamp(144px, 40vw, 400px)' })
+    expect(screen.getByRole('list', { name: 'Task' })).toHaveAttribute('style', expect.stringContaining('width: clamp(144px, 40vw, 400px)'))
   })
 
   it('hiển thị trạng thái rỗng khi không có task', () => {

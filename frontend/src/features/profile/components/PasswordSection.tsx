@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { Alert } from '@/components/common/Alert'
@@ -20,6 +22,7 @@ interface PasswordSectionProps {
 }
 
 export function PasswordSection({ hasPassword, onSubmit, isLoading, error }: PasswordSectionProps) {
+  const tAccount = useTranslations('accountUi')
   const {
     register,
     handleSubmit,
@@ -32,11 +35,11 @@ export function PasswordSection({ hasPassword, onSubmit, isLoading, error }: Pas
 
   return (
     <SectionCard
-      title={hasPassword ? 'Change password' : 'Set a password'}
+      title={hasPassword ? tAccount('changePassword') : tAccount('setAPassword')}
       description={
         hasPassword
-          ? 'Changing your password signs you out on every device.'
-          : 'Add password sign-in to your social account. You will be signed out afterwards.'
+          ? tAccount('changingYourPasswordSignsYouOutOnEveryDevice')
+          : tAccount('addPasswordSignInToYourSocialAccountYouWillBeSignedOutAfterwards')
       }
     >
       <form
@@ -44,7 +47,7 @@ export function PasswordSection({ hasPassword, onSubmit, isLoading, error }: Pas
           if (hasPassword && !values.current_password) {
             setError('current_password', {
               type: 'required',
-              message: 'Enter your current password',
+              message: 'enterYourCurrentPassword',
             })
             return
           }
@@ -60,7 +63,7 @@ export function PasswordSection({ hasPassword, onSubmit, isLoading, error }: Pas
         {error && <Alert>{error}</Alert>}
         {hasPassword && (
           <div>
-            <Label htmlFor="current_password">Current password</Label>
+            <Label htmlFor="current_password"> {tAccount('currentPassword')} </Label>
             <Input
               id="current_password"
               type="password"
@@ -70,13 +73,13 @@ export function PasswordSection({ hasPassword, onSubmit, isLoading, error }: Pas
             />
             {errors.current_password && (
               <p className="mt-1 text-body-sm text-destructive">
-                {errors.current_password.message}
+                {errors.current_password.message && tAccount(errors.current_password.message)}
               </p>
             )}
           </div>
         )}
         <div>
-          <Label htmlFor="new_password">New password</Label>
+          <Label htmlFor="new_password"> {tAccount('newPassword')} </Label>
           <Input
             id="new_password"
             type="password"
@@ -87,12 +90,12 @@ export function PasswordSection({ hasPassword, onSubmit, isLoading, error }: Pas
           />
           {errors.new_password && (
             <p id="new-password-error" className="mt-1 text-body-sm text-destructive">
-              {errors.new_password.message}
+              {errors.new_password.message && tAccount(errors.new_password.message)}
             </p>
           )}
         </div>
         <div>
-          <Label htmlFor="confirm_password">Confirm new password</Label>
+          <Label htmlFor="confirm_password"> {tAccount('confirmNewPassword')} </Label>
           <Input
             id="confirm_password"
             type="password"
@@ -103,12 +106,12 @@ export function PasswordSection({ hasPassword, onSubmit, isLoading, error }: Pas
           />
           {errors.confirm_password && (
             <p id="confirm-password-error" className="mt-1 text-body-sm text-destructive">
-              {errors.confirm_password.message}
+              {errors.confirm_password.message && tAccount(errors.confirm_password.message)}
             </p>
           )}
         </div>
         <Button type="submit" isLoading={isLoading} className="sm:w-auto">
-          {hasPassword ? 'Change password' : 'Set password'}
+          {hasPassword ? tAccount('changePassword') : tAccount('setPassword')}
         </Button>
       </form>
     </SectionCard>

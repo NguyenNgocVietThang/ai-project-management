@@ -1,7 +1,8 @@
 'use client'
 
-import Link from 'next/link'
 import { useTranslations } from 'next-intl'
+
+import Link from 'next/link'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -13,21 +14,21 @@ import { useAuth } from '@/hooks/useAuth'
 import { SocialLoginButtons } from './SocialLoginButtons'
 
 const loginSchema = z.object({
-  email: z.string().min(1, 'Email is required').email('Enter a valid email address'),
-  password: z.string().min(1, 'Password is required'),
+  email: z.string().min(1, 'emailIsRequired').email('enterAValidEmailAddress'),
+  password: z.string().min(1, 'passwordIsRequired'),
 })
 
 type LoginFormValues = z.infer<typeof loginSchema>
 
 export function LoginForm() {
+  const tAccount = useTranslations('accountUi')
   const t = useTranslations('login')
-  const translatedSchema = z.object({ email: z.string().min(1, t('emailRequired')).email(t('emailInvalid')), password: z.string().min(1, t('passwordRequired')) })
   const { login, isLoggingIn, loginError } = useAuth()
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormValues>({ resolver: zodResolver(translatedSchema) })
+  } = useForm<LoginFormValues>({ resolver: zodResolver(loginSchema) })
 
   const onSubmit = handleSubmit(async (values) => {
     try {
@@ -42,7 +43,7 @@ export function LoginForm() {
       {loginError && <Alert>{loginError}</Alert>}
 
       <div>
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email"> {tAccount('email')} </Label>
         <Input
           id="email"
           type="email"
@@ -52,7 +53,7 @@ export function LoginForm() {
         />
         {errors.email && (
           <p id="email-error" className="mt-2 text-body-sm text-destructive">
-            {errors.email.message}
+            {errors.email.message && tAccount(errors.email.message)}
           </p>
         )}
       </div>
@@ -76,7 +77,7 @@ export function LoginForm() {
         />
         {errors.password && (
           <p id="password-error" className="mt-2 text-body-sm text-destructive">
-            {errors.password.message}
+            {errors.password.message && tAccount(errors.password.message)}
           </p>
         )}
       </div>

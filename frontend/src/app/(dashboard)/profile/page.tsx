@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
@@ -21,17 +23,19 @@ import { useAuth } from '@/hooks/useAuth'
 import { authService } from '@/services/auth.service'
 import { userService } from '@/services/user.service'
 import { useAuthStore } from '@/store/authStore'
-import { getApiErrorMessage } from '@/types/api.types'
+import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 import type { OAuthProvider, User } from '@/types/auth.types'
 
 function ProfilePageContent() {
+  const getApiErrorMessage = useApiErrorMessage()
+  const tAccount = useTranslations('accountUi')
   const searchParams = useSearchParams()
   const queryClient = useQueryClient()
   const { user } = useAuth()
   const setUser = useAuthStore((state) => state.setUser)
   const clear = useAuthStore((state) => state.clear)
   const [pendingProvider, setPendingProvider] = useState<OAuthProvider | null>(null)
-  const [socialError, setSocialError] = useState<string | null>(searchParams.get('error'))
+  const [socialError, setSocialError] = useState<unknown>(searchParams.get('error'))
   const linkedProvider = searchParams.get('linked')
 
   useEffect(() => {
@@ -42,7 +46,7 @@ function ProfilePageContent() {
         setUser(updated)
         queryClient.setQueryData(['auth', 'me'], updated)
       })
-      .catch((error) => setSocialError(getApiErrorMessage(error)))
+      .catch((error) => setSocialError(error))
   }, [linkedProvider, queryClient, setUser])
 
   const syncUser = (updated: User) => {
@@ -84,7 +88,7 @@ function ProfilePageContent() {
     },
   })
 
-  if (!user) return <LoadingState variant="page" label="Loading profile…" />
+  if (!user) return <LoadingState variant="page" label={tAccount('loadingProfile')} />
 
   const updateProfile = async (values: ProfileFormValues) => {
     await profileMutation.mutateAsync({
@@ -127,22 +131,21 @@ function ProfilePageContent() {
     await deleteMutation.mutateAsync(values)
   }
 
-  const linkedSuccess = linkedProvider === 'google' ? 'Google account connected.' : null
+  const linkedSuccess = linkedProvider === 'google' ? tAccount('googleAccountConnected') : null
 
   return (
     <div className="mx-auto max-w-6xl space-y-8 pb-10">
       <PageHeader
-        eyebrow="Account"
-        title="Profile settings"
-        description="Manage your personal details and sign-in options."
+        eyebrow={tAccount('account')}
+        title={tAccount('profileSettings')}
+        description={tAccount('manageYourPersonalDetailsAndSignInOptions')}
         meta={
           <Link
             href="/dashboard"
             className="inline-flex min-h-9 items-center gap-2 rounded-lg text-body-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-            Back to dashboard
-          </Link>
+             {tAccount('backToDashboard')} </Link>
         }
       />
 
@@ -162,7 +165,7 @@ function ProfilePageContent() {
             onConnect={connect}
             onDisconnect={disconnect}
             pendingProvider={pendingProvider}
-            error={socialError ?? (disconnectMutation.error ? getApiErrorMessage(disconnectMutation.error) : null)}
+            error={socialError ? getApiErrorMessage(socialError) : (disconnectMutation.error ? getApiErrorMessage(disconnectMutation.error) : null)}
             successMessage={linkedSuccess}
           />
         </aside>
@@ -193,8 +196,9 @@ function ProfilePageContent() {
 }
 
 export default function ProfilePage() {
+  const tAccount = useTranslations('accountUi')
   return (
-    <Suspense fallback={<LoadingState variant="page" label="Loading profile…" />}>
+    <Suspense fallback={<LoadingState variant="page" label={tAccount('loadingProfile')} />}>
       <ProfilePageContent />
     </Suspense>
   )

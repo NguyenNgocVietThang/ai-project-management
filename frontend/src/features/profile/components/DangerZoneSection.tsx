@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -21,6 +23,7 @@ interface DangerZoneSectionProps {
 }
 
 export function DangerZoneSection({ username, onDelete, isLoading, error }: DangerZoneSectionProps) {
+  const tAccount = useTranslations('accountUi')
   const [isOpen, setIsOpen] = useState(false)
   const {
     register,
@@ -36,8 +39,8 @@ export function DangerZoneSection({ username, onDelete, isLoading, error }: Dang
   return (
     <SectionCard
       danger
-      title="Danger zone"
-      description="Deactivating your account is permanent and signs you out everywhere."
+      title={tAccount('dangerZone')}
+      description={tAccount('deactivatingYourAccountIsPermanentAndSignsYouOutEverywhere')}
     >
       {!isOpen ? (
         <Button
@@ -46,8 +49,7 @@ export function DangerZoneSection({ username, onDelete, isLoading, error }: Dang
           className="border-destructive/40 text-destructive hover:border-destructive hover:bg-destructive/10 hover:text-destructive sm:w-auto"
           onClick={() => setIsOpen(true)}
         >
-          Deactivate account
-        </Button>
+           {tAccount('deactivateAccount')} </Button>
       ) : (
         <form
           onSubmit={handleSubmit(async (values) => {
@@ -62,11 +64,9 @@ export function DangerZoneSection({ username, onDelete, isLoading, error }: Dang
         >
           {error && <Alert>{error}</Alert>}
           <p className="text-body-sm text-muted-foreground">
-            Your project and audit history will remain, but personal details and sign-in methods will be removed.
-            Type <strong className="text-foreground">{username}</strong> to confirm.
-          </p>
+             {tAccount('yourProjectAndAuditHistoryWillRemainButPersonalDetailsAndSignInMethodsWillBeRemovedType')} <strong className="text-foreground">{username}</strong>  {tAccount('toConfirm')} </p>
           <div>
-            <Label htmlFor="delete_username">Username</Label>
+            <Label htmlFor="delete_username"> {tAccount('username')} </Label>
             <Input
               id="delete_username"
               autoComplete="off"
@@ -76,14 +76,13 @@ export function DangerZoneSection({ username, onDelete, isLoading, error }: Dang
             />
             {errors.username && (
               <p id="delete-username-error" className="mt-1 text-body-sm text-destructive">
-                {errors.username.message}
+                {errors.username.message && tAccount(errors.username.message)}
               </p>
             )}
           </div>
           <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
             <Button type="button" variant="ghost" className="sm:w-auto" onClick={() => setIsOpen(false)}>
-              Cancel
-            </Button>
+               {tAccount('cancel')} </Button>
             <Button
               type="submit"
               variant="destructive"
@@ -91,8 +90,7 @@ export function DangerZoneSection({ username, onDelete, isLoading, error }: Dang
               isLoading={isLoading}
               disabled={confirmation !== username}
             >
-              Permanently deactivate
-            </Button>
+               {tAccount('permanentlyDeactivate')} </Button>
           </div>
         </form>
       )}

@@ -1,11 +1,12 @@
 'use client'
 
+import { useLocale, useTranslations } from 'next-intl'
+
 /**
  * ActiveProjectsGrid – lưới thẻ cho Home Dashboard
  * Hiển thị thanh tiến độ, đồng hồ ngân sách và badge số ngày còn lại
  */
 import Link from 'next/link'
-import { useTranslations } from 'next-intl'
 import { CalendarClock, TrendingUp } from 'lucide-react'
 import { ButtonLink } from '@/components/common/Button'
 import { EmptyState } from '@/components/common/PageState'
@@ -28,6 +29,7 @@ function ProgressBar({ value, toneClass = 'bg-primary' }: { value: number; toneC
 
 // Nhận className/style để Reveal gắn hiệu ứng trồi lên theo nhịp
 function ProjectCard({ project, className, style }: { project: ActiveProjectSummary; className?: string; style?: React.CSSProperties }) {
+  const locale = useLocale()
   const t = useTranslations('home')
   const budgetPct =
     project.budget && project.budget > 0
@@ -93,8 +95,8 @@ function ProjectCard({ project, className, style }: { project: ActiveProjectSumm
           </div>
           <ProgressBar value={budgetPct ?? 0} toneClass={budgetTone} />
           <div className="mt-1 flex justify-between gap-2 text-caption text-muted-foreground tabular-nums">
-            <span>{formatMoney(project.budget_spent, project.currency)}</span>
-            <span>{formatMoney(project.budget, project.currency)}</span>
+            <span>{formatMoney(project.budget_spent, project.currency, locale)}</span>
+            <span>{formatMoney(project.budget, project.currency, locale)}</span>
           </div>
         </div>
       )}

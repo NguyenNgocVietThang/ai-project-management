@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { Alert } from '@/components/common/Alert'
@@ -22,14 +24,15 @@ interface ProfileDetailsFormProps {
 }
 
 const fields = [
-  { name: 'full_name', label: 'Full name', autoComplete: 'name' },
-  { name: 'username', label: 'Username', autoComplete: 'username' },
-  { name: 'phone', label: 'Phone', autoComplete: 'tel' },
-  { name: 'position', label: 'Position', autoComplete: 'organization-title' },
-  { name: 'department', label: 'Department', autoComplete: 'organization' },
+  { name: 'full_name', label: 'fullName', autoComplete: 'name' },
+  { name: 'username', label: 'username', autoComplete: 'username' },
+  { name: 'phone', label: 'phone', autoComplete: 'tel' },
+  { name: 'position', label: 'position', autoComplete: 'organization-title' },
+  { name: 'department', label: 'department', autoComplete: 'organization' },
 ] as const
 
 export function ProfileDetailsForm({ user, onSubmit, isLoading, error, success }: ProfileDetailsFormProps) {
+  const tAccount = useTranslations('accountUi')
   const {
     register,
     handleSubmit,
@@ -47,8 +50,8 @@ export function ProfileDetailsForm({ user, onSubmit, isLoading, error, success }
 
   return (
     <SectionCard
-      title="Personal information"
-      description="Keep the details your team uses to identify and contact you up to date."
+      title={tAccount('personalInformation')}
+      description={tAccount('keepTheDetailsYourTeamUsesToIdentifyAndContactYouUpToDate')}
     >
       <form
         onSubmit={handleSubmit(async (values) => {
@@ -62,31 +65,30 @@ export function ProfileDetailsForm({ user, onSubmit, isLoading, error, success }
         className="space-y-4"
       >
         {error && <Alert>{error}</Alert>}
-        {success && <Alert variant="success">Profile updated successfully.</Alert>}
+        {success && <Alert variant="success"> {tAccount('profileUpdatedSuccessfully')} </Alert>}
 
         <div>
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email"> {tAccount('email')} </Label>
           <Input id="email" value={user.email} disabled readOnly />
-          <p className="mt-1 text-caption text-muted-foreground">Email cannot be changed here.</p>
+          <p className="mt-1 text-caption text-muted-foreground"> {tAccount('emailCannotBeChangedHere')} </p>
         </div>
 
         <div>
-          <Label htmlFor="hourly_rate">Hourly rate</Label>
+          <Label htmlFor="hourly_rate"> {tAccount('hourlyRate')} </Label>
           <Input
             id="hourly_rate"
-            value={user.hourly_rate === null ? 'Not assigned' : user.hourly_rate.toString()}
+            value={user.hourly_rate === null ? tAccount('notAssigned') : user.hourly_rate.toString()}
             disabled
             readOnly
           />
           <p className="mt-1 text-caption text-muted-foreground">
-            Your hourly rate is managed by an administrator.
-          </p>
+             {tAccount('yourHourlyRateIsManagedByAnAdministrator')} </p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           {fields.map((field) => (
             <div key={field.name} className={field.name === 'full_name' ? 'sm:col-span-2' : ''}>
-              <Label htmlFor={field.name}>{field.label}</Label>
+              <Label htmlFor={field.name}>{tAccount(field.label)}</Label>
               <Input
                 id={field.name}
                 autoComplete={field.autoComplete}
@@ -96,7 +98,7 @@ export function ProfileDetailsForm({ user, onSubmit, isLoading, error, success }
               />
               {errors[field.name] && (
                 <p id={`${field.name}-error`} className="mt-1 text-body-sm text-destructive">
-                  {errors[field.name]?.message}
+                  {errors[field.name]?.message && tAccount(errors[field.name]!.message!)}
                 </p>
               )}
             </div>
@@ -104,8 +106,7 @@ export function ProfileDetailsForm({ user, onSubmit, isLoading, error, success }
         </div>
 
         <Button type="submit" isLoading={isLoading} disabled={!isDirty} className="sm:w-auto">
-          Save changes
-        </Button>
+           {tAccount('saveChanges')} </Button>
       </form>
     </SectionCard>
   )
