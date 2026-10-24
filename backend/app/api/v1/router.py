@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from app.api.v1.endpoints import (
     ai,
+    app_config,
     approvals,
     assignments,
     audit_timeline,
@@ -42,6 +43,7 @@ api_router = APIRouter()
 # Chưa mount: leaves, skills,
 # system. Gantt không có router riêng: frontend vẽ từ `GET /projects/{id}/cpm`. Các endpoint này vẫn là stub `TODO: Implement` không có auth; chỉ mount khi đã
 # có triển khai thật và dependency phân quyền.
+api_router.include_router(app_config.router, prefix="/app", tags=["App"])
 api_router.include_router(auth.router, prefix="/auth", tags=["Auth"])
 api_router.include_router(oauth.router, prefix="/oauth", tags=["OAuth"])
 api_router.include_router(users.router, prefix="/users", tags=["Users"])

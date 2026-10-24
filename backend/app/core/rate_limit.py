@@ -53,6 +53,8 @@ CHAT_POST_LIMIT = "60/minute"
 BULK_WRITE_LIMIT = "20/minute"
 # App làm mới token FCM khi mở app / khi FCM đổi token; hạn mức rộng cho đổi tài khoản liên tục.
 DEVICE_LIMIT = "30/minute"
+# Endpoint công khai, app gọi mỗi lần mở; chặn vòng lặp lỗi thay vì chặn người dùng thật.
+APP_CONFIG_LIMIT = "60/minute"
 
 
 def client_key(request: Request) -> str:

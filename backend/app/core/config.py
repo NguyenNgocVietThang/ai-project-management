@@ -1,4 +1,5 @@
 
+import re
 from typing import Literal
 
 from pydantic import Field, model_validator
@@ -8,6 +9,15 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 # Bị từ chối khi chạy ngoài development bởi Settings._reject_insecure_defaults bên dưới.
 INSECURE_SECRET_KEY = "your-super-secret-key-change-in-production"
 MIN_SECRET_KEY_LENGTH = 32
+SEMVER_PATTERN = re.compile(r"^\d{1,4}\.\d{1,4}\.\d{1,4}$")
+
+
+def parse_version(value: str) -> tuple[int, int, int]:
+    """'1.2.3' -> (1, 2, 3). Chỉ nhận dạng x.y.z; sai dạng thì ném ValueError."""
+    if not SEMVER_PATTERN.match(value):
+        raise ValueError("version must look like 1.2.3")
+    major, minor, patch = (int(part) for part in value.split("."))
+    return major, minor, patch
 
 
 class Settings(BaseSettings):
@@ -133,10 +143,38 @@ class Settings(BaseSettings):
     # Ứng dụng Frontend
     FRONTEND_URL: str = "http://localhost:3000"
 
+    # App di động (xem GET /app/config). Chỉ là thông tin cho app, không chặn API khác.
+    APP_MIN_SUPPORTED_VERSION: str = "0.0.0"
+    APP_LATEST_VERSION: str = "0.0.0"
+    MAINTENANCE_MODE: bool = False
+    MAINTENANCE_MESSAGE: str = Field(default="", max_length=500)
+
+    # Push notification tới app di động. `disabled` (mặc định) giữ nguyên hành vi hiện tại:
+    # không truy vấn thiết bị, không tạo job. `fake` chỉ dùng cho test/development.
+    PUSH_PROVIDER: Literal["disabled", "fake", "fcm"] = "disabled"
+    FCM_PROJECT_ID: str = ""
+    # Toàn bộ JSON của service account Firebase (secret). Không commit, không log.
+    FCM_SERVICE_ACCOUNT_JSON: str = Field(default="", repr=False)
+    PUSH_HTTP_TIMEOUT_SECONDS: float = 15.0
+
     # Đăng nhập mạng xã hội (OAuth 2.0)
     GOOGLE_CLIENT_ID: str = ""
     GOOGLE_CLIENT_SECRET: str = ""
     GOOGLE_REDIRECT_URI: str = "http://localhost:8000/api/v1/oauth/google/callback"
+
+    @model_validator(mode="after")
+    def _validate_mobile_settings(self) -> "Settings":
+        """Phiên bản app phải đúng dạng x.y.z và min <= latest (ở mọi môi trường)."""
+        try:
+            minimum = parse_version(self.APP_MIN_SUPPORTED_VERSION)
+            latest = parse_version(self.APP_LATEST_VERSION)
+        except ValueError as exc:
+            raise ValueError(
+                "APP_MIN_SUPPORTED_VERSION and APP_LATEST_VERSION must look like 1.2.3"
+            ) from exc
+        if minimum > latest:
+            raise ValueError("APP_MIN_SUPPORTED_VERSION must not exceed APP_LATEST_VERSION")
+        return self
 
     @model_validator(mode="after")
     def _reject_insecure_defaults(self) -> "Settings":
@@ -182,6 +220,12 @@ class Settings(BaseSettings):
                 problems.append("SUPABASE_SERVICE_ROLE_KEY is required for private storage")
         if self.EMAIL_PROVIDER == "resend" and (not self.RESEND_API_KEY or self.EMAIL_FROM.endswith("@projectmanagement.com")):
             problems.append("RESEND_API_KEY and a verified EMAIL_FROM are required")
+        if self.PUSH_PROVIDER == "fake":
+            problems.append("PUSH_PROVIDER=fake is only for development and tests")
+        if self.PUSH_PROVIDER == "fcm" and (
+            not self.FCM_PROJECT_ID or not self.FCM_SERVICE_ACCOUNT_JSON
+        ):
+            problems.append("FCM_PROJECT_ID and FCM_SERVICE_ACCOUNT_JSON are required for fcm")
         if self.JOB_LEASE_SECONDS <= self.JOB_TIMEOUT_SECONDS:
             problems.append("JOB_LEASE_SECONDS must exceed JOB_TIMEOUT_SECONDS")
 
