@@ -496,7 +496,7 @@ async def publish(channel: str, message: dict):
 
 ### Danh mục REST API Routers (`/api/v1/...`)
 
-**33 REST router đang được mount & phục vụ thật:**
+**35 REST router đang được mount & phục vụ thật:**
 
 | STT | Endpoint Prefix | Router File | Mô tả chức năng |
 |---|---|---|---|
@@ -533,6 +533,10 @@ async def publish(channel: str, message: dict):
 | 31 | `/jobs` | `jobs.py` | Tra cứu trạng thái durable job |
 | 32 | `/internal/jobs` | `internal_jobs.py` | Endpoint nội bộ cho cron (`POST /internal/jobs/schedules`) |
 | 33 | `/investor` | `investor.py` | Cổng nhà đầu tư chỉ đọc: danh sách portfolio được cấp, tổng quan EVM/ROI, chi tiết dự án (Phase 5, giai đoạn 5.3) |
+| 34 | `/devices` | `devices.py` | Token push của app di động: `POST /devices` (đăng ký/làm mới, idempotent, tối đa 10 thiết bị hoạt động/người), `DELETE /devices/{token}` (hủy; chỉ token của chính người gọi, luôn 204) |
+| 35 | `/app` | `app_config.py` | `GET /app/config` công khai: `min_supported_version`, `latest_version`, `maintenance` cho app di động (đặt bằng `APP_MIN_SUPPORTED_VERSION`, `APP_LATEST_VERSION`, `MAINTENANCE_MODE`) |
+
+> **Client di động (`X-Client: android`).** `POST /auth/login`, `/auth/refresh` và `/auth/oauth/exchange` trả thêm `refresh_token` trong body (schema `MobileTokenResponse`) và không đặt cookie. Trình duyệt giữ nguyên hành vi cũ: refresh token chỉ nằm trong cookie httpOnly. Refresh token đến từ cookie không bao giờ được trả ra body dù request có header này. Push FCM được xếp hàng qua job `push.send` cùng transaction với thông báo (mặc định `PUSH_PROVIDER=disabled`). Hợp đồng API cho app: [`mobile/openapi/openapi.json`](./mobile/openapi/openapi.json), sinh bằng `python backend/scripts/export_openapi.py`. Lộ trình: [`docs/mobile/ANDROID_ROADMAP.md`](./docs/mobile/ANDROID_ROADMAP.md).
 
 Stub `/gantt` đã xóa: Gantt vẽ từ `GET /projects/{id}/cpm`.
 

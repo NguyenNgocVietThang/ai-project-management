@@ -1,4 +1,5 @@
 """Xuất OpenAPI cho app di động: ổn định, đủ endpoint mới và không lệch file đã commit."""
+import difflib
 import importlib.util
 import json
 from pathlib import Path
@@ -28,7 +29,13 @@ def test_export_is_deterministic_and_contains_mobile_endpoints(exporter):
 
 def test_committed_openapi_matches_the_api(exporter):
     """Đổi API mà quên chạy `python scripts/export_openapi.py` sẽ làm test này đỏ."""
-    assert exporter.main(["--check"]) == 0
+    committed = exporter.DEFAULT_OUTPUT.read_text(encoding="utf-8")
+    diff = list(
+        difflib.unified_diff(
+            committed.splitlines(), exporter.render_openapi().splitlines(), lineterm="", n=0
+        )
+    )
+    assert not diff, "openapi.json lệch:\n" + "\n".join(diff[:30])
 
 
 def test_check_fails_when_file_is_stale(exporter, tmp_path):

@@ -1,7 +1,6 @@
 # Lộ trình phát triển ứng dụng Android
 
-> Trạng thái: **ĐỀ XUẤT — chờ chủ dự án duyệt** (soạn ngày 2026-10-24).
-> Mọi giả định ở mục 2 chưa được xác nhận chính thức; thay đổi giả định thì cập nhật tài liệu này trước khi code.
+> Trạng thái: **Giai đoạn 0 đã làm xong mã** (xem mục 9). Giả định G3 và G6 đã được chủ dự án xác nhận ngày 2026-10-24; G1, G2, G4, G5 vẫn chờ xác nhận. Thay đổi giả định thì cập nhật tài liệu này trước khi code.
 > Prompt giao việc cho từng giai đoạn: [`PHASE_PROMPTS.md`](./PHASE_PROMPTS.md).
 
 ## 1. Mục tiêu
@@ -153,7 +152,7 @@ Xếp theo giá trị trên công sức:
 
 | Giai đoạn | Trạng thái | PR | Ghi chú |
 |---|---|---|---|
-| 0 — Chuẩn bị backend | Chưa bắt đầu | — | — |
+| 0 — Chuẩn bị backend | Hoàn thành mã + test (2026-10-24); chờ nghiệm thu FCM thật | commit thẳng `main` (không PR theo yêu cầu chủ dự án) | 0.1–0.5, 0.7 xong; 0.6 chỉ khảo sát (`OAUTH_MOBILE.md`, đề xuất C rồi B). Backend 811 passed/2 skipped, frontend 248 passed. Chưa gọi FCM thật (chưa có Firebase project) |
 | 1 — Khung app | Chưa bắt đầu | — | — |
 | 2 — Push, chat, duyệt CR | Chưa bắt đầu | — | — |
 | 3 — Mở rộng, phát hành | Chưa bắt đầu | — | — |

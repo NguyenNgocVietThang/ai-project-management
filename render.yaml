@@ -56,6 +56,17 @@ services:
         sync: false
       - key: EMAIL_FROM
         sync: false
+      # Push FCM cho app Android: để trống/disabled cho tới khi có Firebase project.
+      - key: PUSH_PROVIDER
+        value: disabled
+      - key: FCM_PROJECT_ID
+        sync: false
+      - key: FCM_SERVICE_ACCOUNT_JSON
+        sync: false
+      - key: APP_MIN_SUPPORTED_VERSION
+        value: 0.0.0
+      - key: APP_LATEST_VERSION
+        value: 0.0.0
       - key: STORAGE_PROVIDER
         value: supabase
       - key: SUPABASE_URL

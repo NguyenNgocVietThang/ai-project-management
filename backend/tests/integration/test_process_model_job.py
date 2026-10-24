@@ -7,7 +7,6 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from app.core.job_runner import JobContext, JobRunner
-from app.main import app
 from app.models.ai_output import AIOutput
 from app.models.ai_request import AIRequest, AIRequestStatus
 from app.models.job import Job
@@ -235,11 +234,9 @@ async def test_repeated_apply_does_not_write_twice(engine, session, make_user, s
 
 @pytest.mark.asyncio
 async def test_http_contract(session, make_user, seed_roles, as_user, monkeypatch):
-    from app.api.v1.endpoints.process_models import router
-
-    # router.py chưa mount (do điều phối viên thêm); test tự gắn router vào app test.
-    if not any(getattr(route, "path", "") == "/api/v1/projects/{project_id}/process-model" for route in app.routes):
-        app.include_router(router, prefix="/api/v1")
+    # Router đã được mount sẵn trong router.py. Không gắn lại vào `app` toàn cục: với
+    # FastAPI hiện tại `app.routes` không liệt kê route con nên guard cũ luôn thất bại và mỗi
+    # lần chạy làm trùng route, làm lệch OpenAPI của các test khác.
     use_provider(monkeypatch, GOOD)
     project, users, _ = await make_project(session, make_user, seed_roles)
     url = f"/api/v1/projects/{project.id}/process-model"

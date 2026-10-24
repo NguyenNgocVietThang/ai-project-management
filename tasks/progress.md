@@ -87,3 +87,17 @@
 - Trạng thái cloud: chưa nghiệm thu Supabase Storage, email provider hoặc các luồng cloud; báo cáo cloud ngày 2026-10-12 là nhật ký lịch sử. Xem `docs/adapter-verification.md` và `tasks/todo.md`.
 - Tài liệu roadmap Phase 5 sửa để phản ánh adapter Storage đã kiểm thử giả lập cục bộ nhưng chưa nghiệm thu trên Supabase thật. Xuất DOCX/XLSX đã có; chỉ upload/parse tài liệu nguồn còn TODO.
 - Số liệu test trong các báo cáo giữ nguyên theo ngày chạy; mốc mới nhất trong tài liệu hiện có là backend 697 passed / 28 skipped và frontend 32 tệp / 146 test (2026-10-16).
+
+
+## Android — Giai đoạn 0 (chuẩn bị backend), 2026-10-24
+
+- Kế hoạch đã duyệt: tasks/mobile-phase0-plan.md. Quyết định của chủ dự án: commit thẳng main (không PR), payload push dùng tiêu đề gốc (không gửi message), G3+G6 đúng, giữ `DELETE /devices/{token}`, tối đa 10 thiết bị/người và 1 job push/thiết bị, `/app/config` một bộ phiên bản chung.
+- 0.1 Auth mobile: header `X-Client: android` trả `refresh_token` trong body ở login/refresh/oauth-exchange, không đặt cookie; web không đổi. Refresh token đến từ cookie không bao giờ lộ ra body dù có header (chống XSS tự gắn header).
+- 0.2 `device_tokens` (migration 20261024_device_tokens, đã upgrade/downgrade/upgrade trên PostgreSQL 16 cục bộ) + `POST /devices`, `DELETE /devices/{token}`.
+- 0.3 Job `push.send` (outbox cùng transaction, mỗi thông báo × thiết bị một job), adapter FCM HTTP v1 (JWT RS256 bằng PyJWT, không thêm thư viện) + provider `fake`. Mặc định `PUSH_PROVIDER=disabled` nên hành vi cũ không đổi. Token `UNREGISTERED` tự thu hồi.
+- 0.4 `GET /app/config`. 0.5 `backend/scripts/export_openapi.py` + `mobile/openapi/openapi.json` + bước `--check` trong CI. 0.6 khảo sát OAuth (docs/mobile/OAUTH_MOBILE.md), chưa triển khai. 0.7 README §10, deploy doc, .env.production.example, render.yaml.
+- Kiểm thử: baseline trước khi sửa 713 passed, 28 skipped (Python 3.11). Sau khi sửa: 785 passed, 28 skipped; với PostgreSQL 16 thật (TEST_POSTGRES_URL, SECURITY_TEST_DATABASE_URL) 811 passed, 2 skipped (hai biến thể chỉ dành cho SQLite). Ruff sạch. Frontend: type-check, lint sạch, 248 test passed (không đổi mã frontend).
+- Sửa phụ: tests/integration/test_process_model_job.py gắn lại router vào `app` toàn cục (guard `app.routes` vô hiệu với FastAPI hiện tại) làm trùng route trong OpenAPI; đã bỏ đoạn gắn thừa vì router đã mount sẵn.
+- Môi trường: Python 3.13 mặc định không build được asyncpg 0.29; dùng venv Python 3.11 (như CI). Không chạy được `graphify` (lệnh không có trong môi trường).
+- Chưa hoàn thành/nghiệm thu: gửi FCM thật tới thiết bị (chưa có Firebase project/service account); OAuth Google cho mobile (chỉ khảo sát).
+- Ngoài phạm vi, ghi nhận: rate limit `/auth/refresh` theo IP có thể gộp nhiều thiết bị cùng NAT; chế độ bảo trì chưa chặn API; thu hồi device token khi đổi mật khẩu/tăng `auth_version` nên làm ở Giai đoạn 2.

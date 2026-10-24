@@ -61,8 +61,24 @@ Chuyển từ Redis security store cũ sang Postgres phải invalidate session c
 - Backup thủ công định kỳ và trước migration. Supabase Free không có managed backup đầy đủ cho ứng dụng. Cài Postgres client phù hợp; cấp `PGHOST/PGPORT/PGUSER/PGDATABASE/PGPASSWORD/PGSSLMODE=verify-full` qua env/private pgpass, chạy `pg_dump --format=custom --file=demo-backup.dump`. Không đưa password vào command line, log hoặc Git. Storage bytes phải backup riêng; DB dump không chứa nội dung file.
 - Thử restore vào DB test trước với `pg_restore --no-owner --no-acl --dbname=TEST_DATABASE demo-backup.dump`; đối chiếu số hàng và checksum Storage. Restore live là quyết định riêng, không dùng `--clean` khi chưa có backup/ủy quyền.
 
+## Push notification cho app Android (FCM)
+
+Mặc định `PUSH_PROVIDER=disabled`: không truy vấn thiết bị, không tạo job, hành vi hiện tại không đổi. Chỉ bật khi đã có Firebase project.
+
+1. Tạo Firebase project (gói Spark miễn phí), thêm ứng dụng Android với package name của app. **Không** commit `google-services.json` thật vào Git.
+2. Firebase Console → Project settings → Service accounts → **Generate new private key**. Tài khoản dịch vụ chỉ cần vai trò **Firebase Cloud Messaging API Admin**. Bảo đảm API *Firebase Cloud Messaging API (V1)* đã bật.
+3. Trong dashboard Render của backend đặt (đều là secret/biến môi trường, không ghi vào file trong repo):
+   - `PUSH_PROVIDER=fcm`
+   - `FCM_PROJECT_ID` = Project ID của Firebase
+   - `FCM_SERVICE_ACCOUNT_JSON` = toàn bộ nội dung file JSON vừa tải, dán trên một dòng. Xóa file JSON khỏi máy sau khi dán.
+4. Backend từ chối khởi động nếu `PUSH_PROVIDER=fcm` mà thiếu hai biến trên, hoặc nếu `PUSH_PROVIDER=fake` ngoài môi trường development.
+5. Vận hành: mỗi (thông báo × thiết bị) là một job `push.send` trong bảng `jobs` (cùng transaction với thông báo, hết hạn sau 6 giờ). Token FCM báo `UNREGISTERED` bị thu hồi tự động (`device_tokens.revoked_at`). Kiểm tra: `select status,error_code,count(*) from jobs where kind='push.send' group by 1,2;`.
+6. Giới hạn đã biết: giao hàng "ít nhất một lần" (hiếm khi trùng nếu worker mất lease sau khi gửi); push hiển thị **tiêu đề thông báo gốc** trên màn hình khóa, không kèm nội dung chi tiết. Chưa nghiệm thu với FCM thật (chưa có Firebase project) — chỉ kiểm thử bằng giả lập HTTP.
+
+Phiên bản app: đặt `APP_MIN_SUPPORTED_VERSION` / `APP_LATEST_VERSION` (dạng `x.y.z`) và `MAINTENANCE_MODE`; app đọc qua `GET /api/v1/app/config`. Sau khi đổi API cho app, chạy `python backend/scripts/export_openapi.py` và commit `mobile/openapi/openapi.json` (CI kiểm tra lệch).
+
 ## Các mục còn cần nghiệm thu trên cloud
 
-Tạo account/project/sender; nhận email thật; pg_net/Vault/quyền extensions; Storage private/persistence/URL expiry thật; TLS/pooling; peak RAM Linux dưới AI/CPM; đăng ký/verify/login/logout/reset/invite/AI/notification/avatar qua HTTPS proxy; cold start, restart, Redis maintenance và quota/latency thật. Thử token replay, user trái quyền job/file, đóng tab và reload Jobs. Google OAuth cần key và callback thật.
+Tạo account/project/sender; nhận email thật; pg_net/Vault/quyền extensions; Storage private/persistence/URL expiry thật; TLS/pooling; peak RAM Linux dưới AI/CPM; đăng ký/verify/login/logout/reset/invite/AI/notification/avatar qua HTTPS proxy; cold start, restart, Redis maintenance và quota/latency thật. Thử token replay, user trái quyền job/file, đóng tab và reload Jobs. Google OAuth cần key và callback thật. FCM thật (gửi push tới thiết bị) cũng chưa nghiệm thu.
 
 Xuất SRS/BRD DOCX và báo cáo XLSX đã được triển khai qua durable jobs; BPMN cũng có luồng sinh riêng. Upload/parse tài liệu gốc BRD/SRS vẫn là TODO, chưa có endpoint. Storage đã triển khai cho avatar và adapter server-only; luồng upload tài liệu gốc cần RBAC riêng. Nghiệm thu Storage trên Supabase cloud vẫn còn mở; xem [kiểm chứng adapter](adapter-verification.md). URL ký TTL 300 giây là credential ngắn hạn: ai có URL còn dùng được đến expiry, không hứa thu hồi tức thì.
