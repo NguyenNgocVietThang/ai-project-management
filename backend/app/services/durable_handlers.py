@@ -77,6 +77,76 @@ async def run_email(ctx):
     return JobResult(result={"sent": True})
 
 
+# Nội dung thân thông báo push: chỉ chuỗi chung, chi tiết lấy lại khi mở app.
+PUSH_BODY = {"vi": "Mở ứng dụng để xem chi tiết.", "en": "Open the app to see details."}
+PUSH_TITLE_MAX = 120
+
+
+def build_push_message(notification, device):
+    """Dựng push từ thông báo: tiêu đề gốc (cắt ngắn) + id để app mở đúng màn hình.
+
+    Cố ý KHÔNG gửi `Notification.message`: nội dung chi tiết lấy lại sau khi mở app.
+    """
+    from app.utils.push import PushMessage
+
+    data = {
+        "notification_id": notification.id,
+        "notification_type": notification.notification_type.value,
+        "related_entity_type": notification.related_entity_type,
+        "related_entity_id": notification.related_entity_id,
+        "link": notification.link,
+    }
+    return PushMessage(
+        token=device.token,
+        title=notification.title[:PUSH_TITLE_MAX],
+        body=PUSH_BODY.get(device.locale, PUSH_BODY["vi"]),
+        data={key: str(value) for key, value in data.items() if value is not None},
+    )
+
+
+async def run_push(ctx):
+    from app.core.config import settings
+    from app.models.device_token import DeviceToken
+    from app.models.notification import Notification
+    from app.utils.push import PushDeliveryError, send_push
+
+    if settings.PUSH_PROVIDER == "disabled":
+        raise PermanentJobError("push_unconfigured")
+    data = ctx.job.payload
+    async with ctx.session_factory() as db:
+        notification = await db.get(Notification, data["notification_id"])
+        device = await db.get(DeviceToken, data["device_id"])
+        user = await db.get(User, device.user_id) if device is not None else None
+        # Không còn gì để báo: thông báo đã xóa/đã đọc (xem trên web), thiết bị đã hủy,
+        # token đã chuyển sang người khác hoặc tài khoản bị vô hiệu. Coi là hoàn thành.
+        if (
+            notification is None
+            or device is None
+            or user is None
+            or not user.is_active
+            or device.revoked_at is not None
+            or device.user_id != notification.user_id
+            or notification.is_read
+        ):
+            return JobResult(result={"skipped": True})
+        message = build_push_message(notification, device)
+        device_id = device.id
+    await ctx.mark_dispatched()
+    try:
+        await send_push(message)
+    except PushDeliveryError as exc:
+        if exc.unregistered:
+            async with ctx.session_factory() as db, db.begin():
+                stale = await db.get(DeviceToken, device_id)
+                if stale is not None and stale.revoked_at is None:
+                    stale.revoked_at = datetime.now(UTC)
+            return JobResult(result={"revoked": True})
+        if exc.retryable:
+            raise RetryableJobError("provider_error") from exc
+        raise PermanentJobError("provider_rejected") from exc
+    return JobResult(result={"sent": True})
+
+
 async def run_document(ctx):
     # Import trễ để tránh vòng import khi nạp danh sách handler.
     from app.services.document_service import run_document_job
@@ -89,4 +159,4 @@ async def run_report(ctx):
     return await run_report_job(ctx)
 
 
-HANDLERS = {"report.xlsx": run_report, "document.generate": run_document, "scheduling.cpm": run_cpm, "email.verify": run_email, "email.reset": run_email, "email.invite": run_email}
+HANDLERS = {"report.xlsx": run_report, "document.generate": run_document, "scheduling.cpm": run_cpm, "email.verify": run_email, "email.reset": run_email, "email.invite": run_email, "push.send": run_push}

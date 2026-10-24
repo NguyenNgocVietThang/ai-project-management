@@ -12,16 +12,19 @@ Cách dùng (từ task_service hoặc các service khác):
         entity_id=task.id,
     )
 """
+import logging
 from collections.abc import Sequence
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
 from fastapi import Depends
 from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.core.exceptions import ForbiddenException, NotFoundException
 from app.db.session import get_db
+from app.models.device_token import DeviceToken
 from app.models.notification import Notification, NotificationType
 from app.schemas.notification import (
     MarkReadResponse,
@@ -29,6 +32,52 @@ from app.schemas.notification import (
     NotificationResponse,
     UnreadCountResponse,
 )
+
+logger = logging.getLogger(__name__)
+
+# Push quá cũ không còn giá trị (người dùng đã thấy thông báo trong app); hết hạn thì bỏ.
+PUSH_JOB_TTL = timedelta(hours=6)
+
+
+async def enqueue_push_jobs(db: AsyncSession, notifications: Sequence[Notification]) -> None:
+    """Xếp hàng push cho thiết bị của người nhận, CÙNG transaction với thông báo.
+
+    Mỗi (thông báo × thiết bị) một job: retry một thiết bị không gửi trùng sang thiết bị khác.
+    Không làm gì khi `PUSH_PROVIDER=disabled` (hành vi mặc định) và không bao giờ làm hỏng
+    nghiệp vụ gọi nó: lỗi hàng đợi chỉ mất push, còn thông báo trong app vẫn còn.
+    """
+    if settings.PUSH_PROVIDER == "disabled" or not notifications:
+        return
+    from app.services.job_service import enqueue
+
+    try:
+        # Savepoint: lỗi ở đây không được làm hỏng transaction nghiệp vụ đang mở.
+        async with db.begin_nested():
+            user_ids = {notification.user_id for notification in notifications}
+            devices = (
+                await db.scalars(
+                    select(DeviceToken).where(
+                        DeviceToken.user_id.in_(user_ids), DeviceToken.revoked_at.is_(None)
+                    )
+                )
+            ).all()
+            by_user: dict[int, list[DeviceToken]] = {}
+            for device in devices:
+                by_user.setdefault(device.user_id, []).append(device)
+            expires_at = datetime.now(UTC) + PUSH_JOB_TTL
+            for notification in notifications:
+                for device in by_user.get(notification.user_id, []):
+                    await enqueue(
+                        db,
+                        "push.send",
+                        {"notification_id": notification.id, "device_id": device.id},
+                        f"push:{notification.id}:{device.id}",
+                        owner_id=notification.user_id,
+                        expires_at=expires_at,
+                    )
+    except Exception:
+        # Không log nội dung lỗi: câu SQL có thể chứa tham số.
+        logger.warning("Could not queue push notification jobs")
 
 
 class NotificationService:
@@ -74,6 +123,7 @@ class NotificationService:
         # Một lần flush cho cả lô: cần id và created_at do server sinh ra để dựng
         # payload WS, giống như push() đơn lẻ.
         await db.flush()
+        await enqueue_push_jobs(db, notifications)
 
         from app.core.ws_manager import publish_many
 
@@ -221,6 +271,7 @@ class NotificationService:
         )
         db.add(notification)
         await db.flush()
+        await enqueue_push_jobs(db, [notification])
 
         from app.core.ws_manager import (
             publish,  # import cục bộ: tránh nạp hạ tầng ws mỗi lần load service

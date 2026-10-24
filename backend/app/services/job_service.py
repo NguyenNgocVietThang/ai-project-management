@@ -30,6 +30,7 @@ ERROR_CODES = frozenset(
         "project_unavailable",
         "email_expired",
         "email_unconfigured",
+        "push_unconfigured",
         "invalid_provider_response",
         "shutdown_interrupted",
         "storage_error",
