@@ -94,6 +94,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt -r requirements-dev.txt
       - run: python -m pytest tests -q
+      # Hợp đồng API cho app di động: đổi API mà không cập nhật mobile/openapi/openapi.json thì đỏ.
+      - name: Check mobile OpenAPI is up to date
+        run: python scripts/export_openapi.py --check
 
   frontend:
     # Trước đây CI hoàn toàn không chạm tới frontend: không typecheck, không lint,
