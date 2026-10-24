@@ -26,6 +26,7 @@ from app.models.chat_message import ChatMessage  # noqa: F401
 from app.models.chat_read_state import ChatReadState  # noqa: F401
 from app.models.comment import Comment  # noqa: F401
 from app.models.dependency import Dependency  # noqa: F401
+from app.models.device_token import DeviceToken  # noqa: F401
 
 # ─── Domain 7: Tài liệu & Thông báo ─────────────────────────────────────────
 from app.models.document import Document  # noqa: F401

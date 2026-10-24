@@ -11,6 +11,7 @@ from app.api.v1.endpoints import (
     cpm,
     dashboards,
     dependencies,
+    devices,
     documents,
     epics,
     internal_jobs,
@@ -68,6 +69,7 @@ api_router.include_router(process_models.router, tags=["Process models"])
 api_router.include_router(resource_leveling.router, tags=["Resource Leveling"])
 api_router.include_router(dashboards.router, prefix="/dashboards", tags=["Dashboards"])
 api_router.include_router(investor.router, prefix="/investor", tags=["Investor"])
+api_router.include_router(devices.router, prefix="/devices", tags=["Devices"])
 api_router.include_router(notifications.router, prefix="/notifications", tags=["Notifications"])
 api_router.include_router(audit_timeline.router, prefix="/audit", tags=["Audit"])
 api_router.include_router(ai.router, prefix="/ai", tags=["AI"])

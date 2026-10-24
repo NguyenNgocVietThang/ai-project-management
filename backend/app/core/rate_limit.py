@@ -51,6 +51,8 @@ CHAT_POST_LIMIT = "60/minute"
 # Ghi hàng loạt: mỗi lần gọi có thể chạm tới hàng trăm task và kéo theo một lần
 # tính lại lịch trình toàn dự án.
 BULK_WRITE_LIMIT = "20/minute"
+# App làm mới token FCM khi mở app / khi FCM đổi token; hạn mức rộng cho đổi tài khoản liên tục.
+DEVICE_LIMIT = "30/minute"
 
 
 def client_key(request: Request) -> str:
