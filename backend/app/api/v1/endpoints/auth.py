@@ -5,6 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from app.core.auth_cookies import (
     clear_session_cookies,
+    is_mobile_client,
     read_refresh_token,
     set_session_cookies,
 )
@@ -26,6 +27,7 @@ from app.schemas.auth import (
     AccessTokenResponse,
     ForgotPasswordRequest,
     LogoutRequest,
+    MobileTokenResponse,
     OAuthExchangeRequest,
     RefreshRequest,
     RegisterRequest,
@@ -43,6 +45,27 @@ EMAIL_VERIFIED_MESSAGE = "Email verified successfully"
 VERIFICATION_SENT_MESSAGE = "Verification email sent"
 ALREADY_VERIFIED_MESSAGE = "Email is already verified"
 
+SessionResponse = AccessTokenResponse | MobileTokenResponse
+
+
+def _session_response(
+    request: Request,
+    response: Response,
+    access_token: str,
+    refresh_token: str,
+    *,
+    as_mobile: bool | None = None,
+) -> SessionResponse:
+    """Trả phiên theo đúng loại client.
+
+    Trình duyệt: refresh token vào cookie httpOnly, body chỉ có access token (như trước đây).
+    App di động (`X-Client: android`): không đặt cookie, refresh token nằm trong body.
+    """
+    if is_mobile_client(request) if as_mobile is None else as_mobile:
+        return MobileTokenResponse(access_token=access_token, refresh_token=refresh_token)
+    set_session_cookies(response, refresh_token, access_token)
+    return AccessTokenResponse(access_token=access_token)
+
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 @limiter.limit(REGISTER_LIMIT)
@@ -52,7 +75,7 @@ async def register(request: Request, body: RegisterRequest, auth_service: AuthSe
     return user
 
 
-@router.post("/login", response_model=AccessTokenResponse)
+@router.post("/login", response_model=SessionResponse)
 @limiter.limit(LOGIN_LIMIT)
 async def login(
     request: Request,
@@ -64,14 +87,14 @@ async def login(
 
     Refresh token đi vào một cookie httpOnly, không nằm trong body: nó là credential
     tồn tại lâu nhất ở đây, nên nó là thứ phải nằm ngoài tầm với của JavaScript.
+    Ngoại lệ: app di động (`X-Client: android`) nhận refresh token trong body.
     """
     user = await auth_service.authenticate(form_data.username, form_data.password)
     tokens = auth_service.issue_tokens(user)
-    set_session_cookies(response, tokens.refresh_token, tokens.access_token)
-    return AccessTokenResponse(access_token=tokens.access_token)
+    return _session_response(request, response, tokens.access_token, tokens.refresh_token)
 
 
-@router.post("/refresh", response_model=AccessTokenResponse)
+@router.post("/refresh", response_model=SessionResponse)
 @limiter.limit(REFRESH_LIMIT)
 async def refresh_token(
     request: Request,
@@ -83,16 +106,23 @@ async def refresh_token(
 
     Trình duyệt không gửi gì cả — refresh token tới từ cookie httpOnly. Body vẫn
     được chấp nhận cho client không phải trình duyệt, vốn không có kho cookie.
+
+    App di động (`X-Client: android` + refresh token trong body) nhận cặp token mới trong
+    body. Nếu refresh token đến từ cookie thì luôn xử lý như trình duyệt, bất kể header:
+    một XSS tự gắn header không được phép lôi refresh token ra khỏi cookie httpOnly.
     """
-    presented = read_refresh_token(request, body.refresh_token if body else None)
+    body_token = body.refresh_token if body else None
+    as_mobile = is_mobile_client(request) and bool(body_token)
+    presented = body_token if as_mobile else read_refresh_token(request, body_token)
     if not presented:
         raise UnauthorizedException("Could not validate credentials")
     tokens = await auth_service.refresh(presented)
-    set_session_cookies(response, tokens.refresh_token, tokens.access_token)
-    return AccessTokenResponse(access_token=tokens.access_token)
+    return _session_response(
+        request, response, tokens.access_token, tokens.refresh_token, as_mobile=as_mobile
+    )
 
 
-@router.post("/oauth/exchange", response_model=AccessTokenResponse)
+@router.post("/oauth/exchange", response_model=SessionResponse)
 @limiter.limit(LOGIN_LIMIT)
 async def exchange_oauth_code(
     request: Request, response: Response, body: OAuthExchangeRequest
@@ -109,8 +139,7 @@ async def exchange_oauth_code(
     if tokens is None:
         raise UnauthorizedException("Sign-in link is no longer valid")
     access_token, refresh_token = tokens
-    set_session_cookies(response, refresh_token, access_token)
-    return AccessTokenResponse(access_token=access_token)
+    return _session_response(request, response, access_token, refresh_token)
 
 
 @router.post("/logout", response_model=MessageResponse)
@@ -133,9 +162,14 @@ async def logout(
     access_token = (
         authorization[7:].strip() if authorization.lower().startswith("bearer ") else None
     )
-    await auth_service.logout(
-        read_refresh_token(request, body.refresh_token if body else None), access_token
+    body_token = body.refresh_token if body else None
+    # App di động không có cookie: ưu tiên token trong body để thu hồi đúng phiên của nó.
+    refresh = (
+        body_token
+        if is_mobile_client(request) and body_token
+        else read_refresh_token(request, body_token)
     )
+    await auth_service.logout(refresh, access_token)
     clear_session_cookies(response)
     return MessageResponse(message="Logged out successfully")
 

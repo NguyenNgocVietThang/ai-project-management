@@ -29,6 +29,12 @@ MEDIA_COOKIE_NAME = "media-token"
 # Không mang bí mật; chỉ để middleware phía frontend biết có phiên hay không.
 SESSION_FLAG_COOKIE_NAME = "has-session"
 
+# Client không phải trình duyệt (app Android) tự khai báo bằng header này để nhận refresh
+# token trong body thay vì cookie. Xem `is_mobile_client` về lý do header này KHÔNG đủ
+# để lộ refresh token cho trình duyệt.
+CLIENT_HEADER = "x-client"
+MOBILE_CLIENTS = frozenset({"android"})
+
 
 def _refresh_path() -> str:
     return f"{settings.API_V1_PREFIX}/auth"
@@ -83,3 +89,15 @@ def read_refresh_token(request: Request, fallback: str | None = None) -> str | N
     di động) vốn không có kho cookie. Trình duyệt thì không bao giờ đi đường đó nữa.
     """
     return request.cookies.get(REFRESH_COOKIE_NAME) or fallback
+
+
+def is_mobile_client(request: Request) -> bool:
+    """Request có khai báo là app di động (`X-Client: android`) hay không.
+
+    Header này do client tự khai nên KHÔNG phải ranh giới tin cậy. Nó chỉ chọn hình thức
+    trả token; quyền lấy token vẫn do credential quyết định (mật khẩu, mã OAuth dùng một
+    lần, hoặc refresh token nằm trong body). Riêng /auth/refresh: refresh token đến từ
+    cookie httpOnly thì không bao giờ được trả ra body — nếu không, một XSS tự gắn header
+    sẽ lấy được đúng thứ mà cookie httpOnly sinh ra để che giấu.
+    """
+    return request.headers.get(CLIENT_HEADER, "").strip().lower() in MOBILE_CLIENTS

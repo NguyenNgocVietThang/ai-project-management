@@ -52,6 +52,17 @@ class AccessTokenResponse(BaseModel):
     token_type: str = "bearer"
 
 
+class MobileTokenResponse(BaseModel):
+    """Phản hồi cho app di động (`X-Client: android`).
+
+    App không có kho cookie httpOnly; refresh token nằm trong Android Keystore
+    (expo-secure-store) nên được trả trong body. Trình duyệt không bao giờ nhận hình thức này.
+    """
+    access_token: str
+    refresh_token: str
+    token_type: str = "bearer"
+
+
 class RefreshRequest(BaseModel):
     refresh_token: str
 
