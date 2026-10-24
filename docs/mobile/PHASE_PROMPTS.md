@@ -139,3 +139,15 @@ Tiêu chí nghiệm thu: theo mục "Tiêu chí nghiệm thu" của Giai đoạn
 ## Giai đoạn 4 — Tùy chọn
 
 Chỉ bắt đầu khi có phản hồi từ người dùng thật. Chọn một hạng mục trong mục 6 "Giai đoạn 4" của lộ trình, mở phiên mới với Phần chung và mô tả hạng mục đó; vẫn phải qua bước trình kế hoạch và chờ xác nhận.
+
+## Giai đoạn 5–9 — Đề xuất
+
+Điều kiện chung: giai đoạn trước đã merge, dùng **Phần chung** ở đầu file, nhánh `claude/mobile-phase<N>-<tên-ngắn>`, và bước đầu tiên luôn là trình kế hoạch chờ xác nhận. Chi tiết từng hạng mục ở mục 6 của lộ trình.
+
+| Giai đoạn | Nhánh gợi ý | Mô tả giao việc |
+|---|---|---|
+| 5 | `claude/mobile-phase5-operations` | Thực hiện 5.1 → 5.6: giám sát lỗi, đo lường có đồng ý, EAS Update, nợ backend (thu hồi device token, rate limit refresh theo thiết bị, bảo trì), đăng nhập Google theo `docs/mobile/OAUTH_MOBILE.md` phương án B |
+| 6 | `claude/mobile-phase6-public-release` | Thực hiện 6.1 → 6.5: hồ sơ Play Store, xóa tài khoản (app + backend), staged rollout. Không tự soạn nội dung pháp lý; để chỗ trống cho chủ dự án |
+| 7 | `claude/mobile-phase7-ios-tablet` | Thực hiện 7.1 → 7.3. Chỉ bắt đầu khi G5 được xác nhận |
+| 8 | `claude/mobile-phase8-advanced` | Thực hiện 8.1 → 8.4. Hỏi chủ dự án chọn hạng mục ưu tiên trước |
+| 9 | `claude/mobile-phase9-scale` | Thực hiện 9.1 → 9.4 dựa trên số liệu thật từ Giai đoạn 5; không nâng gói khi chưa được duyệt chi phí |

@@ -130,6 +130,69 @@ Xếp theo giá trị trên công sức:
 4. Đồng bộ lịch (milestone, hạn task) sang Google Calendar.
 5. iOS (nếu giả định G5 đúng).
 
+### Giai đoạn 5 — Ổn định và vận hành sau phát hành *(đề xuất)*
+
+Điều kiện: Giai đoạn 3 đã phát hành Internal Testing và có phản hồi thật.
+
+| Việc | Chi tiết |
+|---|---|
+| 5.1 Giám sát lỗi | Báo crash/lỗi JS (gói miễn phí), che dữ liệu cá nhân; dashboard lỗi theo phiên bản app |
+| 5.2 Đo lường tối thiểu | Tỷ lệ nhận push, thời gian cold start, tỷ lệ lỗi refresh; chỉ thu khi người dùng đồng ý, không ghi nội dung nghiệp vụ |
+| 5.3 Cập nhật OTA | EAS Update cho thay đổi JS; quy tắc khi nào phải build lại binary; kênh `preview`/`production` |
+| 5.4 Nợ backend từ Giai đoạn 0–3 | Thu hồi device token khi đổi mật khẩu/tăng `auth_version`; rate limit `/auth/refresh` theo thiết bị thay vì chỉ IP; chế độ bảo trì chặn API có kiểm soát |
+| 5.5 Đăng nhập Google | Triển khai phương án B trong `OAUTH_MOBILE.md` (ID token → endpoint mới), kèm test chống chiếm tài khoản |
+| 5.6 Hoàn thiện từ phản hồi | Xử lý backlog lỗi/UX từ Internal Testing; khả năng truy cập (cỡ chữ, TalkBack, tương phản) |
+
+**Nghiệm thu:** crash-free sessions đạt ngưỡng do chủ dự án đặt; đo được tỷ lệ nhận push; đăng nhập Google chạy trên thiết bị thật mà luồng web không đổi.
+
+### Giai đoạn 6 — Phát hành công khai và tuân thủ *(đề xuất)*
+
+| Việc | Chi tiết |
+|---|---|
+| 6.1 Hồ sơ Play Store | Mô tả vi/en, ảnh chụp màn hình, phân loại nội dung, Data safety form khớp thực tế thu thập dữ liệu |
+| 6.2 Chính sách | Chính sách quyền riêng tư và điều khoản (cần chủ dự án/pháp lý duyệt, không tự soạn thay) |
+| 6.3 Xóa tài khoản | Chức năng xóa tài khoản và dữ liệu cá nhân trong app + endpoint backend (Google Play yêu cầu); định nghĩa dữ liệu nghiệp vụ được giữ lại (audit, dự án) |
+| 6.4 Phát hành theo đợt | Closed testing → staged rollout 5% → 20% → 100%; tiêu chí dừng/rollback dựa trên 5.1–5.2 |
+| 6.5 Hỗ trợ | Kênh nhận phản hồi trong app, hướng dẫn người dùng cuối, quy trình xử lý sự cố |
+
+**Nghiệm thu:** Play Console duyệt bản production; xóa tài khoản kiểm chứng end-to-end; có quy trình rollback đã diễn tập.
+
+### Giai đoạn 7 — Mở rộng nền tảng *(đề xuất, phụ thuộc G5)*
+
+| Việc | Chi tiết |
+|---|---|
+| 7.1 iOS | Build iOS từ cùng mã nguồn (tách từ Giai đoạn 4 mục 5), APNs qua FCM, Sign in with Apple nếu có đăng nhập mạng xã hội, TestFlight |
+| 7.2 Máy tính bảng/gập | Bố cục hai cột cho danh sách–chi tiết |
+| 7.3 Widget và lối tắt | Widget timer/task đến hạn, app shortcuts (tách từ Giai đoạn 4 mục 3) |
+
+**Nghiệm thu:** cùng bộ E2E Maestro chạy trên Android và iOS; không phân nhánh mã theo nền tảng ngoài lớp native bắt buộc.
+
+### Giai đoạn 8 — Năng lực nâng cao *(đề xuất)*
+
+| Việc | Chi tiết |
+|---|---|
+| 8.1 Offline mở rộng | Sửa task/bình luận khi offline với hàng đợi và giải quyết xung đột mở rộng từ 3.2 |
+| 8.2 AI trên di động | Nhập việc bằng văn bản/giọng nói, tóm tắt cuộc trò chuyện, phân tích tài liệu (chỉ khi backend có "Document upload & AI parser"); chạy qua durable job |
+| 8.3 Tích hợp lịch | Đồng bộ milestone/hạn task sang Google Calendar |
+| 8.4 Nghỉ phép | Hoàn thiện endpoint `leaves` (hiện là stub chưa mount) và màn hình xin/duyệt nghỉ |
+
+**Nghiệm thu:** từng hạng mục có RBAC riêng và test; AI luôn hiển thị trạng thái job, có hạn mức theo `AI_DAILY_JOB_LIMIT`.
+
+### Giai đoạn 9 — Mở rộng quy mô hạ tầng *(đề xuất, chỉ khi có tải thật)*
+
+Kích hoạt khi cold start hoặc quota Free tier trở thành điểm nghẽn thật (đo bằng 5.2).
+
+| Việc | Chi tiết |
+|---|---|
+| 9.1 Nâng gói | Đánh giá nâng Render/Supabase để bỏ cold start; cập nhật `docs/deploy-render-supabase.md` và chi phí |
+| 9.2 Realtime | Đánh giá WebSocket nhiều instance (Redis pub/sub đã có) và giảm tải bằng push |
+| 9.3 Push quy mô | Gửi theo lô, hạn mức FCM, dọn token chết định kỳ |
+| 9.4 Kiểm thử tải | Kịch bản tải cho login/refresh/notifications/chat |
+
+**Nghiệm thu:** số liệu trước/sau về độ trễ p95 và tỷ lệ lỗi; kế hoạch chi phí được chủ dự án duyệt.
+
+> Các Giai đoạn 5–9 chỉ là đề xuất sắp xếp theo giá trị và phụ thuộc; thứ tự và phạm vi do chủ dự án quyết định sau mỗi giai đoạn. Mỗi giai đoạn vẫn phải trình kế hoạch chi tiết và chờ xác nhận trước khi viết mã.
+
 ## 7. Rủi ro và giảm thiểu
 
 | Rủi ro | Mức | Giảm thiểu |
@@ -140,6 +203,9 @@ Xếp theo giá trị trên công sức:
 | Lộ dữ liệu qua push (nội dung nhạy cảm trên màn hình khóa) | Trung bình | Payload chỉ chứa id + tiêu đề trung tính, nội dung chi tiết lấy lại khi mở app |
 | Model AI miễn phí chậm/hạn chế ảnh hưởng tính năng AI trên mobile | Thấp–Trung bình | Tính năng AI chạy qua durable job, app chỉ hiển thị trạng thái |
 | Lệch API giữa web và mobile | Trung bình | Sinh client từ OpenAPI trong CI, kiểm tra thay đổi phá vỡ tương thích |
+| Bị Google Play từ chối do thiếu xóa tài khoản/Data safety/chính sách riêng tư (Giai đoạn 6) | Trung bình | Làm 6.1–6.3 trước khi nộp bản production |
+| Thu thập số liệu vi phạm quyền riêng tư (Giai đoạn 5) | Trung bình | Chỉ thu khi đồng ý, không ghi nội dung nghiệp vụ, che dữ liệu cá nhân |
+| Chi phí hạ tầng tăng khi nâng khỏi Free tier (Giai đoạn 9) | Trung bình | Chỉ nâng khi có số liệu; chủ dự án duyệt chi phí |
 
 ## 8. Quy tắc phối hợp giữa các phiên làm việc
 
@@ -157,3 +223,8 @@ Xếp theo giá trị trên công sức:
 | 2 — Push, chat, duyệt CR | Chưa bắt đầu | — | — |
 | 3 — Mở rộng, phát hành | Chưa bắt đầu | — | — |
 | 4 — Tùy chọn | Chưa bắt đầu | — | — |
+| 5 — Ổn định, vận hành | Chưa bắt đầu | — | Đề xuất |
+| 6 — Phát hành công khai, tuân thủ | Chưa bắt đầu | — | Đề xuất |
+| 7 — Mở rộng nền tảng (iOS…) | Chưa bắt đầu | — | Đề xuất, phụ thuộc G5 |
+| 8 — Năng lực nâng cao | Chưa bắt đầu | — | Đề xuất |
+| 9 — Quy mô hạ tầng | Chưa bắt đầu | — | Đề xuất, chỉ khi có tải thật |
