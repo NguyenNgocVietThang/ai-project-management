@@ -7,10 +7,10 @@ import viMessages from '../../../../../../messages/vi.json'
 import type { Task, TaskListParams } from '@/types/task.types'
 import TasksPage from './page'
 
-const mocks = vi.hoisted(() => ({ actions: {} as Record<string, { mutate: ReturnType<typeof vi.fn>; isPending: boolean }>, retry: vi.fn(), error: false, loading: false, wbsLoading: false, params: {} as TaskListParams }))
+const mocks = vi.hoisted(() => ({ actions: {} as Record<string, { mutate: ReturnType<typeof vi.fn>; isPending: boolean }>, retry: vi.fn(), error: false, loading: false, wbsLoading: false, pages: 1, projectId: '2', params: {} as TaskListParams }))
 vi.mock('next/navigation', async () => {
   const { useSyncExternalStore } = await import('react')
-  return { useParams: () => ({ id: '2' }), notFound: vi.fn(), useSearchParams: () => {
+  return { useParams: () => ({ id: mocks.projectId }), notFound: vi.fn(), useSearchParams: () => {
     const value = useSyncExternalStore(listener => { window.addEventListener('popstate', listener); return () => window.removeEventListener('popstate', listener) }, () => window.location.search)
     return new URLSearchParams(value)
   } }
@@ -23,7 +23,7 @@ const capabilities = { can_update: true, can_delete: true, can_change_status: tr
 const tasks: Task[] = Array.from({ length: 17 }, (_, index) => ({ id: index + 1, name: index === 0 ? 'Phân tích yêu cầu' : `Implementation ${index}`, status: index ? 'TODO' : 'IN_PROGRESS', priority: 'MEDIUM', labels: [], due_date: null, start_date: null, primary_assignee: { id: 7, full_name: 'An', username: 'an', email: 'an@example.test', avatar_url: null }, description: null, story_points: null, progress: 0, early_start: null, early_finish: null, late_start: null, late_finish: null, float_days: null, is_critical: false, order_index: 0, created_at: '', updated_at: '', project_id: 2, actual_hours: 0, estimated_hours: 2, phase_id: 2, sprint_id: null, epic_id: null, assignee_id: 7, capabilities }))
 const detail = { ...tasks[0], description: '', subtasks: [], assignments: [], predecessor_dependencies: [], successor_dependencies: [], total_logged_hours: 0 }
 vi.mock('@/features/tasks/hooks/useTasks', () => ({
-  useTasks: (_id: number, params: TaskListParams) => { mocks.params = params; const items = tasks.filter(task => (!params.search || task.name.toLocaleLowerCase().includes(params.search.toLocaleLowerCase())) && (!params.status || task.status === params.status)); return { data: mocks.loading ? undefined : { items, total: items.length, page: params.page || 1, total_pages: 1 }, isLoading: mocks.loading, isError: mocks.error, error: new Error('Unavailable'), refetch: mocks.retry } },
+  useTasks: (_id: number, params: TaskListParams) => { mocks.params = params; const items = tasks.filter(task => (!params.search || task.name.toLocaleLowerCase().includes(params.search.toLocaleLowerCase())) && (!params.status || task.status === params.status)); return { data: mocks.loading ? undefined : { items, total: mocks.pages > 1 ? 205 : items.length, page: params.page || 1, total_pages: mocks.pages }, isLoading: mocks.loading, isError: mocks.error, error: new Error('Unavailable'), refetch: mocks.retry } },
   useTask: (id: number | null) => ({ data: id ? detail : undefined, isLoading: false }), useWorklogs: () => ({ data: [] }), useActiveTimer: () => ({ data: null }), useTaskActions: () => mocks.actions,
 }))
 
@@ -36,6 +36,8 @@ beforeEach(() => {
   mocks.error = false
   mocks.loading = false
   mocks.wbsLoading = false
+  mocks.pages = 1
+  mocks.projectId = '2'
   mocks.actions = Object.fromEntries(['create', 'update', 'changeStatus', 'bulk', 'stopTimer', 'startTimer', 'remove', 'assign', 'unassign', 'createSubtask', 'updateSubtask', 'removeSubtask', 'addDependency', 'removeDependency', 'addWorklog', 'removeWorklog'].map(name => [name, { mutate: vi.fn(), isPending: false }]))
 })
 
@@ -99,6 +101,37 @@ describe('task list interactions', () => {
     rendered.rerender(<NextIntlClientProvider locale="en" messages={messages}><TasksPage /></NextIntlClientProvider>)
     await user.click(screen.getByRole('button', { name: 'Try again' }))
     expect(mocks.retry).toHaveBeenCalled()
+  })
+
+  it.each(['board', 'list', 'sprint'])('exposes pagination for %s and preserves filters while navigating beyond loaded work', async view => {
+    mocks.pages = 2
+    window.history.replaceState(null, '', `/projects/2/tasks?view=${view}&priority=HIGH`)
+    setup()
+    const user = userEvent.setup()
+    expect(screen.getByText('Showing 17 tasks on this page · 205 matching tasks')).toBeInTheDocument()
+    const pagination = screen.getByRole('navigation', { name: messages.tasks.pagination })
+    expect(within(pagination).getByRole('button', { name: 'Previous' })).toBeDisabled()
+    await user.click(within(pagination).getByRole('button', { name: 'Next' }))
+    expect(mocks.params.page).toBe(2)
+    expect(mocks.params.priority).toBe('HIGH')
+    expect(within(pagination).getByRole('button', { name: 'Next' })).toBeDisabled()
+    expect(within(pagination).getByRole('button', { name: 'Previous' })).toBeEnabled()
+  })
+
+  it('resets bulk selection on URL history/filter scope and project changes', async () => {
+    window.history.replaceState(null, '', '/projects/2/tasks?view=list')
+    const rendered = setup()
+    const user = userEvent.setup()
+    await user.click(screen.getByRole('checkbox', { name: messages.tasks.selectLoaded }))
+    expect(screen.getByRole('combobox', { name: messages.tasks.setStatus })).toBeInTheDocument()
+    await act(async () => {
+      window.history.pushState(null, '', '/projects/2/tasks?view=list&priority=HIGH')
+    })
+    expect(screen.queryByRole('combobox', { name: messages.tasks.setStatus })).not.toBeInTheDocument()
+    await user.click(screen.getByRole('checkbox', { name: messages.tasks.selectLoaded }))
+    mocks.projectId = '3'
+    rendered.rerender(<NextIntlClientProvider locale="en" messages={messages}><TasksPage /></NextIntlClientProvider>)
+    expect(screen.queryByRole('combobox', { name: messages.tasks.setStatus })).not.toBeInTheDocument()
   })
 
   it.each(['en', 'vi'])('opens localized detail with a fixed external save footer (%s)', async locale => {
