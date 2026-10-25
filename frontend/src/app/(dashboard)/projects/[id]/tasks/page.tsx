@@ -82,8 +82,10 @@ export default function TasksPage() {
           const taskIds = tasks.filter(task => ids.includes(task.id) && task.capabilities.can_update && task.capabilities.can_change_status).map(task => task.id)
           if (taskIds.length) actions.bulk.mutate({ taskIds, body: { status } }, { onSuccess })
         }} />}
-        {view === 'sprint' && <SprintWorkspace key={projectId} tasks={tasks} sprints={sprints} onOpen={setSelectedTask} />}
       </>}
+
+    {/* Keep sprint selection mounted across uncached filter loads; hide stale detail while loading. */}
+    {view === 'sprint' && <div hidden={query.isLoading || wbs.isLoading || query.isError}><SprintWorkspace key={projectId} tasks={tasks} sprints={sprints} onOpen={setSelectedTask} /></div>}
 
     <div className="flex flex-wrap items-center justify-between gap-3 text-caption text-muted-foreground">
       <p className="tabular-nums">{query.data && t('showingPage', { count: tasks.length, total: query.data.total })}</p>

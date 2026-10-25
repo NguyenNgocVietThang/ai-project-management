@@ -7,7 +7,7 @@ import viMessages from '../../../../../../messages/vi.json'
 import type { Task, TaskListParams } from '@/types/task.types'
 import TasksPage from './page'
 
-const mocks = vi.hoisted(() => ({ actions: {} as Record<string, { mutate: ReturnType<typeof vi.fn>; isPending: boolean }>, retry: vi.fn(), error: false, loading: false, wbsLoading: false, pages: 1, projectId: '2', params: {} as TaskListParams }))
+const mocks = vi.hoisted(() => ({ actions: {} as Record<string, { mutate: ReturnType<typeof vi.fn>; isPending: boolean }>, retry: vi.fn(), error: false, loading: false, wbsLoading: false, pages: 1, projectId: '2', sprints: [] as Array<{ id: number; name: string; status: string }>, params: {} as TaskListParams }))
 vi.mock('next/navigation', async () => {
   const { useSyncExternalStore } = await import('react')
   return { useParams: () => ({ id: mocks.projectId }), notFound: vi.fn(), useSearchParams: () => {
@@ -17,7 +17,7 @@ vi.mock('next/navigation', async () => {
 })
 vi.mock('@/features/projects/hooks/useProjects', () => ({ useProjectDetail: () => ({ data: { capabilities: { can_update: true } } }) }))
 vi.mock('@/features/projects/hooks/useProjectMembers', () => ({ useProjectMembers: () => ({ data: [{ user: { id: 7, full_name: 'An' } }] }) }))
-vi.mock('@/features/wbs/hooks/useWBS', () => ({ useWBS: () => ({ data: { phases: [{ id: 2, name: 'Discovery', sprints: [] }], unphased_sprints: [], epics: [] }, isLoading: mocks.wbsLoading }) }))
+vi.mock('@/features/wbs/hooks/useWBS', () => ({ useWBS: () => ({ data: { phases: [{ id: 2, name: 'Discovery', sprints: mocks.sprints }], unphased_sprints: [], epics: [] }, isLoading: mocks.wbsLoading }) }))
 
 const capabilities = { can_update: true, can_delete: true, can_change_status: true, can_manage_dependencies: true, can_manage_assignments: true, can_log_work: true, can_read_worklogs: true }
 const tasks: Task[] = Array.from({ length: 17 }, (_, index) => ({ id: index + 1, name: index === 0 ? 'Phân tích yêu cầu' : `Implementation ${index}`, status: index ? 'TODO' : 'IN_PROGRESS', priority: 'MEDIUM', labels: [], due_date: null, start_date: null, primary_assignee: { id: 7, full_name: 'An', username: 'an', email: 'an@example.test', avatar_url: null }, description: null, story_points: null, progress: 0, early_start: null, early_finish: null, late_start: null, late_finish: null, float_days: null, is_critical: false, order_index: 0, created_at: '', updated_at: '', project_id: 2, actual_hours: 0, estimated_hours: 2, phase_id: 2, sprint_id: null, epic_id: null, assignee_id: 7, capabilities }))
@@ -38,6 +38,7 @@ beforeEach(() => {
   mocks.wbsLoading = false
   mocks.pages = 1
   mocks.projectId = '2'
+  mocks.sprints = []
   mocks.actions = Object.fromEntries(['create', 'update', 'changeStatus', 'bulk', 'stopTimer', 'startTimer', 'remove', 'assign', 'unassign', 'createSubtask', 'updateSubtask', 'removeSubtask', 'addDependency', 'removeDependency', 'addWorklog', 'removeWorklog'].map(name => [name, { mutate: vi.fn(), isPending: false }]))
 })
 
@@ -116,6 +117,31 @@ describe('task list interactions', () => {
     expect(mocks.params.priority).toBe('HIGH')
     expect(within(pagination).getByRole('button', { name: 'Next' })).toBeDisabled()
     expect(within(pagination).getByRole('button', { name: 'Previous' })).toBeEnabled()
+  })
+
+  it('preserves selected Sprint 12 through an uncached filter loading boundary, then resets for a new project', async () => {
+    mocks.sprints = Array.from({ length: 12 }, (_, index) => ({ id: index + 1, name: `Sprint ${index + 1}`, status: 'PLANNED' }))
+    window.history.replaceState(null, '', '/projects/2/tasks?view=sprint')
+    const rendered = setup()
+    const user = userEvent.setup()
+    await user.selectOptions(screen.getByRole('combobox', { name: messages.tasks.selectSprintGroup }), 'sprint_id:12')
+    expect(screen.getByRole('region', { name: 'Sprint 12' })).toBeVisible()
+
+    mocks.loading = true
+    await user.type(screen.getByRole('searchbox'), 'uncached-empty-filter')
+    await waitFor(() => expect(mocks.params.search).toBe('uncached-empty-filter'))
+    // The request has no placeholder response. Only the loading state is exposed.
+    expect(screen.queryByRole('combobox', { name: messages.tasks.selectSprintGroup })).not.toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Sprint 12' })).not.toBeInTheDocument()
+
+    mocks.loading = false
+    rendered.rerender(<NextIntlClientProvider locale="en" messages={messages}><TasksPage /></NextIntlClientProvider>)
+    expect(screen.getByRole('combobox', { name: messages.tasks.selectSprintGroup })).toHaveValue('sprint_id:12')
+    expect(screen.getByRole('region', { name: 'Sprint 12' })).toHaveTextContent(messages.tasks.emptySprint)
+
+    mocks.projectId = '3'
+    rendered.rerender(<NextIntlClientProvider locale="en" messages={messages}><TasksPage /></NextIntlClientProvider>)
+    expect(screen.getByRole('combobox', { name: messages.tasks.selectSprintGroup })).toHaveValue('sprint_id:none')
   })
 
   it('resets bulk selection on URL history/filter scope and project changes', async () => {
