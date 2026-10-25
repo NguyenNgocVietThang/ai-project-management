@@ -26,9 +26,9 @@ export function TaskFilters({ filters, onChange, onReset, phases, sprints, epics
   const t = useTranslations('tasks')
   const [open, setOpen] = useState(false)
   const active = Object.entries(filters).filter(([key, value]) => !['page', 'page_size'].includes(key) && value !== undefined && value !== '' && (!Array.isArray(value) || value.length > 0))
-  const select = (key: 'status' | 'priority' | 'phase_id' | 'sprint_id' | 'epic_id' | 'assignee_id', label: string, placeholder: string, options: { value: string; label: string }[]) => <label className="block min-w-0 space-y-1 text-caption font-medium"><span>{label}</span><Select value={filters[key] || ''} onChange={event => onChange(key, (event.target.value ? key.endsWith('_id') ? Number(event.target.value) : event.target.value : undefined) as TaskListParams[typeof key])}><option value="">{placeholder}</option>{options.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}</Select></label>
-  const status = () => select('status', t('status'), t('allStatuses'), TASK_STATUSES.map(value => ({ value, label: t(`statuses.${value}`) })))
-  const assignee = () => select('assignee_id', t('assignee'), t('allAssignees'), members.map(item => ({ value: String(item.id), label: item.name })))
+  const select = (key: 'status' | 'priority' | 'phase_id' | 'sprint_id' | 'epic_id' | 'assignee_id', label: string, placeholder: string, options: { value: string; label: string }[], compact = false) => <label className="block min-w-0 space-y-1 text-caption font-medium"><span className={compact ? 'sr-only' : undefined}>{label}</span><Select className={compact ? 'h-10' : undefined} value={filters[key] || ''} onChange={event => onChange(key, (event.target.value ? key.endsWith('_id') ? Number(event.target.value) : event.target.value : undefined) as TaskListParams[typeof key])}><option value="">{placeholder}</option>{options.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}</Select></label>
+  const status = (compact = false) => select('status', t('status'), t('allStatuses'), TASK_STATUSES.map(value => ({ value, label: t(`statuses.${value}`) })), compact)
+  const assignee = (compact = false) => select('assignee_id', t('assignee'), t('allAssignees'), members.map(item => ({ value: String(item.id), label: item.name })), compact)
   const chipValue = (key: string, value: unknown) => {
     if (key === 'status') return t(`statuses.${value}`)
     if (key === 'priority') return t(`priorities.${value}`)
@@ -38,9 +38,9 @@ export function TaskFilters({ filters, onChange, onReset, phases, sprints, epics
   const chipLabel: Record<string, string> = { search: t('searchPlaceholder'), status: t('status'), priority: t('priority'), phase_id: t('phase'), sprint_id: t('sprint'), epic_id: t('epic'), assignee_id: t('assignee'), labels: t('labels'), due_date_from: t('dueFrom'), due_date_to: t('dueTo') }
   return <section aria-label={t('filters')} className="space-y-2">
     <div className="flex flex-wrap items-end gap-2">
-      <div className="min-w-0 flex-1 basis-40"><Input type="search" aria-label={t('searchPlaceholder')} placeholder={t('searchPlaceholder')} value={filters.search || ''} onChange={event => onChange('search', event.target.value || undefined)} /></div>
-      <div className="hidden w-40 md:block">{status()}</div><div className="hidden w-44 md:block">{assignee()}</div>
-      <Button variant="outline" fullWidth={false} onClick={() => setOpen(true)} aria-haspopup="dialog"><SlidersHorizontal className="h-4 w-4" aria-hidden="true" />{t('filters')}{active.length > 0 && <span className="tabular-nums">({active.length})</span>}</Button>
+      <div className="min-w-0 flex-1 basis-40"><Input className="h-10" type="search" aria-label={t('searchPlaceholder')} placeholder={t('searchPlaceholder')} value={filters.search || ''} onChange={event => onChange('search', event.target.value || undefined)} /></div>
+      <div className="hidden w-40 md:block">{status(true)}</div><div className="hidden w-44 md:block">{assignee(true)}</div>
+      <Button size="sm" className="min-h-10" variant="outline" fullWidth={false} onClick={() => setOpen(true)} aria-haspopup="dialog"><SlidersHorizontal className="h-4 w-4" aria-hidden="true" />{t('filters')}{active.length > 0 && <span className="tabular-nums">({active.length})</span>}</Button>
     </div>
     <div className="flex flex-wrap items-center gap-2">
       <p role="status" className="text-caption text-muted-foreground">{total === undefined ? t('updating') : t('results', { count: total })}</p>

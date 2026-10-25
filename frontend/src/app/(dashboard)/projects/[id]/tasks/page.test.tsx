@@ -7,7 +7,7 @@ import viMessages from '../../../../../../messages/vi.json'
 import type { Task, TaskListParams } from '@/types/task.types'
 import TasksPage from './page'
 
-const mocks = vi.hoisted(() => ({ actions: {} as Record<string, { mutate: ReturnType<typeof vi.fn>; isPending: boolean }>, retry: vi.fn(), error: false, loading: false, params: {} as TaskListParams }))
+const mocks = vi.hoisted(() => ({ actions: {} as Record<string, { mutate: ReturnType<typeof vi.fn>; isPending: boolean }>, retry: vi.fn(), error: false, loading: false, wbsLoading: false, params: {} as TaskListParams }))
 vi.mock('next/navigation', async () => {
   const { useSyncExternalStore } = await import('react')
   return { useParams: () => ({ id: '2' }), notFound: vi.fn(), useSearchParams: () => {
@@ -17,7 +17,7 @@ vi.mock('next/navigation', async () => {
 })
 vi.mock('@/features/projects/hooks/useProjects', () => ({ useProjectDetail: () => ({ data: { capabilities: { can_update: true } } }) }))
 vi.mock('@/features/projects/hooks/useProjectMembers', () => ({ useProjectMembers: () => ({ data: [{ user: { id: 7, full_name: 'An' } }] }) }))
-vi.mock('@/features/wbs/hooks/useWBS', () => ({ useWBS: () => ({ data: { phases: [{ id: 2, name: 'Discovery', sprints: [] }], unphased_sprints: [], epics: [] }, isLoading: false }) }))
+vi.mock('@/features/wbs/hooks/useWBS', () => ({ useWBS: () => ({ data: { phases: [{ id: 2, name: 'Discovery', sprints: [] }], unphased_sprints: [], epics: [] }, isLoading: mocks.wbsLoading }) }))
 
 const capabilities = { can_update: true, can_delete: true, can_change_status: true, can_manage_dependencies: true, can_manage_assignments: true, can_log_work: true, can_read_worklogs: true }
 const tasks: Task[] = Array.from({ length: 17 }, (_, index) => ({ id: index + 1, name: index === 0 ? 'Phân tích yêu cầu' : `Implementation ${index}`, status: index ? 'TODO' : 'IN_PROGRESS', priority: 'MEDIUM', labels: [], due_date: null, start_date: null, primary_assignee: { id: 7, full_name: 'An', username: 'an', email: 'an@example.test', avatar_url: null }, description: null, story_points: null, progress: 0, early_start: null, early_finish: null, late_start: null, late_finish: null, float_days: null, is_critical: false, order_index: 0, created_at: '', updated_at: '', project_id: 2, actual_hours: 0, estimated_hours: 2, phase_id: 2, sprint_id: null, epic_id: null, assignee_id: 7, capabilities }))
@@ -35,6 +35,7 @@ beforeEach(() => {
   vi.spyOn(window, 'matchMedia').mockImplementation(query => ({ matches: query.includes('max-width'), media: query, onchange: null, addListener: vi.fn(), removeListener: vi.fn(), addEventListener: vi.fn(), removeEventListener: vi.fn(), dispatchEvent: vi.fn() }))
   mocks.error = false
   mocks.loading = false
+  mocks.wbsLoading = false
   mocks.actions = Object.fromEntries(['create', 'update', 'changeStatus', 'bulk', 'stopTimer', 'startTimer', 'remove', 'assign', 'unassign', 'createSubtask', 'updateSubtask', 'removeSubtask', 'addDependency', 'removeDependency', 'addWorklog', 'removeWorklog'].map(name => [name, { mutate: vi.fn(), isPending: false }]))
 })
 
@@ -90,6 +91,10 @@ describe('task list interactions', () => {
     rendered.rerender(<NextIntlClientProvider locale="en" messages={messages}><TasksPage /></NextIntlClientProvider>)
     expect(screen.getByRole('searchbox')).toBe(search)
     mocks.loading = false
+    mocks.wbsLoading = true
+    rendered.rerender(<NextIntlClientProvider locale="en" messages={messages}><TasksPage /></NextIntlClientProvider>)
+    expect(screen.getByRole('searchbox')).toBe(search)
+    mocks.wbsLoading = false
     mocks.error = true
     rendered.rerender(<NextIntlClientProvider locale="en" messages={messages}><TasksPage /></NextIntlClientProvider>)
     await user.click(screen.getByRole('button', { name: 'Try again' }))

@@ -21,6 +21,7 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
   const getApiErrorMessage = useApiErrorMessage()
   const id = useNumericParam()
   const pathname = usePathname()
+  const compactTasks = pathname === `/projects/${id}/tasks` || pathname.startsWith(`/projects/${id}/tasks/`)
   const query = useProjectDetail(id)
   const unread = useChatUnreadCount(id).data?.unread_count ?? 0
   const t = useTranslations('project')
@@ -42,13 +43,16 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
   const project = query.data
 
   return (
-    <div className="min-w-0 space-y-4">
+    <div className={compactTasks ? 'min-w-0 space-y-2' : 'min-w-0 space-y-4'}>
       {/* ===== Đầu trang dự án: trạng thái, phương pháp, tên, danh mục ===== */}
-      <PageHeader
+      {compactTasks ? <header className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
+        <h1 title={project.name} className="min-w-0 break-words text-lg font-semibold [overflow-wrap:anywhere]">{project.name}</h1>
+        <div className="flex flex-wrap items-center gap-2"><ProjectStatusBadge status={project.status} /><Badge tone="primary">{t.has(`methodologies.${project.methodology}`) ? t(`methodologies.${project.methodology}`) : formatStatus(project.methodology, locale)}</Badge></div>
+      </header> : <PageHeader
         title={project.name}
         description={project.portfolio_name || t('standalone')}
         meta={<><ProjectStatusBadge status={project.status} /><Badge tone="primary">{t.has(`methodologies.${project.methodology}`) ? t(`methodologies.${project.methodology}`) : formatStatus(project.methodology, locale)}</Badge></>}
-      />
+      />}
       {/* ===== Thanh tab dính ngay dưới header ứng dụng (cao 64px) ===== */}
       <div className="sticky top-16 z-10 -mx-4 bg-background px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         <ProjectNavigation projectId={id} pathname={pathname} unread={unread} />
