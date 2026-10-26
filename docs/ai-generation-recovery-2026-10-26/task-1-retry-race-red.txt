@@ -1,0 +1,77 @@
+
+ RUN  v5.0.0 C:/BA/AI Project Planning & Portfolio Management system/frontend
+
+ ❯ src/services/api.test.ts (11 tests | 1 failed | 10 skipped) 477ms
+   ❯ refresh session races (4)
+     × does not send a queued authenticated retry in a replacement session 466ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/services/api.test.ts > refresh session races > does not send a queued authenticated retry in a replacement session
+AssertionError: promise resolved "{ data: {}, status: 200, …(3) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "config": {
++     "_authSessionId": 2,
++     "adapter": [Function anonymous],
++     "allowAbsoluteUrls": true,
++     "baseURL": "http://localhost:8000/api/v1",
++     "data": undefined,
++     "env": {
++       "Blob": [Function Blob],
++       "FormData": [Function FormData],
++     },
++     "headers": {
++       "Accept": "application/json, text/plain, */*",
++       "Authorization": "Bearer fixture-next",
++     },
++     "maxBodyLength": -1,
++     "maxContentLength": -1,
++     "method": "get",
++     "timeout": 90000,
++     "transformRequest": [
++       [Function transformRequest],
++     ],
++     "transformResponse": [
++       [Function transformResponse],
++     ],
++     "transitional": {
++       "advertiseZstdAcceptEncoding": false,
++       "clarifyTimeoutError": false,
++       "forcedJSONParsing": true,
++       "legacyInterceptorReqResOrdering": true,
++       "silentJSONParsing": true,
++       "validateStatusUndefinedResolves": true,
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 skipped (11)
+   Start at  22:08:49
+   Duration  4.52s (environment 62%, setup 21%, tests 13%, transform 4%, worker 1%)
+
++     },
++     "url": "/fixture/retry",
++     "validateStatus": [Function validateStatus],
++     "withCredentials": true,
++     "xsrfCookieName": "XSRF-TOKEN",
++     "xsrfHeaderName": "X-XSRF-TOKEN",
++   },
++   "data": {},
++   "headers": {},
++   "status": 200,
++   "statusText": "OK",
+  }
+
+ ❯ src/services/api.test.ts:175:119
+    173|     const previousSession = useAuthStore.getState().sessionId
+    174|     startAuthSession({ access_token: 'fixture-next', token_type: 'bear…
+    175|     await expect(api.get('/fixture/retry', { _authSessionId: previousS…
+       |                                                                                                                       ^
+    176|     expect(requests).toBe(0)
+    177|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯

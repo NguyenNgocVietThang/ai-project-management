@@ -30,24 +30,32 @@ const refreshClient = axios.create({
   timeout: REQUEST_TIMEOUT_MS,
 })
 
-api.interceptors.request.use((config) => {
+type RetriableConfig = InternalAxiosRequestConfig & { _retry?: boolean; _authSessionId?: number }
+
+api.interceptors.request.use((config: RetriableConfig) => {
+  const sessionId = authStore.getState().sessionId
+  if (config._authSessionId !== undefined && config._authSessionId !== sessionId) {
+    throw new Error('Session changed before request')
+  }
+  config._authSessionId = sessionId
   const token = authStore.getState().accessToken
-  if (token && config.headers) {
+  // Logout already captured the token whose server session must be revoked.
+  if (token && config.headers && config.url !== '/auth/logout') {
     config.headers.Authorization = `Bearer ${token}`
   }
   return config
 })
 
-type RetriableConfig = InternalAxiosRequestConfig & { _retry?: boolean }
-
 // Nhiều request có thể cùng bị 401 một lúc (vd một trang bắn nhiều query sau khi access
 // token hết hạn). Chỉ request đầu tiên kích hoạt refresh; các request còn lại chờ trên promise dùng chung này.
-let refreshPromise: Promise<string> | null = null
+let refreshPromise: { sessionId: number; promise: Promise<string> } | null = null
 
 async function refreshAccessToken(): Promise<string> {
+  const sessionId = authStore.getState().sessionId
   // Không có body: refresh token nằm trong cookie httpOnly mà trình duyệt tự
   // đính kèm (withCredentials ở trên). Frontend không bao giờ nhìn thấy nó.
   const { data } = await refreshClient.post<AccessTokenResponse>('/auth/refresh')
+  if (authStore.getState().sessionId !== sessionId) throw new Error('Session changed during refresh')
   authStore.getState().setTokens(data)
   return data.access_token
 }
@@ -58,10 +66,12 @@ async function refreshAccessToken(): Promise<string> {
  * phải được lấy lại từ cookie refresh trước khi render bất cứ thứ gì cần xác thực.
  * Trả về false khi không có phiên hợp lệ — nơi gọi sẽ đưa người dùng tới trang đăng nhập. */
 export async function bootstrapSession(): Promise<boolean> {
+  const sessionId = authStore.getState().sessionId
   try {
     await refreshAccessToken()
     return true
   } catch (error) {
+    if (authStore.getState().sessionId !== sessionId) return false
     if (axios.isAxiosError(error) && [401, 403].includes(error.response?.status ?? 0)) {
       authStore.getState().clear()
       return false
@@ -75,20 +85,27 @@ api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const originalRequest = error.config as RetriableConfig | undefined
-    const isAuthEndpoint = originalRequest?.url?.includes('/auth/login') || originalRequest?.url?.includes('/auth/refresh')
+    const isAuthEndpoint = originalRequest?.url?.includes('/auth/login') || originalRequest?.url?.includes('/auth/refresh') || originalRequest?.url?.includes('/auth/logout')
 
     if (error.response?.status === 401 && originalRequest && !originalRequest._retry && !isAuthEndpoint) {
+      const sessionId = authStore.getState().sessionId
+      if (originalRequest._authSessionId !== undefined && originalRequest._authSessionId !== sessionId) return Promise.reject(error)
       originalRequest._retry = true
       try {
-        refreshPromise ??= refreshAccessToken().finally(() => {
-          refreshPromise = null
-        })
-        const newAccessToken = await refreshPromise
+        if (!refreshPromise || refreshPromise.sessionId !== sessionId) {
+          const pending = refreshAccessToken().finally(() => {
+            if (refreshPromise?.promise === pending) refreshPromise = null
+          })
+          refreshPromise = { sessionId, promise: pending }
+        }
+        const newAccessToken = await refreshPromise.promise
+        if (authStore.getState().sessionId !== sessionId) throw new Error('Session changed before retry')
         if (originalRequest.headers) {
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
         }
         return api(originalRequest)
       } catch (refreshError) {
+        if (authStore.getState().sessionId !== sessionId) return Promise.reject(refreshError)
         if (!axios.isAxiosError(refreshError) || ![401, 403].includes(refreshError.response?.status ?? 0)) {
           return Promise.reject(refreshError)
         }

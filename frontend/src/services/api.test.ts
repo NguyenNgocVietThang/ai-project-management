@@ -91,3 +91,88 @@ describe('api client', () => {
     }
   })
 })
+
+// The refresh boundary must not restore a cleared or replaced client session.
+describe('refresh session races', () => {
+  beforeEach(() => { vi.restoreAllMocks(); vi.resetModules() })
+  it.each(['logout', 'account switch'])('discards a refresh response after %s', async (boundary) => {
+    const axios = (await import('axios')).default
+    const create = axios.create.bind(axios)
+    let complete!: () => void
+    vi.spyOn(axios, 'create').mockImplementation((config) => {
+      const client = create(config)
+      client.defaults.adapter = request => new Promise(resolve => {
+        complete = () => resolve({ data: { access_token: 'fixture-late', token_type: 'bearer' }, status: 200, statusText: 'OK', headers: {}, config: request })
+      })
+      return client
+    })
+    const { bootstrapSession } = await import('./api')
+    const { useAuthStore } = await import('@/store/authStore')
+    useAuthStore.getState().clear()
+    const pending = bootstrapSession().catch(() => false)
+    await vi.waitFor(() => expect(complete).toBeDefined())
+    useAuthStore.getState().clear()
+    if (boundary === 'account switch') useAuthStore.getState().setTokens({ access_token: 'fixture-next', token_type: 'bearer' })
+    complete()
+    expect(await pending).toBe(false)
+    expect(useAuthStore.getState().accessToken).toBe(boundary === 'logout' ? null : 'fixture-next')
+  })
+
+  it('refreshes concurrent 401s once while retaining the same owner', async () => {
+    const { default: axios, AxiosError } = await import('axios')
+    const create = axios.create.bind(axios)
+    let refreshes = 0
+    let completeRefresh!: () => void
+    vi.spyOn(axios, 'create').mockImplementation(config => {
+      const client = create(config)
+      client.defaults.adapter = async request => {
+        if (request.url === '/auth/refresh') {
+          refreshes += 1
+          return new Promise(resolve => { completeRefresh = () => resolve({ data: { access_token: 'fixture-rotated', token_type: 'bearer' }, status: 200, statusText: 'OK', headers: {}, config: request }) })
+        }
+        if (request.headers.Authorization !== 'Bearer fixture-rotated') {
+          throw new AxiosError('expired', 'ERR_BAD_RESPONSE', request, undefined, { data: {}, status: 401, statusText: '', headers: {}, config: request })
+        }
+        return { data: { ok: true }, status: 200, statusText: 'OK', headers: {}, config: request }
+      }
+      return client
+    })
+    const { api } = await import('./api')
+    const { useAuthStore } = await import('@/store/authStore')
+    useAuthStore.getState().setTokens({ access_token: 'fixture-original', token_type: 'bearer' })
+    const owner = { id: 1 } as import('@/types/auth.types').User
+    useAuthStore.getState().setUser(owner)
+    const sessionId = useAuthStore.getState().sessionId
+    const first = api.get('/fixture/one')
+    const second = api.get('/fixture/two')
+    await vi.waitFor(() => expect(refreshes).toBe(1))
+    completeRefresh()
+    const responses = await Promise.all([first, second])
+    expect(responses.map(response => response.data)).toEqual([{ ok: true }, { ok: true }])
+    expect(refreshes).toBe(1)
+    expect(useAuthStore.getState().sessionId).toBe(sessionId)
+    expect(useAuthStore.getState().user).toEqual(owner)
+  })
+
+
+  it('does not send a queued authenticated retry in a replacement session', async () => {
+    const axios = (await import('axios')).default
+    const create = axios.create.bind(axios)
+    let requests = 0
+    vi.spyOn(axios, 'create').mockImplementation(config => {
+      const client = create(config)
+      client.defaults.adapter = async request => {
+        requests += 1
+        return { data: {}, status: 200, statusText: 'OK', headers: {}, config: request }
+      }
+      return client
+    })
+    const { api } = await import('./api')
+    const { useAuthStore, startAuthSession } = await import('@/store/authStore')
+    useAuthStore.getState().setTokens({ access_token: 'fixture-original', token_type: 'bearer' })
+    const previousSession = useAuthStore.getState().sessionId
+    startAuthSession({ access_token: 'fixture-next', token_type: 'bearer' })
+    await expect(api.get('/fixture/retry', { _authSessionId: previousSession } as import('axios').AxiosRequestConfig)).rejects.toThrow('Session changed')
+    expect(requests).toBe(0)
+  })
+})

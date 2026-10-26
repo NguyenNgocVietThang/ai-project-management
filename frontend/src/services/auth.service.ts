@@ -1,4 +1,5 @@
 import { api } from '@/services/api'
+import { authStore } from '@/store/authStore'
 import type {
   AuthMessageResponse,
   LoginCredentials,
@@ -59,7 +60,11 @@ export const authService = {
    * token đi kèm, rồi xoá cookie phiên. Nếu không có bước này, logout chỉ là việc
    * quên token phía client và một token bị đánh cắp vẫn dùng được tới khi hết hạn. */
   async logout(): Promise<void> {
-    await api.post('/auth/logout')
+    // Capture before useAuth immediately invalidates local identity.
+    const accessToken = authStore.getState().accessToken
+    await api.post('/auth/logout', undefined, {
+      headers: { Authorization: accessToken ? `Bearer ${accessToken}` : undefined },
+    })
   },
 
   async forgotPassword(email: string): Promise<AuthMessageResponse> {

@@ -6,6 +6,9 @@ interface AuthState {
   /** Chỉ nằm trong bộ nhớ. Xem ghi chú về lưu trữ bên dưới. */
   accessToken: string | null
   user: User | null
+  /** Opaque in-memory boundaries; never put credentials in query keys. */
+  sessionId: number
+  tokenVersion: number
   /** True khi lần bootstrap phiên lúc khởi động đã chạy xong (thành hay bại). */
   hasHydrated: boolean
   isAuthenticated: () => boolean
@@ -34,15 +37,21 @@ const SESSION_FLAG_COOKIE = 'has-session'
 export const useAuthStore = create<AuthState>()((set, get) => ({
   accessToken: null,
   user: null,
+  sessionId: 0,
+  tokenVersion: 0,
   hasHydrated: false,
   isAuthenticated: () => Boolean(get().accessToken),
-  setTokens: (tokens) => set({ accessToken: tokens?.access_token ?? null }),
+  setTokens: (tokens) => set(state => ({
+    accessToken: tokens?.access_token ?? null,
+    sessionId: state.sessionId + (state.accessToken ? 0 : 1),
+    tokenVersion: state.tokenVersion + 1,
+  })),
   setUser: (user) => set({ user }),
   clear: () => {
     // Cookie thật là httpOnly, chỉ server xoá được (qua /auth/logout); dọn cờ này để middleware
     // không coi người dùng còn đăng nhập khi request logout lỗi.
     Cookies.remove(SESSION_FLAG_COOKIE, { path: '/' })
-    set({ accessToken: null, user: null })
+    set(state => ({ accessToken: null, user: null, sessionId: state.sessionId + 1, tokenVersion: state.tokenVersion + 1 }))
   },
   setHasHydrated: (value) => set({ hasHydrated: value }),
 }))
@@ -51,4 +60,15 @@ export const authStore = useAuthStore
 
 export function hasSessionCookie(): boolean {
   return Cookies.get(SESSION_FLAG_COOKIE) === '1'
+}
+
+/** Login/account replacement starts a new identity, whereas refresh only rotates its token. */
+export function startAuthSession(tokens: AccessTokenResponse): number {
+  useAuthStore.setState(state => ({
+    accessToken: tokens.access_token,
+    user: null,
+    sessionId: state.sessionId + 1,
+    tokenVersion: state.tokenVersion + 1,
+  }))
+  return useAuthStore.getState().sessionId
 }

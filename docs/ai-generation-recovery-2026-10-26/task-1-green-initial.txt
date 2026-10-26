@@ -1,0 +1,78 @@
+
+ RUN  v5.0.0 C:/BA/AI Project Planning & Portfolio Management system/frontend
+
+stderr | src/features/jobs/hooks/useAIJobPolling.test.tsx > restored session polling > requires a restored owner before GET (profile success: true) and never POSTs
+Warning: An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at TestComponent (C:\BA\AI Project Planning & Portfolio Management system\frontend\node_modules\@testing-library\react\dist\pure.js:337:5)
+    at QueryClientProvider (file:///C:/BA/AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:20:3)
+    at wrapper (C:/BA/AI Project Planning & Portfolio Management system/frontend/src/features/jobs/hooks/useAIJobPolling.test.tsx:98:22)
+Warning: An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at TestComponent (C:\BA\AI Project Planning & Portfolio Management system\frontend\node_modules\@testing-library\react\dist\pure.js:337:5)
+    at QueryClientProvider (file:///C:/BA/AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:20:3)
+    at wrapper (C:/BA/AI Project Planning & Portfolio Management system/frontend/src/features/jobs/hooks/useAIJobPolling.test.tsx:98:22)
+Warning: An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at TestComponent (C:\BA\AI Project Planning & Portfolio Management system\frontend\node_modules\@testing-library\react\dist\pure.js:337:5)
+    at QueryClientProvider (file:///C:/BA/AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:20:3)
+    at wrapper (C:/BA/AI Project Planning & Portfolio Management system/frontend/src/features/jobs/hooks/useAIJobPolling.test.tsx:98:22)
+
+ ❯ src/features/jobs/hooks/useAIJobPolling.test.tsx (3 tests | 1 failed) 196ms
+   ❯ restored session polling (2)
+     × requires a restored owner before GET (profile success: true) and never POSTs 55ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/jobs/hooks/useAIJobPolling.test.tsx > restored session polling > requires a restored owner before GET (profile success: true) and never POSTs
+AssertionError: expected undefined to be 'COMPLETED' // Object.is equality
+
+- Expected:
+"COMPLETED"
+
++ Received:
+undefined
+
+ ❯ src/features/jobs/hooks/useAIJobPolling.test.tsx:61:49
+     59|       expect(useAuthStore.getState().user?.id).toBe(1)
+     60|       expect(aiService.getJob).toHaveBeenCalledWith('restored', expect…
+     61|       expect(mount.result.current.data?.status).toBe('COMPLETED')
+       |                                                 ^
+     62|     } else {
+     63|       expect(useAuthStore.getState().user).toBeNull()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 29 passed (30)
+   Start at  22:01:59
+   Duration  26.66s (environment 61%, setup 16%, tests 10%, import 7%, transform 4%, worker 1%)
+
+Environment  jsdom was created 5 times · 14.86s total, 61% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments

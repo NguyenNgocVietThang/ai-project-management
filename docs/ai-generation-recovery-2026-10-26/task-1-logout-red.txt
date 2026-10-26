@@ -1,0 +1,33 @@
+
+ RUN  v5.0.0 C:/BA/AI Project Planning & Portfolio Management system/frontend
+
+ ❯ src/services/auth.service.test.ts (1 test | 1 failed) 30ms
+   ❯ logout request (1)
+     × captures the bearer for revocation before immediate client clear 25ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/services/auth.service.test.ts > logout request > captures the bearer for revocation before immediate client clear
+AssertionError: expected undefined to be 'Bearer fixture-revoke' // Object.is equality
+
+- Expected:
+"Bearer fixture-revoke"
+
++ Received:
+undefined
+
+ ❯ src/services/auth.service.test.ts:21:29
+     19|       useAuthStore.getState().clear()
+     20|       await request
+     21|       expect(authorization).toBe('Bearer fixture-revoke')
+       |                             ^
+     22|       expect(useAuthStore.getState().accessToken).toBeNull()
+     23|     } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  22:06:06
+   Duration  3.39s (environment 65%, setup 18%, import 10%, transform 5%, tests 1%, worker 1%)

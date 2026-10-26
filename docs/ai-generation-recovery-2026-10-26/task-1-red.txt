@@ -1,0 +1,390 @@
+
+ RUN  v5.0.0 C:/BA/AI Project Planning & Portfolio Management system/frontend
+
+stderr | src/hooks/useAuth.test.tsx > current session identity > synchronizes a restored profile into the owner store
+Warning: An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at TestComponent (C:\BA\AI Project Planning & Portfolio Management system\frontend\node_modules\@testing-library\react\dist\pure.js:337:5)
+    at QueryClientProvider (file:///C:/BA/AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:20:3)
+    at wrapper (C:/BA/AI Project Planning & Portfolio Management system/frontend/src/hooks/useAuth.test.tsx:52:21)
+
+stderr | src/hooks/useAuth.test.tsx > current session identity > does not reuse the previous account profile while the next profile loads
+Warning: An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at TestComponent (C:\BA\AI Project Planning & Portfolio Management system\frontend\node_modules\@testing-library\react\dist\pure.js:337:5)
+    at QueryClientProvider (file:///C:/BA/AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:20:3)
+    at wrapper (C:/BA/AI Project Planning & Portfolio Management system/frontend/src/hooks/useAuth.test.tsx:52:21)
+
+stderr | src/hooks/useAuth.test.tsx > current session identity > discards a pending profile after logout
+Warning: An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at TestComponent (C:\BA\AI Project Planning & Portfolio Management system\frontend\node_modules\@testing-library\react\dist\pure.js:337:5)
+    at QueryClientProvider (file:///C:/BA/AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:20:3)
+    at wrapper (C:/BA/AI Project Planning & Portfolio Management system/frontend/src/hooks/useAuth.test.tsx:52:21)
+
+stderr | src/hooks/useAuth.test.tsx > current session identity > discards a pending profile after account switch
+Warning: An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at TestComponent (C:\BA\AI Project Planning & Portfolio Management system\frontend\node_modules\@testing-library\react\dist\pure.js:337:5)
+    at QueryClientProvider (file:///C:/BA/AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:20:3)
+    at wrapper (C:/BA/AI Project Planning & Portfolio Management system/frontend/src/hooks/useAuth.test.tsx:52:21)
+
+stderr | src/hooks/useAuth.test.tsx > current session identity > discards a pending profile after same-token reauthentication
+Warning: An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at TestComponent (C:\BA\AI Project Planning & Portfolio Management system\frontend\node_modules\@testing-library\react\dist\pure.js:337:5)
+    at QueryClientProvider (file:///C:/BA/AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:20:3)
+    at wrapper (C:/BA/AI Project Planning & Portfolio Management system/frontend/src/hooks/useAuth.test.tsx:52:21)
+
+stderr | src/hooks/useAuth.test.tsx > current session identity > accepts the current profile after access token rotation
+Warning: An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at TestComponent (C:\BA\AI Project Planning & Portfolio Management system\frontend\node_modules\@testing-library\react\dist\pure.js:337:5)
+    at QueryClientProvider (file:///C:/BA/AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:20:3)
+    at wrapper (C:/BA/AI Project Planning & Portfolio Management system/frontend/src/hooks/useAuth.test.tsx:52:21)
+
+stderr | src/hooks/useAuth.test.tsx > current session identity > rejects a late direct login profile after logout
+Warning: An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at TestComponent (C:\BA\AI Project Planning & Portfolio Management system\frontend\node_modules\@testing-library\react\dist\pure.js:337:5)
+    at QueryClientProvider (file:///C:/BA/AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:20:3)
+    at wrapper (C:/BA/AI Project Planning & Portfolio Management system/frontend/src/hooks/useAuth.test.tsx:52:21)
+
+stderr | src/hooks/useAuth.test.tsx > current session identity > rejects a late direct register profile after logout
+Warning: An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at TestComponent (C:\BA\AI Project Planning & Portfolio Management system\frontend\node_modules\@testing-library\react\dist\pure.js:337:5)
+    at QueryClientProvider (file:///C:/BA/AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:20:3)
+    at wrapper (C:/BA/AI Project Planning & Portfolio Management system/frontend/src/hooks/useAuth.test.tsx:52:21)
+
+stderr | src/hooks/useAuth.test.tsx > current session identity > rejects a late direct resend profile after logout
+Warning: An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at TestComponent (C:\BA\AI Project Planning & Portfolio Management system\frontend\node_modules\@testing-library\react\dist\pure.js:337:5)
+    at QueryClientProvider (file:///C:/BA/AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:20:3)
+    at wrapper (C:/BA/AI Project Planning & Portfolio Management system/frontend/src/hooks/useAuth.test.tsx:52:21)
+
+ ❯ src/hooks/useAuth.test.tsx (11 tests | 9 failed) 3859ms
+   ❯ current session identity (11)
+     × synchronizes a restored profile into the owner store 194ms
+     × does not reuse the previous account profile while the next profile loads 88ms
+     × discards a pending profile after logout 41ms
+     × discards a pending profile after account switch 1079ms
+     × discards a pending profile after same-token reauthentication 1019ms
+     × accepts the current profile after access token rotation 1046ms
+     × rejects a late direct login profile after logout 87ms
+     × rejects a late direct register profile after logout 90ms
+     × rejects a late direct resend profile after logout 103ms
+ ❯ src/services/api.test.ts (9 tests | 2 failed) 5218ms
+   ❯ refresh session races (2)
+     × discards a refresh response after logout 15ms
+     × discards a refresh response after account switch 9ms
+stderr | src/features/jobs/hooks/useAIJobPolling.test.tsx > restored session polling > requires a restored owner before GET (profile success: true) and never POSTs
+Warning: An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at TestComponent (C:\BA\AI Project Planning & Portfolio Management system\frontend\node_modules\@testing-library\react\dist\pure.js:337:5)
+    at QueryClientProvider (file:///C:/BA/AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:20:3)
+    at wrapper (C:/BA/AI Project Planning & Portfolio Management system/frontend/src/features/jobs/hooks/useAIJobPolling.test.tsx:98:22)
+Warning: An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at TestComponent (C:\BA\AI Project Planning & Portfolio Management system\frontend\node_modules\@testing-library\react\dist\pure.js:337:5)
+    at QueryClientProvider (file:///C:/BA/AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:20:3)
+    at wrapper (C:/BA/AI Project Planning & Portfolio Management system/frontend/src/features/jobs/hooks/useAIJobPolling.test.tsx:98:22)
+
+ ❯ src/features/jobs/hooks/useAIJobPolling.test.tsx (3 tests | 1 failed) 113ms
+   ❯ restored session polling (2)
+     × requires a restored owner before GET (profile success: true) and never POSTs 34ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/hooks/useAuth.test.tsx > current session identity > synchronizes a restored profile into the owner store
+AssertionError: expected null to deeply equal { id: 1, full_name: 'First fixture' }
+
+- Expected:
+{
+  "full_name": "First fixture",
+  "id": 1,
+}
+
++ Received:
+null
+
+ ❯ src/hooks/useAuth.test.tsx:49:42
+     47|     const mount = mountAuth()
+     48|     await waitFor(() => expect(mount.result.current.user).toEqual(firs…
+     49|     expect(useAuthStore.getState().user).toEqual(first)
+       |                                          ^
+     50|   })
+     51|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/12]⎯
+
+ FAIL  src/hooks/useAuth.test.tsx > current session identity > does not reuse the previous account profile while the next profile loads
+AssertionError: expected { id: 1, full_name: 'First fixture' } to be null
+
+- Expected:
+null
+
++ Received:
+{
+  "full_name": "First fixture",
+  "id": 1,
+}
+
+ ❯ src/hooks/useAuth.test.tsx:60:39
+     58|     vi.mocked(authService.me).mockReturnValueOnce(next.promise)
+     59|     act(() => { useAuthStore.getState().clear(); startSession('fixture…
+     60|     expect(mount.result.current.user).toBeNull()
+       |                                       ^
+     61|     await act(async () => next.resolve(second))
+     62|     await waitFor(() => expect(mount.result.current.user).toEqual(seco…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/12]⎯
+
+ FAIL  src/hooks/useAuth.test.tsx > current session identity > discards a pending profile after logout
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/hooks/useAuth.test.tsx:86:93
+     84|       expect(useAuthStore.getState().user).toEqual(second)
+     85|     }
+     86|     expect(mount.client.getQueryCache().getAll().some(query => query.s…
+       |                                                                                             ^
+     87|   })
+     88|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/12]⎯
+
+ FAIL  src/hooks/useAuth.test.tsx > current session identity > discards a pending profile after account switch
+ FAIL  src/hooks/useAuth.test.tsx > current session identity > discards a pending profile after same-token reauthentication
+AssertionError: expected { id: 1, full_name: 'First fixture' } to deeply equal { id: 2, full_name: 'Second fixture' }
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div />
+  </body>
+</html>
+
+- Expected
++ Received
+
+  {
+-   "full_name": "Second fixture",
+-   "id": 2,
++   "full_name": "First fixture",
++   "id": 1,
+  }
+
+ ❯ src/hooks/useAuth.test.tsx:83:61
+     81|       expect(useAuthStore.getState().user).toBeNull()
+     82|     } else {
+     83|       await waitFor(() => expect(mount.result.current.user).toEqual(se…
+       |                                                             ^
+     84|       expect(useAuthStore.getState().user).toEqual(second)
+     85|     }
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/12]⎯
+
+ FAIL  src/hooks/useAuth.test.tsx > current session identity > accepts the current profile after access token rotation
+AssertionError: expected null to deeply equal { id: 1, full_name: 'First fixture' }
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div />
+  </body>
+</html>
+
+- Expected:
+{
+  "full_name": "First fixture",
+  "id": 1,
+}
+
++ Received:
+null
+
+ ❯ src/hooks/useAuth.test.tsx:106:62
+    104|     act(() => useAuthStore.getState().setTokens({ access_token: 'fixtu…
+    105|     await act(async () => pending.resolve(first))
+    106|     await waitFor(() => expect(useAuthStore.getState().user).toEqual(f…
+       |                                                              ^
+    107|     expect(mount.result.current.user).toEqual(first)
+    108|   })
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/12]⎯
+
+ FAIL  src/hooks/useAuth.test.tsx > current session identity > rejects a late direct login profile after logout
+ FAIL  src/hooks/useAuth.test.tsx > current session identity > rejects a late direct register profile after logout
+ FAIL  src/hooks/useAuth.test.tsx > current session identity > rejects a late direct resend profile after logout
+AssertionError: expected { id: 1, full_name: 'First fixture' } to be null
+
+- Expected:
+null
+
++ Received:
+{
+  "full_name": "First fixture",
+  "id": 1,
+}
+
+ ❯ src/hooks/useAuth.test.tsx:127:42
+    125|     act(() => useAuthStore.getState().clear())
+    126|     await act(async () => { pending.resolve(first); await operation })
+    127|     expect(useAuthStore.getState().user).toBeNull()
+       |                                          ^
+    128|     expect(mount.result.current.user).toBeNull()
+    129|     expect(mount.client.getQueryCache().getAll().some(query => query.s…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/12]⎯
+
+ FAIL  src/services/api.test.ts > refresh session races > discards a refresh response after logout
+ FAIL  src/services/api.test.ts > refresh session races > discards a refresh response after account switch
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/services/api.test.ts:117:27
+    115|     if (boundary === 'account switch') useAuthStore.getState().setToke…
+    116|     complete()
+    117|     expect(await pending).toBe(false)
+       |                           ^
+    118|     expect(useAuthStore.getState().accessToken).toBe(boundary === 'log…
+    119|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/12]⎯
+
+ FAIL  src/features/jobs/hooks/useAIJobPolling.test.tsx > restored session polling > requires a restored owner before GET (profile success: true) and never POSTs
+AssertionError: expected undefined to be 1 // Object.is equality
+
+- Expected:
+1
+
++ Received:
+undefined
+
+ ❯ src/features/jobs/hooks/useAIJobPolling.test.tsx:59:48
+     57|     await act(async () => { await vi.advanceTimersByTimeAsync(50) })
+     58|     if (success) {
+     59|       expect(useAuthStore.getState().user?.id).toBe(1)
+       |                                                ^
+     60|       expect(aiService.getJob).toHaveBeenCalledWith('restored', expect…
+     61|       expect(mount.result.current.data?.status).toBe('COMPLETED')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/12]⎯
+
+
+ Test Files  3 failed (3)
+      Tests  12 failed | 11 passed (23)
+   Start at  21:58:35
+   Duration  71.67s (environment 67%, setup 14%, tests 13%, import 3%, transform 1%)
+
+Environment  jsdom was created 3 times · 46.53s total, 67% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
