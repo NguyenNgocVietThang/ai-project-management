@@ -1,0 +1,584 @@
+{
+  "synthetic": true,
+  "source": "Actual local Next.js UI with fully intercepted synthetic API responses; no production reads/writes.",
+  "mode": "views-smoke",
+  "started": "2026-10-25T16:12:38.855Z",
+  "cases": [
+    {
+      "width": 390,
+      "locale": "vi",
+      "theme": "dark",
+      "route": "tasks",
+      "view": "board",
+      "path": "/projects/2/tasks?view=board",
+      "id": "tasks-board-390-vi-dark-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 3429,
+          "left": 0,
+          "width": 390,
+          "height": 3365
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "firstTaskRect": {
+        "x": 51,
+        "y": 602,
+        "width": 288,
+        "height": 20
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nCông việc\nNQ\nDự án mẫu AI — Quản lý dự án và danh mục\nĐang hoạt động\nKết hợp\nTổng quan\nCông việc\nKế hoạch\nThêm\nCông việc\nBảng\nDanh sách\nSprint\nCông việc mới\nBộ lọc\n\n17 kết quả\n\n17 công việc đã tải khớp bộ lọc · theo trạng thái\n\nCần làm\n4\nCao\nPhân tích yêu cầu nghiệp vụ\nĐường găng\nQA\n10 thg 11, 2026\nNguyễn QA\nTrung bình\nXây dựng cơ sở dữ liệu\nQA\n10 thg 11, 2026\nNguyễn QA\nTrung bình\nXây dựng báo cáo tiến độ\nQA\n10 thg 11, 2026\nNguyễn QA\nCao\nTriển khai thử nghiệm\nQA\n10 thg 11, 2026\nNguyễn QA\nĐang thực hiện\n4\nTrung bình\nLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskName\nĐường găng\nQA\n10 thg 11, 2026\nNguyễn QA\nCao\nPhát triển đăng nhập và phân quyền\nQA\n10 thg 11, 2026\nNguyễn QA\nTrung bình\nTích hợp dịch vụ AI\nQA\n10 thg 11, 2026\nNguyễn QA\nTrung bình\nNghiệm thu và bàn giao\nQA\n10 thg 11, 2026\nNguyễn QA\nĐang duyệt\n3\nTrung bình\nXác định phạm vi dự án\nĐường găng\nQA\n10 thg 11, 2026\nNguyễn QA\nTrung bình\nPhát triển quản lý dự án\nQA\n10 thg 11, 2026\nNguyễn QA\nCao\nKiểm thử chức năng\nQA\n10 thg 11, 2026\nNguyễn QA\nHoàn thành\n3\nCao\nThiết kế kiến trúc hệ thống\nQA\n10 thg 11, 2026\nNguyễn QA\nTrung bình\nPhát triển quản lý công việc\nQA\n10 thg 11, 2026\nNguyễn QA\nTrung bình\nKiểm thử tích hợp\nQA\n10 thg 11, 2026\nNguyễn QA\nBị chặn\n3\nTrung bình\nThiết kế giao diện người dùng\nQA\n10 thg 11, 2026\nNguyễn QA\nCao\nTích hợp lịch và biểu đồ Gantt\nQA\n10 thg 11, 2026\nNguyễn QA\nTrung bình\nĐào tạo người dùng\nQA\n10 thg 11, 2026\nNguyễn QA\n\nĐang hiển thị 17 công việc trên trang · 17 công việc phù hợp",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/users/me/worklogs/active"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/members"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true
+      }
+    },
+    {
+      "width": 390,
+      "locale": "vi",
+      "theme": "dark",
+      "route": "tasks",
+      "view": "list",
+      "path": "/projects/2/tasks?view=list",
+      "id": "tasks-list-390-vi-dark-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 3982,
+          "left": 0,
+          "width": 390,
+          "height": 3918
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "firstTaskRect": {
+        "x": 82,
+        "y": 651,
+        "width": 190.140625,
+        "height": 20
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nCông việc\nNQ\nDự án mẫu AI — Quản lý dự án và danh mục\nĐang hoạt động\nKết hợp\nTổng quan\nCông việc\nKế hoạch\nThêm\nCông việc\nBảng\nDanh sách\nSprint\nCông việc mới\nBộ lọc\n\n17 kết quả\n\nChọn công việc đã tải\n\nChỉ đổi trạng thái các công việc đã chọn trên trang này mà bạn có quyền sửa.\n\nGiai đoạn 1 — Phân tích và phát triển\n1\nPhân tích yêu cầu nghiệp vụ\nCần làm\nCao\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn 2 — Phân tích và phát triển\n2\nLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskName\nĐang thực hiện\nTrung bình\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nKiểm thử tích hợp\nHoàn thành\nTrung bình\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn 3 — Phân tích và phát triển\n2\nXác định phạm vi dự án\nĐang duyệt\nTrung bình\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nĐào tạo người dùng\nBị chặn\nTrung bình\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn 4 — Phân tích và phát triển\n2\nThiết kế kiến trúc hệ thống\nHoàn thành\nCao\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nTriển khai thử nghiệm\nCần làm\nCao\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn 5 — Phân tích và phát triển\n1\nThiết kế giao diện người dùng\nBị chặn\nTrung bình\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn 6 — Phân tích và phát triển\n1\nXây dựng cơ sở dữ liệu\nCần làm\nTrung bình\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn 7 — Phân tích và phát triển\n1\nPhát triển đăng nhập và phân quyền\nĐang thực hiện\nCao\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn 8 — Phân tích và phát triển\n1\nPhát triển quản lý dự án\nĐang duyệt\nTrung bình\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn 9 — Phân tích và phát triển\n1\nPhát triển quản lý công việc\nHoàn thành\nTrung bình\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn 10 — Phân tích và phát triển\n1\nTích hợp lịch và biểu đồ Gantt\nBị chặn\nCao\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn 11 — Phân tích và phát triển\n1\nXây dựng báo cáo tiến độ\nCần làm\nTrung bình\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn 12 — Phân tích và phát triển\n1\nTích hợp dịch vụ AI\nĐang thực hiện\nTrung bình\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn không khả dụng #999\n1\nNghiệm thu và bàn giao\nĐang thực hiện\nTrung bình\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nChưa có giai đoạn\n1\nKiểm thử chức năng\nĐang duyệt\nCao\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\n\nĐang hiển thị 17 công việc trên trang · 17 công việc phù hợp\n\nTrang trước\nTrang 1 / 1\nTrang sau",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/users/me/worklogs/active"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/members"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true
+      }
+    },
+    {
+      "width": 390,
+      "locale": "vi",
+      "theme": "dark",
+      "route": "tasks",
+      "view": "sprint",
+      "path": "/projects/2/tasks?view=sprint",
+      "id": "tasks-sprint-390-vi-dark-17-ready",
+      "geometry": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "documentWidth": 390,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 390,
+          "bottom": 836,
+          "left": 0,
+          "width": 390,
+          "height": 772
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nDự án mẫu AI — Quản lý dự án và danh mục\nCông việc\nNQ\nDự án mẫu AI — Quản lý dự án và danh mục\nĐang hoạt động\nKết hợp\nTổng quan\nCông việc\nKế hoạch\nThêm\nCông việc\nBảng\nDanh sách\nSprint\nCông việc mới\nBộ lọc\n\n17 kết quả\n\nSprint hoặc công việc tồn đọng\nDanh sách chờ · 1 công việc đã tải khớp bộ lọc\nSprint 1 — Phát triển và nghiệm thu · 1 công việc đã tải khớp bộ lọc\nSprint 2 — Phát triển và nghiệm thu · 2 công việc đã tải khớp bộ lọc\nSprint 3 — Phát triển và nghiệm thu · 2 công việc đã tải khớp bộ lọc\nSprint 4 — Phát triển và nghiệm thu · 2 công việc đã tải khớp bộ lọc\nSprint 5 — Phát triển và nghiệm thu · 1 công việc đã tải khớp bộ lọc\nSprint 6 — Phát triển và nghiệm thu · 1 công việc đã tải khớp bộ lọc\nSprint 7 — Phát triển và nghiệm thu · 1 công việc đã tải khớp bộ lọc\nSprint 8 — Phát triển và nghiệm thu · 1 công việc đã tải khớp bộ lọc\nSprint 9 — Phát triển và nghiệm thu · 1 công việc đã tải khớp bộ lọc\nSprint 10 — Phát triển và nghiệm thu · 1 công việc đã tải khớp bộ lọc\nSprint 11 — Phát triển và nghiệm thu · 1 công việc đã tải khớp bộ lọc\nSprint 12 — Phát triển và nghiệm thu · 1 công việc đã tải khớp bộ lọc\nSprint không khả dụng #999 · 1 công việc đã tải khớp bộ lọc\nDanh sách chờ\n\n3 điểm\n\n0 hoàn tất / 1 công việc đã tải khớp bộ lọc\n\nKiểm thử chức năng\nĐang duyệt\nCao\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\n\nĐang hiển thị 17 công việc trên trang · 17 công việc phù hợp",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/users/me/worklogs/active"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/members"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true
+      }
+    },
+    {
+      "width": 1440,
+      "locale": "vi",
+      "theme": "dark",
+      "route": "tasks",
+      "view": "board",
+      "path": "/projects/2/tasks?view=board",
+      "id": "tasks-board-1440-vi-dark-17-ready",
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1440,
+          "bottom": 1353,
+          "left": 240,
+          "width": 1200,
+          "height": 1289
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "firstTaskRect": {
+        "x": 311,
+        "y": 474,
+        "width": 166.796875,
+        "height": 40
+      },
+      "bodyText": "Đến nội dung chính\nAI Project.\nKẾ HOẠCH & DANH MỤC\nThu gọn điều hướng\n\nKHÔNG GIAN LÀM VIỆC\n\nBảng điều khiển\nDanh mục\nDự án\n\nCÁ NHÂN\n\nThông báo\nHồ sơ\n\nNHÀ ĐẦU TƯ\n\nCổng nhà đầu tư\n\nQUẢN TRỊ\n\nQuản trị\nGiao diện\nDự án\nDự án mẫu AI — Quản lý dự án và danh mục\nCông việc\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nNguyễn QA\nDự án mẫu AI — Quản lý dự án và danh mục\nĐang hoạt động\nKết hợp\nTổng quan\nCông việc\nKế hoạch\nThêm\nCông việc\nBảng\nDanh sách\nSprint\nCông việc mới\nTrạng thái\nMọi trạng thái\nCần làm\nĐang thực hiện\nĐang duyệt\nHoàn thành\nBị chặn\nNgười phụ trách\nMọi người phụ trách\nNguyễn QA\nBộ lọc\n\n17 kết quả\n\n17 công việc đã tải khớp bộ lọc · theo trạng thái\n\nCần làm\n4\nCao\nPhân tích yêu cầu nghiệp vụ\nĐường găng\nQA\n10 thg 11, 2026\nNguyễn QA\nTrung bình\nXây dựng cơ sở dữ liệu\nQA\n10 thg 11, 2026\nNguyễn QA\nTrung bình\nXây dựng báo cáo tiến độ\nQA\n10 thg 11, 2026\nNguyễn QA\nCao\nTriển khai thử nghiệm\nQA\n10 thg 11, 2026\nNguyễn QA\nĐang thực hiện\n4\nTrung bình\nLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskName\nĐường găng\nQA\n10 thg 11, 2026\nNguyễn QA\nCao\nPhát triển đăng nhập và phân quyền\nQA\n10 thg 11, 2026\nNguyễn QA\nTrung bình\nTích hợp dịch vụ AI\nQA\n10 thg 11, 2026\nNguyễn QA\nTrung bình\nNghiệm thu và bàn giao\nQA\n10 thg 11, 2026\nNguyễn QA\nĐang duyệt\n3\nTrung bình\nXác định phạm vi dự án\nĐường găng\nQA\n10 thg 11, 2026\nNguyễn QA\nTrung bình\nPhát triển quản lý dự án\nQA\n10 thg 11, 2026\nNguyễn QA\nCao\nKiểm thử chức năng\nQA\n10 thg 11, 2026\nNguyễn QA\nHoàn thành\n3\nCao\nThiết kế kiến trúc hệ thống\nQA\n10 thg 11, 2026\nNguyễn QA\nTrung bình\nPhát triển quản lý công việc\nQA\n10 thg 11, 2026\nNguyễn QA\nTrung bình\nKiểm thử tích hợp\nQA\n10 thg 11, 2026\nNguyễn QA\nBị chặn\n3\nTrung bình\nThiết kế giao diện người dùng\nQA\n10 thg 11, 2026\nNguyễn QA\nCao\nTích hợp lịch và biểu đồ Gantt\nQA\n10 thg 11, 2026\nNguyễn QA\nTrung bình\nĐào tạo người dùng\nQA\n10 thg 11, 2026\nNguyễn QA\n\nĐang hiển thị 17 công việc trên trang · 17 công việc phù hợp",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/users/me/worklogs/active"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/members"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true
+      }
+    },
+    {
+      "width": 1440,
+      "locale": "vi",
+      "theme": "dark",
+      "route": "tasks",
+      "view": "list",
+      "path": "/projects/2/tasks?view=list",
+      "id": "tasks-list-1440-vi-dark-17-ready",
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1440,
+          "bottom": 2546,
+          "left": 240,
+          "width": 1200,
+          "height": 2482
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "firstTaskRect": {
+        "x": 350,
+        "y": 483,
+        "width": 190.140625,
+        "height": 20
+      },
+      "bodyText": "Đến nội dung chính\nAI Project.\nKẾ HOẠCH & DANH MỤC\nThu gọn điều hướng\n\nKHÔNG GIAN LÀM VIỆC\n\nBảng điều khiển\nDanh mục\nDự án\n\nCÁ NHÂN\n\nThông báo\nHồ sơ\n\nNHÀ ĐẦU TƯ\n\nCổng nhà đầu tư\n\nQUẢN TRỊ\n\nQuản trị\nGiao diện\nDự án\nDự án mẫu AI — Quản lý dự án và danh mục\nCông việc\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nNguyễn QA\nDự án mẫu AI — Quản lý dự án và danh mục\nĐang hoạt động\nKết hợp\nTổng quan\nCông việc\nKế hoạch\nThêm\nCông việc\nBảng\nDanh sách\nSprint\nCông việc mới\nTrạng thái\nMọi trạng thái\nCần làm\nĐang thực hiện\nĐang duyệt\nHoàn thành\nBị chặn\nNgười phụ trách\nMọi người phụ trách\nNguyễn QA\nBộ lọc\n\n17 kết quả\n\nChọn công việc đã tải\n\nChỉ đổi trạng thái các công việc đã chọn trên trang này mà bạn có quyền sửa.\n\nGiai đoạn 1 — Phân tích và phát triển\n1\nPhân tích yêu cầu nghiệp vụ\nCần làm\nCao\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn 2 — Phân tích và phát triển\n2\nLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskNameLongUnbrokenTaskName\nĐang thực hiện\nTrung bình\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nKiểm thử tích hợp\nHoàn thành\nTrung bình\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn 3 — Phân tích và phát triển\n2\nXác định phạm vi dự án\nĐang duyệt\nTrung bình\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nĐào tạo người dùng\nBị chặn\nTrung bình\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn 4 — Phân tích và phát triển\n2\nThiết kế kiến trúc hệ thống\nHoàn thành\nCao\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nTriển khai thử nghiệm\nCần làm\nCao\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn 5 — Phân tích và phát triển\n1\nThiết kế giao diện người dùng\nBị chặn\nTrung bình\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn 6 — Phân tích và phát triển\n1\nXây dựng cơ sở dữ liệu\nCần làm\nTrung bình\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn 7 — Phân tích và phát triển\n1\nPhát triển đăng nhập và phân quyền\nĐang thực hiện\nCao\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn 8 — Phân tích và phát triển\n1\nPhát triển quản lý dự án\nĐang duyệt\nTrung bình\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn 9 — Phân tích và phát triển\n1\nPhát triển quản lý công việc\nHoàn thành\nTrung bình\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn 10 — Phân tích và phát triển\n1\nTích hợp lịch và biểu đồ Gantt\nBị chặn\nCao\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn 11 — Phân tích và phát triển\n1\nXây dựng báo cáo tiến độ\nCần làm\nTrung bình\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn 12 — Phân tích và phát triển\n1\nTích hợp dịch vụ AI\nĐang thực hiện\nTrung bình\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nGiai đoạn không khả dụng #999\n1\nNghiệm thu và bàn giao\nĐang thực hiện\nTrung bình\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\nChưa có giai đoạn\n1\nKiểm thử chức năng\nĐang duyệt\nCao\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\n\nĐang hiển thị 17 công việc trên trang · 17 công việc phù hợp\n\nTrang trước\nTrang 1 / 1\nTrang sau",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/users/me/worklogs/active"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/members"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true
+      }
+    },
+    {
+      "width": 1440,
+      "locale": "vi",
+      "theme": "dark",
+      "route": "tasks",
+      "view": "sprint",
+      "path": "/projects/2/tasks?view=sprint",
+      "id": "tasks-sprint-1440-vi-dark-17-ready",
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scrollY": 0,
+        "documentWidth": 1440,
+        "documentOverflow": false,
+        "overflowElements": [],
+        "title": "AI Project Management",
+        "main": {
+          "top": 64,
+          "right": 1440,
+          "bottom": 1179,
+          "left": 240,
+          "width": 1200,
+          "height": 1115
+        },
+        "dialog": null,
+        "ancestors": [],
+        "rawTranslationKeys": [],
+        "reducedMotion": true
+      },
+      "bodyText": "Đến nội dung chính\nAI Project.\nKẾ HOẠCH & DANH MỤC\nThu gọn điều hướng\n\nKHÔNG GIAN LÀM VIỆC\n\nBảng điều khiển\nDanh mục\nDự án\n\nCÁ NHÂN\n\nThông báo\nHồ sơ\n\nNHÀ ĐẦU TƯ\n\nCổng nhà đầu tư\n\nQUẢN TRỊ\n\nQuản trị\nGiao diện\nDự án\nDự án mẫu AI — Quản lý dự án và danh mục\nCông việc\nNgôn ngữ\nTiếng Việt\nEnglish\nNQ\nNguyễn QA\nDự án mẫu AI — Quản lý dự án và danh mục\nĐang hoạt động\nKết hợp\nTổng quan\nCông việc\nKế hoạch\nThêm\nCông việc\nBảng\nDanh sách\nSprint\nCông việc mới\nTrạng thái\nMọi trạng thái\nCần làm\nĐang thực hiện\nĐang duyệt\nHoàn thành\nBị chặn\nNgười phụ trách\nMọi người phụ trách\nNguyễn QA\nBộ lọc\n\n17 kết quả\n\nSprint và công việc tồn đọng\nDanh sách chờ\n1\nSprint 1 — Phát triển và nghiệm thu\n1\nSprint 2 — Phát triển và nghiệm thu\n2\nSprint 3 — Phát triển và nghiệm thu\n2\nSprint 4 — Phát triển và nghiệm thu\n2\nSprint 5 — Phát triển và nghiệm thu\n1\nSprint 6 — Phát triển và nghiệm thu\n1\nSprint 7 — Phát triển và nghiệm thu\n1\nSprint 8 — Phát triển và nghiệm thu\n1\nSprint 9 — Phát triển và nghiệm thu\n1\nSprint 10 — Phát triển và nghiệm thu\n1\nSprint 11 — Phát triển và nghiệm thu\n1\nSprint 12 — Phát triển và nghiệm thu\n1\nSprint không khả dụng #999\n1\nDanh sách chờ\n\n3 điểm\n\n0 hoàn tất / 1 công việc đã tải khớp bộ lọc\n\nKiểm thử chức năng\nĐang duyệt\nCao\nNgười phụ trách\nNguyễn QA\nHạn hoàn thành: 10 thg 11, 2026\nSố giờ: 0.0 / 8\n\nĐang hiển thị 17 công việc trên trang · 17 công việc phù hợp",
+      "traffic": [
+        {
+          "method": "POST",
+          "path": "/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/auth/me"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/unread-count"
+        },
+        {
+          "method": "GET",
+          "path": "/users/me/worklogs/active"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/wbs"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/members"
+        },
+        {
+          "method": "GET",
+          "path": "/projects/2/tasks"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/ws-ticket"
+        }
+      ],
+      "errors": [],
+      "checks": {
+        "loaded": true,
+        "noDocumentOverflow": true,
+        "noRawTranslationKeys": true,
+        "reducedMotion": true,
+        "noUnexpectedRuntimeErrors": true
+      }
+    }
+  ],
+  "completed": "2026-10-25T16:14:23.990Z",
+  "summary": {
+    "cases": 6,
+    "passed": 6,
+    "failures": []
+  }
+}

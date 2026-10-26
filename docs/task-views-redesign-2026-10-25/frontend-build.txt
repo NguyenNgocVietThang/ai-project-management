@@ -1,0 +1,63 @@
+   ▲ Next.js 15.5.28
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · proxyTimeout: 120000
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 56s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/20) ...
+   Generating static pages (5/20) 
+   Generating static pages (10/20) 
+   Generating static pages (15/20) 
+ ✓ Generating static pages (20/20)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                   Size  First Load JS
+┌ ƒ /                                        151 B         103 kB
+├ ƒ /_not-found                              151 B         103 kB
+├ ƒ /admin                                 3.58 kB         129 kB
+├ ƒ /admin/audit                           10.8 kB         168 kB
+├ ƒ /admin/roles                           10.3 kB         193 kB
+├ ƒ /admin/users                           7.85 kB         204 kB
+├ ƒ /dashboard                             8.01 kB         180 kB
+├ ƒ /forgot-password                       7.59 kB         187 kB
+├ ƒ /investor                              8.72 kB         169 kB
+├ ƒ /investor/portfolios/[id]               112 kB         289 kB
+├ ƒ /login                                 8.08 kB         188 kB
+├ ƒ /notifications                          7.3 kB         179 kB
+├ ƒ /oauth-callback                        7.68 kB         153 kB
+├ ƒ /portfolios                            4.72 kB         198 kB
+├ ƒ /portfolios/[id]                        9.9 kB         201 kB
+├ ƒ /profile                               6.68 kB         195 kB
+├ ƒ /projects                              9.81 kB         207 kB
+├ ƒ /projects/[id]                           151 B         103 kB
+├ ƒ /projects/[id]/ai-insights             10.4 kB         177 kB
+├ ƒ /projects/[id]/change-requests         7.74 kB         177 kB
+├ ƒ /projects/[id]/change-requests/[crId]    764 B         176 kB
+├ ƒ /projects/[id]/chat                    14.3 kB         182 kB
+├ ƒ /projects/[id]/documents               12.9 kB         177 kB
+├ ƒ /projects/[id]/gantt                   10.6 kB         172 kB
+├ ƒ /projects/[id]/members                 8.51 kB         179 kB
+├ ƒ /projects/[id]/overview                8.33 kB         170 kB
+├ ƒ /projects/[id]/process                 15.2 kB         179 kB
+├ ƒ /projects/[id]/settings                10.9 kB         194 kB
+├ ƒ /projects/[id]/tasks                   34.4 kB         199 kB
+├ ƒ /projects/[id]/timesheet               14.5 kB         172 kB
+├ ƒ /projects/[id]/versions                13.3 kB         174 kB
+├ ƒ /projects/[id]/wbs                     9.42 kB         174 kB
+├ ƒ /register                              4.05 kB         189 kB
+├ ƒ /reset-password                        3.86 kB         189 kB
+└ ƒ /verify-email                          7.85 kB         153 kB
++ First Load JS shared by all               103 kB
+  ├ chunks/1255-7c76c237ede415d8.js        46.2 kB
+  ├ chunks/4bd1b696-100b9d70ed4e49c1.js    54.2 kB
+  └ other shared chunks (total)            2.12 kB
+
+
+ƒ Middleware                               34.2 kB
+
+ƒ  (Dynamic)  server-rendered on demand
+

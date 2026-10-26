@@ -1,0 +1,101 @@
+[
+  {
+    "width": 390,
+    "checks": {
+      "latePhaseKeyboard": true,
+      "searchPreservedAcrossViews": true,
+      "historyRestoresViewAndSearch": true,
+      "drawerKeyboard": true,
+      "lateSprintUnknownAndBacklogReachable": true
+    },
+    "geometry": {
+      "width": 390,
+      "height": 844,
+      "scrollY": 0,
+      "documentWidth": 390,
+      "documentOverflow": false,
+      "overflowElements": [],
+      "title": "AI Project Management",
+      "main": {
+        "top": 64,
+        "right": 390,
+        "bottom": 820,
+        "left": 0,
+        "width": 390,
+        "height": 756
+      },
+      "dialog": null,
+      "ancestors": [],
+      "rawTranslationKeys": [],
+      "reducedMotion": true
+    },
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "checks": {
+      "latePhaseKeyboard": true,
+      "searchPreservedAcrossViews": true,
+      "historyRestoresViewAndSearch": true,
+      "drawerKeyboard": true,
+      "lateSprintUnknownAndBacklogReachable": true
+    },
+    "geometry": {
+      "width": 1440,
+      "height": 900,
+      "scrollY": 279,
+      "documentWidth": 1440,
+      "documentOverflow": false,
+      "overflowElements": [],
+      "title": "AI Project Management",
+      "main": {
+        "top": -215,
+        "right": 1440,
+        "bottom": 900,
+        "left": 240,
+        "width": 1200,
+        "height": 1115
+      },
+      "dialog": null,
+      "ancestors": [],
+      "rawTranslationKeys": [],
+      "reducedMotion": true
+    },
+    "errors": []
+  },
+  {
+    "view": "board",
+    "checks": {
+      "pageTwoAccessible": true
+    },
+    "errors": []
+  },
+  {
+    "view": "list",
+    "checks": {
+      "pageTwoAccessible": true
+    },
+    "errors": []
+  },
+  {
+    "view": "sprint",
+    "checks": {
+      "pageTwoAccessible": true
+    },
+    "errors": []
+  },
+  {
+    "view": "board",
+    "checks": {
+      "keyboardStatusDrop": true
+    },
+    "errors": []
+  },
+  {
+    "view": "sprint-filter-loading",
+    "checks": {
+      "selectedSprintSurvivesQueryLoading": true
+    },
+    "errors": []
+  }
+]

@@ -9,7 +9,7 @@ User approved A/B/C mockups and asked for subagent implementation. This plan is 
 - No page horizontal overflow at 320/390/768/1024/1440px. All status/sprint groups remain reachable with long names, empty groups and many groups. Do not merely clip overflow. Small screens use vertical reflow or accessible controls.
 - Keep the tasks route compact: project context, navigation, toolbar and first task must fit a typical laptop/mobile viewport. Scope shared project layout changes to the tasks route.
 - Use restrained existing transitions with reduced-motion support; no marketing hero, marquee, pinning or new animation dependency in a work-management screen.
-- Work directly on local main, explicitly requested by the user after the initial isolated Task 1 work was transferred. Do not push, deploy or change production records. Preserve unrelated files.
+- Work directly on local main, explicitly requested by the user after the initial isolated Task 1 work was transferred. The user subsequently authorized pushing main to GitHub for automatic website deployment after final verification. Do not change production records. Preserve unrelated files.
 - Run meaningful focused behavior tests per task; final lint, typecheck, full tests, production build and real-browser responsive checks. Update Graphify separately after code settles.
 
 ## Task 1: Compact workspace and Kanban overview
