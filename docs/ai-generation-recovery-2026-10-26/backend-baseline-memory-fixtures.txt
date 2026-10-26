@@ -1,0 +1,28 @@
+......                                                                   [100%]
+============================== warnings summary ===============================
+..\..\..\..\backend\.venv\Lib\site-packages\starlette\formparsers.py:12
+  C:\BA\AI Project Planning & Portfolio Management system\backend\.venv\Lib\site-packages\starlette\formparsers.py:12: PendingDeprecationWarning: Please use `import python_multipart` instead.
+    import multipart
+
+tests/integration/test_durable_ai_execution.py::test_generation_is_atomic_and_replay_does_not_duplicate
+  C:\BA\AI Project Planning & Portfolio Management system\backend\.venv\Lib\site-packages\pytest_asyncio\plugin.py:783: DeprecationWarning: The event_loop fixture provided by pytest-asyncio has been redefined in
+  C:\BA\AI Project Planning & Portfolio Management system\backend\tests\conftest.py:34
+  Replacing the event_loop fixture with a custom implementation is deprecated
+  and will lead to errors in the future.
+  If you want to request an asyncio event loop with a scope other than function
+  scope, use the "scope" argument to the asyncio mark when marking the tests.
+  If you want to return different types of event loops, use the event_loop_policy
+  fixture.
+  
+    warnings.warn(
+
+..\..\..\..\backend\.venv\Lib\site-packages\_pytest\cacheprovider.py:474
+  C:\BA\AI Project Planning & Portfolio Management system\backend\.venv\Lib\site-packages\_pytest\cacheprovider.py:474: PytestCacheWarning: could not create cache path C:\BA\AI Project Planning & Portfolio Management system\backend\.pytest_cache\v\cache\nodeids: [WinError 5] Access is denied: 'C:\\BA\\AI Project Planning & Portfolio Management system\\backend\\.pytest_cache\\v\\cache'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+..\..\..\..\backend\.venv\Lib\site-packages\_pytest\stepwise.py:51
+  C:\BA\AI Project Planning & Portfolio Management system\backend\.venv\Lib\site-packages\_pytest\stepwise.py:51: PytestCacheWarning: could not create cache path C:\BA\AI Project Planning & Portfolio Management system\backend\.pytest_cache\v\cache\stepwise: [WinError 5] Access is denied: 'C:\\BA\\AI Project Planning & Portfolio Management system\\backend\\.pytest_cache\\v\\cache'
+    session.config.cache.set(STEPWISE_CACHE_DIR, [])
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+6 passed, 4 warnings in 7.48s

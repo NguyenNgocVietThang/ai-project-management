@@ -1,0 +1,18 @@
+ImportError while loading conftest 'C:\BA\AI Project Planning & Portfolio Management system\backend\tests\conftest.py'.
+..\..\..\..\backend\tests\conftest.py:24: in <module>
+    from app.core.dependencies import get_current_user
+..\..\..\..\backend\app\core\dependencies.py:10: in <module>
+    from app.core.token_revocation import is_revoked
+..\..\..\..\backend\app\core\token_revocation.py:24: in <module>
+    from app.services import security_state_service as durable_state
+..\..\..\..\backend\app\services\security_state_service.py:20: in <module>
+    from app.db.session import SecuritySessionLocal as AsyncSessionLocal
+..\..\..\..\backend\app\db\session.py:12: in <module>
+    engine = create_async_engine(
+..\..\..\..\backend\.venv\Lib\site-packages\sqlalchemy\ext\asyncio\engine.py:120: in create_async_engine
+    sync_engine = _create_engine(url, **kw)
+..\..\..\..\backend\.venv\Lib\site-packages\sqlalchemy\util\deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+..\..\..\..\backend\.venv\Lib\site-packages\sqlalchemy\engine\create.py:697: in create_engine
+    raise TypeError(
+E   TypeError: Invalid argument(s) 'pool_size','max_overflow' sent to create_engine(), using configuration SQLiteDialect_aiosqlite/NullPool/Engine.  Please check that the keyword arguments are appropriate for this combination of components.
