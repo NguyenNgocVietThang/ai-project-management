@@ -52,7 +52,12 @@ export const authService = {
   },
 
   async me(): Promise<User> {
+    const sessionId = authStore.getState().sessionId
     const { data } = await api.get<User>('/auth/me')
+    const current = authStore.getState()
+    if (!current.accessToken || current.sessionId !== sessionId) {
+      throw new Error('Session changed while loading profile')
+    }
     return data
   },
 

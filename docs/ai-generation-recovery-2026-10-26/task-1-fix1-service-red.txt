@@ -1,0 +1,39 @@
+
+ RUN  v5.0.0 C:/BA/AI Project Planning & Portfolio Management system/frontend
+
+ ❯ src/services/auth.service.test.ts (4 tests | 2 failed) 243ms
+   ❯ profile response session boundary (3)
+     × rejects a late me response after logout before a caller writes identity 95ms
+     × rejects a late me response after account switch before a caller writes identity 57ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/services/auth.service.test.ts > profile response session boundary > rejects a late me response after logout before a caller writes identity
+ FAIL  src/services/auth.service.test.ts > profile response session boundary > rejects a late me response after account switch before a caller writes identity
+AssertionError: promise resolved "{ id: 1, full_name: 'Old fixture' }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "full_name": "Old fixture",
++   "id": 1,
+  }
+
+ ❯ src/services/auth.service.test.ts:45:27
+     43|       else { startAuthSession({ access_token: 'fixture-next', token_ty…
+     44|       complete()
+     45|       await expect(caller).rejects.toThrow('Session changed')
+       |                           ^
+     46|       expect(useAuthStore.getState().user).toEqual(boundary === 'logou…
+     47|     } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  22:23:55
+   Duration  4.33s (environment 66%, setup 16%, import 7%, tests 7%, transform 3%, worker 1%)

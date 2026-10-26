@@ -1,0 +1,30 @@
+
+ RUN  v5.0.0 C:/BA/AI Project Planning & Portfolio Management system/frontend
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start forks worker for test files C:/BA/AI Project Planning & Portfolio Management system/frontend/src/hooks/useAuth.test.tsx.
+ ❯ ../../AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/vitest/dist/chunks/index.B89dZ0-N.js:11469:94
+ ❯ Pool.schedule ../../AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/vitest/dist/chunks/index.B89dZ0-N.js:11469:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+ ❯ Timeout.<anonymous> ../../AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/vitest/dist/chunks/index.B89dZ0-N.js:10968:58
+ ❯ listOnTimeout node:internal/timers:605:17
+ ❯ processTimers node:internal/timers:541:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  9 passed (9)
+      Tests  48 passed (48)
+     Errors  1 error
+   Start at  06:43:59
+   Duration  196.70s (environment 49%, setup 23%, import 19%, tests 6%, transform 3%, worker 1%)
+
+Environment  jsdom was created 9 times · 52.28s total, 49% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments

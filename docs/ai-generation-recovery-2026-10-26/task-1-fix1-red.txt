@@ -1,0 +1,65 @@
+
+ RUN  v5.0.0 C:/BA/AI Project Planning & Portfolio Management system/frontend
+
+ ❯ src/hooks/useAuth.test.tsx (19 tests | 2 failed | 17 skipped) 268ms
+   ❯ current session identity (19)
+     × preserves current-session profile and verification updates when another consumer mounts 236ms
+     × preserves a newer same-session profile when an older restoration response completes 27ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/hooks/useAuth.test.tsx > current session identity > preserves current-session profile and verification updates when another consumer mounts
+AssertionError: expected { id: 1, …(3) } to deeply equal { id: 1, …(3) }
+
+- Expected
++ Received
+
+  {
+-   "avatar_url": "/updated.png",
+-   "email_verified": true,
+-   "full_name": "Updated fixture",
++   "avatar_url": "/before.png",
++   "email_verified": false,
++   "full_name": "First fixture",
+    "id": 1,
+  }
+
+ ❯ src/hooks/useAuth.test.tsx:194:42
+    192|     const wrapper = ({ children }: { children: ReactNode }) => <QueryC…
+    193|     const next = renderHook(() => useAuth(), { wrapper })
+    194|     expect(useAuthStore.getState().user).toEqual(updated)
+       |                                          ^
+    195|     expect(original.result.current.user).toEqual(updated)
+    196|     expect(next.result.current.user).toEqual(updated)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/hooks/useAuth.test.tsx > current session identity > preserves a newer same-session profile when an older restoration response completes
+AssertionError: expected { id: 1, …(2) } to deeply equal { id: 1, …(2) }
+
+- Expected
++ Received
+
+  {
+-   "email_verified": true,
+-   "full_name": "Verified fixture",
++   "email_verified": false,
++   "full_name": "First fixture",
+    "id": 1,
+  }
+
+ ❯ src/hooks/useAuth.test.tsx:215:42
+    213|     await act(async () => pending.resolve(beforeUpdate))
+    214|     await waitFor(() => expect(mount.client.isFetching()).toBe(0))
+    215|     expect(useAuthStore.getState().user).toEqual(updated)
+       |                                          ^
+    216|     expect(mount.result.current.user).toEqual(updated)
+    217|     expect(mount.result.current.user?.email_verified).toBe(true)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 17 skipped (19)
+   Start at  22:21:14
+   Duration  6.47s (environment 78%, setup 12%, tests 5%, transform 3%, import 3%, worker 1%)

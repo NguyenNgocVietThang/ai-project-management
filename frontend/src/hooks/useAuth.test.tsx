@@ -176,4 +176,44 @@ describe('current session identity', () => {
     expect(mount.result.current.user).toEqual(first)
     if (path === 'register') expect(mocks.replace).toHaveBeenCalledWith('/dashboard')
   })
+
+  it('preserves current-session profile and verification updates when another consumer mounts', async () => {
+    startSession()
+    const beforeUpdate = { ...first, email_verified: false, avatar_url: '/before.png' }
+    const updated = { ...first, full_name: 'Updated fixture', email_verified: true, avatar_url: '/updated.png' }
+    vi.mocked(authService.me).mockResolvedValue(beforeUpdate)
+    const original = mountAuth()
+    await waitFor(() => expect(useAuthStore.getState().user).toEqual(beforeUpdate))
+    // Existing profile and verification success paths update store plus the legacy cache key.
+    act(() => {
+      useAuthStore.getState().setUser(updated)
+      original.client.setQueryData(['auth', 'me'], updated)
+    })
+    const wrapper = ({ children }: { children: ReactNode }) => <QueryClientProvider client={original.client}>{children}</QueryClientProvider>
+    const next = renderHook(() => useAuth(), { wrapper })
+    expect(useAuthStore.getState().user).toEqual(updated)
+    expect(original.result.current.user).toEqual(updated)
+    expect(next.result.current.user).toEqual(updated)
+    expect(next.result.current.user?.email_verified).toBe(true)
+    expect(authService.me).toHaveBeenCalledTimes(1)
+  })
+
+  it('preserves a newer same-session profile when an older restoration response completes', async () => {
+    startSession()
+    const pending = deferred<User>()
+    const beforeUpdate = { ...first, email_verified: false }
+    const updated = { ...first, full_name: 'Verified fixture', email_verified: true }
+    vi.mocked(authService.me).mockReturnValue(pending.promise)
+    const mount = mountAuth()
+    await waitFor(() => expect(authService.me).toHaveBeenCalledTimes(1))
+    act(() => {
+      useAuthStore.getState().setUser(updated)
+      mount.client.setQueryData(['auth', 'me'], updated)
+    })
+    await act(async () => pending.resolve(beforeUpdate))
+    await waitFor(() => expect(mount.client.isFetching()).toBe(0))
+    expect(useAuthStore.getState().user).toEqual(updated)
+    expect(mount.result.current.user).toEqual(updated)
+    expect(mount.result.current.user?.email_verified).toBe(true)
+  })
 })

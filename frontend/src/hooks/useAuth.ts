@@ -43,8 +43,9 @@ export function useAuth() {
       queryKey: ['auth', 'me'],
       predicate: query => query.queryKey[2] !== sessionId || query.queryKey[3] !== tokenVersion,
     })
-    if (accessToken && meQuery.data && !meQuery.isError) setUser(meQuery.data)
-  }, [accessToken, sessionId, tokenVersion, meQuery.data, meQuery.isError, queryClient, setUser])
+    // Restoration fills an empty identity; profile/verification updates in the store win.
+    if (accessToken && !current.user && meQuery.data && !meQuery.isError) setUser(meQuery.data)
+  }, [accessToken, user, sessionId, tokenVersion, meQuery.data, meQuery.isError, queryClient, setUser])
 
   const sessionIsCurrent = (expected: number) => {
     const current = useAuthStore.getState()

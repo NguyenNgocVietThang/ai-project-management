@@ -1,0 +1,43 @@
+
+ RUN  v5.0.0 C:/BA/AI Project Planning & Portfolio Management system/frontend
+
+ ❯ src/services/auth.service.test.ts (4 tests | 2 failed) 258ms
+   ❯ profile response session boundary (3)
+     × rejects a late me response after logout before a caller writes identity 104ms
+     × rejects a late me response after account switch before a caller writes identity 56ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/services/auth.service.test.ts > profile response session boundary > rejects a late me response after logout before a caller writes identity
+ FAIL  src/services/auth.service.test.ts > profile response session boundary > rejects a late me response after account switch before a caller writes identity
+AssertionError: promise resolved "{ id: 1, full_name: 'Old fixture' }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "full_name": "Old fixture",
++   "id": 1,
+  }
+
+ ❯ src/services/auth.service.test.ts:45:27
+     43|       else { startAuthSession({ access_token: 'fixture-next', token_ty…
+     44|       complete()
+     45|       await expect(caller).rejects.toThrow('Session changed')
+       |                           ^
+     46|       expect(useAuthStore.getState().user).toEqual(boundary === 'logou…
+     47|     } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed | 9 passed (10)
+      Tests  2 failed | 65 passed (67)
+   Start at  22:24:29
+   Duration  42.05s (environment 56%, setup 16%, tests 15%, import 9%, transform 4%, worker 1%)
+
+Environment  jsdom was created 10 times · 21.45s total, 56% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
