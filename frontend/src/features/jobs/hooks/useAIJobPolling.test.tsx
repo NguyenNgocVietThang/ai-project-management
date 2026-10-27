@@ -69,3 +69,44 @@ describe('restored session polling', () => {
     client.clear()
   })
 })
+
+
+describe('manual recovery GET boundaries', () => {
+  it.each(['anonymous', 'offline', 'hidden', 'logout', 'account switch'])('rejects retained refetch after %s', async boundary => {
+    vi.mocked(aiService.getJob).mockResolvedValue({ job_id: '4', status: 'PROCESSING', result: null, error: null, project_id: null })
+    const client = new QueryClient()
+    const wrapper = ({ children }: { children: ReactNode }) => <QueryClientProvider client={client}>{children}</QueryClientProvider>
+    const mount = renderHook(() => useAIJob('4'), { wrapper })
+    await act(async () => { await vi.advanceTimersByTimeAsync(10) })
+    const retainedRefetch = mount.result.current.refetch
+    act(() => {
+      if (boundary === 'anonymous') useAuthStore.setState({ user: null })
+      if (boundary === 'logout') useAuthStore.getState().clear()
+      if (boundary === 'account switch') useAuthStore.setState({ user: { id: 2 } as User })
+      if (boundary === 'offline') Object.defineProperty(navigator, 'onLine', { value: false, configurable: true })
+      if (boundary === 'hidden') Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true })
+    })
+    vi.mocked(aiService.getJob).mockClear()
+    await act(async () => { await retainedRefetch() })
+    expect(aiService.getJob).not.toHaveBeenCalled()
+    mount.unmount(); client.clear()
+    Object.defineProperty(navigator, 'onLine', { value: true, configurable: true })
+    Object.defineProperty(document, 'visibilityState', { value: 'visible', configurable: true })
+  })
+})
+
+
+it('does not automatically GET or display the previous owner job after account switch', async () => {
+  vi.mocked(aiService.getJob).mockResolvedValue({ job_id: '4', status: 'COMPLETED', result: {}, error: null, project_id: 3 })
+  const client = new QueryClient()
+  const wrapper = ({ children }: { children: ReactNode }) => <QueryClientProvider client={client}>{children}</QueryClientProvider>
+  const mount = renderHook(() => useAIJob('4'), { wrapper })
+  await act(async () => { await vi.advanceTimersByTimeAsync(10) })
+  expect(mount.result.current.data?.project_id).toBe(3)
+  vi.mocked(aiService.getJob).mockClear()
+  act(() => { useAuthStore.getState().clear(); useAuthStore.setState({ user: { id: 2 } as User, accessToken: 'second' }) })
+  await act(async () => { await vi.advanceTimersByTimeAsync(10) })
+  expect(mount.result.current.data).toBeUndefined()
+  expect(aiService.getJob).not.toHaveBeenCalled()
+  mount.unmount(); client.clear()
+})

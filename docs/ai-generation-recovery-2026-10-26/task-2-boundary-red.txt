@@ -1,0 +1,104 @@
+
+ RUN  v5.0.0 C:/BA/AI Project Planning & Portfolio Management system/frontend
+
+stderr | src/features/jobs/hooks/useAIJobPolling.test.tsx > does not automatically GET or display the previous owner job after account switch
+Warning: An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at TestComponent (C:\BA\AI Project Planning & Portfolio Management system\frontend\node_modules\@testing-library\react\dist\pure.js:337:5)
+    at QueryClientProvider (file:///C:/BA/AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:20:3)
+    at wrapper (C:/BA/AI Project Planning & Portfolio Management system/frontend/src/features/jobs/hooks/useAIJobPolling.test.tsx:197:21)
+Warning: An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at TestComponent (C:\BA\AI Project Planning & Portfolio Management system\frontend\node_modules\@testing-library\react\dist\pure.js:337:5)
+    at QueryClientProvider (file:///C:/BA/AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:20:3)
+    at wrapper (C:/BA/AI Project Planning & Portfolio Management system/frontend/src/features/jobs/hooks/useAIJobPolling.test.tsx:197:21)
+Warning: An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at TestComponent (C:\BA\AI Project Planning & Portfolio Management system\frontend\node_modules\@testing-library\react\dist\pure.js:337:5)
+    at QueryClientProvider (file:///C:/BA/AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:20:3)
+    at wrapper (C:/BA/AI Project Planning & Portfolio Management system/frontend/src/features/jobs/hooks/useAIJobPolling.test.tsx:197:21)
+
+ ❯ src/features/jobs/hooks/useAIJobPolling.test.tsx (9 tests | 1 failed) 651ms
+   × does not automatically GET or display the previous owner job after account switch 152ms
+ ❯ src/features/ai/components/AIGeneratorModal.test.tsx (23 tests | 1 failed) 8554ms
+   ❯ pending generation account boundaries (2)
+     × does not enqueue after the owner changes during finalization 471ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/ai/components/AIGeneratorModal.test.tsx > pending generation account boundaries > does not enqueue after the owner changes during finalization
+AssertionError: expected [ '/requirement-briefs/11/skip', …(1) ] to deeply equal [ '/requirement-briefs/11/skip' ]
+
+- Expected
++ Received
+
+  [
+    "/requirement-briefs/11/skip",
++   "/ai/generate-project-from-brief",
+  ]
+
+ ❯ src/features/ai/components/AIGeneratorModal.test.tsx:278:56
+    276|     act(() => { useAuthStore.getState().clear(); useAuthStore.setState…
+    277|     await act(async () => resolve({ data: brief({ status: 'ready' }) }…
+    278|     expect(mocks.post.mock.calls.map(call => call[0])).toEqual(['/requ…
+       |                                                        ^
+    279|   })
+    280| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/jobs/hooks/useAIJobPolling.test.tsx > does not automatically GET or display the previous owner job after account switch
+AssertionError: expected { job_id: '4', …(4) } to be undefined
+
+- Expected:
+undefined
+
++ Received:
+{
+  "error": null,
+  "job_id": "4",
+  "project_id": 3,
+  "result": {},
+  "status": "COMPLETED",
+}
+
+ ❯ src/features/jobs/hooks/useAIJobPolling.test.tsx:109:37
+    107|   act(() => { useAuthStore.getState().clear(); useAuthStore.setState({…
+    108|   await act(async () => { await vi.advanceTimersByTimeAsync(10) })
+    109|   expect(mount.result.current.data).toBeUndefined()
+       |                                     ^
+    110|   expect(aiService.getJob).not.toHaveBeenCalled()
+    111|   mount.unmount(); client.clear()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 30 passed (32)
+   Start at  07:04:43
+   Duration  24.61s (environment 40%, tests 29%, setup 16%, import 8%, transform 7%)
+

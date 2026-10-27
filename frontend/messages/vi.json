@@ -541,6 +541,16 @@
     "backToList": "Quay lại danh sách yêu cầu thay đổi"
   },
   "clarifier": {
+    "restoringSession": "Đang khôi phục phiên đăng nhập trước khi tải công việc đã lưu...",
+    "sessionUnavailable": "Đăng nhập lại để khôi phục công việc đã lưu.",
+    "checkingStatus": "Đang kiểm tra trạng thái công việc đã lưu...",
+    "queued": "Dự án của bạn đang trong hàng đợi.",
+    "offlineStatus": "Bạn đang ngoại tuyến. Kết nối lại để kiểm tra công việc đã lưu.",
+    "pausedStatus": "Đã tạm dừng kiểm tra trạng thái khi tab bị ẩn. Quay lại tab này để tiếp tục.",
+    "statusUnavailable": "Không tải được trạng thái công việc. Kiểm tra lại để lấy kết quả mới nhất.",
+    "missingProject": "Công việc đã hoàn tất nhưng thiếu liên kết dự án. Vui lòng kiểm tra lại trạng thái.",
+    "longWait": "Thời gian chờ đang lâu hơn dự kiến. Công việc đã lưu vẫn có thể hoàn tất.",
+    "checkStatus": "Kiểm tra trạng thái",
     "title": "Tạo dự án bằng AI",
     "description": "Mô tả ý tưởng của bạn. AI hỏi từng câu một và không tự điền thông tin chưa được xác nhận.",
     "ideaLabel": "Ý tưởng dự án",

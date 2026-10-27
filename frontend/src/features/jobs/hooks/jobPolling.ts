@@ -40,12 +40,12 @@ export function useCancelPausedJobQuery(queryKey: QueryKey, enabled: boolean) {
   }, [client, keyHash, enabled])
 }
 
-export function useJobPollingOptions(requested: boolean) {
+export function useJobPollingState() {
   const ownerId = useAuthStore((state) => state.user?.id ?? null)
   const authenticated = useAuthStore((state) => Boolean(state.accessToken) && state.hasHydrated)
-  const [active, setActive] = useState(pageActive)
+  const [environment, setEnvironment] = useState(() => ({ online: typeof navigator !== 'undefined' && navigator.onLine, visible: typeof document !== 'undefined' && document.visibilityState === 'visible' }))
   useEffect(() => {
-    const update = () => setActive(pageActive())
+    const update = () => setEnvironment({ online: navigator.onLine, visible: document.visibilityState === 'visible' })
     document.addEventListener('visibilitychange', update)
     window.addEventListener('online', update)
     window.addEventListener('offline', update)
@@ -56,9 +56,16 @@ export function useJobPollingOptions(requested: boolean) {
       window.removeEventListener('offline', update)
     }
   }, [])
+  const reason = !authenticated || ownerId === null ? 'session' : !environment.online ? 'offline' : !environment.visible ? 'hidden' : 'active'
+  return { ownerId, reason, active: reason === 'active' }
+}
+
+/** UI metadata stays outside TanStack Query options. */
+export function jobPollingOptions(requested: boolean, polling: ReturnType<typeof useJobPollingState>) {
+  const active = polling.active
   return {
-    ownerId,
-    enabled: requested && ownerId !== null && authenticated && active,
+    ownerId: polling.ownerId,
+    enabled: requested && active,
     retry: false as const,
     staleTime: 0,
     refetchIntervalInBackground: false,
@@ -66,4 +73,15 @@ export function useJobPollingOptions(requested: boolean) {
     refetchOnWindowFocus: (query: { state: PollState }) => !isTerminalJob(query.state.data?.status) && !isAccessError(query.state.error),
     refetchOnReconnect: (query: { state: PollState }) => !isTerminalJob(query.state.data?.status) && !isAccessError(query.state.error),
   }
+}
+
+export function useJobPollingOptions(requested: boolean) {
+  return jobPollingOptions(requested, useJobPollingState())
+}
+
+/** Read live boundaries because manual refetch bypasses Query.enabled. */
+export function canReadOwnerJob(ownerId: number | null, sessionId: number) {
+  const current = useAuthStore.getState()
+  return ownerId !== null && current.user?.id === ownerId && current.sessionId === sessionId
+    && current.hasHydrated && Boolean(current.accessToken) && pageActive()
 }

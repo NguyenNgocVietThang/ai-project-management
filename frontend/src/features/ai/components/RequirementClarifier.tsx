@@ -10,6 +10,7 @@ import { Label } from '@/components/common/Label'
 import { Badge } from '@/components/ui/Badge'
 import { Skeleton, SkeletonRegion, SkeletonText } from '@/components/ui/Skeleton'
 import { cn } from '@/lib/utils'
+import { useAuthStore } from '@/store/authStore'
 import { projectKeys } from '@/features/projects/hooks/useProjects'
 import { useAIJob } from '@/features/ai/hooks/useAIGenerator'
 import {
@@ -385,18 +386,29 @@ function GenerationStatus({ jobId, onViewProject, onRestart }: {
   const queryClient = useQueryClient()
   const job = useAIJob(jobId)
   const status = job.data?.status
+  const [longWait, setLongWait] = useState(false)
+  useEffect(() => {
+    const timer = window.setTimeout(() => setLongWait(true), 120000)
+    return () => window.clearTimeout(timer)
+  }, [jobId])
+  const retry = (label = t('checkStatus')) => (
+    <Button type="button" variant="outline" fullWidth={false} className="w-full sm:w-auto"
+      onClick={() => void job.refetch()} isLoading={job.isFetching} disabled={job.pollingState !== 'active'}>{label}</Button>
+  )
 
   useEffect(() => {
     if (status === 'COMPLETED') void queryClient.invalidateQueries({ queryKey: projectKeys.all })
   }, [status, queryClient])
 
+  if (job.pollingState !== 'active') {
+    const message = job.pollingState === 'offline' ? 'offlineStatus' : job.pollingState === 'hidden' ? 'pausedStatus' : 'restoringSession'
+    return <div role="status" className="space-y-4"><p className="text-body-sm text-muted-foreground">{t(message)}</p></div>
+  }
   if (job.isError) {
     return (
       <div className="space-y-4">
-        <ErrorNotice error={job.error} />
-        <Button type="button" variant="outline" fullWidth={false} className="w-full sm:w-auto" onClick={() => void job.refetch()} isLoading={job.isFetching}>
-          {t('retryStatus')}
-        </Button>
+        <Alert>{t('statusUnavailable')}</Alert>
+        {retry(t('retryStatus'))}
       </div>
     )
   }
@@ -407,6 +419,9 @@ function GenerationStatus({ jobId, onViewProject, onRestart }: {
         <Button type="button" variant="outline" fullWidth={false} className="w-full sm:w-auto" onClick={onRestart}>{t('backToBrief')}</Button>
       </div>
     )
+  }
+  if (status === 'COMPLETED' && !job.data?.project_id) {
+    return <div className="space-y-4"><Alert>{t('missingProject')}</Alert>{retry()}</div>
   }
   if (status === 'COMPLETED') {
     return (
@@ -425,8 +440,10 @@ function GenerationStatus({ jobId, onViewProject, onRestart }: {
     <div role="status" className="space-y-4 py-2">
       <p className="flex items-center gap-2 text-body-sm text-muted-foreground">
         <Sparkles className="h-4 w-4 text-primary" aria-hidden="true" />
-        {t('generating')}
+        {status === 'PROCESSING' ? t('generating') : status === 'PENDING' ? t('queued') : t('checkingStatus')}
       </p>
+      {longWait && <p className="text-body-sm text-muted-foreground">{t('longWait')}</p>}
+      {longWait && retry()}
       <div aria-hidden="true" className="space-y-3">
         {[0, 1, 2].map((i) => (
           <div key={i} className="space-y-2 rounded-lg border p-3">
@@ -446,22 +463,34 @@ export interface RequirementClarifierProps {
 /** Luồng hỏi làm rõ: ý tưởng, hội thoại từng câu, bảng tiến độ mục, sinh dự án. */
 export function RequirementClarifier({ onViewProject }: RequirementClarifierProps) {
   const t = useTranslations('clarifier')
-  const [briefId, setBriefId] = useState<number | null>(null)
-  const [genJobId, setGenJobId] = useState<string | null>(null)
+  const ownerId = useAuthStore(state => state.user?.id ?? null)
+  const sessionId = useAuthStore(state => state.sessionId)
+  const token = useAuthStore(state => Boolean(state.accessToken))
+  const hydrated = useAuthStore(state => state.hasHydrated)
+  if (!hydrated || !token || ownerId === null) {
+    return <p role="status" className="text-body-sm text-muted-foreground">{t(hydrated && !token ? 'sessionUnavailable' : 'restoringSession')}</p>
+  }
+  return <OwnerClarifier key={`${ownerId}:${sessionId}`} ownerId={ownerId} sessionId={sessionId} onViewProject={onViewProject} />
+}
+
+function OwnerClarifier({ onViewProject, ownerId, sessionId }: RequirementClarifierProps & { ownerId: number; sessionId: number }) {
+  const t = useTranslations('clarifier')
+  const [briefId, setBriefId] = useState<number | null>(() => loadActiveBriefId(ownerId))
+  const [genJobId, setGenJobId] = useState<string | null>(() => loadGenerationJobId(ownerId))
+  const currentOwner = () => {
+    const auth = useAuthStore.getState()
+    return auth.user?.id === ownerId && auth.sessionId === sessionId && Boolean(auth.accessToken)
+  }
   const brief = useRequirementBrief(briefId)
 
-  // Khôi phục hồ sơ và job sinh dự án đã lưu sau khi tải lại trang (chỉ chạy phía client).
-  useEffect(() => {
-    setBriefId(loadActiveBriefId())
-    setGenJobId(loadGenerationJobId())
-  }, [])
-
   const selectBrief = (id: number | null) => {
-    saveActiveBriefId(id)
+    if (!currentOwner()) return
+    saveActiveBriefId(id, ownerId)
     setBriefId(id)
   }
   const setGeneration = (id: string | null) => {
-    saveGenerationJobId(id)
+    if (!currentOwner()) return
+    saveGenerationJobId(id, ownerId)
     setGenJobId(id)
   }
   const startOver = () => {
@@ -472,11 +501,11 @@ export function RequirementClarifier({ onViewProject }: RequirementClarifierProp
   // Hồ sơ đã lưu không còn tồn tại (404) thì quay về màn nhập ý tưởng.
   const notFound = brief.isError && httpStatus(brief.error) === 404
   useEffect(() => {
-    if (notFound) {
-      saveActiveBriefId(null)
+    if (notFound && useAuthStore.getState().user?.id === ownerId && useAuthStore.getState().sessionId === sessionId) {
+      saveActiveBriefId(null, ownerId)
       setBriefId(null)
     }
-  }, [notFound])
+  }, [notFound, ownerId, sessionId])
 
   if (genJobId) {
     return (

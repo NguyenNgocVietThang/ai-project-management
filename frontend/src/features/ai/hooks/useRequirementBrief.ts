@@ -1,6 +1,7 @@
 'use client'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useAuthStore } from '@/store/authStore'
 import { durableJobKeys } from '@/features/jobs/hooks/useJobs'
 import { requirementBriefService } from '@/features/ai/services/requirementBrief.service'
 import type {
@@ -11,23 +12,33 @@ import type {
 
 export const briefKeys = {
   all: ['requirement-briefs'] as const,
-  list: () => ['requirement-briefs', 'list'] as const,
-  detail: (id: number) => ['requirement-briefs', 'detail', id] as const,
+  list: (ownerId?: number | null, sessionId?: number) => ['requirement-briefs', 'list', ownerId, sessionId] as const,
+  detail: (id: number, ownerId?: number | null, sessionId?: number) => ['requirement-briefs', 'detail', id, ownerId, sessionId] as const,
 }
 
 // Khóa localStorage lưu hồ sơ đang làm để tải lại trang vẫn khôi phục được.
 const ACTIVE_BRIEF_KEY = 'ai.requirementBrief.activeId'
 const ACTIVE_GEN_JOB_KEY = 'ai.requirementBrief.generationJobId'
 
-function readStorage(key: string): string | null {
+function storageKey(key: string, ownerId: number | null) {
+  return ownerId === null ? null : `${key}.owner:${ownerId}`
+}
+
+function currentOwner() {
+  const auth = useAuthStore.getState()
+  return auth.hasHydrated && auth.accessToken ? auth.user?.id ?? null : null
+}
+
+function readStorage(key: string | null): string | null {
   try {
-    return window.localStorage.getItem(key)
+    return key === null ? null : window.localStorage.getItem(key)
   } catch {
     return null
   }
 }
 
-function writeStorage(key: string, value: string | null) {
+function writeStorage(key: string | null, value: string | null) {
+  if (key === null) return
   try {
     if (value === null) window.localStorage.removeItem(key)
     else window.localStorage.setItem(key, value)
@@ -36,22 +47,22 @@ function writeStorage(key: string, value: string | null) {
   }
 }
 
-export function loadActiveBriefId(): number | null {
-  const raw = readStorage(ACTIVE_BRIEF_KEY)
+export function loadActiveBriefId(ownerId = currentOwner()): number | null {
+  const raw = readStorage(storageKey(ACTIVE_BRIEF_KEY, ownerId))
   const id = raw ? Number(raw) : NaN
   return Number.isInteger(id) && id > 0 ? id : null
 }
 
-export function saveActiveBriefId(id: number | null) {
-  writeStorage(ACTIVE_BRIEF_KEY, id === null ? null : String(id))
+export function saveActiveBriefId(id: number | null, ownerId = currentOwner()) {
+  writeStorage(storageKey(ACTIVE_BRIEF_KEY, ownerId), id === null ? null : String(id))
 }
 
-export function loadGenerationJobId(): string | null {
-  return readStorage(ACTIVE_GEN_JOB_KEY)
+export function loadGenerationJobId(ownerId = currentOwner()): string | null {
+  return readStorage(storageKey(ACTIVE_GEN_JOB_KEY, ownerId))
 }
 
-export function saveGenerationJobId(id: string | null) {
-  writeStorage(ACTIVE_GEN_JOB_KEY, id)
+export function saveGenerationJobId(id: string | null, ownerId = currentOwner()) {
+  writeStorage(storageKey(ACTIVE_GEN_JOB_KEY, ownerId), id)
 }
 
 /** Lượt hỏi còn đang chạy (chưa thành công, chưa thất bại). */
@@ -64,22 +75,31 @@ export function isTurnFailed(brief?: RequirementBriefDetail): boolean {
   return brief?.pending_turn?.status === 'failed'
 }
 
+function useBriefOwner() {
+  const ownerId = useAuthStore(state => state.user?.id ?? null)
+  const sessionId = useAuthStore(state => state.sessionId)
+  const authenticated = useAuthStore(state => state.hasHydrated && Boolean(state.accessToken))
+  return { ownerId, sessionId, enabled: authenticated && ownerId !== null }
+}
+
 export function useRequirementBrief(id: number | null) {
+  const { ownerId, sessionId, enabled } = useBriefOwner()
   return useQuery({
-    queryKey: briefKeys.detail(id ?? 0),
+    queryKey: briefKeys.detail(id ?? 0, ownerId, sessionId),
     queryFn: ({ signal }) => requirementBriefService.get(id!, signal),
-    enabled: id !== null,
+    enabled: enabled && id !== null,
     retry: false,
     // Khi lượt AI đang chạy thì đọc lại hồ sơ định kỳ; pending_turn phản ánh trạng thái job.
     refetchInterval: (query) => (isTurnRunning(query.state.data) ? 3000 : false),
   })
 }
 
-export function useRecentBriefs(enabled: boolean) {
+export function useRecentBriefs(requested: boolean) {
+  const { ownerId, sessionId, enabled } = useBriefOwner()
   return useQuery({
-    queryKey: briefKeys.list(),
+    queryKey: briefKeys.list(ownerId, sessionId),
     queryFn: ({ signal }) => requirementBriefService.list(5, signal),
-    enabled,
+    enabled: requested && enabled,
     retry: false,
   })
 }
@@ -87,9 +107,12 @@ export function useRecentBriefs(enabled: boolean) {
 /** Gom các thao tác thay đổi hồ sơ; kết quả trả về ghi thẳng vào cache chi tiết. */
 export function useBriefActions() {
   const client = useQueryClient()
+  const { ownerId, sessionId } = useBriefOwner()
   const store = (brief: RequirementBriefDetail) => {
-    client.setQueryData(briefKeys.detail(brief.id), brief)
-    void client.invalidateQueries({ queryKey: briefKeys.list() })
+    const current = useAuthStore.getState()
+    if (current.user?.id !== ownerId || current.sessionId !== sessionId || !current.accessToken) return
+    client.setQueryData(briefKeys.detail(brief.id, ownerId, sessionId), brief)
+    void client.invalidateQueries({ queryKey: briefKeys.list(ownerId, sessionId) })
   }
   const onTurn = { onSuccess: (r: { brief: RequirementBriefDetail }) => {
     store(r.brief)
@@ -123,6 +146,10 @@ export function useBriefActions() {
         if (mode !== 'ready') {
           const brief = mode === 'skip' ? await requirementBriefService.skip(id) : await requirementBriefService.finalize(id)
           store(brief)
+        }
+        const current = useAuthStore.getState()
+        if (current.user?.id !== ownerId || current.sessionId !== sessionId || !current.accessToken) {
+          throw new Error('Brief session is no longer active')
         }
         return requirementBriefService.generateProject(id)
       },

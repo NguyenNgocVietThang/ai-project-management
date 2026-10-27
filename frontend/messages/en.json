@@ -541,6 +541,16 @@
     "backToList": "Back to change requests"
   },
   "clarifier": {
+    "restoringSession": "Restoring your session before loading saved work...",
+    "sessionUnavailable": "Sign in again to recover your saved work.",
+    "checkingStatus": "Checking the saved job status...",
+    "queued": "Your project is queued.",
+    "offlineStatus": "You are offline. Reconnect to check the saved job.",
+    "pausedStatus": "Status checks are paused while this tab is hidden. Return to this tab to continue.",
+    "statusUnavailable": "The job status could not be loaded. Check again to recover the latest result.",
+    "missingProject": "The job completed, but its project link is missing. Check the status again.",
+    "longWait": "This is taking longer than expected. Your saved job can still complete.",
+    "checkStatus": "Check status",
     "title": "Generate project with AI",
     "description": "Describe your idea. AI asks one question at a time, and nothing unconfirmed is filled in for you.",
     "ideaLabel": "Your project idea",

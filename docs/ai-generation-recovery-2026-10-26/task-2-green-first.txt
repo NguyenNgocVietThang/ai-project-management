@@ -1,0 +1,9 @@
+
+ RUN  v5.0.0 C:/BA/AI Project Planning & Portfolio Management system/frontend
+
+
+ Test Files  3 passed (3)
+      Tests  32 passed (32)
+   Start at  07:02:40
+   Duration  36.17s (environment 48%, tests 18%, setup 18%, import 8%, transform 7%, worker 1%)
+
