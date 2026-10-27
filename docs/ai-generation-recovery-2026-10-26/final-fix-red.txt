@@ -1,0 +1,88 @@
+
+ RUN  v5.0.0 C:/BA/AI Project Planning & Portfolio Management system/frontend
+
+ ❯ src/services/api.test.ts (14 tests | 3 failed) 2496ms
+   ❯ refresh session races (7)
+     × restores overlapping cookie bootstraps with one refresh and two successful callers 10ms
+     × rejects both pending bootstraps after logout and gives a replacement its own refresh 1018ms
+     × rejects both pending bootstraps after account switch and gives a replacement its own refresh 1008ms
+ ❯ src/app/(dashboard)/layout.bootstrap.test.tsx (1 test | 1 failed) 197ms
+   × restores cookie identity through actual bootstrap and profile requests under StrictMode replay 193ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/services/api.test.ts > refresh session races > restores overlapping cookie bootstraps with one refresh and two successful callers
+AssertionError: expected [ true, false ] to deeply equal [ true, true ]
+
+- Expected
++ Received
+
+  [
+    true,
+-   true,
++   false,
+  ]
+
+ ❯ src/services/api.test.ts:117:48
+    115|     await vi.waitFor(() => expect(completions.length).toBeGreaterThan(…
+    116|     completions.forEach(complete => complete())
+    117|     expect(await Promise.all([first, second])).toEqual([true, true])
+       |                                                ^
+    118|     expect(completions).toHaveLength(1)
+    119|     expect(useAuthStore.getState().accessToken).toBe('fixture-restored…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/services/api.test.ts > refresh session races > rejects both pending bootstraps after logout and gives a replacement its own refresh
+ FAIL  src/services/api.test.ts > refresh session races > rejects both pending bootstraps after account switch and gives a replacement its own refresh
+AssertionError: expected [ [Function], [Function] ] to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ src/services/api.test.ts:137:48
+    135|     useAuthStore.getState().clear()
+    136|     const previous = [bootstrapSession(), bootstrapSession()]
+    137|     await vi.waitFor(() => expect(completions).toHaveLength(1))
+       |                                                ^
+    138|     useAuthStore.getState().clear()
+    139|     if (boundary === 'account switch') startAuthSession({ access_token…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/app/(dashboard)/layout.bootstrap.test.tsx > restores cookie identity through actual bootstrap and profile requests under StrictMode replay
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array [
+      "/login",
+    ]
+
+
+Number of calls: 1
+
+ ❯ src/app/(dashboard)/layout.bootstrap.test.tsx:62:29
+     60|   await screen.findByText('Restored workspace')
+     61|   await waitFor(() => expect(useAuthStore.getState().user).toEqual(pro…
+     62|   expect(mocks.replace).not.toHaveBeenCalled()
+       |                             ^
+     63|   expect(requests.filter(request => request.url === '/auth/refresh')).…
+     64|   expect(requests.some(request => request.url === '/auth/me')).toBe(tr…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  4 failed | 11 passed (15)
+   Start at  23:05:45
+   Duration  10.01s (environment 46%, tests 29%, setup 13%, import 6%, transform 5%, worker 1%)
+
+    Isolate  2 workers spawned · ~2.45s startup each (spawn + environment, per file)
+             at least ~2.45s faster with isolate: false — reuses workers across files instead of one per file
+

@@ -1,0 +1,3653 @@
+{
+  "mode": "states",
+  "started": "2026-10-27T00:21:03.162Z",
+  "scenarios": [
+    {
+      "name": "login-and-cookie-only-reload",
+      "outcome": "PASS"
+    },
+    {
+      "name": "states-en-1440",
+      "outcome": "PASS",
+      "statuses": [
+        "PENDING",
+        "PROCESSING",
+        "offline",
+        "hidden",
+        "GET503",
+        "FAILED",
+        "missing-project",
+        "COMPLETED"
+      ],
+      "actualHidden": true,
+      "longWait120s": true,
+      "noCreation": true,
+      "keyboard": true
+    },
+    {
+      "name": "states-en-390",
+      "outcome": "PASS",
+      "statuses": [
+        "PENDING",
+        "PROCESSING",
+        "offline",
+        "hidden",
+        "GET503",
+        "FAILED",
+        "missing-project",
+        "COMPLETED"
+      ],
+      "actualHidden": true,
+      "longWait120s": false,
+      "noCreation": true,
+      "keyboard": true
+    },
+    {
+      "name": "states-vi-1440",
+      "outcome": "PASS",
+      "statuses": [
+        "PENDING",
+        "PROCESSING",
+        "offline",
+        "hidden",
+        "GET503",
+        "FAILED",
+        "missing-project",
+        "COMPLETED"
+      ],
+      "actualHidden": true,
+      "longWait120s": false,
+      "noCreation": true,
+      "keyboard": true
+    },
+    {
+      "name": "states-vi-390",
+      "outcome": "PASS",
+      "statuses": [
+        "PENDING",
+        "PROCESSING",
+        "offline",
+        "hidden",
+        "GET503",
+        "FAILED",
+        "missing-project",
+        "COMPLETED"
+      ],
+      "actualHidden": true,
+      "longWait120s": false,
+      "noCreation": true,
+      "keyboard": true
+    }
+  ],
+  "console": [
+    {
+      "label": "states-en-1440",
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+      "location": {
+        "url": "http://127.0.0.1:3180/api/v1/ai/jobs/1",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "label": "states-en-390",
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+      "location": {
+        "url": "http://127.0.0.1:3180/api/v1/ai/jobs/1",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "label": "states-vi-1440",
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+      "location": {
+        "url": "http://127.0.0.1:3180/api/v1/ai/jobs/1",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "label": "states-vi-390",
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+      "location": {
+        "url": "http://127.0.0.1:3180/api/v1/ai/jobs/1",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    }
+  ],
+  "network": [
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "at": 1793060465933
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/auth/login",
+      "status": 200,
+      "at": 1793060466443
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060466447
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060466518
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060467231
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060467231
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060467232
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/dashboards/summary",
+      "at": 1793060467232
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060467233
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060469243
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060469493
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060469495
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060469496
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060469496
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060469497
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060469497
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060469558
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060469642
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060469733
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060469779
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060469781
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060469783
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060469887
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060472854
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060473422
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060473423
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060473424
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060473425
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060473427
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060473428
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060473518
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060473612
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060473681
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060473684
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060473687
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060473692
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060473776
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060476723
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060476967
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060476969
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060476969
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060476970
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060476972
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060476973
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060477098
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060477165
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060477177
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060477230
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060477298
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060477300
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060477322
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060477325
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060477416
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060477513
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060477534
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060480336
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060480758
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060480760
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060480761
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060480762
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060480767
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060480767
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060481072
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060481096
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060481186
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060481281
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060481282
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060481301
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060481304
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060481306
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060481675
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060481693
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060481703
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060488693
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060488694
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060494857
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060494857
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060495083
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060495114
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060500114
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060500192
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060505211
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060505274
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060510288
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060510361
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060515387
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060515491
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060520504
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060520584
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060525608
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060525774
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060530793
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060530860
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060535869
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060535938
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060540954
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060541047
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060546070
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060546171
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060551192
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060551272
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060556286
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060556355
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060561376
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060561457
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060566472
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060566538
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060571550
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060571606
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060576622
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060576686
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060581701
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060581784
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060586808
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060586887
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060591903
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060591957
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060596972
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060597039
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060601080
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060601169
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060602237
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060602238
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060602314
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060602392
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060604601
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060604827
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060604828
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060604829
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060604830
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060604830
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060604831
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060604881
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060604951
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060605112
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060605113
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060605135
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060605201
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060605435
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060605438
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060605535
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060605567
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 503,
+      "at": 1793060605588
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060606538
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060606612
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060606621
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060606884
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060609311
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060609711
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060609711
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060609712
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060609713
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060609713
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060609714
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060609988
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060610064
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060610191
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060610192
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060610211
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060610218
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060610311
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060610355
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060610428
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060610784
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060610788
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060613820
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060614061
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060614062
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060614062
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060614063
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060614063
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060614063
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060614491
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060614578
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060614578
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060614579
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060614758
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060614767
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060614823
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060615116
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060615151
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060615160
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060615168
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060615302
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060615387
+    },
+    {
+      "label": "states-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060616188
+    },
+    {
+      "label": "states-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060616335
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060619248
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060619465
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060619466
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060619466
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060619467
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060619468
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060619468
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060619693
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060619774
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060619775
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060619776
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060619792
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060619814
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060619908
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060619913
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060620062
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060620085
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060620153
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060622951
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060623156
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060623158
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060623159
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060623159
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060623160
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060623161
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060623334
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060623405
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060623407
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060623408
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060623442
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060623463
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060623498
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060623570
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060623908
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060623916
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060624113
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060630710
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060630711
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060636993
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060636994
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060637196
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060637227
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060639079
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060639328
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060639329
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060639330
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060639330
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060639331
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060639332
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060639549
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060639635
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060639636
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060639637
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060639672
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060639677
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060639680
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060639682
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060639818
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060639827
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 503,
+      "at": 1793060639869
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060640167
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060640242
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060640253
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060640344
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060642300
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060642504
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060642505
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060642506
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060642506
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060642507
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060642508
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060642667
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060642746
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060642747
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060642747
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060642819
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060642826
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060642827
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060642925
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060643209
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060643232
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060643244
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060645928
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060646195
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060646196
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060646196
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060646197
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060646197
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060646198
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060646410
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060646494
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060646496
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060646497
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060646579
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060646615
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060646646
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060646658
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060646712
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060646732
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060646737
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060646793
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060646853
+    },
+    {
+      "label": "states-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060647067
+    },
+    {
+      "label": "states-en-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060647282
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060650915
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060651376
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060651376
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060651377
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060651377
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060651378
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060651378
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060651487
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060651575
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060651607
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060651624
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060651627
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060651636
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060651748
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060651822
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060651823
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060651913
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060651925
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060654196
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060654487
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060654488
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060654488
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060654489
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060654489
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060654490
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060654536
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060654616
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060654772
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060654773
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060654794
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060654801
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060654839
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060654841
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060654897
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060654961
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060654978
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060661886
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060661887
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060668070
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060668070
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060668276
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060668295
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060670694
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060670925
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060670925
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060670926
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060670926
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060670927
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060670929
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060670981
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060671062
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060671248
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060671249
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060671275
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060671354
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060671356
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060671412
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060671434
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060671569
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 503,
+      "at": 1793060671576
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060672198
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060672272
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060672282
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060672378
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060674412
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060674637
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060674639
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060674640
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060674641
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060674641
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060674642
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060674685
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060674754
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060674791
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060674876
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060674877
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060675042
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060675044
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060675118
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060675124
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060675150
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060675158
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060678320
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060678632
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060678633
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060678634
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060678635
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060678635
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060678636
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060678797
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060678859
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060678860
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060678861
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060678940
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060678987
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060679045
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060679104
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060679122
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060679137
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060679142
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060679179
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060679255
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060679694
+    },
+    {
+      "label": "states-vi-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060679759
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060682706
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060683135
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060683136
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060683136
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060683137
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060683137
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060683138
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060683199
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060683205
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060683258
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060683511
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060683543
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060683545
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060683658
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060683658
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060683686
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060684225
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060684369
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060686772
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060686961
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060686963
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060686964
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060686964
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060686965
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060686965
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060687143
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060687202
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060687202
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060687203
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060687288
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060687322
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060687327
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060687411
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060687424
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060687480
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060687570
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060693913
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060693915
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060694240
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060694250
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060700143
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060700148
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060700416
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060700432
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060702935
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060703154
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060703154
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060703155
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060703156
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060703156
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060703157
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060703199
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060703259
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060703295
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060703386
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060703388
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060703406
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060703478
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060703504
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060703557
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 503,
+      "at": 1793060703668
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060703670
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060704090
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060704154
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060704161
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060704299
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060705840
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060706053
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060706054
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060706054
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060706055
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060706055
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060706056
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060706243
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060706299
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060706300
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060706300
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060706388
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060706389
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060706454
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060706494
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060706515
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060706526
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060706564
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060709608
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060709833
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060709834
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060709834
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060709835
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060709835
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060709836
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060710394
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060710465
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060710466
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060710466
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060710504
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060710522
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060710576
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060710618
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060710655
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060710960
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060710984
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060710989
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060711060
+    },
+    {
+      "label": "states-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060711646
+    },
+    {
+      "label": "states-vi-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060711796
+    }
+  ],
+  "screenshots": [
+    "screenshots/states-en-1440-long-wait-120s.png",
+    "screenshots/states-vi-390-offline.png"
+  ],
+  "outcome": "PASS",
+  "finished": "2026-10-27T00:25:12.125Z",
+  "sourceScreenshotCount": 31,
+  "evidenceExport": {
+    "source": "states-report.json",
+    "sanitized": true,
+    "screenshots": "Selected original screenshots; no image modification"
+  }
+}

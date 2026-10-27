@@ -1,0 +1,66 @@
+{
+  "classification": "Unclassified isolated-harness startup security-state failures; clean-console gate remains unresolved",
+  "observed": {
+    "initialConsoleWsTicket503": 2,
+    "realLoginRequestTimesUnixMs": [
+      1793116114542,
+      1793116114542,
+      1793116121386,
+      1793116143290
+    ],
+    "realLoginResponses": [
+      {
+        "at": 1793116120789,
+        "status": 503
+      },
+      {
+        "at": 1793116120791,
+        "status": 503
+      },
+      {
+        "at": 1793116124865,
+        "status": 200
+      },
+      {
+        "at": 1793116144858,
+        "status": 200
+      }
+    ],
+    "backendWarnings": [
+      "WARNING  [663663bdc14f46e985fb45caf8cefe83] app.services.security_state_service: Durable security state is unavailable",
+      "WARNING  [8b7164a95a574cb581d210405da00f29] app.services.security_state_service: Durable security state is unavailable"
+    ],
+    "underlyingExceptionOrLockTrace": [],
+    "laterWsTicketResponses": [
+      {
+        "label": "cookie-only-reload",
+        "status": 200
+      },
+      {
+        "label": "waterfall-en-1440",
+        "status": 200
+      },
+      {
+        "label": "waterfall-en-390",
+        "status": 200
+      },
+      {
+        "label": "waterfall-vi-1440",
+        "status": 200
+      },
+      {
+        "label": "waterfall-vi-390",
+        "status": 200
+      }
+    ],
+    "pageErrors": []
+  },
+  "isolation": {
+    "applicationAndSecurityDatabasesAreDistinct": true,
+    "securityStateImportedFactoryAliasOverridden": true,
+    "authAndPermissionDependenciesOverridden": false,
+    "rateLimitsEnabled": true
+  },
+  "limits": "Security state service catches all underlying exceptions and emits a fixed warning without traceback. Current evidence cannot distinguish SQLite write contention, operation timeout, or scheduling pressure; no root-cause claim is made.",
+  "nextCheck": "After controller heavy gates finish, repeat focused warm login/refresh/me/ws-ticket with original gates intact. If failure repeats, capture safe exception type/SQLite error category through QA-only instrumentation; do not log credentials or weaken timeout/auth gates."
+}

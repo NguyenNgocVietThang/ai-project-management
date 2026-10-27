@@ -95,6 +95,64 @@ describe('api client', () => {
 // The refresh boundary must not restore a cleared or replaced client session.
 describe('refresh session races', () => {
   beforeEach(() => { vi.restoreAllMocks(); vi.resetModules() })
+  it('restores overlapping cookie bootstraps with one refresh and two successful callers', async () => {
+    const axios = (await import('axios')).default
+    const create = axios.create.bind(axios)
+    const completions: (() => void)[] = []
+    vi.spyOn(axios, 'create').mockImplementation(config => {
+      const client = create(config)
+      client.defaults.adapter = request => new Promise(resolve => {
+        completions.push(() => resolve({ data: { access_token: 'fixture-restored', token_type: 'bearer' }, status: 200, statusText: 'OK', headers: {}, config: request }))
+      })
+      return client
+    })
+    const { bootstrapSession } = await import('./api')
+    const { useAuthStore } = await import('@/store/authStore')
+    useAuthStore.getState().clear()
+    expect(useAuthStore.getState().user).toBeNull()
+    const first = bootstrapSession()
+    const second = bootstrapSession()
+    await vi.waitFor(() => expect(completions.length).toBeGreaterThan(0))
+    completions.forEach(complete => complete())
+    expect(await Promise.all([first, second])).toEqual([true, true])
+    expect(completions).toHaveLength(1)
+    expect(useAuthStore.getState().accessToken).toBe('fixture-restored')
+  })
+
+  it.each(['logout', 'account switch'])('rejects both pending bootstraps after %s and gives a replacement its own refresh', async boundary => {
+    const axios = (await import('axios')).default
+    const create = axios.create.bind(axios)
+    const completions: ((token: string) => void)[] = []
+    vi.spyOn(axios, 'create').mockImplementation(config => {
+      const client = create(config)
+      client.defaults.adapter = request => new Promise(resolve => {
+        completions.push(token => resolve({ data: { access_token: token, token_type: 'bearer' }, status: 200, statusText: 'OK', headers: {}, config: request }))
+      })
+      return client
+    })
+    const { bootstrapSession } = await import('./api')
+    const { useAuthStore, startAuthSession } = await import('@/store/authStore')
+    useAuthStore.getState().clear()
+    const previous = [bootstrapSession(), bootstrapSession()]
+    await vi.waitFor(() => expect(completions).toHaveLength(1))
+    useAuthStore.getState().clear()
+    if (boundary === 'account switch') startAuthSession({ access_token: 'fixture-b', token_type: 'bearer' })
+    const replacement = boundary === 'account switch' ? bootstrapSession() : null
+    if (replacement) await vi.waitFor(() => expect(completions).toHaveLength(2))
+    completions[0]('fixture-late-a')
+    expect(await Promise.all(previous)).toEqual([false, false])
+    expect(useAuthStore.getState().accessToken).toBe(boundary === 'logout' ? null : 'fixture-b')
+    if (replacement) {
+      // Settling A must not erase B's pending entry; another B caller joins B.
+      const another = bootstrapSession()
+      await Promise.resolve()
+      expect(completions).toHaveLength(2)
+      completions[1]('fixture-rotated-b')
+      expect(await Promise.all([replacement, another])).toEqual([true, true])
+      expect(useAuthStore.getState().accessToken).toBe('fixture-rotated-b')
+    }
+  })
+
   it.each(['logout', 'account switch'])('discards a refresh response after %s', async (boundary) => {
     const axios = (await import('axios')).default
     const create = axios.create.bind(axios)
@@ -150,6 +208,40 @@ describe('refresh session races', () => {
     const responses = await Promise.all([first, second])
     expect(responses.map(response => response.data)).toEqual([{ ok: true }, { ok: true }])
     expect(refreshes).toBe(1)
+    expect(useAuthStore.getState().sessionId).toBe(sessionId)
+    expect(useAuthStore.getState().user).toEqual(owner)
+  })
+
+  it('shares the same-owner refresh between bootstrap and a 401 retry', async () => {
+    const { default: axios, AxiosError } = await import('axios')
+    const create = axios.create.bind(axios)
+    const completions: (() => void)[] = []
+    vi.spyOn(axios, 'create').mockImplementation(config => {
+      const client = create(config)
+      client.defaults.adapter = async request => {
+        if (request.url === '/auth/refresh') return new Promise(resolve => {
+          completions.push(() => resolve({ data: { access_token: 'fixture-rotated', token_type: 'bearer' }, status: 200, statusText: 'OK', headers: {}, config: request }))
+        })
+        if (request.headers.Authorization !== 'Bearer fixture-rotated') {
+          throw new AxiosError('expired', 'ERR_BAD_RESPONSE', request, undefined, { data: {}, status: 401, statusText: '', headers: {}, config: request })
+        }
+        return { data: { ok: true }, status: 200, statusText: 'OK', headers: {}, config: request }
+      }
+      return client
+    })
+    const { api, bootstrapSession } = await import('./api')
+    const { useAuthStore } = await import('@/store/authStore')
+    useAuthStore.getState().setTokens({ access_token: 'fixture-original', token_type: 'bearer' })
+    const owner = { id: 1 } as import('@/types/auth.types').User
+    useAuthStore.getState().setUser(owner)
+    const sessionId = useAuthStore.getState().sessionId
+    const request = api.get('/fixture/job')
+    await vi.waitFor(() => expect(completions).toHaveLength(1))
+    const bootstrap = bootstrapSession()
+    completions.forEach(complete => complete())
+    expect(await bootstrap).toBe(true)
+    expect((await request).data).toEqual({ ok: true })
+    expect(completions).toHaveLength(1)
     expect(useAuthStore.getState().sessionId).toBe(sessionId)
     expect(useAuthStore.getState().user).toEqual(owner)
   })

@@ -1,0 +1,32 @@
+node node_modules/vitest/vitest.mjs run src/hooks/useAuth.test.tsx src/features/jobs/hooks src/features/ai/components/AIGeneratorModal.test.tsx src/features/ai/components/AIGeneratorRecovery.test.tsx src/app/(dashboard)/layout.test.tsx src/services/api.test.ts src/services/auth.service.test.ts src/i18n/catalog.test.ts --pool=threads --maxWorkers=1 --testTimeout=15000
+
+ RUN  v5.0.0 C:/BA/AI Project Planning & Portfolio Management system/frontend
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start threads worker for test files C:/BA/AI Project Planning & Portfolio Management system/frontend/src/features/ai/components/AIGeneratorModal.test.tsx.
+ ❯ ../../AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/vitest/dist/chunks/index.B89dZ0-N.js:11469:94
+ ❯ Pool.schedule ../../AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/vitest/dist/chunks/index.B89dZ0-N.js:11469:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+ ❯ Timeout.<anonymous> ../../AI%20Project%20Planning%20&%20Portfolio%20Management%20system/frontend/node_modules/vitest/dist/chunks/index.B89dZ0-N.js:10968:58
+ ❯ listOnTimeout node:internal/timers:605:17
+ ❯ processTimers node:internal/timers:541:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  9 passed (9)
+      Tests  62 passed (62)
+     Errors  1 error
+   Start at  22:54:42
+   Duration  156.02s (environment 47%, setup 31%, import 14%, tests 6%, transform 2%, worker 1%)
+
+    Isolate  9 workers spawned · ~5.09s startup each (spawn + environment, per file)
+             at least ~40.70s faster with isolate: false — reuses workers across files instead of one per file
+
+Exit code: 1

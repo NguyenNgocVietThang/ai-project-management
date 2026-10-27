@@ -1,0 +1,1596 @@
+{
+  "mode": "restore",
+  "started": "2026-10-27T00:13:40.865Z",
+  "scenarios": [
+    {
+      "name": "login-and-cookie-only-reload",
+      "outcome": "PASS"
+    },
+    {
+      "name": "restore-en-1440",
+      "outcome": "PASS",
+      "noJobBeforeMe": true,
+      "duplicatePost": 0,
+      "providerDelta": 0,
+      "legacyPreserved": true,
+      "closeReopen": true,
+      "sameOwnerReload": true
+    },
+    {
+      "name": "restore-en-390",
+      "outcome": "PASS",
+      "noJobBeforeMe": true,
+      "duplicatePost": 0,
+      "providerDelta": 0,
+      "legacyPreserved": true,
+      "closeReopen": true,
+      "sameOwnerReload": true
+    },
+    {
+      "name": "restore-vi-1440",
+      "outcome": "PASS",
+      "noJobBeforeMe": true,
+      "duplicatePost": 0,
+      "providerDelta": 0,
+      "legacyPreserved": true,
+      "closeReopen": true,
+      "sameOwnerReload": true
+    },
+    {
+      "name": "restore-vi-390",
+      "outcome": "PASS",
+      "noJobBeforeMe": true,
+      "duplicatePost": 0,
+      "providerDelta": 0,
+      "legacyPreserved": true,
+      "closeReopen": true,
+      "sameOwnerReload": true
+    }
+  ],
+  "console": [
+    {
+      "label": "real-login",
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "location": {
+        "url": "http://127.0.0.1:3180/favicon.ico",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    }
+  ],
+  "network": [
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "at": 1793060024629
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/auth/login",
+      "status": 200,
+      "at": 1793060025102
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060025106
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060025173
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060025879
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060025880
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060025880
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/dashboards/summary",
+      "at": 1793060025880
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060025881
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060027951
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060028182
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060028186
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060028187
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060028187
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060028189
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060028189
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060028362
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060028826
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060028826
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060028826
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060028827
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060028827
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060028828
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060031998
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060032398
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060032398
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060032399
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060032400
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060032401
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060032401
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060032513
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060032648
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060032747
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060033124
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060033124
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060033124
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060033125
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060035534
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060035813
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060035813
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060035816
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060035817
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060035818
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060035818
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060036480
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060036481
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060036578
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060036579
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060039531
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060039583
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060039647
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060039709
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060039710
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060039833
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060039844
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060039848
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060039928
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060040441
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060040443
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060040443
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060040709
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060040711
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060042461
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060042686
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060042687
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060042688
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060042688
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060042688
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060042690
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060042756
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060042810
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060042870
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060042980
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060042980
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060043011
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060043112
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060043130
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060043202
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060043485
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060043501
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060043527
+    },
+    {
+      "label": "restore-en-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060043593
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060046680
+    },
+    {
+      "label": "restore-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060046912
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060046913
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060046915
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060046915
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060046915
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060046916
+    },
+    {
+      "label": "restore-en-390",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060047462
+    },
+    {
+      "label": "restore-en-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060047477
+    },
+    {
+      "label": "restore-en-390",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060047539
+    },
+    {
+      "label": "restore-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060047559
+    },
+    {
+      "label": "restore-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060050894
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060050965
+    },
+    {
+      "label": "restore-en-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060051062
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060051167
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060051168
+    },
+    {
+      "label": "restore-en-390",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060051690
+    },
+    {
+      "label": "restore-en-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060051784
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060051793
+    },
+    {
+      "label": "restore-en-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060051851
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060052335
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060052340
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060052341
+    },
+    {
+      "label": "restore-en-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060052586
+    },
+    {
+      "label": "restore-en-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060052586
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060054335
+    },
+    {
+      "label": "restore-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060054663
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060054665
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060054665
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060054665
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060054665
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060054665
+    },
+    {
+      "label": "restore-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060054709
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060054778
+    },
+    {
+      "label": "restore-en-390",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060054808
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060054950
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060054950
+    },
+    {
+      "label": "restore-en-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060054955
+    },
+    {
+      "label": "restore-en-390",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060054972
+    },
+    {
+      "label": "restore-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060055028
+    },
+    {
+      "label": "restore-en-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060055030
+    },
+    {
+      "label": "restore-en-390",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060055810
+    },
+    {
+      "label": "restore-en-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060055816
+    },
+    {
+      "label": "restore-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060055830
+    },
+    {
+      "label": "restore-en-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060055900
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060058977
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060059236
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060059237
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060059238
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060059238
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060059238
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060059238
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060059611
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060059661
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060059662
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060059750
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060062943
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060063005
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060063064
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060063131
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060063131
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060063559
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060063562
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060063567
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060063641
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060064487
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060064488
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060064488
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060064805
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060064806
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060066452
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060066720
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060066722
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060066722
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060066722
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060066722
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060066722
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060066945
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060067022
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060067024
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060067024
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060067089
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060067124
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060067158
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060067180
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060067298
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060067381
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060067389
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060067394
+    },
+    {
+      "label": "restore-vi-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060067484
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060070863
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060071104
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060071104
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060071104
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060071104
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060071105
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060071105
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060071323
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060071326
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060071350
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060071434
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060074756
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060074813
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060074874
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060074942
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060074943
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060075315
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060075336
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060075337
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060075683
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060075684
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060075688
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060075756
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060075809
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060075927
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793060077632
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793060078022
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793060078023
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793060078025
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793060078026
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060078026
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793060078027
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793060078054
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793060078115
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/1",
+      "at": 1793060078474
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/1",
+      "at": 1793060078474
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793060078505
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793060078505
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793060078551
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060078695
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793060078777
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/1",
+      "status": 200,
+      "at": 1793060078861
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793060078862
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/1",
+      "status": 200,
+      "at": 1793060078874
+    },
+    {
+      "label": "restore-vi-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793060079119
+    }
+  ],
+  "screenshots": [
+    "screenshots/restore-vi-390-completed.png"
+  ],
+  "outcome": "PASS",
+  "finished": "2026-10-27T00:14:39.159Z",
+  "sourceScreenshotCount": 10,
+  "evidenceExport": {
+    "source": "restore-report.json",
+    "sanitized": true,
+    "screenshots": "Selected original screenshots; no image modification"
+  }
+}

@@ -46,18 +46,24 @@ api.interceptors.request.use((config: RetriableConfig) => {
   return config
 })
 
-// Nhiều request có thể cùng bị 401 một lúc (vd một trang bắn nhiều query sau khi access
-// token hết hạn). Chỉ request đầu tiên kích hoạt refresh; các request còn lại chờ trên promise dùng chung này.
+// Cookie bootstraps and 401 retries share one refresh for the current session.
+// A replacement account starts its own refresh even while the previous one settles.
 let refreshPromise: { sessionId: number; promise: Promise<string> } | null = null
 
-async function refreshAccessToken(): Promise<string> {
+function refreshAccessToken(): Promise<string> {
   const sessionId = authStore.getState().sessionId
-  // Không có body: refresh token nằm trong cookie httpOnly mà trình duyệt tự
-  // đính kèm (withCredentials ở trên). Frontend không bao giờ nhìn thấy nó.
-  const { data } = await refreshClient.post<AccessTokenResponse>('/auth/refresh')
-  if (authStore.getState().sessionId !== sessionId) throw new Error('Session changed during refresh')
-  authStore.getState().setTokens(data)
-  return data.access_token
+  if (refreshPromise?.sessionId === sessionId) return refreshPromise.promise
+  const pending = (async () => {
+    // The browser sends the httpOnly refresh cookie; no credential body is needed.
+    const { data } = await refreshClient.post<AccessTokenResponse>('/auth/refresh')
+    if (authStore.getState().sessionId !== sessionId) throw new Error('Session changed during refresh')
+    authStore.getState().setTokens(data)
+    return data.access_token
+  })().finally(() => {
+    if (refreshPromise?.promise === pending) refreshPromise = null
+  })
+  refreshPromise = { sessionId, promise: pending }
+  return pending
 }
 
 /** Đổi cookie phiên lấy một access token mới lúc khởi động ứng dụng.
@@ -92,13 +98,7 @@ api.interceptors.response.use(
       if (originalRequest._authSessionId !== undefined && originalRequest._authSessionId !== sessionId) return Promise.reject(error)
       originalRequest._retry = true
       try {
-        if (!refreshPromise || refreshPromise.sessionId !== sessionId) {
-          const pending = refreshAccessToken().finally(() => {
-            if (refreshPromise?.promise === pending) refreshPromise = null
-          })
-          refreshPromise = { sessionId, promise: pending }
-        }
-        const newAccessToken = await refreshPromise.promise
+        const newAccessToken = await refreshAccessToken()
         if (authStore.getState().sessionId !== sessionId) throw new Error('Session changed before retry')
         if (originalRequest.headers) {
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`

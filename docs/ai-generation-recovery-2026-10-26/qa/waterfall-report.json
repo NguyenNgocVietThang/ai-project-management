@@ -1,0 +1,1826 @@
+{
+  "mode": "waterfall",
+  "started": "2026-10-27T15:47:07.123Z",
+  "scenarios": [
+    {
+      "name": "login-and-cookie-only-reload",
+      "outcome": "PASS"
+    },
+    {
+      "name": "waterfall-en-1440",
+      "outcome": "PASS",
+      "job_id": "2",
+      "project_id": 2,
+      "requestMethodology": "waterfall",
+      "dbMethodology": "waterfall",
+      "phases": 3,
+      "tasks": 3,
+      "dependencies": 2,
+      "sprints": 0,
+      "providerDelta": 1
+    },
+    {
+      "name": "waterfall-en-390",
+      "outcome": "PASS",
+      "job_id": "3",
+      "project_id": 3,
+      "requestMethodology": "waterfall",
+      "dbMethodology": "waterfall",
+      "phases": 3,
+      "tasks": 3,
+      "dependencies": 2,
+      "sprints": 0,
+      "providerDelta": 1
+    },
+    {
+      "name": "waterfall-vi-1440",
+      "outcome": "PASS",
+      "job_id": "4",
+      "project_id": 4,
+      "requestMethodology": "waterfall",
+      "dbMethodology": "waterfall",
+      "phases": 3,
+      "tasks": 3,
+      "dependencies": 2,
+      "sprints": 0,
+      "providerDelta": 1
+    },
+    {
+      "name": "waterfall-vi-390",
+      "outcome": "PASS",
+      "job_id": "5",
+      "project_id": 5,
+      "requestMethodology": "waterfall",
+      "dbMethodology": "waterfall",
+      "phases": 3,
+      "tasks": 3,
+      "dependencies": 2,
+      "sprints": 0,
+      "providerDelta": 1
+    }
+  ],
+  "console": [
+    {
+      "label": "real-login",
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "location": {
+        "url": "http://127.0.0.1:3180/favicon.ico",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "label": "real-login",
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+      "location": {
+        "url": "http://127.0.0.1:3180/api/v1/auth/ws-ticket",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "label": "real-login",
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+      "location": {
+        "url": "http://127.0.0.1:3180/api/v1/auth/ws-ticket",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    }
+  ],
+  "network": [
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "at": 1793116086585
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/auth/login",
+      "status": 200,
+      "at": 1793116090247
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793116090251
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793116090967
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793116114542
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793116114542
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793116114542
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/dashboards/summary",
+      "at": 1793116114597
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793116114597
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 503,
+      "at": 1793116120789
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 503,
+      "at": 1793116120791
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793116121386
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793116122486
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793116122584
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/dashboards/summary",
+      "status": 200,
+      "at": 1793116124002
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793116124865
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793116142915
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793116143288
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793116143290
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793116143290
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793116143290
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793116143290
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793116143291
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793116144176
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793116144176
+    },
+    {
+      "label": "real-login",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793116144207
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793116144526
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793116144583
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793116144858
+    },
+    {
+      "label": "real-login",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793116144894
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793116148710
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793116149468
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793116149492
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793116149492
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793116149492
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793116149493
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793116149494
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793116150644
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793116150701
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793116151053
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793116151060
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793116151728
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793116151728
+    },
+    {
+      "label": "cookie-only-reload",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793116151728
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793116160812
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793116161634
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793116161663
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793116161664
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793116161665
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793116161666
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793116161666
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793116164030
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793116164200
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793116164349
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793116164428
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793116164430
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/4",
+      "at": 1793116164430
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793116164431
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793116165453
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/4",
+      "status": 200,
+      "at": 1793116165495
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/ai/generate-project-from-brief",
+      "at": 1793116166722,
+      "data": {
+        "brief_id": 4,
+        "methodology": "waterfall"
+      }
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/generate-project-from-brief",
+      "status": 202,
+      "at": 1793116167172
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793116167177
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/2",
+      "at": 1793116167177
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793116168226
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/2",
+      "status": 200,
+      "at": 1793116168316
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793116173213
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/2",
+      "at": 1793116173312
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793116173848
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/2",
+      "status": 200,
+      "at": 1793116174115
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793116174131
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793116174315
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/2",
+      "at": 1793116263702
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/2/unread-count",
+      "at": 1793116263702
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "response",
+      "path": "/api/v1/projects/2/unread-count",
+      "status": 200,
+      "at": 1793116264366
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "response",
+      "path": "/api/v1/projects/2",
+      "status": 200,
+      "at": 1793116264989
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/2/activity",
+      "at": 1793116265063
+    },
+    {
+      "label": "waterfall-en-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/dashboards/projects/2/stats",
+      "at": 1793116265063
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793116278498
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793116279701
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793116279868
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793116279869
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793116279870
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793116279870
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793116279872
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793116282437
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793116282648
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793116282648
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793116282826
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/5",
+      "at": 1793116282826
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793116282955
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793116283619
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793116284318
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/5",
+      "status": 200,
+      "at": 1793116285002
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/ai/generate-project-from-brief",
+      "at": 1793116287797,
+      "data": {
+        "brief_id": 5,
+        "methodology": "waterfall"
+      }
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "response",
+      "path": "/api/v1/ai/generate-project-from-brief",
+      "status": 202,
+      "at": 1793116289249
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793116289252
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/3",
+      "at": 1793116289252
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793116292446
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/3",
+      "status": 200,
+      "at": 1793116294718
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793116297152
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/3",
+      "at": 1793116299465
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793116307534
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/3",
+      "status": 200,
+      "at": 1793116307846
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793116307847
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793116309277
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/3",
+      "at": 1793116312082
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/3/unread-count",
+      "at": 1793116312082
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "response",
+      "path": "/api/v1/projects/3/unread-count",
+      "status": 200,
+      "at": 1793116314314
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "response",
+      "path": "/api/v1/projects/3",
+      "status": 200,
+      "at": 1793116314315
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/3/activity",
+      "at": 1793116314315
+    },
+    {
+      "label": "waterfall-en-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/dashboards/projects/3/stats",
+      "at": 1793116314315
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793116331674
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793116332861
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793116332861
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793116332861
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793116332861
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793116332861
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793116332861
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793116336309
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793116336311
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/6",
+      "at": 1793116336312
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793116336474
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793116336475
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793116336475
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793116337580
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793116337916
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/6",
+      "status": 200,
+      "at": 1793116337917
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/ai/generate-project-from-brief",
+      "at": 1793116339220,
+      "data": {
+        "brief_id": 6,
+        "methodology": "waterfall"
+      }
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "response",
+      "path": "/api/v1/ai/generate-project-from-brief",
+      "status": 202,
+      "at": 1793116340177
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793116340178
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/4",
+      "at": 1793116340179
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793116341042
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/4",
+      "status": 200,
+      "at": 1793116341062
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793116346046
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/4",
+      "at": 1793116346059
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793116346661
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/4",
+      "status": 200,
+      "at": 1793116346745
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793116346746
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793116347008
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/4",
+      "at": 1793116349339
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/4/unread-count",
+      "at": 1793116349339
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "response",
+      "path": "/api/v1/projects/4/unread-count",
+      "status": 200,
+      "at": 1793116350605
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "response",
+      "path": "/api/v1/projects/4",
+      "status": 200,
+      "at": 1793116350607
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/4/activity",
+      "at": 1793116350608
+    },
+    {
+      "label": "waterfall-vi-1440",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/dashboards/projects/4/stats",
+      "at": 1793116350609
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "at": 1793116358651
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "at": 1793116359652
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "at": 1793116359652
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/auth/ws-ticket",
+      "at": 1793116359653
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "at": 1793116359653
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793116359653
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/portfolios/",
+      "at": 1793116359653
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "at": 1793116361102
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793116361103
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/requirement-briefs/7",
+      "at": 1793116361104
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "response",
+      "path": "/api/v1/notifications/unread-count",
+      "status": 200,
+      "at": 1793116361200
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793116361201
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "response",
+      "path": "/api/v1/portfolios/",
+      "status": 200,
+      "at": 1793116361201
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793116361947
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "response",
+      "path": "/api/v1/requirement-briefs/7",
+      "status": 200,
+      "at": 1793116362015
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "response",
+      "path": "/api/v1/auth/ws-ticket",
+      "status": 200,
+      "at": 1793116362221
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "request",
+      "method": "POST",
+      "path": "/api/v1/ai/generate-project-from-brief",
+      "at": 1793116364009,
+      "data": {
+        "brief_id": 7,
+        "methodology": "waterfall"
+      }
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "response",
+      "path": "/api/v1/ai/generate-project-from-brief",
+      "status": 202,
+      "at": 1793116364475
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793116364507
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/5",
+      "at": 1793116364507
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793116365102
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/5",
+      "status": 200,
+      "at": 1793116365123
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "at": 1793116370123
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/ai/jobs/5",
+      "at": 1793116370124
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "response",
+      "path": "/api/v1/jobs",
+      "status": 200,
+      "at": 1793116370740
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "response",
+      "path": "/api/v1/ai/jobs/5",
+      "status": 200,
+      "at": 1793116370740
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/",
+      "at": 1793116370789
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "response",
+      "path": "/api/v1/projects/",
+      "status": 200,
+      "at": 1793116371375
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/5",
+      "at": 1793116373479
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/5/unread-count",
+      "at": 1793116373486
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "response",
+      "path": "/api/v1/projects/5/unread-count",
+      "status": 200,
+      "at": 1793116373877
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "response",
+      "path": "/api/v1/projects/5",
+      "status": 200,
+      "at": 1793116374021
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/projects/5/activity",
+      "at": 1793116374069
+    },
+    {
+      "label": "waterfall-vi-390",
+      "event": "request",
+      "method": "GET",
+      "path": "/api/v1/dashboards/projects/5/stats",
+      "at": 1793116374069
+    }
+  ],
+  "screenshots": [
+    "screenshots/waterfall-en-1440-confirmed-selector.png",
+    "screenshots/waterfall-en-1440-persisted-badge.png",
+    "screenshots/waterfall-en-390-confirmed-selector.png",
+    "screenshots/waterfall-en-390-persisted-badge.png",
+    "screenshots/waterfall-vi-1440-confirmed-selector.png",
+    "screenshots/waterfall-vi-1440-persisted-badge.png",
+    "screenshots/waterfall-vi-390-confirmed-selector.png",
+    "screenshots/waterfall-vi-390-persisted-badge.png"
+  ],
+  "dbEvidence": [
+    {
+      "scenario": "waterfall-en-1440",
+      "requestBody": {
+        "brief_id": 4,
+        "methodology": "waterfall"
+      },
+      "accepted": {
+        "job_id": "2",
+        "status": "PENDING",
+        "message": "Project generation queued"
+      },
+      "aiRequest": {
+        "id": 2,
+        "user_id": 1,
+        "request_type": "PROJECT_GENERATE",
+        "status": "COMPLETED",
+        "project_id": 2,
+        "input_data_json": {
+          "brief_id": 4,
+          "methodology": "waterfall"
+        }
+      },
+      "durableJob": {
+        "id": 2,
+        "kind": "ai.project_generate",
+        "owner_id": 1,
+        "project_id": 2,
+        "status": "succeeded",
+        "attempts": 1,
+        "request_dispatched": true,
+        "request_dispatched_at": "2026-10-27T15:49:28.544626"
+      },
+      "project": {
+        "id": 2,
+        "name": "QA Recovery Waterfall",
+        "pm_id": 1,
+        "methodology": "waterfall",
+        "start_date": "2026-10-27",
+        "end_date": "2026-11-26"
+      },
+      "phases": [
+        {
+          "id": 4,
+          "project_id": 2,
+          "name": "Requirements"
+        },
+        {
+          "id": 5,
+          "project_id": 2,
+          "name": "Implementation"
+        },
+        {
+          "id": 6,
+          "project_id": 2,
+          "name": "Verification"
+        }
+      ],
+      "tasks": [
+        {
+          "id": 4,
+          "project_id": 2,
+          "phase_id": 4,
+          "name": "Approve requirements",
+          "estimated_hours": 8,
+          "start_date": null
+        },
+        {
+          "id": 5,
+          "project_id": 2,
+          "phase_id": 5,
+          "name": "Implement solution",
+          "estimated_hours": 16,
+          "start_date": null
+        },
+        {
+          "id": 6,
+          "project_id": 2,
+          "phase_id": 6,
+          "name": "Acceptance verification",
+          "estimated_hours": 8,
+          "start_date": null
+        }
+      ],
+      "dependencies": [
+        {
+          "id": 3,
+          "predecessor_id": 4,
+          "successor_id": 5,
+          "dependency_type": "FS",
+          "lag_days": 0
+        },
+        {
+          "id": 4,
+          "predecessor_id": 5,
+          "successor_id": 6,
+          "dependency_type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "sprintCount": 0,
+      "providerDispatchDelta": 1,
+      "countDelta": {
+        "jobs": 1,
+        "aiRequests": 1,
+        "projects": 1
+      }
+    },
+    {
+      "scenario": "waterfall-en-390",
+      "requestBody": {
+        "brief_id": 5,
+        "methodology": "waterfall"
+      },
+      "accepted": {
+        "job_id": "3",
+        "status": "PENDING",
+        "message": "Project generation queued"
+      },
+      "aiRequest": {
+        "id": 3,
+        "user_id": 1,
+        "request_type": "PROJECT_GENERATE",
+        "status": "COMPLETED",
+        "project_id": 3,
+        "input_data_json": {
+          "brief_id": 5,
+          "methodology": "waterfall"
+        }
+      },
+      "durableJob": {
+        "id": 3,
+        "kind": "ai.project_generate",
+        "owner_id": 1,
+        "project_id": 3,
+        "status": "succeeded",
+        "attempts": 1,
+        "request_dispatched": true,
+        "request_dispatched_at": "2026-10-27T15:51:35.208846"
+      },
+      "project": {
+        "id": 3,
+        "name": "QA Recovery Waterfall",
+        "pm_id": 1,
+        "methodology": "waterfall",
+        "start_date": "2026-10-27",
+        "end_date": "2026-11-26"
+      },
+      "phases": [
+        {
+          "id": 7,
+          "project_id": 3,
+          "name": "Requirements"
+        },
+        {
+          "id": 8,
+          "project_id": 3,
+          "name": "Implementation"
+        },
+        {
+          "id": 9,
+          "project_id": 3,
+          "name": "Verification"
+        }
+      ],
+      "tasks": [
+        {
+          "id": 7,
+          "project_id": 3,
+          "phase_id": 7,
+          "name": "Approve requirements",
+          "estimated_hours": 8,
+          "start_date": null
+        },
+        {
+          "id": 8,
+          "project_id": 3,
+          "phase_id": 8,
+          "name": "Implement solution",
+          "estimated_hours": 16,
+          "start_date": null
+        },
+        {
+          "id": 9,
+          "project_id": 3,
+          "phase_id": 9,
+          "name": "Acceptance verification",
+          "estimated_hours": 8,
+          "start_date": null
+        }
+      ],
+      "dependencies": [
+        {
+          "id": 5,
+          "predecessor_id": 7,
+          "successor_id": 8,
+          "dependency_type": "FS",
+          "lag_days": 0
+        },
+        {
+          "id": 6,
+          "predecessor_id": 8,
+          "successor_id": 9,
+          "dependency_type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "sprintCount": 0,
+      "providerDispatchDelta": 1,
+      "countDelta": {
+        "jobs": 1,
+        "aiRequests": 1,
+        "projects": 1
+      }
+    },
+    {
+      "scenario": "waterfall-vi-1440",
+      "requestBody": {
+        "brief_id": 6,
+        "methodology": "waterfall"
+      },
+      "accepted": {
+        "job_id": "4",
+        "status": "PENDING",
+        "message": "Project generation queued"
+      },
+      "aiRequest": {
+        "id": 4,
+        "user_id": 1,
+        "request_type": "PROJECT_GENERATE",
+        "status": "COMPLETED",
+        "project_id": 4,
+        "input_data_json": {
+          "brief_id": 6,
+          "methodology": "waterfall"
+        }
+      },
+      "durableJob": {
+        "id": 4,
+        "kind": "ai.project_generate",
+        "owner_id": 1,
+        "project_id": 4,
+        "status": "succeeded",
+        "attempts": 1,
+        "request_dispatched": true,
+        "request_dispatched_at": "2026-10-27T15:52:21.541056"
+      },
+      "project": {
+        "id": 4,
+        "name": "QA Recovery Waterfall",
+        "pm_id": 1,
+        "methodology": "waterfall",
+        "start_date": "2026-10-27",
+        "end_date": "2026-11-26"
+      },
+      "phases": [
+        {
+          "id": 10,
+          "project_id": 4,
+          "name": "Requirements"
+        },
+        {
+          "id": 11,
+          "project_id": 4,
+          "name": "Implementation"
+        },
+        {
+          "id": 12,
+          "project_id": 4,
+          "name": "Verification"
+        }
+      ],
+      "tasks": [
+        {
+          "id": 10,
+          "project_id": 4,
+          "phase_id": 10,
+          "name": "Approve requirements",
+          "estimated_hours": 8,
+          "start_date": null
+        },
+        {
+          "id": 11,
+          "project_id": 4,
+          "phase_id": 11,
+          "name": "Implement solution",
+          "estimated_hours": 16,
+          "start_date": null
+        },
+        {
+          "id": 12,
+          "project_id": 4,
+          "phase_id": 12,
+          "name": "Acceptance verification",
+          "estimated_hours": 8,
+          "start_date": null
+        }
+      ],
+      "dependencies": [
+        {
+          "id": 7,
+          "predecessor_id": 10,
+          "successor_id": 11,
+          "dependency_type": "FS",
+          "lag_days": 0
+        },
+        {
+          "id": 8,
+          "predecessor_id": 11,
+          "successor_id": 12,
+          "dependency_type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "sprintCount": 0,
+      "providerDispatchDelta": 1,
+      "countDelta": {
+        "jobs": 1,
+        "aiRequests": 1,
+        "projects": 1
+      }
+    },
+    {
+      "scenario": "waterfall-vi-390",
+      "requestBody": {
+        "brief_id": 7,
+        "methodology": "waterfall"
+      },
+      "accepted": {
+        "job_id": "5",
+        "status": "PENDING",
+        "message": "Project generation queued"
+      },
+      "aiRequest": {
+        "id": 5,
+        "user_id": 1,
+        "request_type": "PROJECT_GENERATE",
+        "status": "COMPLETED",
+        "project_id": 5,
+        "input_data_json": {
+          "brief_id": 7,
+          "methodology": "waterfall"
+        }
+      },
+      "durableJob": {
+        "id": 5,
+        "kind": "ai.project_generate",
+        "owner_id": 1,
+        "project_id": 5,
+        "status": "succeeded",
+        "attempts": 1,
+        "request_dispatched": true,
+        "request_dispatched_at": "2026-10-27T15:52:45.632704"
+      },
+      "project": {
+        "id": 5,
+        "name": "QA Recovery Waterfall",
+        "pm_id": 1,
+        "methodology": "waterfall",
+        "start_date": "2026-10-27",
+        "end_date": "2026-11-26"
+      },
+      "phases": [
+        {
+          "id": 13,
+          "project_id": 5,
+          "name": "Requirements"
+        },
+        {
+          "id": 14,
+          "project_id": 5,
+          "name": "Implementation"
+        },
+        {
+          "id": 15,
+          "project_id": 5,
+          "name": "Verification"
+        }
+      ],
+      "tasks": [
+        {
+          "id": 13,
+          "project_id": 5,
+          "phase_id": 13,
+          "name": "Approve requirements",
+          "estimated_hours": 8,
+          "start_date": null
+        },
+        {
+          "id": 14,
+          "project_id": 5,
+          "phase_id": 14,
+          "name": "Implement solution",
+          "estimated_hours": 16,
+          "start_date": null
+        },
+        {
+          "id": 15,
+          "project_id": 5,
+          "phase_id": 15,
+          "name": "Acceptance verification",
+          "estimated_hours": 8,
+          "start_date": null
+        }
+      ],
+      "dependencies": [
+        {
+          "id": 9,
+          "predecessor_id": 13,
+          "successor_id": 14,
+          "dependency_type": "FS",
+          "lag_days": 0
+        },
+        {
+          "id": 10,
+          "predecessor_id": 14,
+          "successor_id": 15,
+          "dependency_type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "sprintCount": 0,
+      "providerDispatchDelta": 1,
+      "countDelta": {
+        "jobs": 1,
+        "aiRequests": 1,
+        "projects": 1
+      }
+    }
+  ],
+  "outcome": "PASS",
+  "finished": "2026-10-27T15:52:54.557Z",
+  "sourceScreenshotCount": 10,
+  "evidenceExport": {
+    "source": "waterfall-report.json",
+    "sanitized": true,
+    "screenshots": "Selected original screenshots; no image modification"
+  }
+}

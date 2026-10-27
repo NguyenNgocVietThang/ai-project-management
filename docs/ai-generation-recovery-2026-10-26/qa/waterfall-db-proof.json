@@ -1,0 +1,434 @@
+{
+  "source": "Real HTTP body and isolated database rows read after real durable worker completion",
+  "provider": "deterministic fixture boundary only",
+  "cases": [
+    {
+      "scenario": "waterfall-en-1440",
+      "requestBody": {
+        "brief_id": 4,
+        "methodology": "waterfall"
+      },
+      "accepted": {
+        "job_id": "2",
+        "status": "PENDING",
+        "message": "Project generation queued"
+      },
+      "aiRequest": {
+        "id": 2,
+        "user_id": 1,
+        "request_type": "PROJECT_GENERATE",
+        "status": "COMPLETED",
+        "project_id": 2,
+        "input_data_json": {
+          "brief_id": 4,
+          "methodology": "waterfall"
+        }
+      },
+      "durableJob": {
+        "id": 2,
+        "kind": "ai.project_generate",
+        "owner_id": 1,
+        "project_id": 2,
+        "status": "succeeded",
+        "attempts": 1,
+        "request_dispatched": true,
+        "request_dispatched_at": "2026-10-27T15:49:28.544626"
+      },
+      "project": {
+        "id": 2,
+        "name": "QA Recovery Waterfall",
+        "pm_id": 1,
+        "methodology": "waterfall",
+        "start_date": "2026-10-27",
+        "end_date": "2026-11-26"
+      },
+      "phases": [
+        {
+          "id": 4,
+          "project_id": 2,
+          "name": "Requirements"
+        },
+        {
+          "id": 5,
+          "project_id": 2,
+          "name": "Implementation"
+        },
+        {
+          "id": 6,
+          "project_id": 2,
+          "name": "Verification"
+        }
+      ],
+      "tasks": [
+        {
+          "id": 4,
+          "project_id": 2,
+          "phase_id": 4,
+          "name": "Approve requirements",
+          "estimated_hours": 8,
+          "start_date": null
+        },
+        {
+          "id": 5,
+          "project_id": 2,
+          "phase_id": 5,
+          "name": "Implement solution",
+          "estimated_hours": 16,
+          "start_date": null
+        },
+        {
+          "id": 6,
+          "project_id": 2,
+          "phase_id": 6,
+          "name": "Acceptance verification",
+          "estimated_hours": 8,
+          "start_date": null
+        }
+      ],
+      "dependencies": [
+        {
+          "id": 3,
+          "predecessor_id": 4,
+          "successor_id": 5,
+          "dependency_type": "FS",
+          "lag_days": 0
+        },
+        {
+          "id": 4,
+          "predecessor_id": 5,
+          "successor_id": 6,
+          "dependency_type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "sprintCount": 0,
+      "providerDispatchDelta": 1,
+      "countDelta": {
+        "jobs": 1,
+        "aiRequests": 1,
+        "projects": 1
+      }
+    },
+    {
+      "scenario": "waterfall-en-390",
+      "requestBody": {
+        "brief_id": 5,
+        "methodology": "waterfall"
+      },
+      "accepted": {
+        "job_id": "3",
+        "status": "PENDING",
+        "message": "Project generation queued"
+      },
+      "aiRequest": {
+        "id": 3,
+        "user_id": 1,
+        "request_type": "PROJECT_GENERATE",
+        "status": "COMPLETED",
+        "project_id": 3,
+        "input_data_json": {
+          "brief_id": 5,
+          "methodology": "waterfall"
+        }
+      },
+      "durableJob": {
+        "id": 3,
+        "kind": "ai.project_generate",
+        "owner_id": 1,
+        "project_id": 3,
+        "status": "succeeded",
+        "attempts": 1,
+        "request_dispatched": true,
+        "request_dispatched_at": "2026-10-27T15:51:35.208846"
+      },
+      "project": {
+        "id": 3,
+        "name": "QA Recovery Waterfall",
+        "pm_id": 1,
+        "methodology": "waterfall",
+        "start_date": "2026-10-27",
+        "end_date": "2026-11-26"
+      },
+      "phases": [
+        {
+          "id": 7,
+          "project_id": 3,
+          "name": "Requirements"
+        },
+        {
+          "id": 8,
+          "project_id": 3,
+          "name": "Implementation"
+        },
+        {
+          "id": 9,
+          "project_id": 3,
+          "name": "Verification"
+        }
+      ],
+      "tasks": [
+        {
+          "id": 7,
+          "project_id": 3,
+          "phase_id": 7,
+          "name": "Approve requirements",
+          "estimated_hours": 8,
+          "start_date": null
+        },
+        {
+          "id": 8,
+          "project_id": 3,
+          "phase_id": 8,
+          "name": "Implement solution",
+          "estimated_hours": 16,
+          "start_date": null
+        },
+        {
+          "id": 9,
+          "project_id": 3,
+          "phase_id": 9,
+          "name": "Acceptance verification",
+          "estimated_hours": 8,
+          "start_date": null
+        }
+      ],
+      "dependencies": [
+        {
+          "id": 5,
+          "predecessor_id": 7,
+          "successor_id": 8,
+          "dependency_type": "FS",
+          "lag_days": 0
+        },
+        {
+          "id": 6,
+          "predecessor_id": 8,
+          "successor_id": 9,
+          "dependency_type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "sprintCount": 0,
+      "providerDispatchDelta": 1,
+      "countDelta": {
+        "jobs": 1,
+        "aiRequests": 1,
+        "projects": 1
+      }
+    },
+    {
+      "scenario": "waterfall-vi-1440",
+      "requestBody": {
+        "brief_id": 6,
+        "methodology": "waterfall"
+      },
+      "accepted": {
+        "job_id": "4",
+        "status": "PENDING",
+        "message": "Project generation queued"
+      },
+      "aiRequest": {
+        "id": 4,
+        "user_id": 1,
+        "request_type": "PROJECT_GENERATE",
+        "status": "COMPLETED",
+        "project_id": 4,
+        "input_data_json": {
+          "brief_id": 6,
+          "methodology": "waterfall"
+        }
+      },
+      "durableJob": {
+        "id": 4,
+        "kind": "ai.project_generate",
+        "owner_id": 1,
+        "project_id": 4,
+        "status": "succeeded",
+        "attempts": 1,
+        "request_dispatched": true,
+        "request_dispatched_at": "2026-10-27T15:52:21.541056"
+      },
+      "project": {
+        "id": 4,
+        "name": "QA Recovery Waterfall",
+        "pm_id": 1,
+        "methodology": "waterfall",
+        "start_date": "2026-10-27",
+        "end_date": "2026-11-26"
+      },
+      "phases": [
+        {
+          "id": 10,
+          "project_id": 4,
+          "name": "Requirements"
+        },
+        {
+          "id": 11,
+          "project_id": 4,
+          "name": "Implementation"
+        },
+        {
+          "id": 12,
+          "project_id": 4,
+          "name": "Verification"
+        }
+      ],
+      "tasks": [
+        {
+          "id": 10,
+          "project_id": 4,
+          "phase_id": 10,
+          "name": "Approve requirements",
+          "estimated_hours": 8,
+          "start_date": null
+        },
+        {
+          "id": 11,
+          "project_id": 4,
+          "phase_id": 11,
+          "name": "Implement solution",
+          "estimated_hours": 16,
+          "start_date": null
+        },
+        {
+          "id": 12,
+          "project_id": 4,
+          "phase_id": 12,
+          "name": "Acceptance verification",
+          "estimated_hours": 8,
+          "start_date": null
+        }
+      ],
+      "dependencies": [
+        {
+          "id": 7,
+          "predecessor_id": 10,
+          "successor_id": 11,
+          "dependency_type": "FS",
+          "lag_days": 0
+        },
+        {
+          "id": 8,
+          "predecessor_id": 11,
+          "successor_id": 12,
+          "dependency_type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "sprintCount": 0,
+      "providerDispatchDelta": 1,
+      "countDelta": {
+        "jobs": 1,
+        "aiRequests": 1,
+        "projects": 1
+      }
+    },
+    {
+      "scenario": "waterfall-vi-390",
+      "requestBody": {
+        "brief_id": 7,
+        "methodology": "waterfall"
+      },
+      "accepted": {
+        "job_id": "5",
+        "status": "PENDING",
+        "message": "Project generation queued"
+      },
+      "aiRequest": {
+        "id": 5,
+        "user_id": 1,
+        "request_type": "PROJECT_GENERATE",
+        "status": "COMPLETED",
+        "project_id": 5,
+        "input_data_json": {
+          "brief_id": 7,
+          "methodology": "waterfall"
+        }
+      },
+      "durableJob": {
+        "id": 5,
+        "kind": "ai.project_generate",
+        "owner_id": 1,
+        "project_id": 5,
+        "status": "succeeded",
+        "attempts": 1,
+        "request_dispatched": true,
+        "request_dispatched_at": "2026-10-27T15:52:45.632704"
+      },
+      "project": {
+        "id": 5,
+        "name": "QA Recovery Waterfall",
+        "pm_id": 1,
+        "methodology": "waterfall",
+        "start_date": "2026-10-27",
+        "end_date": "2026-11-26"
+      },
+      "phases": [
+        {
+          "id": 13,
+          "project_id": 5,
+          "name": "Requirements"
+        },
+        {
+          "id": 14,
+          "project_id": 5,
+          "name": "Implementation"
+        },
+        {
+          "id": 15,
+          "project_id": 5,
+          "name": "Verification"
+        }
+      ],
+      "tasks": [
+        {
+          "id": 13,
+          "project_id": 5,
+          "phase_id": 13,
+          "name": "Approve requirements",
+          "estimated_hours": 8,
+          "start_date": null
+        },
+        {
+          "id": 14,
+          "project_id": 5,
+          "phase_id": 14,
+          "name": "Implement solution",
+          "estimated_hours": 16,
+          "start_date": null
+        },
+        {
+          "id": 15,
+          "project_id": 5,
+          "phase_id": 15,
+          "name": "Acceptance verification",
+          "estimated_hours": 8,
+          "start_date": null
+        }
+      ],
+      "dependencies": [
+        {
+          "id": 9,
+          "predecessor_id": 13,
+          "successor_id": 14,
+          "dependency_type": "FS",
+          "lag_days": 0
+        },
+        {
+          "id": 10,
+          "predecessor_id": 14,
+          "successor_id": 15,
+          "dependency_type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "sprintCount": 0,
+      "providerDispatchDelta": 1,
+      "countDelta": {
+        "jobs": 1,
+        "aiRequests": 1,
+        "projects": 1
+      }
+    }
+  ]
+}

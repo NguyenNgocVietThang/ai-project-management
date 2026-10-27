@@ -1,0 +1,151 @@
+{
+  "sanitization": {
+    "removedOrRedactedPaths": [],
+    "reportCredentialFields": "No password, cookie, authorization/header, storageState or token fields exported",
+    "excluded": [
+      "runtime SQLite databases",
+      "fixture.json",
+      "browser storageState",
+      "backend logs",
+      "cookie jars"
+    ],
+    "screenshots": "Byte-for-byte copies of synthetic QA UI screenshots"
+  },
+  "files": [
+    {
+      "file": "screenshots/account-b-after-old-a-me-same-document.png",
+      "sha256": "8f2a0c063ac8606bcffdcd9d7b3aadeca9ccc267d5505afdedddaebb5c3019fd",
+      "bytes": 811865
+    },
+    {
+      "file": "screenshots/restore-vi-390-completed.png",
+      "sha256": "645d6c1e66e1d01e26be0589c1eca56e781585a71014437b02ee75da7bb4a89e",
+      "bytes": 122810
+    },
+    {
+      "file": "screenshots/states-en-1440-long-wait-120s.png",
+      "sha256": "ea60ffb82449ea7bbf56a7298de4d68b80b628025725c06bf740974dfc0b9232",
+      "bytes": 539203
+    },
+    {
+      "file": "screenshots/states-vi-390-offline.png",
+      "sha256": "e98cca151363e8c7ad99ed3b9e64ebcfe0603dc679637ffcbb66dda63377b2a7",
+      "bytes": 126164
+    },
+    {
+      "file": "screenshots/waterfall-en-1440-confirmed-selector.png",
+      "sha256": "cced3bca00e9f45076c4c47a99c57d7f6644efb11884151ee14c601078a12cd4",
+      "bytes": 460147
+    },
+    {
+      "file": "screenshots/waterfall-en-1440-persisted-badge.png",
+      "sha256": "c42c05ea7c08a110145ba1a4139f4a845308c314c0fe66c52ce342cf57a7962e",
+      "bytes": 430450
+    },
+    {
+      "file": "screenshots/waterfall-en-390-confirmed-selector.png",
+      "sha256": "dd24b0bcdb1843b4dbb8c1e437430cd2114578587a7643d1e288ffdd036600d2",
+      "bytes": 138945
+    },
+    {
+      "file": "screenshots/waterfall-en-390-persisted-badge.png",
+      "sha256": "d3e737008aed2e412bc7de502028be2a2f1b498957addc053a8f05446b8effef",
+      "bytes": 177919
+    },
+    {
+      "file": "screenshots/waterfall-vi-1440-confirmed-selector.png",
+      "sha256": "26a16f78d9372812b2c204dd71739ae072b1c998c98ed07d3240a6f8269ea60c",
+      "bytes": 347748
+    },
+    {
+      "file": "screenshots/waterfall-vi-1440-persisted-badge.png",
+      "sha256": "076a049fd34584724b222b89d9869d7966f9a9a5e60d956f39c21cfc6ee86225",
+      "bytes": 436390
+    },
+    {
+      "file": "screenshots/waterfall-vi-390-confirmed-selector.png",
+      "sha256": "8d4f544a9fd47dde96bb7cbd56b9c98441f2178e4be48d2c288ab443d3485227",
+      "bytes": 193047
+    },
+    {
+      "file": "screenshots/waterfall-vi-390-persisted-badge.png",
+      "sha256": "c7303814fe617ae4a0b48684a3acefe325027682a388764e1304fae437d53b56",
+      "bytes": 182994
+    },
+    {
+      "file": "restore-report.json",
+      "sha256": "47123d9730d8a2bda8ea5439acc1d73f0d10bbc3e2494b3dae084bbe7df40f95",
+      "bytes": 37849
+    },
+    {
+      "file": "states-report.json",
+      "sha256": "0995f5b59095166f4ad9156a8e09a01b18f9b810cb08ca4375f23d28362e848a",
+      "bytes": 86127
+    },
+    {
+      "file": "account-report.json",
+      "sha256": "e11beaf977d885aa5f0a562f9b85d12050acdf0d41fe72829ec3162efdeb3e01",
+      "bytes": 15469
+    },
+    {
+      "file": "waterfall-report.json",
+      "sha256": "4a044467f723dc146c3564c16d28ceac56e1c55e8ac81b00a3716b1b488c47d6",
+      "bytes": 44332
+    },
+    {
+      "file": "waterfall-db-proof.json",
+      "sha256": "daeaaf81a2ca2f6ce8977ed1450a0c2cd34eaa9ff2717f416e75f9988ed86732",
+      "bytes": 10559
+    },
+    {
+      "file": "harness/backend_harness.py",
+      "sha256": "d68e705c73c701159ec130ba646d08c07e68ab6fae2e36bd9a728a11e3f855f6",
+      "bytes": 15677
+    },
+    {
+      "file": "harness/smoke_backend.py",
+      "sha256": "0f3c415ce63e903ae4cce4fa7298dd99dc74e02c1d7e4c7d9f1ff97077a15ee8",
+      "bytes": 5898
+    },
+    {
+      "file": "harness/browser_qa.cjs",
+      "sha256": "4eda24d09400d8f3ea30736fd918a66f163dab38d232a439c6fab6cd33e76ae9",
+      "bytes": 12223
+    },
+    {
+      "file": "harness/browser_status_matrix.cjs",
+      "sha256": "a3d1772361a555caadab8bd7b93b92f1f574501cda1940e8cd6c262c143f4365",
+      "bytes": 5331
+    },
+    {
+      "file": "harness/browser_account_boundary.cjs",
+      "sha256": "eee230edb10a289c1982bb3893319a19f10e540e1a5a7a39d42deefa9d728d5f",
+      "bytes": 3749
+    },
+    {
+      "file": "harness/browser_waterfall.cjs",
+      "sha256": "755fa36e9de300d9bb4cd8d43d56c8d0879472735112604b7b34b20713924153",
+      "bytes": 5452
+    },
+    {
+      "file": "harness/start_native_chrome.ps1",
+      "sha256": "85d54767d5d2199f3883989b21828d97cd1318f027addcc45f35ae0bf2396003",
+      "bytes": 1087
+    },
+    {
+      "file": "harness/.gitignore",
+      "sha256": "96d43e50ef5937ee14930dfd3ee7386ee380e2551dd65c80460fcab2c43a3c86",
+      "bytes": 89
+    },
+    {
+      "file": "README.md",
+      "sha256": "ce7c9b3365d4906a993bbe053e3369d8c56647278575d0d1ffef66c338f878b8",
+      "bytes": 9019
+    },
+    {
+      "file": "waterfall-startup-diagnostics.json",
+      "sha256": "478264cb70bfac7e9250fcbebe1110ccf9a61192c165f76740ac7672b5fcae7e",
+      "bytes": 2210
+    }
+  ]
+}

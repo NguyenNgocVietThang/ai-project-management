@@ -1,0 +1,14 @@
+node node_modules/vitest/vitest.mjs run src/hooks/useAuth.test.tsx src/features/jobs/hooks src/features/ai/components/AIGeneratorModal.test.tsx src/features/ai/components/AIGeneratorRecovery.test.tsx src/app/(dashboard)/layout.test.tsx src/services/api.test.ts src/services/auth.service.test.ts src/i18n/catalog.test.ts --pool=threads --maxWorkers=1 --testTimeout=15000
+
+ RUN  v5.0.0 C:/BA/AI Project Planning & Portfolio Management system/frontend
+
+
+ Test Files  10 passed (10)
+      Tests  92 passed (92)
+   Start at  22:59:31
+   Duration  64.67s (environment 54%, tests 19%, setup 17%, import 7%, transform 3%, worker 1%)
+
+    Isolate  10 workers spawned · ~3.55s startup each (spawn + environment, per file)
+             at least ~31.95s faster with isolate: false — reuses workers across files instead of one per file
+
+Exit code: 0

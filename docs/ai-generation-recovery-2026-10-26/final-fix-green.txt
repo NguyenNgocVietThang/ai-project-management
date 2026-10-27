@@ -1,0 +1,12 @@
+
+ RUN  v5.0.0 C:/BA/AI Project Planning & Portfolio Management system/frontend
+
+
+ Test Files  9 passed (9)
+      Tests  67 passed (67)
+   Start at  23:06:43
+   Duration  39.84s (environment 60%, setup 19%, tests 10%, import 7%, transform 3%, worker 1%)
+
+    Isolate  9 workers spawned · ~2.74s startup each (spawn + environment, per file)
+             at least ~21.93s faster with isolate: false — reuses workers across files instead of one per file
+
