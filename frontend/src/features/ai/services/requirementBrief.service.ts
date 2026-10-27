@@ -1,5 +1,6 @@
 import { api } from '@/services/api'
 import type { AIJobResponse } from '@/types/ai.types'
+import type { ProjectMethodology } from '@/types/project.types'
 import type {
   BriefItemKey,
   ItemUpdate,
@@ -47,8 +48,8 @@ export const requirementBriefService = {
     const { data } = await api.post<RequirementBriefDetail>(`/requirement-briefs/${id}/finalize`)
     return data
   },
-  async generateProject(briefId: number): Promise<AIJobResponse> {
-    const { data } = await api.post<AIJobResponse>('/ai/generate-project-from-brief', { brief_id: briefId })
+  async generateProject(briefId: number, methodology: ProjectMethodology): Promise<AIJobResponse> {
+    const { data } = await api.post<AIJobResponse>('/ai/generate-project-from-brief', { brief_id: briefId, methodology })
     return data
   },
 }

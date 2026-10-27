@@ -613,6 +613,13 @@
       "brief_not_found": "Hồ sơ này không còn tồn tại.",
       "brief_not_ready": "Hồ sơ chưa sẵn sàng để tạo dự án.",
       "brief_generation_pending": "Dự án đang được tạo từ hồ sơ này."
+    },
+    "methodologyLabel": "Phương pháp quản lý dự án",
+    "methodologyHint": "Xác nhận phương pháp trước khi tạo dự án. AI sẽ giữ lựa chọn này.",
+    "methodologyChoices": {
+      "agile": "Linh hoạt (Agile)",
+      "waterfall": "Thác nước (Waterfall)",
+      "hybrid": "Kết hợp (Hybrid)"
     }
   },
   "versions": {

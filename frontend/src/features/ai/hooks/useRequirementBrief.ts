@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '@/store/authStore'
+import type { ProjectMethodology } from '@/types/project.types'
 import { durableJobKeys } from '@/features/jobs/hooks/useJobs'
 import { requirementBriefService } from '@/features/ai/services/requirementBrief.service'
 import type {
@@ -141,7 +142,7 @@ export function useBriefActions() {
     }),
     // "Bỏ qua, tạo luôn" hoặc "Tạo dự án": chốt hồ sơ rồi xếp job sinh dự án.
     generate: useMutation({
-      mutationFn: async ({ id, mode }: { id: number; mode: 'skip' | 'finalize' | 'ready' }) => {
+      mutationFn: async ({ id, mode, methodology }: { id: number; mode: 'skip' | 'finalize' | 'ready'; methodology: ProjectMethodology }) => {
         // Hồ sơ đã ở trạng thái ready (ví dụ tải lại trang sau khi chốt) thì sinh luôn.
         if (mode !== 'ready') {
           const brief = mode === 'skip' ? await requirementBriefService.skip(id) : await requirementBriefService.finalize(id)
@@ -151,7 +152,7 @@ export function useBriefActions() {
         if (current.user?.id !== ownerId || current.sessionId !== sessionId || !current.accessToken) {
           throw new Error('Brief session is no longer active')
         }
-        return requirementBriefService.generateProject(id)
+        return requirementBriefService.generateProject(id, methodology)
       },
       onSuccess: () => { void client.invalidateQueries({ queryKey: durableJobKeys.all }) },
     }),

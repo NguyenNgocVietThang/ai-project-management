@@ -613,6 +613,13 @@
       "brief_not_found": "This brief no longer exists.",
       "brief_not_ready": "The brief is not ready for generation yet.",
       "brief_generation_pending": "A project is already being generated from this brief."
+    },
+    "methodologyLabel": "Project methodology",
+    "methodologyHint": "Confirm the approach before creating your project. AI will keep this choice.",
+    "methodologyChoices": {
+      "agile": "Agile",
+      "waterfall": "Waterfall",
+      "hybrid": "Hybrid"
     }
   },
   "versions": {

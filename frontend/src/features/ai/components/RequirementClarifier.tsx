@@ -8,6 +8,8 @@ import { Alert } from '@/components/common/Alert'
 import { Button } from '@/components/common/Button'
 import { Label } from '@/components/common/Label'
 import { Badge } from '@/components/ui/Badge'
+import { Select } from '@/components/ui/Select'
+import type { ProjectMethodology } from '@/types/project.types'
 import { Skeleton, SkeletonRegion, SkeletonText } from '@/components/ui/Skeleton'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
@@ -216,6 +218,7 @@ function BriefView({ brief, onGenerated }: { brief: RequirementBriefDetail; onGe
   const actions = useBriefActions()
   const answerId = useId()
   const [answer, setAnswer] = useState('')
+  const [methodology, setMethodology] = useState<ProjectMethodology>('agile')
   const running = isTurnRunning(brief)
   const failed = isTurnFailed(brief)
   const clarifying = brief.status === 'clarifying'
@@ -236,7 +239,7 @@ function BriefView({ brief, onGenerated }: { brief: RequirementBriefDetail; onGe
 
   const generate = async (mode: 'skip' | 'finalize') => {
     try {
-      const res = await actions.generate.mutateAsync({ id: brief.id, mode: brief.status === 'ready' ? 'ready' : mode })
+      const res = await actions.generate.mutateAsync({ id: brief.id, mode: brief.status === 'ready' ? 'ready' : mode, methodology })
       onGenerated(res.job_id)
     } catch {
       // Lỗi hiển thị bên dưới.
@@ -306,17 +309,34 @@ function BriefView({ brief, onGenerated }: { brief: RequirementBriefDetail; onGe
 
       <ErrorNotice error={actions.generate.error} />
       {brief.status !== 'consumed' && (
-        <div className="flex flex-col-reverse gap-3 border-t pt-4 sm:flex-row sm:justify-end">
-          {clarifying && (
-            <Button type="button" variant="outline" fullWidth={false} className="w-full sm:w-auto" disabled={running}
-              isLoading={actions.generate.isPending} onClick={() => void generate('skip')}>{t('skipAndGenerate')}</Button>
-          )}
-          {(brief.can_finalize || brief.status === 'ready') && (
-            <Button type="button" fullWidth={false} className="w-full sm:w-auto" disabled={running}
-              isLoading={actions.generate.isPending} onClick={() => void generate('finalize')}>
-              {!actions.generate.isPending && <Sparkles className="h-4 w-4" aria-hidden="true" />} {t('createProject')}
-            </Button>
-          )}
+        <div className="space-y-3 border-t pt-4">
+          <div className="space-y-2">
+            <Label htmlFor={`${answerId}-methodology`}>{t('methodologyLabel')}</Label>
+            <Select
+              id={`${answerId}-methodology`}
+              value={methodology}
+              onChange={(event) => setMethodology(event.target.value as ProjectMethodology)}
+              aria-describedby={`${answerId}-methodology-hint`}
+              disabled={running || actions.generate.isPending}
+            >
+              {(['agile', 'waterfall', 'hybrid'] as const).map((choice) => (
+                <option key={choice} value={choice}>{t(`methodologyChoices.${choice}`)}</option>
+              ))}
+            </Select>
+            <p id={`${answerId}-methodology-hint`} className="text-caption text-muted-foreground">{t('methodologyHint')}</p>
+          </div>
+          <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            {clarifying && (
+              <Button type="button" variant="outline" fullWidth={false} className="w-full sm:w-auto" disabled={running}
+                isLoading={actions.generate.isPending} onClick={() => void generate('skip')}>{t('skipAndGenerate')}</Button>
+            )}
+            {(brief.can_finalize || brief.status === 'ready') && (
+              <Button type="button" fullWidth={false} className="w-full sm:w-auto" disabled={running}
+                isLoading={actions.generate.isPending} onClick={() => void generate('finalize')}>
+                {!actions.generate.isPending && <Sparkles className="h-4 w-4" aria-hidden="true" />} {t('createProject')}
+              </Button>
+            )}
+          </div>
         </div>
       )}
     </div>

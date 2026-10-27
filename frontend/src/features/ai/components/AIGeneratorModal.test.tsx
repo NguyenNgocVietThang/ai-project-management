@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { NextIntlClientProvider } from 'next-intl'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import en from '../../../../messages/en.json'
+import viMessages from '../../../../messages/vi.json'
 import type { RequirementBriefDetail } from '@/features/ai/types/requirementBrief.types'
 import { useAuthStore } from '@/store/authStore'
 import type { User } from '@/types/auth.types'
@@ -45,11 +46,11 @@ function axiosError(status: number, detail: string) {
   return Object.assign(new Error(detail), { response: { status, data: { detail } } })
 }
 
-function renderModal() {
+function renderModal(locale: 'en' | 'vi' = 'en') {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
   const utils = render(
     <QueryClientProvider client={client}>
-      <NextIntlClientProvider locale="en" messages={en} timeZone="UTC">
+      <NextIntlClientProvider locale={locale} messages={locale === 'vi' ? viMessages : en} timeZone="UTC">
         <AIGeneratorModal open onClose={() => {}} />
       </NextIntlClientProvider>
     </QueryClientProvider>,
@@ -137,7 +138,7 @@ describe('AI generator clarifier flow', () => {
     })
     renderModal()
     await userEvent.setup().click(await screen.findByRole('button', { name: 'Skip, generate now' }))
-    await waitFor(() => expect(mocks.post).toHaveBeenCalledWith('/ai/generate-project-from-brief', { brief_id: 11 }))
+    await waitFor(() => expect(mocks.post).toHaveBeenCalledWith('/ai/generate-project-from-brief', { brief_id: 11, methodology: 'agile' }))
     expect(mocks.post.mock.calls[0][0]).toBe('/requirement-briefs/11/skip')
     expect(await screen.findByText('AI is drafting your project plan...')).toBeVisible()
     expect(window.localStorage.getItem('ai.requirementBrief.generationJobId.owner:1')).toBe('77')
@@ -276,5 +277,76 @@ describe('pending generation account boundaries', () => {
     act(() => { useAuthStore.getState().clear(); useAuthStore.setState({ user: { id: 2 } as User, accessToken: 'second' }) })
     await act(async () => resolve({ data: brief({ status: 'ready' }) }))
     expect(mocks.post.mock.calls.map(call => call[0])).toEqual(['/requirement-briefs/11/skip'])
+  })
+})
+
+
+describe('confirmed project methodology', () => {
+  it.each(['ready', 'finalize', 'skip'] as const)('sends the selected methodology through %s generation', async mode => {
+    window.localStorage.setItem('ai.requirementBrief.activeId.owner:1', '11')
+    serveBrief(brief({ status: mode === 'ready' ? 'ready' : 'clarifying', can_finalize: mode === 'finalize' }))
+    mocks.post.mockImplementation((url: string) => url === '/ai/generate-project-from-brief'
+      ? Promise.resolve({ data: { job_id: '77', status: 'PENDING', message: 'queued' } })
+      : Promise.resolve({ data: brief({ status: 'ready' }) }))
+    renderModal()
+    const user = userEvent.setup()
+    const selector = await screen.findByRole('combobox', { name: 'Project methodology' })
+    expect(selector).toHaveValue('agile')
+    expect(selector).toHaveAccessibleDescription('Confirm the approach before creating your project. AI will keep this choice.')
+    expect(within(selector).getAllByRole('option').map(option => option.textContent)).toEqual(['Agile', 'Waterfall', 'Hybrid'])
+    await user.selectOptions(selector, 'waterfall')
+    // The seven brief items remain unchanged; methodology is confirmed separately.
+    expect(screen.getAllByTestId(/^item-/)).toHaveLength(7)
+    expect(mocks.post).not.toHaveBeenCalled()
+    await user.click(screen.getByRole('button', { name: mode === 'skip' ? 'Skip, generate now' : 'Create project' }))
+    await waitFor(() => expect(mocks.post).toHaveBeenCalledWith('/ai/generate-project-from-brief', { brief_id: 11, methodology: 'waterfall' }))
+    expect(mocks.post.mock.calls.map(call => call[0])).toEqual(mode === 'ready'
+      ? ['/ai/generate-project-from-brief']
+      : [`/requirement-briefs/11/${mode}`, '/ai/generate-project-from-brief'])
+  })
+
+  it.each(['agile', 'hybrid'] as const)('sends the explicitly confirmed %s choice', async methodology => {
+    window.localStorage.setItem('ai.requirementBrief.activeId.owner:1', '11')
+    serveBrief(brief({ status: 'ready', idea: 'Waterfall named project' }))
+    mocks.post.mockResolvedValue({ data: { job_id: '77', status: 'PENDING', message: 'queued' } })
+    renderModal()
+    const user = userEvent.setup()
+    const selector = await screen.findByRole('combobox', { name: 'Project methodology' })
+    expect(selector).toHaveValue('agile')
+    await user.selectOptions(selector, methodology)
+    await user.click(screen.getByRole('button', { name: 'Create project' }))
+    await waitFor(() => expect(mocks.post).toHaveBeenCalledWith('/ai/generate-project-from-brief', { brief_id: 11, methodology }))
+  })
+
+  it('labels the choice and its description in Vietnamese', async () => {
+    window.localStorage.setItem('ai.requirementBrief.activeId.owner:1', '11')
+    serveBrief(brief({ status: 'ready' }))
+    renderModal('vi')
+    const selector = await screen.findByRole('combobox', { name: 'Phương pháp quản lý dự án' })
+    expect(selector).toHaveAccessibleDescription('Xác nhận phương pháp trước khi tạo dự án. AI sẽ giữ lựa chọn này.')
+    expect(within(selector).getAllByRole('option').map(option => option.textContent)).toEqual(['Linh hoạt (Agile)', 'Thác nước (Waterfall)', 'Kết hợp (Hybrid)'])
+  })
+
+  it('locks the confirmed selection while finalization and generation are pending', async () => {
+    window.localStorage.setItem('ai.requirementBrief.activeId.owner:1', '11')
+    serveBrief(brief({ can_finalize: true }))
+    let finishFinalization!: (response: unknown) => void
+    let finishGeneration!: (response: unknown) => void
+    mocks.post.mockImplementation((url: string) => new Promise(resolve => {
+      if (url.endsWith('/finalize')) finishFinalization = resolve
+      else finishGeneration = resolve
+    }))
+    renderModal()
+    const user = userEvent.setup()
+    const selector = await screen.findByRole('combobox', { name: 'Project methodology' })
+    await user.selectOptions(selector, 'waterfall')
+    await user.click(screen.getByRole('button', { name: 'Create project' }))
+    expect(selector).toBeDisabled()
+    await act(async () => finishFinalization({ data: brief({ status: 'ready' }) }))
+    await waitFor(() => expect(finishGeneration).toBeDefined())
+    expect(screen.getByRole('combobox', { name: 'Project methodology' })).toBeDisabled()
+    expect(mocks.post).toHaveBeenCalledWith('/ai/generate-project-from-brief', { brief_id: 11, methodology: 'waterfall' })
+    await act(async () => finishGeneration({ data: { job_id: '77', status: 'PENDING', message: 'queued' } }))
+    expect(await screen.findByText(en.clarifier.generating)).toBeVisible()
   })
 })
