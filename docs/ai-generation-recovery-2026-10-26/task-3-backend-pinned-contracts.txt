@@ -1,0 +1,9 @@
+fastapi==0.143.2
+starlette==1.8.0
+pydantic==2.14.1
+pydantic-settings==2.16.0
+sqlalchemy==2.0.35
+ruff==0.6.9
+Đã ghi C:\BA\AI Project Planning & Portfolio Management system\mobile\openapi\openapi.json
+openapi.json khớp với API.
+All checks passed!

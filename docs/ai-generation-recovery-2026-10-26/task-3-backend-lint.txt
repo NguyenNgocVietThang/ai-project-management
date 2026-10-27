@@ -1,0 +1,618 @@
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\env.py:1:1: I001 [*] Import block is un-sorted or un-formatted
+   |
+ 1 |   ﻿import asyncio
+   |  _^
+ 2 | | from logging.config import fileConfig
+ 3 | |
+ 4 | | from sqlalchemy import pool
+ 5 | | from sqlalchemy.engine import Connection
+ 6 | | from sqlalchemy.ext.asyncio import async_engine_from_config
+ 7 | |
+ 8 | | from alembic import context
+ 9 | |
+10 | | # Import settings và models
+11 | | import sys, os
+12 | | sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+   | |_^ I001
+13 |
+14 |   from app.core.config import settings
+   |
+   = help: Organize imports
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\env.py:11:1: E401 [*] Multiple imports on one line
+   |
+10 | # Import settings và models
+11 | import sys, os
+   | ^^^^^^^^^^^^^^ E401
+12 | sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+   |
+   = help: Split imports
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\13e3544bef02_initial_schema.py:4:9: W291 Trailing whitespace
+  |
+3 | Revision ID: 13e3544bef02
+4 | Revises:
+  |         ^ W291
+5 | Create Date: 2026-08-05 22:44:56.289946
+  |
+  = help: Remove trailing whitespace
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\13e3544bef02_initial_schema.py:8:1: UP035 [*] Import from `collections.abc` instead: `Sequence`
+   |
+ 7 | """
+ 8 | from typing import Sequence, Union
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP035
+ 9 |
+10 | from alembic import op
+   |
+   = help: Import from `collections.abc`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\13e3544bef02_initial_schema.py:8:1: I001 [*] Import block is un-sorted or un-formatted
+   |
+ 7 |   """
+ 8 | / from typing import Sequence, Union
+ 9 | |
+10 | | from alembic import op
+11 | | import sqlalchemy as sa
+12 | |
+13 | |
+14 | | # định danh revision, được Alembic sử dụng.
+   | |_^ I001
+15 |   revision: str = '13e3544bef02'
+16 |   down_revision: Union[str, None] = None
+   |
+   = help: Organize imports
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\13e3544bef02_initial_schema.py:16:16: UP007 [*] Use `X | Y` for type annotations
+   |
+14 | # định danh revision, được Alembic sử dụng.
+15 | revision: str = '13e3544bef02'
+16 | down_revision: Union[str, None] = None
+   |                ^^^^^^^^^^^^^^^^ UP007
+17 | branch_labels: Union[str, Sequence[str], None] = None
+18 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\13e3544bef02_initial_schema.py:17:16: UP007 [*] Use `X | Y` for type annotations
+   |
+15 | revision: str = '13e3544bef02'
+16 | down_revision: Union[str, None] = None
+17 | branch_labels: Union[str, Sequence[str], None] = None
+   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+18 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\13e3544bef02_initial_schema.py:18:13: UP007 [*] Use `X | Y` for type annotations
+   |
+16 | down_revision: Union[str, None] = None
+17 | branch_labels: Union[str, Sequence[str], None] = None
+18 | depends_on: Union[str, Sequence[str], None] = None
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260810_add_social_oauth_fields.py:8:1: UP035 [*] Import from `collections.abc` instead: `Sequence`
+   |
+ 7 | """
+ 8 | from typing import Sequence, Union
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP035
+ 9 |
+10 | from alembic import op
+   |
+   = help: Import from `collections.abc`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260810_add_social_oauth_fields.py:8:1: I001 [*] Import block is un-sorted or un-formatted
+   |
+ 7 |   """
+ 8 | / from typing import Sequence, Union
+ 9 | |
+10 | | from alembic import op
+11 | | import sqlalchemy as sa
+12 | |
+13 | |
+14 | | # định danh revision, được Alembic sử dụng.
+   | |_^ I001
+15 |   revision: str = '20260810_social_oauth'
+16 |   down_revision: Union[str, None] = '13e3544bef02'
+   |
+   = help: Organize imports
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260810_add_social_oauth_fields.py:16:16: UP007 [*] Use `X | Y` for type annotations
+   |
+14 | # định danh revision, được Alembic sử dụng.
+15 | revision: str = '20260810_social_oauth'
+16 | down_revision: Union[str, None] = '13e3544bef02'
+   |                ^^^^^^^^^^^^^^^^ UP007
+17 | branch_labels: Union[str, Sequence[str], None] = None
+18 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260810_add_social_oauth_fields.py:17:16: UP007 [*] Use `X | Y` for type annotations
+   |
+15 | revision: str = '20260810_social_oauth'
+16 | down_revision: Union[str, None] = '13e3544bef02'
+17 | branch_labels: Union[str, Sequence[str], None] = None
+   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+18 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260810_add_social_oauth_fields.py:18:13: UP007 [*] Use `X | Y` for type annotations
+   |
+16 | down_revision: Union[str, None] = '13e3544bef02'
+17 | branch_labels: Union[str, Sequence[str], None] = None
+18 | depends_on: Union[str, Sequence[str], None] = None
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260810_add_social_oauth_fields.py:24:1: W293 [*] Blank line contains whitespace
+   |
+22 |     op.add_column('users', sa.Column('google_id', sa.String(length=255), nullable=True))
+23 |     op.create_index(op.f('ix_users_google_id'), 'users', ['google_id'], unique=True)
+24 |
+   | ^^^^ W293
+25 |     op.add_column('users', sa.Column('facebook_id', sa.String(length=255), nullable=True))
+26 |     op.create_index(op.f('ix_users_facebook_id'), 'users', ['facebook_id'], unique=True)
+   |
+   = help: Remove whitespace from blank line
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260810_add_social_oauth_fields.py:27:1: W293 [*] Blank line contains whitespace
+   |
+25 |     op.add_column('users', sa.Column('facebook_id', sa.String(length=255), nullable=True))
+26 |     op.create_index(op.f('ix_users_facebook_id'), 'users', ['facebook_id'], unique=True)
+27 |
+   | ^^^^ W293
+28 |     op.add_column('users', sa.Column('auth_provider', sa.String(length=50), server_default='local', nullable=False))
+   |
+   = help: Remove whitespace from blank line
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260810_add_social_oauth_fields.py:29:1: W293 [*] Blank line contains whitespace
+   |
+28 |     op.add_column('users', sa.Column('auth_provider', sa.String(length=50), server_default='local', nullable=False))
+29 |
+   | ^^^^ W293
+30 |     op.alter_column('users', 'hashed_password', existing_type=sa.Text(), nullable=True)
+   |
+   = help: Remove whitespace from blank line
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260810_add_social_oauth_fields.py:35:1: W293 [*] Blank line contains whitespace
+   |
+33 | def downgrade() -> None:
+34 |     op.alter_column('users', 'hashed_password', existing_type=sa.Text(), nullable=False)
+35 |
+   | ^^^^ W293
+36 |     op.drop_column('users', 'auth_provider')
+   |
+   = help: Remove whitespace from blank line
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260810_add_social_oauth_fields.py:37:1: W293 [*] Blank line contains whitespace
+   |
+36 |     op.drop_column('users', 'auth_provider')
+37 |
+   | ^^^^ W293
+38 |     op.drop_index(op.f('ix_users_facebook_id'), table_name='users')
+39 |     op.drop_column('users', 'facebook_id')
+   |
+   = help: Remove whitespace from blank line
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260810_add_social_oauth_fields.py:40:1: W293 [*] Blank line contains whitespace
+   |
+38 |     op.drop_index(op.f('ix_users_facebook_id'), table_name='users')
+39 |     op.drop_column('users', 'facebook_id')
+40 |
+   | ^^^^ W293
+41 |     op.drop_index(op.f('ix_users_google_id'), table_name='users')
+42 |     op.drop_column('users', 'google_id')
+   |
+   = help: Remove whitespace from blank line
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260812_add_email_verification_fields.py:9:1: UP035 [*] Import from `collections.abc` instead: `Sequence`
+   |
+ 7 | """
+ 8 |
+ 9 | from typing import Sequence, Union
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP035
+10 |
+11 | import sqlalchemy as sa
+   |
+   = help: Import from `collections.abc`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260812_add_email_verification_fields.py:17:16: UP007 [*] Use `X | Y` for type annotations
+   |
+15 | # định danh revision, được Alembic sử dụng.
+16 | revision: str = "20260812_email_verification"
+17 | down_revision: Union[str, None] = "20260812_password_reset"
+   |                ^^^^^^^^^^^^^^^^ UP007
+18 | branch_labels: Union[str, Sequence[str], None] = None
+19 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260812_add_email_verification_fields.py:18:16: UP007 [*] Use `X | Y` for type annotations
+   |
+16 | revision: str = "20260812_email_verification"
+17 | down_revision: Union[str, None] = "20260812_password_reset"
+18 | branch_labels: Union[str, Sequence[str], None] = None
+   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+19 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260812_add_email_verification_fields.py:19:13: UP007 [*] Use `X | Y` for type annotations
+   |
+17 | down_revision: Union[str, None] = "20260812_password_reset"
+18 | branch_labels: Union[str, Sequence[str], None] = None
+19 | depends_on: Union[str, Sequence[str], None] = None
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260812_add_password_reset_fields.py:9:1: UP035 [*] Import from `collections.abc` instead: `Sequence`
+   |
+ 7 | """
+ 8 |
+ 9 | from typing import Sequence, Union
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP035
+10 |
+11 | import sqlalchemy as sa
+   |
+   = help: Import from `collections.abc`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260812_add_password_reset_fields.py:17:16: UP007 [*] Use `X | Y` for type annotations
+   |
+15 | # định danh revision, được Alembic sử dụng.
+16 | revision: str = "20260812_password_reset"
+17 | down_revision: Union[str, None] = "20260810_social_oauth"
+   |                ^^^^^^^^^^^^^^^^ UP007
+18 | branch_labels: Union[str, Sequence[str], None] = None
+19 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260812_add_password_reset_fields.py:18:16: UP007 [*] Use `X | Y` for type annotations
+   |
+16 | revision: str = "20260812_password_reset"
+17 | down_revision: Union[str, None] = "20260810_social_oauth"
+18 | branch_labels: Union[str, Sequence[str], None] = None
+   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+19 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260812_add_password_reset_fields.py:19:13: UP007 [*] Use `X | Y` for type annotations
+   |
+17 | down_revision: Union[str, None] = "20260810_social_oauth"
+18 | branch_labels: Union[str, Sequence[str], None] = None
+19 | depends_on: Union[str, Sequence[str], None] = None
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260813_add_profile_security_fields.py:9:1: UP035 [*] Import from `collections.abc` instead: `Sequence`
+   |
+ 7 | """
+ 8 |
+ 9 | from typing import Sequence, Union
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP035
+10 |
+11 | import sqlalchemy as sa
+   |
+   = help: Import from `collections.abc`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260813_add_profile_security_fields.py:16:16: UP007 [*] Use `X | Y` for type annotations
+   |
+15 | revision: str = "20260813_profile_security"
+16 | down_revision: Union[str, None] = "20260812_email_verification"
+   |                ^^^^^^^^^^^^^^^^ UP007
+17 | branch_labels: Union[str, Sequence[str], None] = None
+18 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260813_add_profile_security_fields.py:17:16: UP007 [*] Use `X | Y` for type annotations
+   |
+15 | revision: str = "20260813_profile_security"
+16 | down_revision: Union[str, None] = "20260812_email_verification"
+17 | branch_labels: Union[str, Sequence[str], None] = None
+   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+18 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260813_add_profile_security_fields.py:18:13: UP007 [*] Use `X | Y` for type annotations
+   |
+16 | down_revision: Union[str, None] = "20260812_email_verification"
+17 | branch_labels: Union[str, Sequence[str], None] = None
+18 | depends_on: Union[str, Sequence[str], None] = None
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260813_portfolio_project_core.py:8:1: UP035 [*] Import from `collections.abc` instead: `Sequence`
+   |
+ 6 | """
+ 7 |
+ 8 | from typing import Sequence, Union
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP035
+ 9 |
+10 | import sqlalchemy as sa
+   |
+   = help: Import from `collections.abc`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260813_portfolio_project_core.py:16:16: UP007 [*] Use `X | Y` for type annotations
+   |
+15 | revision: str = "20260813_portfolio_project_core"
+16 | down_revision: Union[str, None] = "20260813_profile_security"
+   |                ^^^^^^^^^^^^^^^^ UP007
+17 | branch_labels: Union[str, Sequence[str], None] = None
+18 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260813_portfolio_project_core.py:17:16: UP007 [*] Use `X | Y` for type annotations
+   |
+15 | revision: str = "20260813_portfolio_project_core"
+16 | down_revision: Union[str, None] = "20260813_profile_security"
+17 | branch_labels: Union[str, Sequence[str], None] = None
+   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+18 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260813_portfolio_project_core.py:18:13: UP007 [*] Use `X | Y` for type annotations
+   |
+16 | down_revision: Union[str, None] = "20260813_profile_security"
+17 | branch_labels: Union[str, Sequence[str], None] = None
+18 | depends_on: Union[str, Sequence[str], None] = None
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260814_phase2_task_wbs.py:8:1: UP035 [*] Import from `collections.abc` instead: `Sequence`
+   |
+ 6 | """
+ 7 |
+ 8 | from typing import Sequence, Union
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP035
+ 9 |
+10 | import sqlalchemy as sa
+   |
+   = help: Import from `collections.abc`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260814_phase2_task_wbs.py:16:16: UP007 [*] Use `X | Y` for type annotations
+   |
+15 | revision: str = "20260814_phase2_task_wbs"
+16 | down_revision: Union[str, None] = "20260813_portfolio_project_core"
+   |                ^^^^^^^^^^^^^^^^ UP007
+17 | branch_labels: Union[str, Sequence[str], None] = None
+18 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260814_phase2_task_wbs.py:17:16: UP007 [*] Use `X | Y` for type annotations
+   |
+15 | revision: str = "20260814_phase2_task_wbs"
+16 | down_revision: Union[str, None] = "20260813_portfolio_project_core"
+17 | branch_labels: Union[str, Sequence[str], None] = None
+   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+18 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260814_phase2_task_wbs.py:18:13: UP007 [*] Use `X | Y` for type annotations
+   |
+16 | down_revision: Union[str, None] = "20260813_portfolio_project_core"
+17 | branch_labels: Union[str, Sequence[str], None] = None
+18 | depends_on: Union[str, Sequence[str], None] = None
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260821_chat_tables.py:8:1: UP035 [*] Import from `collections.abc` instead: `Sequence`
+   |
+ 6 | """
+ 7 |
+ 8 | from typing import Sequence, Union
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP035
+ 9 |
+10 | import sqlalchemy as sa
+   |
+   = help: Import from `collections.abc`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260821_chat_tables.py:15:16: UP007 [*] Use `X | Y` for type annotations
+   |
+14 | revision: str = "20260821_chat_tables"
+15 | down_revision: Union[str, None] = "20260821_task_notify_columns"
+   |                ^^^^^^^^^^^^^^^^ UP007
+16 | branch_labels: Union[str, Sequence[str], None] = None
+17 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260821_chat_tables.py:16:16: UP007 [*] Use `X | Y` for type annotations
+   |
+14 | revision: str = "20260821_chat_tables"
+15 | down_revision: Union[str, None] = "20260821_task_notify_columns"
+16 | branch_labels: Union[str, Sequence[str], None] = None
+   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+17 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260821_chat_tables.py:17:13: UP007 [*] Use `X | Y` for type annotations
+   |
+15 | down_revision: Union[str, None] = "20260821_task_notify_columns"
+16 | branch_labels: Union[str, Sequence[str], None] = None
+17 | depends_on: Union[str, Sequence[str], None] = None
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260821_task_notify_columns.py:8:1: UP035 [*] Import from `collections.abc` instead: `Sequence`
+   |
+ 6 | """
+ 7 |
+ 8 | from typing import Sequence, Union
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP035
+ 9 |
+10 | import sqlalchemy as sa
+   |
+   = help: Import from `collections.abc`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260821_task_notify_columns.py:15:16: UP007 [*] Use `X | Y` for type annotations
+   |
+14 | revision: str = "20260821_task_notify_columns"
+15 | down_revision: Union[str, None] = "20260814_phase2_task_wbs"
+   |                ^^^^^^^^^^^^^^^^ UP007
+16 | branch_labels: Union[str, Sequence[str], None] = None
+17 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260821_task_notify_columns.py:16:16: UP007 [*] Use `X | Y` for type annotations
+   |
+14 | revision: str = "20260821_task_notify_columns"
+15 | down_revision: Union[str, None] = "20260814_phase2_task_wbs"
+16 | branch_labels: Union[str, Sequence[str], None] = None
+   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+17 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260821_task_notify_columns.py:17:13: UP007 [*] Use `X | Y` for type annotations
+   |
+15 | down_revision: Union[str, None] = "20260814_phase2_task_wbs"
+16 | branch_labels: Union[str, Sequence[str], None] = None
+17 | depends_on: Union[str, Sequence[str], None] = None
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260904_audit_project_scope.py:16:1: UP035 [*] Import from `collections.abc` instead: `Sequence`
+   |
+14 | """
+15 |
+16 | from typing import Sequence, Union
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP035
+17 |
+18 | import sqlalchemy as sa
+   |
+   = help: Import from `collections.abc`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260904_audit_project_scope.py:23:16: UP007 [*] Use `X | Y` for type annotations
+   |
+22 | revision: str = "20260904_audit_project_scope"
+23 | down_revision: Union[str, None] = "20260821_chat_tables"
+   |                ^^^^^^^^^^^^^^^^ UP007
+24 | branch_labels: Union[str, Sequence[str], None] = None
+25 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260904_audit_project_scope.py:24:16: UP007 [*] Use `X | Y` for type annotations
+   |
+22 | revision: str = "20260904_audit_project_scope"
+23 | down_revision: Union[str, None] = "20260821_chat_tables"
+24 | branch_labels: Union[str, Sequence[str], None] = None
+   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+25 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260904_audit_project_scope.py:25:13: UP007 [*] Use `X | Y` for type annotations
+   |
+23 | down_revision: Union[str, None] = "20260821_chat_tables"
+24 | branch_labels: Union[str, Sequence[str], None] = None
+25 | depends_on: Union[str, Sequence[str], None] = None
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260904_perf_indexes.py:17:1: UP035 [*] Import from `collections.abc` instead: `Sequence`
+   |
+15 | """
+16 |
+17 | from typing import Sequence, Union
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP035
+18 |
+19 | import sqlalchemy as sa
+   |
+   = help: Import from `collections.abc`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260904_perf_indexes.py:25:16: UP007 [*] Use `X | Y` for type annotations
+   |
+24 | revision: str = "20260904_perf_indexes"
+25 | down_revision: Union[str, None] = "20260904_audit_project_scope"
+   |                ^^^^^^^^^^^^^^^^ UP007
+26 | branch_labels: Union[str, Sequence[str], None] = None
+27 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260904_perf_indexes.py:26:16: UP007 [*] Use `X | Y` for type annotations
+   |
+24 | revision: str = "20260904_perf_indexes"
+25 | down_revision: Union[str, None] = "20260904_audit_project_scope"
+26 | branch_labels: Union[str, Sequence[str], None] = None
+   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+27 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20260904_perf_indexes.py:27:13: UP007 [*] Use `X | Y` for type annotations
+   |
+25 | down_revision: Union[str, None] = "20260904_audit_project_scope"
+26 | branch_labels: Union[str, Sequence[str], None] = None
+27 | depends_on: Union[str, Sequence[str], None] = None
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+28 |
+29 | FK_INDEXES = [
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20261008_drop_facebook_login.py:15:1: UP035 [*] Import from `collections.abc` instead: `Sequence`
+   |
+13 | """
+14 |
+15 | from typing import Sequence, Union
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP035
+16 |
+17 | import sqlalchemy as sa
+   |
+   = help: Import from `collections.abc`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20261008_drop_facebook_login.py:22:16: UP007 [*] Use `X | Y` for type annotations
+   |
+21 | revision: str = "20261008_drop_facebook_login"
+22 | down_revision: Union[str, None] = "20260904_perf_indexes"
+   |                ^^^^^^^^^^^^^^^^ UP007
+23 | branch_labels: Union[str, Sequence[str], None] = None
+24 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20261008_drop_facebook_login.py:23:16: UP007 [*] Use `X | Y` for type annotations
+   |
+21 | revision: str = "20261008_drop_facebook_login"
+22 | down_revision: Union[str, None] = "20260904_perf_indexes"
+23 | branch_labels: Union[str, Sequence[str], None] = None
+   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+24 | depends_on: Union[str, Sequence[str], None] = None
+   |
+   = help: Convert to `X | Y`
+
+C:/BA/AI Project Planning & Portfolio Management system/backend\alembic\versions\20261008_drop_facebook_login.py:24:13: UP007 [*] Use `X | Y` for type annotations
+   |
+22 | down_revision: Union[str, None] = "20260904_perf_indexes"
+23 | branch_labels: Union[str, Sequence[str], None] = None
+24 | depends_on: Union[str, Sequence[str], None] = None
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UP007
+   |
+   = help: Convert to `X | Y`
+
+Found 59 errors.
+[*] 58 fixable with the `--fix` option (1 hidden fix can be enabled with the `--unsafe-fixes` option).

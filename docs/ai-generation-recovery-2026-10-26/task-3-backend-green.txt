@@ -1,0 +1,20 @@
+................................................                         [100%]
+============================== warnings summary ===============================
+..\..\..\..\backend\.venv\Lib\site-packages\starlette\formparsers.py:12
+  C:\BA\AI Project Planning & Portfolio Management system\backend\.venv\Lib\site-packages\starlette\formparsers.py:12: PendingDeprecationWarning: Please use `import python_multipart` instead.
+    import multipart
+
+tests/unit/test_ai_project_methodology.py::test_persistence_carries_plan_methodology[agile]
+  C:\BA\AI Project Planning & Portfolio Management system\backend\.venv\Lib\site-packages\pytest_asyncio\plugin.py:783: DeprecationWarning: The event_loop fixture provided by pytest-asyncio has been redefined in
+  C:\BA\AI Project Planning & Portfolio Management system\backend\tests\conftest.py:34
+  Replacing the event_loop fixture with a custom implementation is deprecated
+  and will lead to errors in the future.
+  If you want to request an asyncio event loop with a scope other than function
+  scope, use the "scope" argument to the asyncio mark when marking the tests.
+  If you want to return different types of event loops, use the event_loop_policy
+  fixture.
+
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+48 passed, 2 warnings in 51.59s

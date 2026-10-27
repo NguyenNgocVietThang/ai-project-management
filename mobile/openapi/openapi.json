@@ -3,12 +3,22 @@
     "schemas": {
       "AIGenerateProjectFromBriefRequest": {
         "additionalProperties": false,
-        "description": "Body sinh dự án từ hồ sơ yêu cầu đã chốt (C4).",
+        "description": "The confirmed methodology is separate from the seven requirement items.",
         "properties": {
           "brief_id": {
             "exclusiveMinimum": 0.0,
             "title": "Brief Id",
             "type": "integer"
+          },
+          "methodology": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProjectMethodology"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [

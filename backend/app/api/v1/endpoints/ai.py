@@ -1,11 +1,11 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, status
-from pydantic import BaseModel, ConfigDict, Field
 
 from app.core.dependencies import CurrentUser, CurrentVerifiedUser, require_permissions
 from app.models.user import User
 from app.schemas.ai import (
+    AIGenerateProjectFromBriefRequest,
     AIGenerateProjectRequest,
     AIImpactAnalysisRequest,
     AIJobResponse,
@@ -36,14 +36,6 @@ async def generate_project(
     return await service.request_project_generation(body.prompt, current_user, request_key=idempotency_key)
 
 
-class AIGenerateProjectFromBriefRequest(BaseModel):
-    """Body sinh dự án từ hồ sơ yêu cầu đã chốt (C4)."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    brief_id: int = Field(gt=0)
-
-
 @router.post(
     "/generate-project-from-brief", response_model=AIJobResponse, status_code=status.HTTP_202_ACCEPTED
 )
@@ -58,7 +50,9 @@ async def generate_project_from_brief(
     404 brief_not_found, 409 brief_not_ready / brief_generation_pending, 429 ai_quota_exceeded.
     Theo dõi kết quả bằng GET /ai/jobs/{job_id} (`project_id` có khi hoàn tất).
     """
-    return await service.request_project_generation_from_brief(body.brief_id, current_user, request_key=idempotency_key)
+    return await service.request_project_generation_from_brief(
+        body.brief_id, current_user, methodology=body.methodology, request_key=idempotency_key
+    )
 
 
 @router.post(

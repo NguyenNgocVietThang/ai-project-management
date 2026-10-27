@@ -1,0 +1,623 @@
+.FFFFFFFFFFFF.F......FFFFFFFFF............                               [100%]
+================================== FAILURES ===================================
+____________ test_persistence_carries_plan_methodology[waterfall] _____________
+
+session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000002B2DCFB73B0>
+make_user = <function make_user.<locals>.factory at 0x000002B2DE2A9D00>
+seed_roles = {'Admin': <Role id=1 name=Admin>, 'BA': <Role id=3 name=BA>, 'Customer': <Role id=6 name=Customer>, 'Member': <Role id=5 name=Member>, ...}
+methodology = 'waterfall'
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("methodology", ["agile", "waterfall", "hybrid"])
+    async def test_persistence_carries_plan_methodology(session, make_user, seed_roles, methodology):
+        user = await make_user(roles=[seed_roles["PM"]])
+        project = await _persist_plan(session, {**PLAN, "methodology": methodology}, user)
+>       assert project.methodology == methodology
+E       AssertionError: assert 'agile' == 'waterfall'
+E
+E         - waterfall
+E         + agile
+
+..\..\..\..\backend\tests\unit\test_ai_project_methodology.py:15: AssertionError
+______________ test_persistence_carries_plan_methodology[hybrid] ______________
+
+session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000002B2DD232240>
+make_user = <function make_user.<locals>.factory at 0x000002B2DE41E8E0>
+seed_roles = {'Admin': <Role id=1 name=Admin>, 'BA': <Role id=3 name=BA>, 'Customer': <Role id=6 name=Customer>, 'Member': <Role id=5 name=Member>, ...}
+methodology = 'hybrid'
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("methodology", ["agile", "waterfall", "hybrid"])
+    async def test_persistence_carries_plan_methodology(session, make_user, seed_roles, methodology):
+        user = await make_user(roles=[seed_roles["PM"]])
+        project = await _persist_plan(session, {**PLAN, "methodology": methodology}, user)
+>       assert project.methodology == methodology
+E       AssertionError: assert 'agile' == 'hybrid'
+E
+E         - hybrid
+E         + agile
+
+..\..\..\..\backend\tests\unit\test_ai_project_methodology.py:15: AssertionError
+_ test_invalid_supplied_plan_methodology_rejected_before_any_project[None-scrum] _
+
+session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000002B2DE4434A0>
+make_user = <function make_user.<locals>.factory at 0x000002B2DE4D5D00>
+seed_roles = {'Admin': <Role id=1 name=Admin>, 'BA': <Role id=3 name=BA>, 'Customer': <Role id=6 name=Customer>, 'Member': <Role id=5 name=Member>, ...}
+invalid = 'scrum', confirmed = None
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("invalid", ["scrum", "WATERFALL", "", None, 42])
+    @pytest.mark.parametrize("confirmed", [None, "waterfall"])
+    async def test_invalid_supplied_plan_methodology_rejected_before_any_project(
+        session, make_user, seed_roles, invalid, confirmed,
+    ):
+        user = await make_user(roles=[seed_roles["PM"]])
+        with pytest.raises(ValueError):
+>           await _persist_plan(session, {**PLAN, "methodology": invalid}, user, confirmed_methodology=confirmed)
+E           TypeError: _persist_plan() got an unexpected keyword argument 'confirmed_methodology'
+
+..\..\..\..\backend\tests\unit\test_ai_project_methodology.py:26: TypeError
+_ test_invalid_supplied_plan_methodology_rejected_before_any_project[None-WATERFALL] _
+
+session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000002B2DE39F500>
+make_user = <function make_user.<locals>.factory at 0x000002B2DE5309A0>
+seed_roles = {'Admin': <Role id=1 name=Admin>, 'BA': <Role id=3 name=BA>, 'Customer': <Role id=6 name=Customer>, 'Member': <Role id=5 name=Member>, ...}
+invalid = 'WATERFALL', confirmed = None
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("invalid", ["scrum", "WATERFALL", "", None, 42])
+    @pytest.mark.parametrize("confirmed", [None, "waterfall"])
+    async def test_invalid_supplied_plan_methodology_rejected_before_any_project(
+        session, make_user, seed_roles, invalid, confirmed,
+    ):
+        user = await make_user(roles=[seed_roles["PM"]])
+        with pytest.raises(ValueError):
+>           await _persist_plan(session, {**PLAN, "methodology": invalid}, user, confirmed_methodology=confirmed)
+E           TypeError: _persist_plan() got an unexpected keyword argument 'confirmed_methodology'
+
+..\..\..\..\backend\tests\unit\test_ai_project_methodology.py:26: TypeError
+__ test_invalid_supplied_plan_methodology_rejected_before_any_project[None-] __
+
+session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000002B2DE4B5A30>
+make_user = <function make_user.<locals>.factory at 0x000002B2DCE4D120>
+seed_roles = {'Admin': <Role id=1 name=Admin>, 'BA': <Role id=3 name=BA>, 'Customer': <Role id=6 name=Customer>, 'Member': <Role id=5 name=Member>, ...}
+invalid = '', confirmed = None
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("invalid", ["scrum", "WATERFALL", "", None, 42])
+    @pytest.mark.parametrize("confirmed", [None, "waterfall"])
+    async def test_invalid_supplied_plan_methodology_rejected_before_any_project(
+        session, make_user, seed_roles, invalid, confirmed,
+    ):
+        user = await make_user(roles=[seed_roles["PM"]])
+        with pytest.raises(ValueError):
+>           await _persist_plan(session, {**PLAN, "methodology": invalid}, user, confirmed_methodology=confirmed)
+E           TypeError: _persist_plan() got an unexpected keyword argument 'confirmed_methodology'
+
+..\..\..\..\backend\tests\unit\test_ai_project_methodology.py:26: TypeError
+_ test_invalid_supplied_plan_methodology_rejected_before_any_project[None-None] _
+
+session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000002B2DE51C5C0>
+make_user = <function make_user.<locals>.factory at 0x000002B2DE569620>
+seed_roles = {'Admin': <Role id=1 name=Admin>, 'BA': <Role id=3 name=BA>, 'Customer': <Role id=6 name=Customer>, 'Member': <Role id=5 name=Member>, ...}
+invalid = None, confirmed = None
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("invalid", ["scrum", "WATERFALL", "", None, 42])
+    @pytest.mark.parametrize("confirmed", [None, "waterfall"])
+    async def test_invalid_supplied_plan_methodology_rejected_before_any_project(
+        session, make_user, seed_roles, invalid, confirmed,
+    ):
+        user = await make_user(roles=[seed_roles["PM"]])
+        with pytest.raises(ValueError):
+>           await _persist_plan(session, {**PLAN, "methodology": invalid}, user, confirmed_methodology=confirmed)
+E           TypeError: _persist_plan() got an unexpected keyword argument 'confirmed_methodology'
+
+..\..\..\..\backend\tests\unit\test_ai_project_methodology.py:26: TypeError
+_ test_invalid_supplied_plan_methodology_rejected_before_any_project[None-42] _
+
+session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000002B2DE51FAA0>
+make_user = <function make_user.<locals>.factory at 0x000002B2DE5AC220>
+seed_roles = {'Admin': <Role id=1 name=Admin>, 'BA': <Role id=3 name=BA>, 'Customer': <Role id=6 name=Customer>, 'Member': <Role id=5 name=Member>, ...}
+invalid = 42, confirmed = None
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("invalid", ["scrum", "WATERFALL", "", None, 42])
+    @pytest.mark.parametrize("confirmed", [None, "waterfall"])
+    async def test_invalid_supplied_plan_methodology_rejected_before_any_project(
+        session, make_user, seed_roles, invalid, confirmed,
+    ):
+        user = await make_user(roles=[seed_roles["PM"]])
+        with pytest.raises(ValueError):
+>           await _persist_plan(session, {**PLAN, "methodology": invalid}, user, confirmed_methodology=confirmed)
+E           TypeError: _persist_plan() got an unexpected keyword argument 'confirmed_methodology'
+
+..\..\..\..\backend\tests\unit\test_ai_project_methodology.py:26: TypeError
+_ test_invalid_supplied_plan_methodology_rejected_before_any_project[waterfall-scrum] _
+
+session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000002B2DE58F920>
+make_user = <function make_user.<locals>.factory at 0x000002B2DE56BEC0>
+seed_roles = {'Admin': <Role id=1 name=Admin>, 'BA': <Role id=3 name=BA>, 'Customer': <Role id=6 name=Customer>, 'Member': <Role id=5 name=Member>, ...}
+invalid = 'scrum', confirmed = 'waterfall'
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("invalid", ["scrum", "WATERFALL", "", None, 42])
+    @pytest.mark.parametrize("confirmed", [None, "waterfall"])
+    async def test_invalid_supplied_plan_methodology_rejected_before_any_project(
+        session, make_user, seed_roles, invalid, confirmed,
+    ):
+        user = await make_user(roles=[seed_roles["PM"]])
+        with pytest.raises(ValueError):
+>           await _persist_plan(session, {**PLAN, "methodology": invalid}, user, confirmed_methodology=confirmed)
+E           TypeError: _persist_plan() got an unexpected keyword argument 'confirmed_methodology'
+
+..\..\..\..\backend\tests\unit\test_ai_project_methodology.py:26: TypeError
+_ test_invalid_supplied_plan_methodology_rejected_before_any_project[waterfall-WATERFALL] _
+
+session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000002B2DE58CE90>
+make_user = <function make_user.<locals>.factory at 0x000002B2DE5AE3E0>
+seed_roles = {'Admin': <Role id=1 name=Admin>, 'BA': <Role id=3 name=BA>, 'Customer': <Role id=6 name=Customer>, 'Member': <Role id=5 name=Member>, ...}
+invalid = 'WATERFALL', confirmed = 'waterfall'
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("invalid", ["scrum", "WATERFALL", "", None, 42])
+    @pytest.mark.parametrize("confirmed", [None, "waterfall"])
+    async def test_invalid_supplied_plan_methodology_rejected_before_any_project(
+        session, make_user, seed_roles, invalid, confirmed,
+    ):
+        user = await make_user(roles=[seed_roles["PM"]])
+        with pytest.raises(ValueError):
+>           await _persist_plan(session, {**PLAN, "methodology": invalid}, user, confirmed_methodology=confirmed)
+E           TypeError: _persist_plan() got an unexpected keyword argument 'confirmed_methodology'
+
+..\..\..\..\backend\tests\unit\test_ai_project_methodology.py:26: TypeError
+_ test_invalid_supplied_plan_methodology_rejected_before_any_project[waterfall-] _
+
+session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000002B2DE567A40>
+make_user = <function make_user.<locals>.factory at 0x000002B2DE5F5940>
+seed_roles = {'Admin': <Role id=1 name=Admin>, 'BA': <Role id=3 name=BA>, 'Customer': <Role id=6 name=Customer>, 'Member': <Role id=5 name=Member>, ...}
+invalid = '', confirmed = 'waterfall'
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("invalid", ["scrum", "WATERFALL", "", None, 42])
+    @pytest.mark.parametrize("confirmed", [None, "waterfall"])
+    async def test_invalid_supplied_plan_methodology_rejected_before_any_project(
+        session, make_user, seed_roles, invalid, confirmed,
+    ):
+        user = await make_user(roles=[seed_roles["PM"]])
+        with pytest.raises(ValueError):
+>           await _persist_plan(session, {**PLAN, "methodology": invalid}, user, confirmed_methodology=confirmed)
+E           TypeError: _persist_plan() got an unexpected keyword argument 'confirmed_methodology'
+
+..\..\..\..\backend\tests\unit\test_ai_project_methodology.py:26: TypeError
+_ test_invalid_supplied_plan_methodology_rejected_before_any_project[waterfall-None] _
+
+session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000002B2DE58CEF0>
+make_user = <function make_user.<locals>.factory at 0x000002B2DE628360>
+seed_roles = {'Admin': <Role id=1 name=Admin>, 'BA': <Role id=3 name=BA>, 'Customer': <Role id=6 name=Customer>, 'Member': <Role id=5 name=Member>, ...}
+invalid = None, confirmed = 'waterfall'
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("invalid", ["scrum", "WATERFALL", "", None, 42])
+    @pytest.mark.parametrize("confirmed", [None, "waterfall"])
+    async def test_invalid_supplied_plan_methodology_rejected_before_any_project(
+        session, make_user, seed_roles, invalid, confirmed,
+    ):
+        user = await make_user(roles=[seed_roles["PM"]])
+        with pytest.raises(ValueError):
+>           await _persist_plan(session, {**PLAN, "methodology": invalid}, user, confirmed_methodology=confirmed)
+E           TypeError: _persist_plan() got an unexpected keyword argument 'confirmed_methodology'
+
+..\..\..\..\backend\tests\unit\test_ai_project_methodology.py:26: TypeError
+_ test_invalid_supplied_plan_methodology_rejected_before_any_project[waterfall-42] _
+
+session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000002B2DE61CB00>
+make_user = <function make_user.<locals>.factory at 0x000002B2DE5F6E80>
+seed_roles = {'Admin': <Role id=1 name=Admin>, 'BA': <Role id=3 name=BA>, 'Customer': <Role id=6 name=Customer>, 'Member': <Role id=5 name=Member>, ...}
+invalid = 42, confirmed = 'waterfall'
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("invalid", ["scrum", "WATERFALL", "", None, 42])
+    @pytest.mark.parametrize("confirmed", [None, "waterfall"])
+    async def test_invalid_supplied_plan_methodology_rejected_before_any_project(
+        session, make_user, seed_roles, invalid, confirmed,
+    ):
+        user = await make_user(roles=[seed_roles["PM"]])
+        with pytest.raises(ValueError):
+>           await _persist_plan(session, {**PLAN, "methodology": invalid}, user, confirmed_methodology=confirmed)
+E           TypeError: _persist_plan() got an unexpected keyword argument 'confirmed_methodology'
+
+..\..\..\..\backend\tests\unit\test_ai_project_methodology.py:26: TypeError
+____________ test_legacy_worker_uses_same_methodology_persistence _____________
+
+session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000002B2DE694380>
+make_user = <function make_user.<locals>.factory at 0x000002B2DE62B380>
+seed_roles = {'Admin': <Role id=1 name=Admin>, 'BA': <Role id=3 name=BA>, 'Customer': <Role id=6 name=Customer>, 'Member': <Role id=5 name=Member>, ...}
+
+    @pytest.mark.asyncio
+    async def test_legacy_worker_uses_same_methodology_persistence(session, make_user, seed_roles):
+        from app.workers.ai_tasks import _persist_plan as legacy_persist
+        user = await make_user(roles=[seed_roles["PM"]])
+        project = await legacy_persist(session, {**PLAN, "methodology": "hybrid"}, user)
+>       assert project.methodology == "hybrid"
+E       AssertionError: assert 'agile' == 'hybrid'
+E
+E         - hybrid
+E         + agile
+
+..\..\..\..\backend\tests\unit\test_ai_project_methodology.py:42: AssertionError
+_____ test_confirmed_methodology_reaches_prompt_output_and_project[agile] _____
+
+engine = <sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x000002B2DE2D5F90>
+session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000002B2DE278260>
+make_user = <function make_user.<locals>.factory at 0x000002B2DF0D6980>
+seed_roles = {'Admin': <Role id=1 name=Admin>, 'BA': <Role id=3 name=BA>, 'Customer': <Role id=6 name=Customer>, 'Member': <Role id=5 name=Member>, ...}
+as_user = <function as_user.<locals>.factory at 0x000002B2DF105620>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002B2DF121BB0>
+methodology = 'agile'
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("methodology", ["agile", "waterfall", "hybrid"])
+    async def test_confirmed_methodology_reaches_prompt_output_and_project(
+        engine, session, make_user, seed_roles, as_user, monkeypatch, methodology,
+    ):
+        from app.models.ai_output import AIOutput
+        from app.models.phase import Phase
+        from app.models.sprint import Sprint
+        from app.models.dependency import Dependency
+        from app.models.task import Task
+
+        user = await make_user(roles=[seed_roles["Admin"]])
+        brief = await make_brief(session, user)
+        # A valid but contradictory model choice cannot replace the confirmed choice.
+        plan = {"name": "Confirmed project", "methodology": "hybrid" if methodology != "hybrid" else "agile",
+                "phases": [
+                    {"name": "Requirements", "tasks": [{"name": "Specify", "estimated_hours": 8}]},
+                    {"name": "Delivery", "tasks": [{"name": "Implement", "estimated_hours": 16, "dependencies": ["Specify"]}]},
+                ]}
+        async with as_user(user) as http:
+            response = await http.post("/api/v1/ai/generate-project-from-brief",
+                                       json={"brief_id": brief.id, "methodology": methodology})
+>       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":[{"type":"extra_forbidden","loc":["body","methodology"],"msg":"Extra inputs are not permitted","input":"agile"}]}
+E       assert 422 == 202
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+..\..\..\..\backend\tests\integration\test_project_from_brief_job.py:248: AssertionError
+---------------------------- Captured stdout call -----------------------------
+INFO     [-] httpx: HTTP Request: POST http://test/api/v1/ai/generate-project-from-brief "HTTP/1.1 422 Unprocessable Entity"
+------------------------------ Captured log call ------------------------------
+INFO     httpx:_client.py:1784 HTTP Request: POST http://test/api/v1/ai/generate-project-from-brief "HTTP/1.1 422 Unprocessable Entity"
+___ test_confirmed_methodology_reaches_prompt_output_and_project[waterfall] ___
+
+engine = <sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x000002B2DCDF0F10>
+session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000002B2DF123BF0>
+make_user = <function make_user.<locals>.factory at 0x000002B2DF1642C0>
+seed_roles = {'Admin': <Role id=1 name=Admin>, 'BA': <Role id=3 name=BA>, 'Customer': <Role id=6 name=Customer>, 'Member': <Role id=5 name=Member>, ...}
+as_user = <function as_user.<locals>.factory at 0x000002B2DF165E40>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002B2DF161F40>
+methodology = 'waterfall'
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("methodology", ["agile", "waterfall", "hybrid"])
+    async def test_confirmed_methodology_reaches_prompt_output_and_project(
+        engine, session, make_user, seed_roles, as_user, monkeypatch, methodology,
+    ):
+        from app.models.ai_output import AIOutput
+        from app.models.phase import Phase
+        from app.models.sprint import Sprint
+        from app.models.dependency import Dependency
+        from app.models.task import Task
+
+        user = await make_user(roles=[seed_roles["Admin"]])
+        brief = await make_brief(session, user)
+        # A valid but contradictory model choice cannot replace the confirmed choice.
+        plan = {"name": "Confirmed project", "methodology": "hybrid" if methodology != "hybrid" else "agile",
+                "phases": [
+                    {"name": "Requirements", "tasks": [{"name": "Specify", "estimated_hours": 8}]},
+                    {"name": "Delivery", "tasks": [{"name": "Implement", "estimated_hours": 16, "dependencies": ["Specify"]}]},
+                ]}
+        async with as_user(user) as http:
+            response = await http.post("/api/v1/ai/generate-project-from-brief",
+                                       json={"brief_id": brief.id, "methodology": methodology})
+>       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":[{"type":"extra_forbidden","loc":["body","methodology"],"msg":"Extra inputs are not permitted","input":"waterfall"}]}
+E       assert 422 == 202
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+..\..\..\..\backend\tests\integration\test_project_from_brief_job.py:248: AssertionError
+---------------------------- Captured stdout call -----------------------------
+INFO     [-] httpx: HTTP Request: POST http://test/api/v1/ai/generate-project-from-brief "HTTP/1.1 422 Unprocessable Entity"
+------------------------------ Captured log call ------------------------------
+INFO     httpx:_client.py:1784 HTTP Request: POST http://test/api/v1/ai/generate-project-from-brief "HTTP/1.1 422 Unprocessable Entity"
+____ test_confirmed_methodology_reaches_prompt_output_and_project[hybrid] _____
+
+engine = <sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x000002B2DF0DAC10>
+session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000002B2DF123BC0>
+make_user = <function make_user.<locals>.factory at 0x000002B2DF167E20>
+seed_roles = {'Admin': <Role id=1 name=Admin>, 'BA': <Role id=3 name=BA>, 'Customer': <Role id=6 name=Customer>, 'Member': <Role id=5 name=Member>, ...}
+as_user = <function as_user.<locals>.factory at 0x000002B2DF1ECCC0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002B2DF1D08C0>
+methodology = 'hybrid'
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("methodology", ["agile", "waterfall", "hybrid"])
+    async def test_confirmed_methodology_reaches_prompt_output_and_project(
+        engine, session, make_user, seed_roles, as_user, monkeypatch, methodology,
+    ):
+        from app.models.ai_output import AIOutput
+        from app.models.phase import Phase
+        from app.models.sprint import Sprint
+        from app.models.dependency import Dependency
+        from app.models.task import Task
+
+        user = await make_user(roles=[seed_roles["Admin"]])
+        brief = await make_brief(session, user)
+        # A valid but contradictory model choice cannot replace the confirmed choice.
+        plan = {"name": "Confirmed project", "methodology": "hybrid" if methodology != "hybrid" else "agile",
+                "phases": [
+                    {"name": "Requirements", "tasks": [{"name": "Specify", "estimated_hours": 8}]},
+                    {"name": "Delivery", "tasks": [{"name": "Implement", "estimated_hours": 16, "dependencies": ["Specify"]}]},
+                ]}
+        async with as_user(user) as http:
+            response = await http.post("/api/v1/ai/generate-project-from-brief",
+                                       json={"brief_id": brief.id, "methodology": methodology})
+>       assert response.status_code == 202, response.text
+E       AssertionError: {"detail":[{"type":"extra_forbidden","loc":["body","methodology"],"msg":"Extra inputs are not permitted","input":"hybrid"}]}
+E       assert 422 == 202
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+..\..\..\..\backend\tests\integration\test_project_from_brief_job.py:248: AssertionError
+---------------------------- Captured stdout call -----------------------------
+INFO     [-] httpx: HTTP Request: POST http://test/api/v1/ai/generate-project-from-brief "HTTP/1.1 422 Unprocessable Entity"
+------------------------------ Captured log call ------------------------------
+INFO     httpx:_client.py:1784 HTTP Request: POST http://test/api/v1/ai/generate-project-from-brief "HTTP/1.1 422 Unprocessable Entity"
+_ test_restart_legacy_staged_plan_preserves_saved_choice_without_provider[waterfall] _
+
+engine = <sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x000002B2DF287750>
+session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000002B2DF1D2A50>
+make_user = <function make_user.<locals>.factory at 0x000002B2DF1060C0>
+seed_roles = {'Admin': <Role id=1 name=Admin>, 'BA': <Role id=3 name=BA>, 'Customer': <Role id=6 name=Customer>, 'Member': <Role id=5 name=Member>, ...}
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002B2DF1D2D80>
+methodology = 'waterfall'
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("methodology", ["waterfall", "hybrid", "agile", None])
+    async def test_restart_legacy_staged_plan_preserves_saved_choice_without_provider(
+        engine, session, make_user, seed_roles, monkeypatch, methodology,
+    ):
+        user = await make_user(roles=[seed_roles["PM"]])
+        brief = await make_brief(session, user)
+        kwargs = {"methodology": methodology} if methodology is not None else {}
+>       response = await AIService(session).request_project_generation_from_brief(brief.id, user, **kwargs)
+E       TypeError: AIService.request_project_generation_from_brief() got an unexpected keyword argument 'methodology'
+
+..\..\..\..\backend\tests\integration\test_project_from_brief_job.py:290: TypeError
+_ test_restart_legacy_staged_plan_preserves_saved_choice_without_provider[hybrid] _
+
+engine = <sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x000002B2DF291E10>
+session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000002B2DF163A40>
+make_user = <function make_user.<locals>.factory at 0x000002B2DF23CB80>
+seed_roles = {'Admin': <Role id=1 name=Admin>, 'BA': <Role id=3 name=BA>, 'Customer': <Role id=6 name=Customer>, 'Member': <Role id=5 name=Member>, ...}
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002B2DF1D1430>
+methodology = 'hybrid'
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("methodology", ["waterfall", "hybrid", "agile", None])
+    async def test_restart_legacy_staged_plan_preserves_saved_choice_without_provider(
+        engine, session, make_user, seed_roles, monkeypatch, methodology,
+    ):
+        user = await make_user(roles=[seed_roles["PM"]])
+        brief = await make_brief(session, user)
+        kwargs = {"methodology": methodology} if methodology is not None else {}
+>       response = await AIService(session).request_project_generation_from_brief(brief.id, user, **kwargs)
+E       TypeError: AIService.request_project_generation_from_brief() got an unexpected keyword argument 'methodology'
+
+..\..\..\..\backend\tests\integration\test_project_from_brief_job.py:290: TypeError
+_ test_restart_legacy_staged_plan_preserves_saved_choice_without_provider[agile] _
+
+engine = <sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x000002B2DF0DBE10>
+session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000002B2DF161640>
+make_user = <function make_user.<locals>.factory at 0x000002B2DF23EB60>
+seed_roles = {'Admin': <Role id=1 name=Admin>, 'BA': <Role id=3 name=BA>, 'Customer': <Role id=6 name=Customer>, 'Member': <Role id=5 name=Member>, ...}
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002B2DF1D2990>
+methodology = 'agile'
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("methodology", ["waterfall", "hybrid", "agile", None])
+    async def test_restart_legacy_staged_plan_preserves_saved_choice_without_provider(
+        engine, session, make_user, seed_roles, monkeypatch, methodology,
+    ):
+        user = await make_user(roles=[seed_roles["PM"]])
+        brief = await make_brief(session, user)
+        kwargs = {"methodology": methodology} if methodology is not None else {}
+>       response = await AIService(session).request_project_generation_from_brief(brief.id, user, **kwargs)
+E       TypeError: AIService.request_project_generation_from_brief() got an unexpected keyword argument 'methodology'
+
+..\..\..\..\backend\tests\integration\test_project_from_brief_job.py:290: TypeError
+_ test_restart_legacy_staged_plan_preserves_saved_choice_without_provider[None] _
+
+engine = <sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x000002B2DF258BD0>
+session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000002B2DF1D28D0>
+make_user = <function make_user.<locals>.factory at 0x000002B2DF1AAA20>
+seed_roles = {'Admin': <[MissingGreenlet("greenlet_spawn has not been called; can't call await_only() here. Was IO attempted in an ...all await_only() here. Was IO attempted in an unexpected place?") raised in repr()] Role object at 0x2b2df21acf0>, ...}
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002B2DF1630E0>
+methodology = None
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("methodology", ["waterfall", "hybrid", "agile", None])
+    async def test_restart_legacy_staged_plan_preserves_saved_choice_without_provider(
+        engine, session, make_user, seed_roles, monkeypatch, methodology,
+    ):
+        user = await make_user(roles=[seed_roles["PM"]])
+        brief = await make_brief(session, user)
+        kwargs = {"methodology": methodology} if methodology is not None else {}
+        response = await AIService(session).request_project_generation_from_brief(brief.id, user, **kwargs)
+        request_id = int(response.job_id)
+        await session.commit()
+        factory = async_sessionmaker(engine, expire_on_commit=False)
+        async with factory() as db, db.begin():
+            claimed = (await JobService.claim(db, 1, 120))[0]
+            db.expunge(claimed)
+        context = JobContext(claimed, factory)
+        await context.mark_dispatched()
+        await context.stage_result({"text": json.dumps(PLAN)})
+        async with factory() as db, db.begin():
+            job = await db.get(Job, claimed.id)
+            job.lease_expires_at = datetime.now(UTC) - timedelta(seconds=1)
+
+        async def forbidden_provider():
+            pytest.fail("staged restart must not construct or call a provider")
+        monkeypatch.setattr("app.services.ai.project_generator.get_ai_provider", forbidden_provider)
+        runner = make_runner(engine)
+        await runner.poll_once()
+        await runner.stop()
+        session.expire_all()
+        request = await session.get(AIRequest, request_id)
+>       assert request.status == AIRequestStatus.COMPLETED, request.error_message
+E       AssertionError: None
+E       assert <AIRequestSta... 'PROCESSING'> == <AIRequestSta...: 'COMPLETED'>
+E
+E         - COMPLETED
+E         + PROCESSING
+
+..\..\..\..\backend\tests\integration\test_project_from_brief_job.py:312: AssertionError
+---------------------------- Captured stdout call -----------------------------
+ERROR    [-] asyncio: Task exception was never retrieved
+future: <Task finished name='job-1' coro=<JobRunner._execute() done, defined at C:\BA\AI Project Planning & Portfolio Management system\backend\app\core\job_runner.py:204> exception=staged restart must not construct or call a provider>
+Traceback (most recent call last):
+  File "C:\BA\AI Project Planning & Portfolio Management system\backend\app\core\job_runner.py", line 207, in _execute
+    await asyncio.wait_for(self._perform(ctx), timeout=self.task_timeout)
+  File "C:\Users\VIET THANG\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py", line 520, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "C:\BA\AI Project Planning & Portfolio Management system\backend\app\core\job_runner.py", line 191, in _perform
+    result = await handler(ctx)
+             ^^^^^^^^^^^^^^^^^^
+  File "C:\BA\AI Project Planning & Portfolio Management system\backend\app\services\ai\durable_jobs.py", line 93, in run_ai
+    result = await generate_project_from_brief(build_brief_snapshot_for_generation(brief))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\BA\AI Project Planning & Portfolio Management system\backend\app\services\ai\project_generator.py", line 127, in generate_project_from_brief
+    provider = await get_ai_provider()
+               ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\BA\AI Project Planning & Portfolio Management system\backend\tests\integration\test_project_from_brief_job.py", line 305, in forbidden_provider
+    pytest.fail("staged restart must not construct or call a provider")
+  File "C:\BA\AI Project Planning & Portfolio Management system\backend\.venv\Lib\site-packages\_pytest\outcomes.py", line 178, in fail
+    raise Failed(msg=reason, pytrace=pytrace)
+Failed: staged restart must not construct or call a provider
+------------------------------ Captured log call ------------------------------
+ERROR    asyncio:base_events.py:1833 Task exception was never retrieved
+future: <Task finished name='job-1' coro=<JobRunner._execute() done, defined at C:\BA\AI Project Planning & Portfolio Management system\backend\app\core\job_runner.py:204> exception=staged restart must not construct or call a provider>
+Traceback (most recent call last):
+  File "C:\BA\AI Project Planning & Portfolio Management system\backend\app\core\job_runner.py", line 207, in _execute
+    await asyncio.wait_for(self._perform(ctx), timeout=self.task_timeout)
+  File "C:\Users\VIET THANG\AppData\Local\Programs\Python\Python312\Lib\asyncio\tasks.py", line 520, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "C:\BA\AI Project Planning & Portfolio Management system\backend\app\core\job_runner.py", line 191, in _perform
+    result = await handler(ctx)
+             ^^^^^^^^^^^^^^^^^^
+  File "C:\BA\AI Project Planning & Portfolio Management system\backend\app\services\ai\durable_jobs.py", line 93, in run_ai
+    result = await generate_project_from_brief(build_brief_snapshot_for_generation(brief))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\BA\AI Project Planning & Portfolio Management system\backend\app\services\ai\project_generator.py", line 127, in generate_project_from_brief
+    provider = await get_ai_provider()
+               ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\BA\AI Project Planning & Portfolio Management system\backend\tests\integration\test_project_from_brief_job.py", line 305, in forbidden_provider
+    pytest.fail("staged restart must not construct or call a provider")
+  File "C:\BA\AI Project Planning & Portfolio Management system\backend\.venv\Lib\site-packages\_pytest\outcomes.py", line 178, in fail
+    raise Failed(msg=reason, pytrace=pytrace)
+Failed: staged restart must not construct or call a provider
+_______________ test_methodology_is_part_of_idempotency_payload _______________
+
+session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000002B2DF1D3980>
+make_user = <function make_user.<locals>.factory at 0x000002B2DF2D1940>
+seed_roles = {'Admin': <Role id=1 name=Admin>, 'BA': <Role id=3 name=BA>, 'Customer': <Role id=6 name=Customer>, 'Member': <Role id=5 name=Member>, ...}
+as_user = <function as_user.<locals>.factory at 0x000002B2DF2D2160>
+
+    @pytest.mark.asyncio
+    async def test_methodology_is_part_of_idempotency_payload(session, make_user, seed_roles, as_user):
+        user = await make_user(roles=[seed_roles["Admin"]])
+        brief = await make_brief(session, user)
+        async with as_user(user) as http:
+            headers = {"Idempotency-Key": "confirmed-choice"}
+            body = {"brief_id": brief.id, "methodology": "waterfall"}
+            first = await http.post("/api/v1/ai/generate-project-from-brief", json=body, headers=headers)
+            again = await http.post("/api/v1/ai/generate-project-from-brief", json=body, headers=headers)
+            changed = await http.post("/api/v1/ai/generate-project-from-brief",
+                                      json={**body, "methodology": "agile"}, headers=headers)
+>       assert first.status_code == again.status_code == 202
+E       assert 422 == 202
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+..\..\..\..\backend\tests\integration\test_project_from_brief_job.py:328: AssertionError
+---------------------------- Captured stdout call -----------------------------
+INFO     [-] httpx: HTTP Request: POST http://test/api/v1/ai/generate-project-from-brief "HTTP/1.1 422 Unprocessable Entity"
+INFO     [-] httpx: HTTP Request: POST http://test/api/v1/ai/generate-project-from-brief "HTTP/1.1 422 Unprocessable Entity"
+INFO     [-] httpx: HTTP Request: POST http://test/api/v1/ai/generate-project-from-brief "HTTP/1.1 422 Unprocessable Entity"
+------------------------------ Captured log call ------------------------------
+INFO     httpx:_client.py:1784 HTTP Request: POST http://test/api/v1/ai/generate-project-from-brief "HTTP/1.1 422 Unprocessable Entity"
+INFO     httpx:_client.py:1784 HTTP Request: POST http://test/api/v1/ai/generate-project-from-brief "HTTP/1.1 422 Unprocessable Entity"
+INFO     httpx:_client.py:1784 HTTP Request: POST http://test/api/v1/ai/generate-project-from-brief "HTTP/1.1 422 Unprocessable Entity"
+_ test_legacy_idempotency_omission_is_preserved_and_explicit_choice_conflicts _
+
+session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000002B2DF21B3E0>
+make_user = <function make_user.<locals>.factory at 0x000002B2DF33F560>
+
+    @pytest.mark.asyncio
+    async def test_legacy_idempotency_omission_is_preserved_and_explicit_choice_conflicts(session, make_user):
+        user = await make_user()
+        brief = await make_brief(session, user)
+        service = AIService(session)
+        first = await service.request_project_generation_from_brief(brief.id, user, request_key="legacy")
+        again = await service.request_project_generation_from_brief(brief.id, user, request_key="legacy")
+        request = await session.get(AIRequest, int(first.job_id))
+        assert request.input_data_json == {"brief_id": brief.id}
+        assert first.job_id == again.job_id
+        with pytest.raises(HTTPException) as error:
+>           await service.request_project_generation_from_brief(brief.id, user, methodology="agile", request_key="legacy")
+E           TypeError: AIService.request_project_generation_from_brief() got an unexpected keyword argument 'methodology'
+
+..\..\..\..\backend\tests\integration\test_project_from_brief_job.py:345: TypeError
+============================== warnings summary ===============================
+..\..\..\..\backend\.venv\Lib\site-packages\starlette\formparsers.py:12
+  C:\BA\AI Project Planning & Portfolio Management system\backend\.venv\Lib\site-packages\starlette\formparsers.py:12: PendingDeprecationWarning: Please use `import python_multipart` instead.
+    import multipart
+
+tests/unit/test_ai_project_methodology.py::test_persistence_carries_plan_methodology[agile]
+  C:\BA\AI Project Planning & Portfolio Management system\backend\.venv\Lib\site-packages\pytest_asyncio\plugin.py:783: DeprecationWarning: The event_loop fixture provided by pytest-asyncio has been redefined in
+  C:\BA\AI Project Planning & Portfolio Management system\backend\tests\conftest.py:34
+  Replacing the event_loop fixture with a custom implementation is deprecated
+  and will lead to errors in the future.
+  If you want to request an asyncio event loop with a scope other than function
+  scope, use the "scope" argument to the asyncio mark when marking the tests.
+  If you want to return different types of event loops, use the event_loop_policy
+  fixture.
+
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED ..\..\..\..\backend\tests\unit\test_ai_project_methodology.py::test_persistence_carries_plan_methodology[waterfall]
+FAILED ..\..\..\..\backend\tests\unit\test_ai_project_methodology.py::test_persistence_carries_plan_methodology[hybrid]
+FAILED ..\..\..\..\backend\tests\unit\test_ai_project_methodology.py::test_invalid_supplied_plan_methodology_rejected_before_any_project[None-scrum]
+FAILED ..\..\..\..\backend\tests\unit\test_ai_project_methodology.py::test_invalid_supplied_plan_methodology_rejected_before_any_project[None-WATERFALL]
+FAILED ..\..\..\..\backend\tests\unit\test_ai_project_methodology.py::test_invalid_supplied_plan_methodology_rejected_before_any_project[None-]
+FAILED ..\..\..\..\backend\tests\unit\test_ai_project_methodology.py::test_invalid_supplied_plan_methodology_rejected_before_any_project[None-None]
+FAILED ..\..\..\..\backend\tests\unit\test_ai_project_methodology.py::test_invalid_supplied_plan_methodology_rejected_before_any_project[None-42]
+FAILED ..\..\..\..\backend\tests\unit\test_ai_project_methodology.py::test_invalid_supplied_plan_methodology_rejected_before_any_project[waterfall-scrum]
+FAILED ..\..\..\..\backend\tests\unit\test_ai_project_methodology.py::test_invalid_supplied_plan_methodology_rejected_before_any_project[waterfall-WATERFALL]
+FAILED ..\..\..\..\backend\tests\unit\test_ai_project_methodology.py::test_invalid_supplied_plan_methodology_rejected_before_any_project[waterfall-]
+FAILED ..\..\..\..\backend\tests\unit\test_ai_project_methodology.py::test_invalid_supplied_plan_methodology_rejected_before_any_project[waterfall-None]
+FAILED ..\..\..\..\backend\tests\unit\test_ai_project_methodology.py::test_invalid_supplied_plan_methodology_rejected_before_any_project[waterfall-42]
+FAILED ..\..\..\..\backend\tests\unit\test_ai_project_methodology.py::test_legacy_worker_uses_same_methodology_persistence
+FAILED ..\..\..\..\backend\tests\integration\test_project_from_brief_job.py::test_confirmed_methodology_reaches_prompt_output_and_project[agile]
+FAILED ..\..\..\..\backend\tests\integration\test_project_from_brief_job.py::test_confirmed_methodology_reaches_prompt_output_and_project[waterfall]
+FAILED ..\..\..\..\backend\tests\integration\test_project_from_brief_job.py::test_confirmed_methodology_reaches_prompt_output_and_project[hybrid]
+FAILED ..\..\..\..\backend\tests\integration\test_project_from_brief_job.py::test_restart_legacy_staged_plan_preserves_saved_choice_without_provider[waterfall]
+FAILED ..\..\..\..\backend\tests\integration\test_project_from_brief_job.py::test_restart_legacy_staged_plan_preserves_saved_choice_without_provider[hybrid]
+FAILED ..\..\..\..\backend\tests\integration\test_project_from_brief_job.py::test_restart_legacy_staged_plan_preserves_saved_choice_without_provider[agile]
+FAILED ..\..\..\..\backend\tests\integration\test_project_from_brief_job.py::test_restart_legacy_staged_plan_preserves_saved_choice_without_provider[None]
+FAILED ..\..\..\..\backend\tests\integration\test_project_from_brief_job.py::test_methodology_is_part_of_idempotency_payload
+FAILED ..\..\..\..\backend\tests\integration\test_project_from_brief_job.py::test_legacy_idempotency_omission_is_preserved_and_explicit_choice_conflicts
+22 failed, 20 passed, 2 warnings in 36.17s

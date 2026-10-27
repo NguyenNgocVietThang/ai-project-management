@@ -75,6 +75,15 @@ async def run_ai(ctx):
         token = active_ai_context.set(ctx)
         try:
             if request_type == AIRequestType.PROJECT_GENERATE:
+                from app.models.project import ProjectMethodology
+                from app.schemas.ai import validated_project_methodology
+                from app.services.ai.parsing import parse_json_object
+
+                try:
+                    confirmed = ProjectMethodology(input_data["methodology"]) if "methodology" in input_data else None
+                except ValueError as exc:
+                    raise PermanentJobError("invalid_payload") from exc
+                staged = ctx.job.staged_result
                 if "brief_id" in input_data:
                     # C4: sinh từ hồ sơ đã chốt; ảnh chụp đọc trước khi gọi provider.
                     from app.models.requirement_brief import RequirementBrief
@@ -90,10 +99,18 @@ async def run_ai(ctx):
                         return JobResult(result={"ai_request_id": request_id})
                     if brief.status != "ready":
                         raise PermanentJobError("invalid_payload")
-                    result = await generate_project_from_brief(build_brief_snapshot_for_generation(brief))
+                    snapshot = build_brief_snapshot_for_generation(brief)
+                    if confirmed is not None:
+                        snapshot["methodology"] = confirmed.value
+                    result = parse_json_object(staged["text"]) if staged is not None else await generate_project_from_brief(snapshot)
                 else:
                     from app.services.ai.project_generator import generate_project_from_prompt
-                    result = await generate_project_from_prompt(input_data["prompt"])
+                    result = parse_json_object(staged["text"]) if staged is not None else await generate_project_from_prompt(input_data["prompt"])
+                try:
+                    methodology = validated_project_methodology(result, confirmed)
+                except ValueError as exc:
+                    raise PermanentJobError("invalid_provider_response") from exc
+                result = {**result, "methodology": methodology.value}
                 phases = result.get("phases", [])
                 if len(phases) > 50 or sum(len(p.get("tasks", [])) for p in phases if isinstance(p, dict)) > min(settings.AI_MAX_PROJECT_TASKS, 150):
                     raise PermanentJobError("ai_budget_exceeded")

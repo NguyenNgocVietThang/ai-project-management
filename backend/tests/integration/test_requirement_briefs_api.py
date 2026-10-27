@@ -203,3 +203,21 @@ async def test_list_newest_first_with_limit(session, make_user, as_user):
         assert [row["id"] for row in listed] == [ids[2], ids[1]]
         assert listed[0]["item_counts"]["total"] == 7
         assert (await http.get(BASE, params={"limit": 0})).status_code == 422
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("invalid", ["scrum", "WATERFALL", "", 42])
+async def test_invalid_project_methodology_is_422_before_enqueue(session, make_user, seed_roles, as_user, invalid):
+    from app.models.ai_request import AIRequest
+    from tests.integration.test_project_from_brief_job import make_brief
+
+    user = await make_user(roles=[seed_roles["Admin"]])
+    brief = await make_brief(session, user)
+    async with as_user(user) as http:
+        response = await http.post("/api/v1/ai/generate-project-from-brief",
+                                   json={"brief_id": brief.id, "methodology": invalid})
+    assert response.status_code == 422
+    assert any(error["loc"][-1] == "methodology" for error in response.json()["detail"])
+    assert await _job_count(session) == 0
+    assert await session.scalar(select(func.count()).select_from(AIRequest)) == 0
+    assert brief.pending_job_id is None

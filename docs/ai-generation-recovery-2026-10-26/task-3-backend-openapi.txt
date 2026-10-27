@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "C:\BA\AI Project Planning & Portfolio Management system\backend\scripts\export_openapi.py", line 53, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\BA\AI Project Planning & Portfolio Management system\backend\scripts\export_openapi.py", line 48, in main
+    print(f"\u0110� ghi {args.output}")
+  File "C:\Users\VIET THANG\AppData\Local\Programs\Python\Python312\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u0110' in position 0: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\BA\AI Project Planning & Portfolio Management system\backend\scripts\export_openapi.py", line 53, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\BA\AI Project Planning & Portfolio Management system\backend\scripts\export_openapi.py", line 44, in main
+    print("openapi.json kh\u1edbp v\u1edbi API.")
+  File "C:\Users\VIET THANG\AppData\Local\Programs\Python\Python312\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u1edb' in position 15: character maps to <undefined>

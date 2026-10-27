@@ -17,6 +17,7 @@ from app.db.session import get_db
 from app.models.ai_output import AIOutput
 from app.models.ai_request import AIRequest, AIRequestStatus, AIRequestType
 from app.models.job import Job
+from app.models.project import ProjectMethodology
 from app.models.user import User
 from app.schemas.ai import AIJobResponse, AIResultResponse
 from app.services.job_service import enqueue
@@ -33,7 +34,7 @@ class AIService:
             raise BadRequestException("Prompt must contain 1 to 8000 characters")
         return await self._queue(AIRequestType.PROJECT_GENERATE, {"prompt": prompt}, user, project_id=None, message="Project generation queued", request_key=request_key)
 
-    async def request_project_generation_from_brief(self, brief_id: int, user: User, *, request_key: str | None = None) -> AIJobResponse:
+    async def request_project_generation_from_brief(self, brief_id: int, user: User, *, methodology: ProjectMethodology | None = None, request_key: str | None = None) -> AIJobResponse:
         """C4: xếp hàng sinh dự án từ hồ sơ yêu cầu đã chốt (`ready`).
 
         Chạy trong transaction của request, khóa hàng hồ sơ để hai yêu cầu đồng thời
@@ -49,6 +50,8 @@ class AIService:
         if request_key is not None and (not request_key or len(request_key) > 100):
             raise BadRequestException("Idempotency-Key must contain 1 to 100 characters")
         input_data = {"brief_id": brief_id}
+        if methodology is not None:
+            input_data["methodology"] = ProjectMethodology(methodology).value
         message = "Project generation queued"
         brief = await get_owned(self.db, brief_id, user, lock=True)
         if request_key is not None:

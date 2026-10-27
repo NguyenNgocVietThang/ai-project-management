@@ -1,0 +1,79 @@
+.....................ss................................................. [  8%]
+....................sssss............................................... [ 17%]
+................................sss..................................... [ 25%]
+...........ss........................................................... [ 34%]
+........................................................................ [ 42%]
+........................................................................ [ 51%]
+........................................................................ [ 59%]
+........................................................................ [ 68%]
+........................................................................ [ 77%]
+........................................................................ [ 85%]
+.....................................s.s.s.s.s.s.sss.s...s.s..sss.s..... [ 94%]
+.................................................                        [100%]
+============================== warnings summary ===============================
+tests/integration/test_ai_dispatch_budget.py::test_dispatch_budget_counts_retries_and_rolls_back_failed_transaction
+  C:\BA\AI Project Planning & Portfolio Management system\.superpowers\sdd\2026-10-26-ai-generation-recovery\test-env\pinned-venv\Lib\site-packages\pytest_asyncio\plugin.py:783: DeprecationWarning: The event_loop fixture provided by pytest-asyncio has been redefined in
+  C:\BA\AI Project Planning & Portfolio Management system\backend\tests\conftest.py:34
+  Replacing the event_loop fixture with a custom implementation is deprecated
+  and will lead to errors in the future.
+  If you want to request an asyncio event loop with a scope other than function
+  scope, use the "scope" argument to the asyncio mark when marking the tests.
+  If you want to return different types of event loops, use the event_loop_policy
+  fixture.
+
+    warnings.warn(
+
+tests/integration/test_project_versions.py::test_diff_endpoint
+  C:\BA\AI Project Planning & Portfolio Management system\backend\app\api\v1\endpoints\project_versions.py:106: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    raise UnprocessableException("target must be a version id or 'current'")
+
+tests/integration/test_requirement_briefs_api.py::test_reject_assumption_keeps_missing
+  C:\BA\AI Project Planning & Portfolio Management system\backend\app\services\requirement_brief_service.py:126: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    raise UnprocessableException("invalid_item_update") from exc
+
+tests/unit/test_change_request_service.py::test_submit_missing_role_names_role_and_keeps_draft
+tests/unit/test_change_request_service.py::test_admin_and_inactive_members_do_not_count
+  C:\BA\AI Project Planning & Portfolio Management system\backend\app\services\change_request_service.py:84: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    raise UnprocessableException(f"missing_roles: {', '.join(missing)}")
+
+tests/unit/test_cpm_scheduling.py::test_the_cpm_endpoint_refuses_over_cap_without_loading_tasks[counts0]
+tests/unit/test_cpm_scheduling.py::test_the_cpm_endpoint_applies_the_job_caps_over_http[tasks]
+  C:\BA\AI Project Planning & Portfolio Management system\backend\app\services\scheduling_service.py:201: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    raise UnprocessableException("resource_limit_exceeded")
+
+tests/unit/test_cpm_scheduling.py::test_the_cpm_endpoint_refuses_over_cap_without_loading_tasks[counts1]
+tests/unit/test_cpm_scheduling.py::test_the_cpm_endpoint_applies_the_job_caps_over_http[dependencies]
+  C:\BA\AI Project Planning & Portfolio Management system\backend\app\services\scheduling_service.py:212: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    raise UnprocessableException("resource_limit_exceeded")
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+SKIPPED [1] ..\..\..\..\backend\tests\integration\test_approval_postgres.py:95: Set TEST_POSTGRES_URL to a disposable PostgreSQL server; SQLite does not prove locks
+SKIPPED [1] ..\..\..\..\backend\tests\integration\test_approval_postgres.py:116: Set TEST_POSTGRES_URL to a disposable PostgreSQL server; SQLite does not prove locks
+SKIPPED [1] ..\..\..\..\backend\tests\integration\test_durable_jobs_postgres.py:56: Set TEST_POSTGRES_URL to a disposable PostgreSQL server; SQLite does not prove locks
+SKIPPED [1] ..\..\..\..\backend\tests\integration\test_durable_jobs_postgres.py:78: Set TEST_POSTGRES_URL to a disposable PostgreSQL server; SQLite does not prove locks
+SKIPPED [1] ..\..\..\..\backend\tests\integration\test_durable_jobs_postgres.py:101: Set TEST_POSTGRES_URL to a disposable PostgreSQL server; SQLite does not prove locks
+SKIPPED [1] ..\..\..\..\backend\tests\integration\test_durable_jobs_postgres.py:121: Set TEST_POSTGRES_URL to a disposable PostgreSQL server; SQLite does not prove locks
+SKIPPED [1] ..\..\..\..\backend\tests\integration\test_durable_jobs_postgres.py:164: Set TEST_POSTGRES_URL to a disposable PostgreSQL server; SQLite does not prove locks
+SKIPPED [1] ..\..\..\..\backend\tests\integration\test_project_versions_postgres.py:88: Set TEST_POSTGRES_URL to a disposable PostgreSQL server; SQLite does not prove locks
+SKIPPED [1] ..\..\..\..\backend\tests\integration\test_project_versions_postgres.py:104: Set TEST_POSTGRES_URL to a disposable PostgreSQL server; SQLite does not prove locks
+SKIPPED [1] ..\..\..\..\backend\tests\integration\test_project_versions_postgres.py:116: Set TEST_POSTGRES_URL to a disposable PostgreSQL server; SQLite does not prove locks
+SKIPPED [1] ..\..\..\..\backend\tests\integration\test_version_rollback.py:385: Set TEST_POSTGRES_URL to a disposable PostgreSQL server
+SKIPPED [1] ..\..\..\..\backend\tests\integration\test_version_rollback.py:403: Set TEST_POSTGRES_URL to a disposable PostgreSQL server
+SKIPPED [1] ..\..\..\..\backend\tests\unit\test_security_state.py:66: Set SECURITY_TEST_DATABASE_URL to a disposable localhost Postgres
+SKIPPED [1] ..\..\..\..\backend\tests\unit\test_security_state.py:80: Set SECURITY_TEST_DATABASE_URL to a disposable localhost Postgres
+SKIPPED [1] ..\..\..\..\backend\tests\unit\test_security_state.py:90: Set SECURITY_TEST_DATABASE_URL to a disposable localhost Postgres
+SKIPPED [1] ..\..\..\..\backend\tests\unit\test_security_state.py:103: Set SECURITY_TEST_DATABASE_URL to a disposable localhost Postgres
+SKIPPED [1] ..\..\..\..\backend\tests\unit\test_security_state.py:117: Set SECURITY_TEST_DATABASE_URL to a disposable localhost Postgres
+SKIPPED [1] ..\..\..\..\backend\tests\unit\test_security_state.py:130: Set SECURITY_TEST_DATABASE_URL to a disposable localhost Postgres
+SKIPPED [1] ..\..\..\..\backend\tests\unit\test_security_state.py:140: Set SECURITY_TEST_DATABASE_URL to a disposable localhost Postgres
+SKIPPED [1] ..\..\..\..\backend\tests\unit\test_security_state.py:153: Independent connection pools require real PostgreSQL
+SKIPPED [1] ..\..\..\..\backend\tests\unit\test_security_state.py:149: Set SECURITY_TEST_DATABASE_URL to a disposable localhost Postgres
+SKIPPED [1] ..\..\..\..\backend\tests\unit\test_security_state.py:186: Set SECURITY_TEST_DATABASE_URL to a disposable localhost Postgres
+SKIPPED [1] ..\..\..\..\backend\tests\unit\test_security_state.py:228: Set SECURITY_TEST_DATABASE_URL to a disposable localhost Postgres
+SKIPPED [1] ..\..\..\..\backend\tests\unit\test_security_state.py:245: Set SECURITY_TEST_DATABASE_URL to a disposable localhost Postgres
+SKIPPED [1] ..\..\..\..\backend\tests\unit\test_security_state.py:278: Set SECURITY_TEST_DATABASE_URL to a disposable localhost Postgres
+SKIPPED [1] ..\..\..\..\backend\tests\unit\test_security_state.py:306: Independent simultaneous auth transactions require real PostgreSQL
+SKIPPED [1] ..\..\..\..\backend\tests\unit\test_security_state.py:302: Set SECURITY_TEST_DATABASE_URL to a disposable localhost Postgres
+SKIPPED [1] ..\..\..\..\backend\tests\unit\test_security_state.py:332: Set SECURITY_TEST_DATABASE_URL to a disposable localhost Postgres
+813 passed, 28 skipped, 9 warnings in 224.46s (0:03:44)

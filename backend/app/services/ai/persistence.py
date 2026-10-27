@@ -4,8 +4,9 @@ from datetime import date, timedelta
 
 logger = logging.getLogger(__name__)
 
-async def _persist_plan(db, plan: dict, user) -> "object":
+async def _persist_plan(db, plan: dict, user, *, confirmed_methodology=None) -> "object":
     from app.core.exceptions import BadRequestException
+    from app.schemas.ai import validated_project_methodology
     from app.schemas.project import ProjectCreate
     from app.schemas.task import DependencyCreate, TaskCreate
     from app.schemas.wbs import PhaseCreate
@@ -15,6 +16,8 @@ async def _persist_plan(db, plan: dict, user) -> "object":
 
     if not isinstance(plan, dict):
         raise BadRequestException("AI response was not a JSON object")
+
+    methodology = validated_project_methodology(plan, confirmed_methodology)
 
     name = (plan.get("name") or "").strip()
     if not name:
@@ -57,6 +60,7 @@ async def _persist_plan(db, plan: dict, user) -> "object":
             description=(plan.get("description") or None),
             start_date=start,
             end_date=end,
+            methodology=methodology,
         ),
         pm=user,
     )
