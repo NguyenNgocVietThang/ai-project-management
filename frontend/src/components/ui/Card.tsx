@@ -9,16 +9,16 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
   as?: 'div' | 'article' | 'section'
 }
 
-/** Khối nội dung cơ sở: bo 12px, viền mảnh, bóng mềm nhiều tầng. */
+/** Khối nội dung cơ sở: bo 16px, viền mảnh, nền đặc dễ đọc. */
 export const Card = forwardRef<HTMLDivElement, CardProps>(
   ({ className, interactive = false, flush = false, as: Tag = 'div', ...props }, ref) => (
     <Tag
       ref={ref as never}
       className={cn(
-        'relative rounded-xl border border-border/80 bg-card text-card-foreground shadow-soft',
+        'relative rounded-2xl border border-border/70 bg-card text-card-foreground',
         !flush && 'p-4 sm:p-6',
         interactive &&
-          'transition-[transform,box-shadow,border-color] duration-200 ease-out-soft hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-soft-md focus-within:border-primary/40',
+          'transition-[transform,box-shadow,border-color] duration-200 ease-out-soft hover:border-primary/30 hover:shadow-soft-md focus-within:border-primary/40',
         className
       )}
       {...props}

@@ -48,10 +48,10 @@ export function MainNav({ isAdmin, isInvestor = false, onNavigate, collapsed = f
   const visible = (audience: 'all' | 'admin' | 'investor') =>
     audience === 'all' || (audience === 'admin' && isAdmin) || (audience === 'investor' && isInvestor)
   return (
-    <nav aria-label={t('mainNavigation')} className="flex flex-col gap-6">
+    <nav aria-label={t('mainNavigation')} className="flex flex-col gap-7">
       {GROUPS.filter(group => visible(group.audience)).map(group => (
         <div key={group.key}>
-          <p className={cn('eyebrow mb-2 px-3', collapsed && 'sr-only')}>{t(group.key)}</p>
+          <p className={cn('mb-2 px-3 text-caption font-medium text-muted-foreground', collapsed && 'sr-only')}>{t(group.key)}</p>
           <ul className="flex flex-col gap-1">
             {group.links.map(({ href, key, Icon }) => {
               const active = pathname === href || pathname.startsWith(`${href}/`)
@@ -72,7 +72,7 @@ export function MainNav({ isAdmin, isInvestor = false, onNavigate, collapsed = f
                         : 'text-muted-foreground before:bg-transparent hover:bg-muted hover:text-foreground'
                     )}
                   >
-                    <Icon className={cn('h-5 w-5 transition-transform duration-200 group-hover:scale-110', active && 'text-primary')} strokeWidth={1.75} aria-hidden="true" />
+                    <Icon className={cn('h-5 w-5 transition-transform duration-200 ', active && 'text-primary')} strokeWidth={1.75} aria-hidden="true" />
                     <span className={collapsed ? 'sr-only' : undefined}>{t(key)}</span>
                   </Link>
                 </li>

@@ -1,15 +1,16 @@
 import type { Metadata, Viewport } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale, getMessages } from 'next-intl/server'
-import { Inter } from 'next/font/google'
+import { Be_Vietnam_Pro } from 'next/font/google'
 import { Providers } from '@/app/providers'
 import { themeInitScript } from '@/components/theme/ThemeProvider'
 import './globals.css'
 
-// Inter tự host qua next/font: có bộ ký tự tiếng Việt, không chặn render và
+// Be_Vietnam_Pro tự host qua next/font: có bộ ký tự tiếng Việt, không chặn render và
 // không gây nhảy layout (next/font tự sinh font dự phòng có cùng số đo).
-const inter = Inter({
+const vietnam = Be_Vietnam_Pro({
   subsets: ['latin', 'latin-ext', 'vietnamese'],
+  weight: ['400', '500', '600', '700'],
   display: 'swap',
   variable: '--font-sans',
 })
@@ -34,7 +35,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const messages = await getMessages()
 
   return (
-    <html lang={locale} className={inter.variable} suppressHydrationWarning>
+    <html lang={locale} className={vietnam.variable} suppressHydrationWarning>
       <head>
         {/* Chạy trước lần vẽ đầu tiên, nếu không người dùng ở chế độ tối sẽ thấy
             một cú chớp trắng ở mỗi lần tải trang. */}

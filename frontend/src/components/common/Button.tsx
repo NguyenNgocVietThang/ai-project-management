@@ -33,7 +33,7 @@ export function buttonClasses({
   className,
 }: { variant?: ButtonVariant; size?: ButtonSize; fullWidth?: boolean; className?: string } = {}) {
   return cn(
-    'inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium',
+    'inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-full font-medium',
     'transition-[background-color,border-color,color,box-shadow,transform] duration-200 ease-out-soft',
     'active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
     'disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50',

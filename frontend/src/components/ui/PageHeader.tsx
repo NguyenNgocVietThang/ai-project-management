@@ -21,14 +21,14 @@ interface PageHeaderProps {
  */
 export function PageHeader({ title, eyebrow, description, actions, meta, animate = false, compact = true, className }: PageHeaderProps) {
   return (
-    <header className={cn('flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between', className)}>
+    <header className={cn('flex flex-col gap-4 border-b border-border/70 pb-6 sm:flex-row sm:items-end sm:justify-between', className)}>
       <div className="min-w-0">
         {meta && <div className="mb-2 flex flex-wrap items-center gap-2">{meta}</div>}
         {eyebrow && <p className="eyebrow mb-2">{eyebrow}</p>}
         {animate ? (
-          <RevealText text={title} className={cn('break-words [overflow-wrap:anywhere]', compact ? 'text-xl font-semibold sm:text-2xl' : 'text-h2 sm:text-h1')} />
+          <RevealText text={title} className={cn('break-words [overflow-wrap:anywhere]', compact ? 'text-2xl font-medium tracking-tight sm:text-3xl' : 'text-h2 sm:text-h1')} />
         ) : (
-          <h1 title={title} className={cn('break-words [overflow-wrap:anywhere]', compact ? 'line-clamp-2 text-xl font-semibold sm:text-2xl' : 'text-h2 sm:text-h1')}>{title}</h1>
+          <h1 title={title} className={cn('break-words [overflow-wrap:anywhere]', compact ? 'line-clamp-2 text-2xl font-medium tracking-tight sm:text-3xl' : 'text-h2 sm:text-h1')}>{title}</h1>
         )}
         {description && <p className="mt-1 max-w-prose-ui break-words text-body-sm text-muted-foreground">{description}</p>}
       </div>

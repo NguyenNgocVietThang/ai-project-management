@@ -9,7 +9,6 @@ import { LanguageToggle } from '@/components/layout/LanguageToggle'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Skeleton, SkeletonRegion } from '@/components/ui/Skeleton'
-import { Reveal, RevealText } from '@/components/motion/RevealText'
 import { useAuthStore } from '@/store/authStore'
 import { FireworksToggle } from '@/components/background/FireworksToggle'
 
@@ -64,64 +63,42 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     return <AuthLoadingSkeleton />
   }
 
-  // Nền ứng dụng được render chung ở Providers; các lớp bg-background/.. giữ ảnh
-  // nhìn thấy nhẹ phía sau phần giới thiệu và biểu mẫu.
   return (
-    <div className="grid min-h-dvh lg:grid-cols-[1.05fr_1fr]">
-      <aside className="auth-grid relative hidden flex-col justify-between overflow-hidden border-r border-border/60 bg-accent/20 p-10 lg:flex xl:p-16">
-        {/* Quầng sáng teal mềm phía sau khối tiêu đề, chỉ để trang trí. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_40%,hsl(var(--primary)/0.18),transparent_60%)]"
-        />
-        <div className="relative">
+    <div className="min-h-dvh p-3 sm:p-5 lg:p-6">
+      <div className="mx-auto grid min-h-[calc(100dvh-3rem)] max-w-[1600px] overflow-hidden rounded-3xl border border-border/70 bg-card lg:grid-cols-[1.1fr_1fr]">
+        <aside className="dusk-auth-story relative hidden flex-col justify-between p-10 lg:flex xl:p-14">
           <Brand />
-        </div>
-        <div className="relative my-12 max-w-lg">
-          <p className="eyebrow mb-6 animate-fade-in text-primary">{t('eyebrow')}</p>
-          <RevealText as="p" text={t('title')} className="text-display text-foreground" />
-          <Reveal delay={240}>
-            <p className="mt-6 max-w-md text-lead text-muted-foreground">{t('description')}</p>
-          </Reveal>
-          <Reveal
-            stagger={80}
-            delay={360}
-            className="mt-10 space-y-2 rounded-2xl border border-border/60 bg-card/70 p-6 shadow-soft backdrop-blur-md"
-          >
-            {(['step1', 'step2', 'step3'] as const).map((step, i) => {
-              const Icon = STEP_ICONS[i]
-              return (
-                <div key={step} className="flex items-center gap-4 py-2">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent text-primary">
-                    <Icon className="h-4 w-4" aria-hidden="true" />
-                  </span>
-                  <span className="text-body-sm font-medium text-foreground">{t(step)}</span>
-                  <span className="ml-auto font-mono text-caption text-muted-foreground">0{i + 1}</span>
-                </div>
-              )
-            })}
-          </Reveal>
-        </div>
-        <p className="relative text-caption text-muted-foreground">{t('footer')}</p>
-      </aside>
-      <main className="relative flex min-h-dvh flex-col bg-background/40 px-4 py-6 sm:px-12">
-        <div className="flex flex-wrap items-center justify-end gap-3">
-          <LanguageToggle />
-          <FireworksToggle label={ts('fireworks')} reducedMotionHint={ts('fireworksReducedMotion')} />
-          <ThemeToggle />
-        </div>
-        <div className="page-enter mx-auto flex w-full max-w-sm flex-1 flex-col justify-center py-12">
-          <div className="mb-8 lg:hidden">
-            <Brand />
+          <div className="my-12 max-w-lg">
+            <p className="mb-5 text-body-sm font-medium text-primary">{t('eyebrow')}</p>
+            <p className="text-4xl font-medium leading-[1.15] tracking-tight xl:text-5xl">{t('title')}</p>
+            <p className="mt-6 max-w-md text-lead text-foreground">{t('description')}</p>
           </div>
-          {/* Trên mobile/tablet (không có cột giới thiệu) form nằm trong thẻ kính mờ;
-              từ lg trở lên form đứng trực tiếp trên nền. */}
-          <div className="rounded-2xl border border-border/60 bg-card/80 p-6 shadow-soft backdrop-blur-md sm:p-8 lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none lg:backdrop-blur-none">
+          <div>
+            <div className="space-y-4 border-t border-foreground/20 pt-6">
+              {(['step1', 'step2', 'step3'] as const).map((step, i) => {
+                const Icon = STEP_ICONS[i]
+                return <div key={step} className="flex items-center gap-3 text-body-sm font-medium">
+                  <Icon className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+                  <span>{t(step)}</span>
+                </div>
+              })}
+            </div>
+            <p className="mt-8 text-caption text-muted-foreground">{t('footer')}</p>
+          </div>
+        </aside>
+        <main className="relative flex flex-col bg-card px-5 py-5 sm:px-10 lg:px-12 xl:px-16">
+          <div className="flex flex-wrap items-center justify-end gap-3">
+            <LanguageToggle />
+            <FireworksToggle label={ts('fireworks')} reducedMotionHint={ts('fireworksReducedMotion')} />
+            <ThemeToggle />
+          </div>
+          <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center py-12">
+            <div className="dusk-landscape mb-8 rounded-2xl border border-border/60 p-5 lg:hidden"><Brand /></div>
             {children}
           </div>
-        </div>
-        <p className="text-center text-caption text-muted-foreground"> {tAccount('aIProjectPlanningPortfolioManagement')} </p>
-      </main>
+          <p className="text-center text-caption text-muted-foreground">{tAccount('aIProjectPlanningPortfolioManagement')}</p>
+        </main>
+      </div>
     </div>
   )
 }

@@ -2,79 +2,79 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Token thiết kế. Giá trị là bộ ba HSL để Tailwind ghép được độ trong suốt
-   (bg-primary/10). Nền trung tính theo Slate, teal là màu nhấn duy nhất.
-   Mọi cặp chữ/nền dùng cho văn bản đã được kiểm tra đạt WCAG AA (>= 4.5:1). */
+/* Dusk-inspired product theme. Semantic status colors remain distinct.
+ * Landscape is decorative; readable workspace surfaces are opaque. */
 @layer base {
   :root {
     color-scheme: light;
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    --primary: 175 77% 26%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 18%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 19% 35%;
-    --accent: 166 76% 96%;
-    --accent-foreground: 175 69% 21%;
-    --destructive: 0 72% 45%;
-    --destructive-foreground: 0 0% 100%;
-    --success: 163 94% 24%;
-    --success-foreground: 0 0% 100%;
-    --success-soft: 152 81% 95%;
-    --warning: 26 90% 37%;
-    --warning-foreground: 0 0% 100%;
-    --warning-soft: 48 100% 95%;
-    --info: 201 96% 32%;
-    --info-foreground: 0 0% 100%;
-    --info-soft: 204 100% 96%;
-    --border: 214 32% 91%;
-    --input: 213 27% 84%;
-    --ring: 175 77% 30%;
-    --shadow-color: 222 47% 11%;
-    --radius: 0.75rem;
-    /* Cùng một bố cục ảnh cho hai chế độ; lớp phủ giữ nội dung dễ đọc. */
-    --app-bg-image: url('/backgrounds/old-village-sunset.png');
-    --app-bg-overlay: 0.62;
+    --background: 240 14% 96%;
+    --foreground: 235 20% 15%;
+    --card: 240 20% 99%;
+    --card-foreground: 235 20% 15%;
+    --popover: 240 20% 99%;
+    --popover-foreground: 235 20% 15%;
+    --primary: 242 43% 46%;
+    --primary-foreground: 240 25% 98%;
+    --secondary: 240 15% 92%;
+    --secondary-foreground: 235 20% 22%;
+    --muted: 240 13% 93%;
+    --muted-foreground: 235 10% 39%;
+    --accent: 242 36% 92%;
+    --accent-foreground: 242 40% 33%;
+    --destructive: 0 67% 42%;
+    --destructive-foreground: 240 25% 98%;
+    --success: 158 62% 27%;
+    --success-foreground: 240 25% 98%;
+    --success-soft: 150 30% 94%;
+    --warning: 28 80% 33%;
+    --warning-foreground: 240 25% 98%;
+    --warning-soft: 38 55% 94%;
+    --info: 209 65% 35%;
+    --info-foreground: 240 25% 98%;
+    --info-soft: 210 40% 95%;
+    --border: 240 12% 84%;
+    --input: 240 10% 72%;
+    --ring: 242 43% 46%;
+    --shadow-color: 235 20% 25%;
+    --radius: 0.625rem;
+    --app-bg-image: url('/backgrounds/dusk-dawn.webp');
+    --app-bg-overlay: 0.72;
+    --landscape-scrim: 240 20% 97%;
   }
   :root.dark {
     color-scheme: dark;
-    --background: 224 40% 6%;
-    --foreground: 210 40% 96%;
-    --card: 222 40% 9%;
-    --card-foreground: 210 40% 96%;
-    --popover: 222 37% 11%;
-    --popover-foreground: 210 40% 96%;
-    --primary: 172 66% 50%;
-    --primary-foreground: 222 47% 8%;
-    --secondary: 217 33% 15%;
-    --secondary-foreground: 210 40% 92%;
-    --muted: 217 33% 15%;
-    --muted-foreground: 215 20% 68%;
-    --accent: 175 40% 14%;
-    --accent-foreground: 171 77% 70%;
-    --destructive: 0 91% 71%;
-    --destructive-foreground: 222 47% 8%;
-    --success: 158 64% 52%;
-    --success-foreground: 222 47% 8%;
-    --success-soft: 160 50% 12%;
-    --warning: 43 96% 56%;
-    --warning-foreground: 222 47% 8%;
-    --warning-soft: 35 60% 12%;
-    --info: 198 93% 60%;
-    --info-foreground: 222 47% 8%;
-    --info-soft: 200 60% 13%;
-    --border: 217 30% 18%;
-    --input: 215 25% 27%;
-    --ring: 172 66% 50%;
-    --shadow-color: 224 60% 2%;
-    --app-bg-image: url('/backgrounds/old-village-night.png');
-    --app-bg-overlay: 0.58;
+    --background: 230 18% 9%;
+    --foreground: 240 16% 94%;
+    --card: 232 16% 13%;
+    --card-foreground: 240 16% 94%;
+    --popover: 232 16% 15%;
+    --popover-foreground: 240 16% 94%;
+    --primary: 238 70% 79%;
+    --primary-foreground: 235 28% 14%;
+    --secondary: 233 15% 20%;
+    --secondary-foreground: 240 16% 92%;
+    --muted: 233 13% 19%;
+    --muted-foreground: 235 12% 71%;
+    --accent: 238 25% 24%;
+    --accent-foreground: 238 72% 86%;
+    --destructive: 0 80% 75%;
+    --destructive-foreground: 235 28% 14%;
+    --success: 158 46% 66%;
+    --success-foreground: 235 28% 14%;
+    --success-soft: 158 25% 17%;
+    --warning: 34 80% 73%;
+    --warning-foreground: 235 28% 14%;
+    --warning-soft: 30 25% 18%;
+    --info: 207 70% 76%;
+    --info-foreground: 235 28% 14%;
+    --info-soft: 209 25% 19%;
+    --border: 234 12% 27%;
+    --input: 234 12% 43%;
+    --ring: 238 70% 79%;
+    --shadow-color: 230 22% 4%;
+    --app-bg-image: url('/backgrounds/dusk-night.webp');
+    --app-bg-overlay: 0.64;
+    --landscape-scrim: 230 20% 10%;
   }
   * { @apply border-border; }
   html { -webkit-text-size-adjust: 100%; }
@@ -88,13 +88,13 @@
   :focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 3px; }
   ::selection { background: hsl(var(--primary) / 0.2); }
   input, select, textarea { accent-color: hsl(var(--primary)); }
-  th { font-weight: 600; letter-spacing: 0.035em; }
+  th { font-weight: 600; letter-spacing: 0; }
   td { font-variant-numeric: tabular-nums; }
 }
 
 @layer components {
-  .surface { @apply rounded-xl border border-border/80 bg-card text-card-foreground shadow-soft; }
-  .eyebrow { @apply text-overline uppercase text-muted-foreground; }
+  .surface { @apply rounded-2xl border border-border/70 bg-card text-card-foreground; }
+  .eyebrow { @apply text-caption font-medium text-muted-foreground; }
   .page-enter { @apply animate-fade-up; }
   .skip-link { @apply fixed left-4 top-4 z-[60] -translate-y-24 rounded-lg bg-primary px-4 py-3 font-medium text-primary-foreground focus:translate-y-0; }
   .auth-grid {
@@ -124,4 +124,36 @@
 
 @media (max-height: 800px) and (min-width: 1024px) {
   .sidebar-tip { display: none; }
+}
+
+/* A single atmospheric family; imagery never sits directly behind dense data.
+ * Layer order: decorative background 0, app 10, header 20, navigation 30,
+ * dialogs 50, skip link 60. Existing overlays keep their established levels. */
+@layer components {
+  .dusk-sidebar { background: hsl(var(--card) / 0.97); }
+  .dusk-topbar { background: hsl(var(--background) / 0.96); }
+  .dusk-workspace {
+    background: hsl(var(--background) / 0.97);
+    border: 1px solid hsl(var(--border) / 0.65);
+    border-radius: 20px;
+    padding: clamp(1rem, 2.2vw, 2rem);
+    min-width: 0;
+  }
+  .dusk-landscape {
+    background-image: linear-gradient(90deg, hsl(var(--landscape-scrim) / 0.94), hsl(var(--landscape-scrim) / 0.74) 60%, hsl(var(--landscape-scrim) / 0.3)), var(--app-bg-image);
+    background-position: center;
+    background-size: cover;
+  }
+  .dusk-auth-story {
+    background-image: linear-gradient(180deg, hsl(var(--landscape-scrim) / 0.86), hsl(var(--landscape-scrim) / 0.64) 52%, hsl(var(--landscape-scrim) / 0.88)), var(--app-bg-image);
+    background-position: center;
+    background-size: cover;
+  }
+}
+@media (max-width: 767px) {
+  .dusk-workspace { border-radius: 16px; padding: 1rem; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .dusk-sidebar, .dusk-topbar, .dusk-workspace { background: hsl(var(--background)); }
+  .dusk-auth-story, .dusk-landscape { background-image: none; background-color: hsl(var(--background)); }
 }

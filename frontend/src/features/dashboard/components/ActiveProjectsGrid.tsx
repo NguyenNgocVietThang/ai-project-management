@@ -22,7 +22,7 @@ function ProgressBar({ value, toneClass = 'bg-primary' }: { value: number; toneC
   const pct = Math.min(100, Math.max(0, value))
   return (
     <div className="h-2 overflow-hidden rounded-full bg-muted">
-      <div className={cn('h-full rounded-full transition-[width] duration-500 ease-out-soft', toneClass)} style={{ width: `${pct}%` }} />
+      <div className={cn('h-full rounded-full ', toneClass)} style={{ width: `${pct}%` }} />
     </div>
   )
 }
@@ -91,7 +91,7 @@ function ProjectCard({ project, className, style }: { project: ActiveProjectSumm
         <div>
           <div className="mb-2 flex justify-between text-caption text-muted-foreground">
             <span>{t('budget')}</span>
-            <span className="tabular-nums">{budgetPct !== null ? `${Math.round(budgetPct)}%` : '—'}</span>
+            <span className="tabular-nums">{budgetPct !== null ? `${Math.round(budgetPct)}%` : '-'}</span>
           </div>
           <ProgressBar value={budgetPct ?? 0} toneClass={budgetTone} />
           <div className="mt-1 flex justify-between gap-2 text-caption text-muted-foreground tabular-nums">
@@ -121,7 +121,7 @@ export function ActiveProjectsGrid({ projects }: ActiveProjectsGridProps) {
     )
   }
   return (
-    <Reveal stagger={60} className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+    <Reveal stagger={60} className="grid gap-4 md:grid-cols-2">
       {projects.map((p) => (
         <ProjectCard key={p.id} project={p} />
       ))}

@@ -4,7 +4,6 @@ import { AlertTriangle, Briefcase, CheckSquare, Clock } from 'lucide-react'
 import { useFormatter, useTranslations } from 'next-intl'
 import { CountUp } from '@/components/motion/CountUp'
 import { Reveal } from '@/components/motion/RevealText'
-import { Card } from '@/components/ui/Card'
 import type { UserDashboardStats } from '@/features/dashboard/types/dashboard.types'
 import { cn } from '@/lib/utils'
 
@@ -19,20 +18,20 @@ export function StatsRow({ stats }: { stats: UserDashboardStats }) {
     { label: t('hours'), value: stats.hours_this_week, Icon: Clock, suffix: 'h', danger: false },
   ]
   return (
-    <Reveal stagger={60} className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+    <Reveal stagger={60} className="grid grid-cols-2 overflow-hidden rounded-2xl border border-border/70 bg-card xl:grid-cols-4">
       {metrics.map(({ label, value, Icon, suffix, danger }) => (
-        <Card key={label} className="p-4 sm:p-6">
+        <div key={label} className="border-border/60 p-4 odd:border-r sm:p-6 xl:border-r xl:last:border-r-0">
           <div className="flex items-start justify-between gap-2">
             <p className="text-body-sm font-medium text-muted-foreground">{label}</p>
             <span className={cn('flex h-8 w-8 shrink-0 items-center justify-center rounded-lg', danger ? 'bg-destructive/10' : 'bg-accent')}>
               <Icon className={cn('h-4 w-4', danger ? 'text-destructive' : 'text-accent-foreground')} aria-hidden="true" />
             </span>
           </div>
-          <p className={cn('mt-6 text-h2 sm:text-h1', danger && 'text-destructive')}>
+          <p className={cn('mt-4 text-3xl font-medium tracking-tight sm:text-4xl', danger && 'text-destructive')}>
             <CountUp value={value} format={n => f.number(n, { maximumFractionDigits: 1 })} />
             {suffix && <span className="ml-1 text-h4 font-normal text-muted-foreground">{suffix}</span>}
           </p>
-        </Card>
+        </div>
       ))}
     </Reveal>
   )

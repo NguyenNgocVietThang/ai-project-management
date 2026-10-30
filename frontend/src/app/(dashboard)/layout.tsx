@@ -106,11 +106,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <BreadcrumbProvider>
-      <div className={cn("min-h-dvh", sidebarCollapsed ? "lg:pl-20" : "lg:pl-60")}>
+      <div className={cn("min-h-dvh", sidebarCollapsed ? "lg:pl-20" : "lg:pl-64")}>
         <a href="#main-content" className="skip-link">{ts('skipContent')}</a>
 
         {/* ===== Sidebar cố định (desktop >= 1024px) ===== */}
-        <aside className={cn("fixed inset-y-0 left-0 z-30 hidden flex-col overflow-y-auto border-r bg-card/95 px-3 py-4 backdrop-blur-xl lg:flex", sidebarCollapsed ? "w-20" : "w-60")}>
+        <aside className={cn("dusk-sidebar fixed inset-y-0 left-0 z-30 hidden flex-col overflow-y-auto border-r px-4 py-6 lg:flex", sidebarCollapsed ? "w-20" : "w-64")}>
           <Link href="/dashboard" className="mb-8 shrink-0 rounded-lg px-2 transition-opacity duration-200 hover:opacity-80" aria-label={t('dashboard')}>{sidebarCollapsed ? <span className="flex h-10 items-center justify-center text-lg font-semibold text-primary">AI.</span> : <Brand />}</Link>
           <button type="button" onClick={toggleSidebar} aria-label={sidebarCollapsed ? ts('expandNavigation') : ts('collapseNavigation')} title={sidebarCollapsed ? ts('expandNavigation') : ts('collapseNavigation')} className="mb-4 flex min-h-11 items-center justify-center gap-2 rounded-lg text-sm text-muted-foreground hover:bg-muted">{sidebarCollapsed ? <ChevronRight className="h-5 w-5" aria-hidden="true" /> : <><ChevronLeft className="h-5 w-5" aria-hidden="true" />{ts('collapseNavigation')}</>}</button><MainNav collapsed={sidebarCollapsed} isAdmin={isAdminUser(user)} isInvestor={canViewInvestorPortal(user)} />
           <div className="mt-auto space-y-4 pt-8">
@@ -125,7 +125,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </aside>
 
         {/* ===== Header dính trên cùng: breadcrumb + tiện ích ===== */}
-        <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b bg-background/80 px-4 backdrop-blur-xl sm:px-6 lg:px-8">
+        <header className="dusk-topbar sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b px-4 sm:px-6 lg:px-8">
           <div className="flex min-w-0 items-center gap-2">
             <button type="button" onClick={() => setMobileNavOpen(true)} aria-label={t('openNavigation')} aria-expanded={mobileNavOpen} className="-ml-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-lg transition-colors duration-200 hover:bg-accent lg:hidden"><Menu className="h-5 w-5" aria-hidden="true" /></button>
             <Breadcrumbs />
@@ -135,7 +135,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <NotificationBell />
             <div className="mx-1 hidden h-6 w-px bg-border sm:block" aria-hidden="true" />
             {user && <Link href="/profile" aria-label={t('profile')} className="flex items-center gap-2 rounded-lg p-1 transition-colors duration-200 hover:bg-accent">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/70 text-caption font-semibold text-primary-foreground ring-2 ring-background">{initials}</span>
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-caption font-semibold text-primary-foreground ring-2 ring-background">{initials}</span>
               <span className="hidden max-w-36 truncate pr-2 text-body-sm font-medium xl:block">{user.full_name}</span>
             </Link>}
             <button type="button" onClick={logout} aria-label={t('logout')} title={t('logout')} className="flex h-11 w-11 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-accent hover:text-foreground"><LogOut className="h-4 w-4" aria-hidden="true" /></button>
@@ -144,7 +144,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <MobileNav open={mobileNavOpen} isAdmin={isAdminUser(user)} isInvestor={canViewInvestorPortal(user)} onClose={() => setMobileNavOpen(false)} />
 
         {/* ===== Nội dung chính ===== */}
-        <main id="main-content" tabIndex={-1} className="mx-auto min-w-0 w-full max-w-[1600px] space-y-4 px-4 py-4 outline-none sm:px-6 sm:py-6 lg:px-8">
+        <main id="main-content" tabIndex={-1} className="mx-auto min-w-0 w-full max-w-[1480px] space-y-4 px-4 py-4 outline-none sm:px-6 sm:py-6 lg:px-8">
           {user?.email_verified === false && (
             <EmailVerificationBanner
               email={user.email}
@@ -155,7 +155,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             />
           )}
           <JobsPanel />
-          <div>{Children.toArray(children)}</div>
+          <div className="dusk-workspace">{Children.toArray(children)}</div>
         </main>
       </div>
     </BreadcrumbProvider>
