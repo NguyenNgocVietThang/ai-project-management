@@ -191,7 +191,7 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 | ID | SOP | Yêu cầu |
 |---|---|---|
 | AI-01 | SOP-AI-001 | **Project Generator**: PM nhập prompt tự nhiên → AI sinh cấu trúc JSON WBS (Phases, Sprints, Epics, Tasks, Dependencies) → Insert vào DB → Chạy CPM → Hiển thị Gantt. |
-| AI-02 | SOP-AI-002 | **Impact Analysis**: Chạy theo yêu cầu trên trang Change Request (job `ai.impact_analysis`) → AI đánh giá tác động Scope, Timeline, Budget, Resource. |
+| AI-02 | SOP-AI-002 | **Impact Analysis**: Chạy theo yêu cầu trên trang Change Request (job `ai.impact_analysis`) → AI đánh giá tác động Scope, Timeline, Budget, Resource. Báo cáo **chỉ mang tính tư vấn**: không đưa ra quyết định duyệt/từ chối, không ghi vào `approvals`, không tự áp dụng thay đổi. **[Dự kiến – KH-CR]** trả thêm `suggested_impact_level` kèm lý do. |
 | AI-03 | SOP-AI-003 | **Schedule Optimization**: AI tính toán lại chuỗi phụ thuộc và đề xuất lịch trình tối ưu sau khi CR được phê duyệt. |
 | AI-04 | SOP-RM-001 | **Resource Recommendation**: Gợi ý nhân sự phù hợp cho Task dựa trên Skill match, Chi phí, Tải công việc và Lịch nghỉ phép. |
 | AI-05 | SOP-AI-005 | **Risk Analysis**: Đánh giá định kỳ các rủi ro dự án (trễ hạn, quá tải, vượt chi phí) và xếp loại mức độ rủi ro. |
@@ -213,17 +213,22 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 | CR-03 | Thành viên dự án đúng vai trò của bước hiện hành (kể cả người tạo CR) mới được quyết định; admin hệ thống chỉ được xem. Khóa hàng chống quyết định đồng thời; ràng buộc unique (change_request_id, step_order). |
 | CR-04 | Từ chối bắt buộc có lý do; khi một bước bị từ chối, các bước sau chuyển `CANCELLED`. Mọi quyết định ghi audit log và gửi thông báo in-app. |
 | CR-05 | PM duyệt bước cuối thì tự động tạo snapshot phiên bản gắn `change_request_id`. UI `ApprovalTimeline` trên trang chi tiết CR `/projects/[id]/change-requests/[crId]`. |
+| CR-06 | **Nguyên tắc human-in-the-loop:** cả 3 bước do người quyết định; AI không phải là bên duyệt (đã đúng trong `approval_service.py`). |
+| CR-07 | **[Dự kiến – KH-CR]** Mức tác động `MINOR/MODERATE/MAJOR`: người tạo đề xuất, AI gợi ý, PM chốt trước bước BA; hạ mức từ MAJOR bắt buộc lý do và ghi audit; đổi mức giữa chừng thì mở lại các bước đã duyệt. |
+| CR-08 | **[Dự kiến – KH-CR]** CR MAJOR: bắt buộc báo cáo tác động khớp revision hiện tại của CR (hoặc đánh giá thủ công `MANUAL` khi AI lỗi); mỗi người duyệt xác nhận đã đọc (`acknowledged_report_id`) và ghi nhận xét; không duyệt nhanh từ thông báo mobile. Chi tiết `docs/thesis/change-control-design.md` §2. |
 
 ---
 
-### 3.11 Project Versioning & Rollback (SRS-VER)
+### 3.11 Project Versioning & Khôi phục (SRS-VER)
 
 | ID | Yêu cầu |
 |---|---|
 | VER-01 | Snapshot JSON gồm phase, sprint, epic, milestone, task, dependency (không gồm worklog, comment, subtask, assignment); tạo tự động khi PM duyệt CR hoặc baseline thủ công (chỉ PM hoặc admin). Tối đa 50 phiên bản mỗi dự án. |
 | VER-02 | Lưu trữ dữ liệu phiên bản trong bảng `project_versions`; API `/projects/{id}/versions`. |
 | VER-03 | Diff giữa hai phiên bản hoặc với hiện trạng (`/{a}/diff/{b}` hoặc `/{a}/diff/current`), chỉ trả các thay đổi. |
-| VER-04 | Rollback (`/{id}/rollback`) chạy trong một transaction theo quy tắc V0: task có dữ liệu phụ thuộc được đánh dấu `archived_at` thay vì xóa; worklog không bao giờ bị xóa; task đã xóa được tạo lại với ID mới kèm `id_map`; tạo phiên bản "trước khi khôi phục" để có thể đảo ngược; tính lại CPM sau khôi phục. Trang `/projects/[id]/versions`. |
+| VER-04 | *Hiện trạng, sẽ bị thay ở KH-VER:* Rollback (`/{id}/rollback`) chạy trong một transaction theo quy tắc V0: task có dữ liệu phụ thuộc được đánh dấu `archived_at` thay vì xóa; worklog không bao giờ bị xóa; task đã xóa được tạo lại với ID mới kèm `id_map`; tạo phiên bản "trước khi khôi phục" để có thể đảo ngược; tính lại CPM sau khôi phục. Trang `/projects/[id]/versions`. |
+| VER-05 | **[Dự kiến – KH-VER]** Khôi phục có kiểm soát: `POST /{id}/restore-preview` (không ghi, trả `changes`, `skipped`, `preview_token`) rồi `POST /{id}/restore` với token; trạng thái đổi giữa hai bước thì 409 `preview_outdated`; vượt `RESTORE_MAX_CHANGES` thì 422. |
+| VER-06 | **[Dự kiến – KH-VER]** Chỉ khôi phục `start_date`, `due_date`, `estimated_hours` của task còn tồn tại và chưa `DONE`, ngày của phase/sprint/epic/milestone còn tồn tại, dependency giữa task còn tồn tại (bỏ qua nếu tạo chu trình). Không xóa cứng, không tạo lại thực thể, không đổi `status`/`progress`/`assignee_id`. Vẫn tạo snapshot "trước khi khôi phục" và tính lại CPM. Chi tiết `docs/thesis/change-control-design.md` §3. |
 
 ---
 

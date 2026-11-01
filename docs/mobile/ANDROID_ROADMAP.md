@@ -2,6 +2,7 @@
 
 > Trạng thái: **Giai đoạn 0 đã làm xong mã** (xem mục 9). Giả định G3 và G6 đã được chủ dự án xác nhận ngày 2026-10-24; G1, G2, G4, G5 vẫn chờ xác nhận. Thay đổi giả định thì cập nhật tài liệu này trước khi code.
 > Prompt giao việc cho từng giai đoạn: [`PHASE_PROMPTS.md`](./PHASE_PROMPTS.md).
+> **Điều chỉnh 2026-11-01 (ĐATN):** app mobile là **mô-đun trọng tâm** của đồ án, không còn là app phụ. Phạm vi đồ án gồm Giai đoạn 1, 2 và 3.1, 3.2, 3.4 (một phần), 3.5 (chỉ APK/Internal Testing). Không gồm 3.3, các giai đoạn 4–9 và iOS. Màn hình duyệt CR (2.4) phải hiển thị mức tác động và bắt buộc xác nhận đã đọc báo cáo với CR MAJOR. Nút duyệt nhanh trên thông báo (2.5) chỉ dùng cho CR MINOR/MODERATE. Xem [`docs/thesis/scope.md`](../thesis/scope.md) §3 và [`tasks/thesis-revision-plan.md`](../../tasks/thesis-revision-plan.md) (B6–B9).
 
 ## 1. Mục tiêu
 
@@ -102,8 +103,8 @@ Không thuộc phạm vi app: Gantt, AI Project Generator, BPMN, Admin Portal, V
 | 2.1 FCM | Xin quyền thông báo (Android 13+), đăng ký/làm mới token qua `POST /devices`, hủy khi đăng xuất |
 | 2.2 Deep link | Bấm thông báo mở đúng màn hình theo `related_entity_type/id` (Task, ChangeRequest, project chat) |
 | 2.3 Chat dự án | Lịch sử, gửi tin, đếm chưa đọc; WebSocket khi foreground với vé từ `/auth/ws-ticket`, tự kết nối lại có backoff |
-| 2.4 Duyệt CR | Danh sách CR chờ tôi duyệt, xem tóm tắt tác động AI, Duyệt/Từ chối (BA → PO → PM) kèm lý do |
-| 2.5 Action button | Nút Duyệt/Từ chối ngay trong thông báo (chỉ khi người dùng đã mở khóa thiết bị; xác nhận lại bằng sinh trắc học nếu bật) |
+| 2.4 Duyệt CR | Danh sách CR chờ tôi duyệt, **huy hiệu mức tác động**, xem tóm tắt tác động AI (nhãn "Khuyến nghị"), Duyệt/Từ chối (BA → PO → PM) kèm lý do; CR MAJOR bắt buộc tick "đã đọc báo cáo" và nhập nhận xét khi duyệt |
+| 2.5 Action button | Nút Duyệt/Từ chối ngay trong thông báo (chỉ khi người dùng đã mở khóa thiết bị; xác nhận lại bằng sinh trắc học nếu bật). **Chỉ áp dụng cho CR MINOR/MODERATE**; CR MAJOR mở màn hình chi tiết |
 | 2.6 Bản tin sáng | Backend gộp `cron.reminders` (08:00) và `cron.risk` (08:30) thành một push tóm tắt "việc hôm nay + rủi ro cao" |
 
 **Tiêu chí nghiệm thu:** push tới được khi app ở nền/đã đóng; bấm thông báo mở đúng đích; chat nhận tin theo thời gian thực và mất kết nối vẫn phục hồi; duyệt CR từ app cho kết quả giống web (audit log, thông báo bước kế tiếp); không lộ dữ liệu của dự án mà người dùng không phải thành viên.

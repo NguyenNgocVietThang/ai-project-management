@@ -1,21 +1,23 @@
 # Tài liệu yêu cầu nghiệp vụ (BRD)
 ## Hệ thống Lập kế hoạch Dự án và Quản lý Danh mục bằng AI
 
-**Version:** 2.4
-**Date:** 2026-10-13
+**Version:** 2.5
+**Date:** 2026-11-01
+
+> **Điều chỉnh v2.5 (2026-11-01):** làm rõ nguyên tắc *AI chỉ tư vấn, con người quyết định*; bổ sung ứng dụng di động; ghi nhận các thay đổi dự kiến (phân loại mức tác động CR, khôi phục phiên bản có kiểm soát) theo góp ý của GVHD. Mục đánh dấu **[Dự kiến]** là yêu cầu đã chốt nhưng **chưa triển khai** trong mã. Phạm vi đồ án tốt nghiệp xem [`docs/thesis/scope.md`](../../thesis/scope.md).
 
 ---
 
 ## 1. Tổng quan dự án (Tổng quan dự án)
 
 ### 1.1 Mục đích (Purpose)
-Xây dựng một hệ thống quản lý danh mục và kế hoạch dự án thông minh (AI Project Planning & Portfolio Management). Hệ thống có các tính năng cốt lõi tương đương Microsoft Project nhưng được tăng cường sức mạnh bởi Trí tuệ Nhân tạo (AI) để làm rõ yêu cầu, tự động hóa việc lên kế hoạch, phân bổ nguồn lực, phân tích rủi ro, đánh giá tác động của các thay đổi (Change Requests) và sinh tài liệu dự án (SRS/BRD), đồng thời hỗ trợ cộng tác thời gian thực (Real-time Project Chat & WebSocket Notifications).
+Xây dựng một hệ thống quản lý danh mục và kế hoạch dự án thông minh (AI Project Planning & Portfolio Management). Hệ thống có các tính năng cốt lõi tương đương Microsoft Project nhưng được tăng cường sức mạnh bởi Trí tuệ Nhân tạo (AI) để làm rõ yêu cầu, tự động hóa việc lên kế hoạch, phân bổ nguồn lực, phân tích rủi ro, đánh giá tác động của các thay đổi (Change Requests) và sinh tài liệu dự án (SRS/BRD), đồng thời hỗ trợ cộng tác thời gian thực (Real-time Project Chat & WebSocket Notifications). Hệ thống gồm web (PM lập kế hoạch, quản trị) và **ứng dụng di động Android** cho thành viên và người duyệt (nhận việc, ghi giờ, nhận push, duyệt Change Request, chat). AI chỉ đóng vai trò **tư vấn**: mọi quyết định duyệt và mọi thay đổi kế hoạch do con người thực hiện.
 
 ### 1.2 Mục tiêu kinh doanh (Mục tiêu kinh doanh)
 - **Làm rõ yêu cầu trước khi lập kế hoạch:** AI hỏi làm rõ từng câu một dựa trên hồ sơ yêu cầu 7 mục trước khi tạo dự án, không tự bịa các mục người dùng bỏ qua.
-- **Tự động hóa lập kế hoạch:** Giảm 80% thời gian tạo cấu trúc WBS và lên lịch dự án nhờ AI (xKiro).
+- **Tự động hóa lập kế hoạch:** Rút ngắn thời gian tạo cấu trúc WBS và lên lịch dự án nhờ AI (xKiro); mục tiêu giảm 80% là **giả thuyết** được kiểm chứng bằng đánh giá E1 ([`evaluation-plan.md`](../../thesis/evaluation-plan.md)).
 - **Tối ưu hóa nguồn lực:** Tự động phát hiện cảnh báo quá tải (Resource Leveling) và gợi ý nhân sự phù hợp cho công việc.
-- **Kiểm soát rủi ro và thay đổi:** Chuẩn hóa quy trình Change Request (CR) duyệt tuần tự BA -> PO -> PM, có AI phân tích tác động, tự động lưu phiên bản khi duyệt cuối và cho phép khôi phục (rollback).
+- **Kiểm soát rủi ro và thay đổi:** Chuẩn hóa quy trình Change Request (CR) duyệt tuần tự BA -> PO -> PM, **mỗi bước do người giữ đúng vai trò quyết định**; AI chỉ cung cấp báo cáo phân tích tác động mang tính khuyến nghị, không duyệt/từ chối và không tự áp dụng thay đổi. **[Dự kiến]** CR được phân loại mức tác động Nhỏ/Trung bình/Lớn (PM chốt); CR Lớn bắt buộc có báo cáo tác động và người duyệt xác nhận đã đọc. Tự động lưu phiên bản khi duyệt cuối; **[Dự kiến]** khôi phục phiên bản có kiểm soát (xem trước rồi mới áp dụng, chỉ trường kế hoạch).
 - **Cộng tác & Giao tiếp tức thời:** Kênh Chat nhóm trực tiếp theo từng dự án và hệ thống thông báo đẩy thời gian thực giảm độ trễ trao đổi thông tin.
 - **Tự động hóa giám sát tiến độ:** Quét định kỳ hàng ngày phát hiện sớm các công việc bắt đầu trong ngày hoặc sắp đến hạn để thông báo tự động tới toàn nhóm dự án.
 - **Tài liệu và báo cáo tự động:** Sinh SRS/BRD dạng DOCX có sơ đồ quy trình BPMN, xuất báo cáo XLSX (Task, Đường găng, CR và duyệt, EVA, Burndown).
@@ -32,9 +34,10 @@ Xây dựng một hệ thống quản lý danh mục và kế hoạch dự án t
 - **Thông báo đa kênh & Quét định kỳ:** Đẩy thông báo thời gian thực qua WebSocket, fan-out thông báo khi Task thay đổi; job lịch hằng ngày do cron (Supabase Cron hoặc cron cục bộ) kích hoạt qua `POST /api/v1/internal/jobs/schedules`, sinh job nhắc việc lúc 08:00 và job quét rủi ro lúc 08:30 (giờ Asia/Ho_Chi_Minh). Tác vụ nền chạy bằng durable jobs lưu trong PostgreSQL (bảng `jobs`), thay cho Celery/Celery Beat.
 - **Quản trị hệ thống & RBAC:** Quản lý Người dùng, Vai trò, gán 34 quyền hạn và xem Audit Timeline truy vết mọi thay đổi.
 - **Tích hợp AI:** Hỏi làm rõ yêu cầu trước khi tạo dự án, tạo dự án từ hồ sơ yêu cầu đã chốt (vẫn giữ tương thích tạo từ prompt thô), phân tích rủi ro, phân tích tác động, tối ưu lịch trình, gợi ý nhân sự, sinh nội dung SRS/BRD và sinh mô hình quy trình BPMN. Quota mặc định 20 job AI mỗi ngày (`AI_DAILY_JOB_LIMIT`).
-- **Quản lý Change Request (CR) & Phê duyệt đa cấp:** Luồng duyệt tuần tự BA -> PO -> PM kèm Phân tích tác động bằng AI, dòng thời gian duyệt trên trang chi tiết CR.
+- **Quản lý Change Request (CR) & Phê duyệt đa cấp:** Luồng duyệt tuần tự BA -> PO -> PM do con người quyết định, kèm báo cáo Phân tích tác động bằng AI (chỉ tư vấn), dòng thời gian duyệt trên trang chi tiết CR. **[Dự kiến]** Phân loại mức tác động và ràng buộc cho CR Lớn.
 - **Time Tracking & Timesheet:** Ghi nhận giờ làm việc thực tế (`worklogs`) và kiểm tra quá tải tài nguyên.
-- **Quản lý phiên bản (Versioning & Rollback):** Snapshot tự động khi CR được duyệt cuối, baseline thủ công, so sánh khác biệt giữa hai phiên bản và khôi phục dữ liệu dự án.
+- **Quản lý phiên bản (Versioning):** Snapshot tự động khi CR được duyệt cuối, baseline thủ công, so sánh khác biệt giữa hai phiên bản. **[Dự kiến]** Thay rollback toàn phần V0 bằng khôi phục có kiểm soát (xem trước + xác nhận, chỉ khôi phục ngày/ước lượng/dependency của task còn tồn tại).
+- **Ứng dụng di động Android:** Expo React Native. Backend cho mobile đã xong (Giai đoạn 0); app đang triển khai theo [`ANDROID_ROADMAP.md`](../../mobile/ANDROID_ROADMAP.md).
 - **Gantt chỉ đọc:** Biểu đồ Gantt SVG vẽ từ kết quả CPM, đánh dấu đường găng bằng nhãn chữ (không chỉ dựa vào màu), zoom ngày/tuần/tháng, ảo hóa hàng cho dự án lớn (khoảng 2000 task).
 - **Tài liệu và báo cáo:** Sinh SRS/BRD dạng DOCX theo mẫu cố định (tiếng Việt mặc định, hỗ trợ tiếng Anh), chèn ảnh sơ đồ BPMN; xuất XLSX gồm các sheet Task, Đường găng, CR và duyệt, EVA và Burndown (EVA tính theo giờ công). Tệp lưu trong bucket riêng tư (Supabase Storage trên cloud, MinIO khi chạy cục bộ) và chỉ tải qua proxy có kiểm tra quyền.
 - **Mô hình quy trình (BPMN):** AI sinh mô hình quy trình (lane, task, gateway, event, flow) có kiểm tra hợp lệ; trang xem quy trình dạng swimlane.
@@ -62,14 +65,14 @@ Hệ thống hỗ trợ 7 vai trò riêng biệt với các quyền hạn cụ t
 6. **Customer (Khách hàng):** Khởi tạo yêu cầu thay đổi (CR), theo dõi tiến độ dự án của mình.
 7. **Investor (Nhà đầu tư):** Quyền chỉ xem (read-only) các báo cáo cấp độ Portfolio / Project.
 
-Quy tắc duyệt CR: mỗi bước chỉ do thành viên dự án có đúng vai trò của bước đó quyết định. Người tạo CR vẫn được duyệt bước tương ứng với vai trò dự án của mình.
+Quy tắc duyệt CR: mỗi bước chỉ do thành viên dự án có đúng vai trò của bước đó quyết định; AI không phải là một bên duyệt. Người tạo CR vẫn được duyệt bước tương ứng với vai trò dự án của mình.
 
 ---
 
 ## 4. Các Quy trình nghiệp vụ chính (Business Process - SOPs)
 
 ### 4.0 Luồng nghiệp vụ tổng thể
-Ý tưởng -> AI hỏi làm rõ yêu cầu -> tạo dự án (WBS) -> tính CPM và xem Gantt -> phát sinh Change Request -> duyệt BA -> PO -> PM -> lưu phiên bản (có thể rollback) -> xuất tài liệu SRS/BRD DOCX và báo cáo XLSX.
+Ý tưởng -> AI hỏi làm rõ yêu cầu -> tạo dự án (WBS) -> tính CPM và xem Gantt -> phát sinh Change Request -> AI phân tích tác động (tư vấn) -> con người duyệt BA -> PO -> PM (web hoặc app mobile) -> lưu phiên bản (khôi phục có kiểm soát) -> xuất tài liệu SRS/BRD DOCX và báo cáo XLSX.
 
 ### 4.1 Quy trình làm rõ yêu cầu và khởi tạo dự án bằng AI (SOP-AI-001)
 - PM nhập ý tưởng dự án bằng ngôn ngữ tự nhiên.
@@ -85,14 +88,17 @@ Quy tắc duyệt CR: mỗi bước chỉ do thành viên dự án có đúng va
 ### 4.3 Quản lý yêu cầu thay đổi (Change Request Workflow - SOP-CR-001)
 - **Customer / PM** tạo CR ở trạng thái DRAFT và gửi duyệt (SUBMITTED).
 - Khi gửi duyệt, hệ thống tạo 3 bước duyệt tuần tự BA -> PO -> PM. Nếu dự án thiếu thành viên cho một trong các vai trò này, hệ thống từ chối với lỗi 422 `missing_roles`.
-- **AI** chạy `Phân tích tác động` (SOP-AI-002) tính toán mức ảnh hưởng về chi phí, rủi ro, tiến độ trên trang Change Request; PM có thể dùng tiếp `Schedule Optimization` (SOP-AI-003) để đề xuất lịch trình tối ưu.
-- Thành viên đúng vai trò quyết định bước hiện hành; hệ thống khóa bản ghi để chống quyết định đồng thời. Từ chối phải nêu lý do, khi đó các bước sau chuyển sang CANCELLED. Mọi quyết định được ghi audit log và gửi thông báo trong ứng dụng.
+- **Nguyên tắc:** AI **không** có quyền quyết định. Cả ba bước BA, PO, PM đều do con người giữ đúng vai trò dự án quyết định; AI không ghi vào chuỗi duyệt và không tự áp dụng thay đổi vào kế hoạch.
+- **AI (tư vấn)** chạy `Phân tích tác động` (SOP-AI-002) ước tính ảnh hưởng về chi phí, rủi ro, tiến độ trên trang Change Request. Báo cáo là khuyến nghị để người duyệt tham khảo. PM có thể dùng tiếp `Schedule Optimization` (SOP-AI-003) để nhận đề xuất lịch trình; áp dụng hay không do PM quyết định.
+- **[Dự kiến] Mức tác động:** người tạo đề xuất mức Nhỏ/Trung bình/Lớn, AI gợi ý kèm lý do, **PM chốt** trước bước đầu; hạ mức từ Lớn phải nêu lý do. CR Lớn: bắt buộc có báo cáo tác động hợp lệ (hoặc đánh giá thủ công của PM khi AI lỗi), mỗi người duyệt phải xác nhận đã đọc và ghi nhận xét, không duyệt nhanh từ thông báo. Chi tiết: [`change-control-design.md`](../../thesis/change-control-design.md).
+- Người giữ đúng vai trò quyết định bước hiện hành; hệ thống khóa bản ghi để chống quyết định đồng thời. Từ chối phải nêu lý do, khi đó các bước sau chuyển sang CANCELLED. Mọi quyết định được ghi audit log và gửi thông báo trong ứng dụng.
 - Khi PM duyệt bước cuối, hệ thống tự động tạo snapshot phiên bản dự án gắn với CR đó.
 
 ### 4.4 Quản lý phiên bản và khôi phục (SOP-PM-004)
 - Snapshot gồm phase, sprint, epic, milestone, task và dependency; không gồm worklog, comment, subtask, assignment. Tối đa 50 phiên bản mỗi dự án.
 - PM hoặc admin có thể tạo baseline thủ công. Có thể so sánh hai phiên bản hoặc một phiên bản với hiện trạng; kết quả chỉ liệt kê phần thay đổi.
-- Rollback thực hiện trong một transaction: task có dữ liệu phụ thuộc được lưu trữ (archived) thay vì xóa; worklog không bao giờ bị xóa; task đã bị xóa được tạo lại với ID mới kèm bảng ánh xạ ID. Trước khi khôi phục, hệ thống tạo phiên bản "trước khi khôi phục" để có thể đảo ngược, sau đó tính lại CPM.
+- *Hiện trạng mã (V0, sẽ thay):* rollback toàn phần trong một transaction: task có dữ liệu phụ thuộc được lưu trữ (archived) thay vì xóa; worklog không bao giờ bị xóa; task đã bị xóa được tạo lại với ID mới kèm bảng ánh xạ ID; tạo phiên bản "trước khi khôi phục", sau đó tính lại CPM. Cách này rủi ro cao (transaction dài, ghi đè trạng thái/tiến độ, đổi ID).
+- **[Dự kiến] Khôi phục có kiểm soát:** PM xem trước (dry-run) danh sách thay đổi rồi xác nhận bằng token xem trước; dữ liệu đổi giữa hai bước thì trả 409. Chỉ khôi phục ngày, ước lượng giờ và dependency của task còn tồn tại, chưa hoàn thành; không xóa cứng, không tạo lại task; giới hạn số thay đổi mỗi lần; vẫn tạo phiên bản "trước khi khôi phục" và tính lại CPM.
 
 ### 4.5 Quy trình Tracking và Tính toán CPM (SOP-PM-002 & SOP-PM-003)
 - Thành viên cập nhật thời gian làm việc hàng ngày qua Timesheet.
@@ -116,7 +122,8 @@ Quy tắc duyệt CR: mỗi bước chỉ do thành viên dự án có đúng va
 
 - Phase 4 (Workflow & Reporting) đã hoàn thành phần mã nguồn và kiểm thử tự động.
 - Chờ nghiệm thu từ người dùng: duyệt quy tắc rollback V0, duyệt các checkpoint, chạy thử với provider AI thật, chạy kịch bản demo trên Render sau cold start.
+- 2026-11-01: chủ dự án quyết định **không giữ** rollback V0, thay bằng khôi phục có kiểm soát; bổ sung phân loại mức tác động CR và kế hoạch đánh giá. Kế hoạch: [`tasks/thesis-revision-plan.md`](../../../tasks/thesis-revision-plan.md).
 
 ---
 
-*Cập nhật lần cuối: 2026-10-13 — Version 2.4*
+*Cập nhật lần cuối: 2026-11-01 — Version 2.5*
