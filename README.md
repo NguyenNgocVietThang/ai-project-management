@@ -67,7 +67,7 @@ Xây dựng một **web application quản lý dự án và danh mục đầu t�
 | Dashboard KPI / EVA / Burndown | Chạy thật | endpoint `/dashboards` đã mount |
 | AI Project Generator | Chạy thật + UI | `POST /ai/generate-project` + durable job `ai.project_generate` sinh Project/Phase/Task/Dependency thật; UI `AIGeneratorModal.tsx` |
 | AI Impact / Schedule / Resource / Risk | Chạy thật + UI | 4 endpoint AI đã mount; xử lý qua durable jobs; UI tại trang Change Request và `/projects/{id}/ai-insights`; Risk Analysis có lịch quét 08:30 hằng ngày (job `cron.risk`) |
-| Change Request + duyệt BA -> PO -> PM | Chạy thật + UI (Phase 4) | Submit tạo 3 bước duyệt (thiếu vai trò trả 422 `missing_roles`); `/change-requests/{id}/approvals` approve/reject có khóa hàng, audit, thông báo in-app; trang chi tiết CR có dòng thời gian duyệt |
+| Change Request + duyệt BA -> PO -> PM | Chạy thật + UI (Phase 4, mức tác động 2026-11-01) | Submit tạo 3 bước duyệt (thiếu vai trò trả 422 `missing_roles`); `/change-requests/{id}/approvals` approve/reject có khóa hàng, audit, thông báo in-app; trang chi tiết CR có dòng thời gian duyệt. Mức tác động MINOR/MODERATE/MAJOR do PM chốt (`/impact-level`); CR MAJOR cần báo cáo tác động, xác nhận đã đọc đúng revision và nhận xét; AI chỉ gợi ý mức, không quyết định. Báo cáo đã lưu đọc qua `/impact-report`, PM nhập thủ công qua `/impact-report/manual` khi AI lỗi |
 | Project Versioning / So sánh / Rollback | Chạy thật + UI (Phase 4) | `versioning_service`, `/projects/{id}/versions` (baseline PM, diff, rollback theo quy tắc V0, task lưu trữ `archived_at`); trang `/projects/{id}/versions` |
 | Hồ sơ yêu cầu + AI hỏi làm rõ | Chạy thật + UI (Phase 4) | `/requirement-briefs`, job `ai.requirement_clarify`, `POST /ai/generate-project-from-brief`; UI `RequirementClarifier` |
 | Tài liệu SRS/BRD (DOCX), XLSX, BPMN | Chạy thật + UI (Phase 4) | Job `document.generate`, `report.xlsx`, `ai.bpmn_generate` (durable jobs), lưu storage private, tải qua proxy kiểm tra quyền; trang Tài liệu, Quy trình, nút Xuất XLSX |
@@ -523,8 +523,8 @@ async def publish(channel: str, message: dict):
 | 21 | `/audit` | `audit_timeline.py` | Truy vết lịch sử biến động toàn hệ thống (Audit Trail) |
 | 22 | `/projects/{id}/cpm` | `cpm.py` | Phân tích đường găng (CPM) của dự án — chỉ đọc (`GET`), engine tính toán chạy nội bộ ở mọi thao tác ghi task/dependency |
 | 23 | `/ai` | `ai.py` | `POST /ai/generate-project` (xếp hàng qua durable jobs), `POST /ai/generate-project-from-brief`, các endpoint impact/schedule/resource/risk/BPMN & `GET /ai/jobs/{job_id}` |
-| 24 | `/change-requests` | `change_requests.py` | CRUD Change Request và submit vào chuỗi duyệt |
-| 25 | `/change-requests/{id}/approvals` | `approvals.py` | Duyệt/từ chối BA -> PO -> PM, khóa hàng, audit (Phase 4) |
+| 24 | `/change-requests` | `change_requests.py` | CRUD Change Request, submit vào chuỗi duyệt, PM chốt mức tác động (`/{id}/impact-level`), đọc báo cáo tác động (`/{id}/impact-report`), nhập đánh giá thủ công (`/{id}/impact-report/manual`) |
+| 25 | `/change-requests/{id}/approvals` | `approvals.py` | Duyệt/từ chối BA -> PO -> PM, khóa hàng, audit (Phase 4); cổng mức tác động G1–G4 (2026-11-01) |
 | 26 | `/projects/{id}/versions` | `project_versions.py` | Baseline, diff `/{a}/diff/{b or current}`, rollback `/{id}/rollback` (Phase 4) |
 | 27 | `/projects/{id}/documents` | `documents.py` | Sinh SRS/BRD DOCX và tải qua `/download` (Phase 4) |
 | 28 | `/projects/{id}/reports/xlsx` | `reports.py` | Xuất XLSX và tải qua `/{job_id}/download` (Phase 4) |

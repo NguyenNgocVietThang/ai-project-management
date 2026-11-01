@@ -9,8 +9,8 @@
 | Bước | Nội dung | Góp ý | Phụ thuộc | Ước lượng | Trạng thái |
 |---|---|---|---|---|---|
 | **B0** | Hồ sơ điều chỉnh: phản hồi góp ý, phạm vi, thiết kế kiểm soát thay đổi, kế hoạch đánh giá; sửa câu chữ BRD/SRS/lộ trình mobile | 1–4 | — | 0,5 tuần | **Xong (2026-11-01)** |
-| **B1** | Backend phân loại mức tác động CR + ràng buộc MAJOR + AI gợi ý mức (`change-control-design.md` §2); migration, service, schema, test | 3a | B0 | 1 tuần | Đã có kế hoạch chi tiết [`b1-cr-impact-level-plan.md`](./b1-cr-impact-level-plan.md), chờ xác nhận |
-| **B2** | Web: huy hiệu mức, PM chốt/hạ mức, xác nhận đã đọc, nhãn "Khuyến nghị" trên báo cáo AI; i18n vi/en; test | 3a | B1 | 0,5 tuần | Chờ |
+| **B1** | Backend phân loại mức tác động CR + ràng buộc MAJOR + AI gợi ý mức (`change-control-design.md` §2); migration, service, schema, test | 3a | B0 | 1 tuần | **Xong (2026-11-01)**, xem [`b1-cr-impact-level-plan.md`](./b1-cr-impact-level-plan.md) §9 |
+| **B2** | Web: huy hiệu mức, PM chốt/hạ mức, xác nhận đã đọc, nhãn "Khuyến nghị" trên báo cáo AI; i18n vi/en; test | 3a | B1 | 0,5 tuần | **Xong (2026-11-01)** |
 | **B3** | Backend khôi phục có kiểm soát: `restore-preview`, `restore` + `preview_token`, giới hạn thay đổi, gỡ rollback V0; test §3.4 | 3b | B0 | 1 tuần | Chờ xác nhận |
 | **B4** | Web: trang phiên bản hiển thị xem trước → xác nhận; bỏ nút rollback cũ | 3b | B3 | 0,5 tuần | Chờ |
 | **B5** | Bộ công cụ đánh giá E1: 20 kịch bản, `run_plan_eval.py`, `plan_metrics.py` (M1–M7) + unit test, mẫu phiếu chấm chuyên gia | 4 | B0 | 1 tuần | Chờ xác nhận |
@@ -57,3 +57,4 @@ Tổng ước lượng khoảng 12–13 tuần nếu làm tuần tự. B5 và V1
 |---|---|---|
 | 2026-11-01 | B0 | Chủ dự án chốt Q1–Q4 (`docs/thesis/README.md`). Tạo hồ sơ `docs/thesis/`, sửa câu chữ BRD v2.5, SRS, ANDROID_ROADMAP. Chưa đổi mã |
 | 2026-11-01 | B1 | Lập kế hoạch chi tiết. Phát hiện: chưa có API đọc báo cáo tác động đã lưu (F1); CR không sửa được sau khi tạo nên dùng revision của báo cáo thay revision của CR (F2) |
+| 2026-11-01 | B1, B2 | Triển khai và đẩy `main` cùng lúc (quyết định D1). Backend 866 passed / 16 skipped (có PostgreSQL), frontend 348 test. Kiểm thử trình duyệt với backend thật: BA → PM → BA → PM trên CR MAJOR, màn hình 390px không tràn ngang |

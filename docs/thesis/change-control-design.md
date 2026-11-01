@@ -1,6 +1,8 @@
 # Thiết kế kiểm soát thay đổi (KH-CR, KH-VER)
 
-> Ngày: 2026-11-01. Trạng thái: **thiết kế đề xuất, chưa triển khai**. Tên trường, endpoint và ngưỡng dưới đây là bản nháp; sẽ chốt lại ở bước trình kế hoạch chi tiết trước khi code (`tasks/thesis-revision-plan.md` bước B1, B3).
+> Ngày: 2026-11-01. Trạng thái: **§2 đã triển khai (B1 backend + B2 web, 2026-11-01)**, chi tiết tại [`tasks/b1-cr-impact-level-plan.md`](../../tasks/b1-cr-impact-level-plan.md). **§3 chưa triển khai** (B3, B4).
+>
+> Điều chỉnh so với bản nháp khi triển khai: (1) CR không sửa được sau khi tạo nên không dùng revision của CR; thay bằng `impact_reports.revision`, tăng mỗi lần báo cáo bị ghi đè, và người duyệt xác nhận theo revision này. (2) Thêm `GET /change-requests/{id}/impact-report`, vì trước đó báo cáo chỉ hiển thị từ kết quả job nên tải lại trang là mất. (3) Mã lỗi `impact_report_stale` được thay bằng `impact_report_changed`.
 
 ## 1. Nguyên tắc (áp dụng cho toàn hệ thống)
 
@@ -12,7 +14,7 @@
 | P4 | **Mọi quyết định truy vết được.** | Audit log ghi người quyết định, vai trò, mức tác động tại thời điểm quyết định, ID báo cáo đã đọc |
 | P5 | **Thao tác khó đảo ngược phải xem trước.** | Khôi phục phiên bản bắt buộc dry-run (§3) |
 
-Hiện trạng: P1 và P4 đã đúng trong mã (`approval_service.py`). P2 đúng với báo cáo tác động. P3 và P5 chưa có.
+Hiện trạng: P1–P4 đã có trong mã (P3 từ 2026-11-01). P5 chờ B3.
 
 ## 2. Phân loại mức tác động CR
 
@@ -37,7 +39,7 @@ Hiện trạng: P1 và P4 đã đúng trong mã (`approval_service.py`). P2 đú
 |---|---|---|---|
 | Chuỗi duyệt | BA → PO → PM | BA → PO → PM | BA → PO → PM |
 | Báo cáo tác động AI | Tùy chọn | Khuyến nghị (UI nhắc) | **Bắt buộc** trước bước đầu tiên |
-| Báo cáo cũ (CR bị sửa sau khi chạy AI) | — | Cảnh báo | **Chặn duyệt**, phải chạy lại |
+| Báo cáo đổi (chạy lại AI) sau khi người duyệt đọc | — | — | **Chặn duyệt**, phải đọc và xác nhận revision mới (`impact_report_changed`) |
 | AI lỗi / hết quota | — | — | PM nhập **đánh giá tác động thủ công** thay thế (đánh dấu nguồn `MANUAL`) |
 | Xác nhận "đã đọc báo cáo" | Không | Không | **Bắt buộc** với mọi người duyệt |
 | Nhận xét khi **duyệt** | Không | Không | **Bắt buộc** |
@@ -56,7 +58,7 @@ Hiện trạng: P1 và P4 đã đúng trong mã (`approval_service.py`). P2 đú
 | Tình huống | Mã |
 |---|---|
 | MAJOR, chưa có báo cáo hợp lệ | 422 `impact_report_required` |
-| MAJOR, báo cáo cũ hơn revision CR | 422 `impact_report_stale` |
+| Revision báo cáo đã xác nhận khác revision hiện tại | 422 `impact_report_changed` |
 | MAJOR, thiếu xác nhận đã đọc / nhận xét | 422 `acknowledgement_required` / `comment_required` |
 | Mức chưa được PM chốt | 422 `impact_level_unconfirmed` |
 | Hạ mức MAJOR không có lý do | 422 `reason_required` |

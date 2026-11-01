@@ -1,7 +1,7 @@
 # B1 — Kế hoạch chi tiết: Phân loại mức tác động CR (backend)
 
 > Lập ngày 2026-11-01. Thuộc [`tasks/thesis-revision-plan.md`](./thesis-revision-plan.md), thiết kế gốc tại [`docs/thesis/change-control-design.md`](../docs/thesis/change-control-design.md) §2.
-> Trạng thái: **chờ chủ dự án xác nhận**. Chưa viết mã.
+> Trạng thái: **đã triển khai (2026-11-01)** cùng B2 (web); chủ dự án đồng ý D1–D4 theo đề xuất. Kết quả ở §9.
 
 ## 0. Phát hiện khi đối chiếu mã (ảnh hưởng thiết kế)
 
@@ -166,3 +166,19 @@ Số tệp lớn hơn 5 nên **chia 3 commit**: (1) migration + model + schema; 
 | D2 | G1 áp dụng cho mọi mức, kể cả MINOR? | Có. Người tạo có thể khai MINOR để né kiểm soát, nên PM chốt là chốt chặn |
 | D3 | Có cho PM tự hạ MAJOR khi chính PM là người tạo không? | Có, nhưng bắt buộc lý do và ghi audit. Hội đồng xem được trong audit timeline |
 | D4 | Ngưỡng quy tắc dự phòng (2 ngày / 10 ngày / 10% / 2%) | Dùng tạm, chỉnh sau E2 và ghi lý do chỉnh |
+
+## 9. Kết quả triển khai (2026-11-01)
+
+| Hạng mục | Kết quả |
+|---|---|
+| Backend | Toàn bộ test: **866 passed, 16 skipped** khi chạy kèm PostgreSQL 16 cục bộ (`TEST_POSTGRES_URL`); ruff sạch. Mốc trước B1: 813 passed, 28 skipped (không có PostgreSQL) |
+| Test mới | `tests/integration/test_cr_impact_level.py` (14 kịch bản), 2 kịch bản đồng thời trong `test_approval_postgres.py`, bảng biên `derive_impact_level` và gợi ý AI trong `test_impact_analyzer.py` |
+| Migration | Lên/xuống/lên trên PostgreSQL có dữ liệu CR cũ: CR cũ thành MODERATE đã chốt, báo cáo cũ revision 1 nguồn AI, hạ cấp không mất dữ liệu |
+| OpenAPI | Sinh lại `mobile/openapi/openapi.json`; `export_openapi.py --check` đạt |
+| Web (B2) | 348 test (thêm 14), type-check và lint sạch. Thêm huy hiệu mức (danh sách/chi tiết), chọn mức khi tạo CR, panel PM chốt/đổi mức, modal nhập đánh giá thủ công, modal duyệt CR MAJOR có ô xác nhận đã đọc + nhận xét bắt buộc, thông báo chờ PM chốt, thông điệp riêng cho từng mã lỗi 422; i18n vi/en |
+| Trình duyệt | Backend + Next.js cục bộ, Chromium: BA thấy "chờ PM chốt" và không có nút quyết định → PM chốt MAJOR, nhập đánh giá thủ công → BA bị chặn khi thiếu xác nhận/nhận xét rồi duyệt thành công (timeline ghi mức và revision) → PM hạ mức: thiếu lý do bị chặn, có lý do thì lưu được và bước đã duyệt được giữ. Màn hình 390px không tràn ngang, không có lỗi trang |
+
+**Sai khác so với kế hoạch:**
+- Gộp mã backend thành **1 commit** thay vì 3, vì tách lớp dữ liệu riêng thì test mới không chạy được ở commit trung gian; ưu tiên mỗi commit đều xanh.
+- Bỏ `updated_at` khỏi `ImpactReportResponse`: test job phát hiện lần chạy lại AI thứ hai sẽ lỗi (cột `onupdate` hết hạn sau flush, đọc lại trong ngữ cảnh đồng bộ). Lỗi được chặn trước khi lên `main`.
+- Phát hiện khi kiểm thử trình duyệt: báo cáo thủ công từng hiển thị "AI gợi ý"; đã sửa thành "PM đề xuất (đánh giá thủ công)" để không gây hiểu nhầm AI quyết định.

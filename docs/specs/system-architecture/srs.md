@@ -191,7 +191,7 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 | ID | SOP | Yêu cầu |
 |---|---|---|
 | AI-01 | SOP-AI-001 | **Project Generator**: PM nhập prompt tự nhiên → AI sinh cấu trúc JSON WBS (Phases, Sprints, Epics, Tasks, Dependencies) → Insert vào DB → Chạy CPM → Hiển thị Gantt. |
-| AI-02 | SOP-AI-002 | **Impact Analysis**: Chạy theo yêu cầu trên trang Change Request (job `ai.impact_analysis`) → AI đánh giá tác động Scope, Timeline, Budget, Resource. Báo cáo **chỉ mang tính tư vấn**: không đưa ra quyết định duyệt/từ chối, không ghi vào `approvals`, không tự áp dụng thay đổi. **[Dự kiến – KH-CR]** trả thêm `suggested_impact_level` kèm lý do. |
+| AI-02 | SOP-AI-002 | **Impact Analysis**: Chạy theo yêu cầu trên trang Change Request (job `ai.impact_analysis`) → AI đánh giá tác động Scope, Timeline, Budget, Resource. Báo cáo **chỉ mang tính tư vấn**: không đưa ra quyết định duyệt/từ chối, không ghi vào `approvals`, không tự áp dụng thay đổi. Trả thêm `suggested_impact_level` + `impact_level_rationale` (AI không trả mức hợp lệ thì dùng quy tắc dự phòng `derive_impact_level`); hệ thống không bao giờ tự đổi mức của CR (đã triển khai 2026-11-01). |
 | AI-03 | SOP-AI-003 | **Schedule Optimization**: AI tính toán lại chuỗi phụ thuộc và đề xuất lịch trình tối ưu sau khi CR được phê duyệt. |
 | AI-04 | SOP-RM-001 | **Resource Recommendation**: Gợi ý nhân sự phù hợp cho Task dựa trên Skill match, Chi phí, Tải công việc và Lịch nghỉ phép. |
 | AI-05 | SOP-AI-005 | **Risk Analysis**: Đánh giá định kỳ các rủi ro dự án (trễ hạn, quá tải, vượt chi phí) và xếp loại mức độ rủi ro. |
@@ -214,8 +214,9 @@ Kèm theo kênh giao tiếp thời gian thực theo từng dự án (`/ws/chat/{
 | CR-04 | Từ chối bắt buộc có lý do; khi một bước bị từ chối, các bước sau chuyển `CANCELLED`. Mọi quyết định ghi audit log và gửi thông báo in-app. |
 | CR-05 | PM duyệt bước cuối thì tự động tạo snapshot phiên bản gắn `change_request_id`. UI `ApprovalTimeline` trên trang chi tiết CR `/projects/[id]/change-requests/[crId]`. |
 | CR-06 | **Nguyên tắc human-in-the-loop:** cả 3 bước do người quyết định; AI không phải là bên duyệt (đã đúng trong `approval_service.py`). |
-| CR-07 | **[Dự kiến – KH-CR]** Mức tác động `MINOR/MODERATE/MAJOR`: người tạo đề xuất, AI gợi ý, PM chốt trước bước BA; hạ mức từ MAJOR bắt buộc lý do và ghi audit; đổi mức giữa chừng thì mở lại các bước đã duyệt. |
-| CR-08 | **[Dự kiến – KH-CR]** CR MAJOR: bắt buộc báo cáo tác động khớp revision hiện tại của CR (hoặc đánh giá thủ công `MANUAL` khi AI lỗi); mỗi người duyệt xác nhận đã đọc (`acknowledged_report_id`) và ghi nhận xét; không duyệt nhanh từ thông báo mobile. Chi tiết `docs/thesis/change-control-design.md` §2. |
+| CR-07 | **[Đã triển khai 2026-11-01]** Mức tác động `MINOR/MODERATE/MAJOR`: người tạo đề xuất, AI gợi ý, PM chốt trước bước BA; hạ mức từ MAJOR bắt buộc lý do và ghi audit; đổi mức giữa chừng thì mở lại các bước đã duyệt. |
+| CR-08 | **[Đã triển khai 2026-11-01]** Mọi quyết định cần PM đã chốt mức (422 `impact_level_unconfirmed`). Duyệt CR MAJOR: bắt buộc có báo cáo tác động (AI hoặc `MANUAL`), người duyệt gửi `acknowledged_report_revision` khớp `impact_reports.revision` hiện tại (422 `acknowledgement_required` / `impact_report_changed`) và nhận xét (422 `comment_required`); từ chối không cần các điều kiện này. Mỗi bước lưu `impact_level_at_decision`. Vì vậy không thể duyệt nhanh CR MAJOR từ thông báo mobile. Chi tiết `docs/thesis/change-control-design.md` §2. |
+| CR-09 | **[Đã triển khai 2026-11-01]** `GET /change-requests/{id}/impact-report` đọc báo cáo đã lưu (thành viên dự án, 404 khi chưa có), luôn có `advisory: true`. `PUT /change-requests/{id}/impact-report/manual` chỉ PM, chỉ khi chưa có báo cáo nguồn AI (409 `ai_report_exists`); mỗi lần ghi đè báo cáo tăng `revision`. Web: huy hiệu mức trên danh sách/chi tiết, panel PM chốt mức, modal duyệt CR MAJOR có ô xác nhận đã đọc. |
 
 ---
 
