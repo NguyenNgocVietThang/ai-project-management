@@ -1,4 +1,5 @@
 import { api } from '@/services/api'
+import type { ImpactLevel } from '@/types/change-request.types'
 
 /** Vai trò phụ trách từng bước duyệt CR, theo thứ tự BA -> PO -> PM. */
 export type ApprovalRole = 'BA' | 'PO' | 'PM'
@@ -14,12 +15,24 @@ export interface ApprovalStep {
   comment: string | null
   decided_at: string | null
   can_decide: boolean
+  /** Mức tác động của CR tại thời điểm quyết định bước. */
+  impact_level_at_decision: ImpactLevel | null
+  /** Revision báo cáo tác động người duyệt đã xác nhận đọc. */
+  acknowledged_report_revision: number | null
 }
 
 export interface ApprovalChain {
   change_request_id: number
   change_request_status: string
   current_step_order: number | null
+  impact_level: ImpactLevel
+  impact_level_confirmed: boolean
+  /** Revision báo cáo tác động hiện tại; null khi chưa có báo cáo. */
+  report_revision: number | null
+  /** Điều kiện khi DUYỆT (CR MAJOR): cần báo cáo, xác nhận đã đọc và nhận xét. */
+  requires_report: boolean
+  requires_acknowledgement: boolean
+  requires_comment: boolean
   steps: ApprovalStep[]
 }
 
@@ -28,10 +41,15 @@ export const approvalService = {
     const { data } = await api.get<ApprovalChain>(`/change-requests/${crId}/approvals`)
     return data
   },
-  async approve(crId: number, stepOrder: number, comment: string | null): Promise<ApprovalChain> {
+  async approve(
+    crId: number,
+    stepOrder: number,
+    comment: string | null,
+    acknowledgedReportRevision: number | null = null,
+  ): Promise<ApprovalChain> {
     const { data } = await api.post<ApprovalChain>(
       `/change-requests/${crId}/approvals/${stepOrder}/approve`,
-      { comment },
+      { comment, acknowledged_report_revision: acknowledgedReportRevision },
     )
     return data
   },
@@ -61,4 +79,22 @@ export function parseMissingRoles(error: unknown): string[] | null {
   const match = /missing_roles:\s*(.+)$/.exec(detail)
   if (!match) return null
   return match[1].split(',').map((r) => r.trim()).filter(Boolean)
+}
+
+/** Mã lỗi 422 nghiệp vụ của kiểm soát mức tác động (backend trả trong `detail`). */
+export const IMPACT_ERROR_CODES = [
+  'impact_level_unconfirmed',
+  'impact_report_required',
+  'acknowledgement_required',
+  'impact_report_changed',
+  'comment_required',
+  'reason_required',
+  'ai_report_exists',
+] as const
+export type ImpactErrorCode = (typeof IMPACT_ERROR_CODES)[number]
+
+/** Trả về mã lỗi kiểm soát mức tác động nếu lỗi API là một trong các mã đã biết. */
+export function parseImpactError(error: unknown): ImpactErrorCode | null {
+  const { detail } = readApiError(error)
+  return (IMPACT_ERROR_CODES as readonly string[]).includes(detail ?? '') ? (detail as ImpactErrorCode) : null
 }

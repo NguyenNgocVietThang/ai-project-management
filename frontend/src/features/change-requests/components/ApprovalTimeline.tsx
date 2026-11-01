@@ -9,7 +9,12 @@ import { Modal } from '@/components/common/Modal'
 import { Badge, type BadgeTone } from '@/components/ui/Badge'
 import { Skeleton, SkeletonRegion } from '@/components/ui/Skeleton'
 import { cn } from '@/lib/utils'
-import { readApiError, type ApprovalStep, type ApprovalStepStatus } from '@/features/change-requests/approvals'
+import {
+  parseImpactError,
+  readApiError,
+  type ApprovalStep,
+  type ApprovalStepStatus,
+} from '@/features/change-requests/approvals'
 import { useApprovalChain, useDecideApproval } from '@/features/change-requests/hooks/useApprovals'
 
 const REASON_MAX = 2000
@@ -41,6 +46,7 @@ const STATUS_TONE: Record<ApprovalStepStatus, BadgeTone> = {
 
 export function ApprovalTimeline({ changeRequestId }: { changeRequestId: number }) {
   const t = useTranslations('approvals')
+  const ti = useTranslations('impactControl')
   const format = useFormatter()
   const chain = useApprovalChain(changeRequestId)
   const decide = useDecideApproval(changeRequestId)
@@ -48,9 +54,13 @@ export function ApprovalTimeline({ changeRequestId }: { changeRequestId: number 
   const [rejectStep, setRejectStep] = useState<ApprovalStep | null>(null)
   const [text, setText] = useState('')
   const [touched, setTouched] = useState(false)
+  // Xác nhận đã đọc báo cáo tác động (bắt buộc khi duyệt CR MAJOR).
+  const [acknowledged, setAcknowledged] = useState(false)
 
-  // Chuyển lỗi API thành thông báo thân thiện theo mã HTTP.
+  // Chuyển lỗi API thành thông báo thân thiện: mã nghiệp vụ mức tác động trước, rồi tới mã HTTP.
   const errorMessage = (error: unknown) => {
+    const impactCode = parseImpactError(error)
+    if (impactCode) return ti(`errors.${impactCode}`)
     const { status } = readApiError(error)
     if (status === 403) return t('errorForbidden')
     if (status === 409) return t('errorConflict')
@@ -63,12 +73,27 @@ export function ApprovalTimeline({ changeRequestId }: { changeRequestId: number 
     setRejectStep(null)
     setText('')
     setTouched(false)
+    setAcknowledged(false)
   }
+
+  const isMajor = chain.data?.requires_acknowledgement ?? false
+  const reportRevision = chain.data?.report_revision ?? null
 
   const submitApprove = () => {
     if (!approveStep) return
+    setTouched(true)
     const comment = text.trim() || null
-    decide.mutate({ kind: 'approve', stepOrder: approveStep.step_order, comment }, { onSettled: close })
+    if (isMajor && (reportRevision === null || !acknowledged || !comment)) return
+    decide.mutate(
+      {
+        kind: 'approve',
+        stepOrder: approveStep.step_order,
+        comment,
+        // Gửi đúng revision người duyệt đã đọc; backend từ chối nếu báo cáo đã đổi.
+        acknowledgedReportRevision: isMajor ? reportRevision : null,
+      },
+      { onSettled: close },
+    )
   }
 
   const submitReject = () => {
@@ -104,11 +129,16 @@ export function ApprovalTimeline({ changeRequestId }: { changeRequestId: number 
 
   const steps = [...chain.data.steps].sort((a, b) => a.step_order - b.step_order)
   const rejectInvalid = touched && !text.trim()
+  const ackInvalid = touched && isMajor && !acknowledged
+  const commentInvalid = touched && isMajor && !text.trim()
+  // PM chưa chốt mức: backend chặn mọi quyết định (G1), nên ẩn nút và giải thích lý do.
+  const awaitingConfirmation = !chain.data.impact_level_confirmed && chain.data.current_step_order !== null
 
   return (
     <section aria-labelledby="approval-title" className="space-y-4">
       <h3 id="approval-title" className="text-h4 text-foreground">{t('title')}</h3>
       {decide.isError && <Alert>{errorMessage(decide.error)}</Alert>}
+      {awaitingConfirmation && <Alert>{ti('waitingConfirmation')}</Alert>}
       {steps.length === 0 ? (
         <p className="text-body-sm text-muted-foreground">{t('empty')}</p>
       ) : (
@@ -158,7 +188,14 @@ export function ApprovalTimeline({ changeRequestId }: { changeRequestId: number 
                       {step.comment}
                     </p>
                   )}
-                  {step.can_decide && (
+                  {(step.impact_level_at_decision || step.acknowledged_report_revision) && (
+                    <p className="mt-1 text-caption text-muted-foreground">
+                      {step.impact_level_at_decision && ti('decidedAtLevel', { level: ti(`level.${step.impact_level_at_decision}`) })}
+                      {step.impact_level_at_decision && step.acknowledged_report_revision && ' · '}
+                      {step.acknowledged_report_revision && ti('acknowledgedRevision', { revision: step.acknowledged_report_revision })}
+                    </p>
+                  )}
+                  {step.can_decide && !awaitingConfirmation && (
                     <div className="mt-3 flex gap-2">
                       <Button type="button" fullWidth={false} className="flex-1" onClick={() => { close(); setApproveStep(step) }}>
                         {t('approve')}
@@ -176,19 +213,57 @@ export function ApprovalTimeline({ changeRequestId }: { changeRequestId: number 
       )}
 
       <Modal open={approveStep !== null} onClose={close} title={t('approveTitle')}>
-        <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); submitApprove() }}>
-          <label className="block text-body-sm font-medium text-foreground" htmlFor="approval-comment">{t('commentOptional')}</label>
+        <form className="space-y-4" noValidate onSubmit={(e) => { e.preventDefault(); submitApprove() }}>
+          {isMajor && (
+            <Alert>{reportRevision === null ? ti('majorNeedsReport') : ti('majorApproveNotice')}</Alert>
+          )}
+          {isMajor && reportRevision !== null && (
+            <div>
+              <label className="flex items-start gap-2 text-body-sm text-foreground" htmlFor="approval-ack">
+                <input
+                  id="approval-ack"
+                  type="checkbox"
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-primary"
+                  checked={acknowledged}
+                  aria-invalid={ackInvalid}
+                  aria-describedby={ackInvalid ? 'approval-ack-error' : undefined}
+                  onChange={(e) => setAcknowledged(e.target.checked)}
+                />
+                <span>{ti('ackLabel', { revision: reportRevision })}</span>
+              </label>
+              {ackInvalid && (
+                <p id="approval-ack-error" role="alert" className="mt-1 text-body-sm text-destructive">{ti('ackMissing')}</p>
+              )}
+            </div>
+          )}
+          <label className="block text-body-sm font-medium text-foreground" htmlFor="approval-comment">
+            {isMajor ? ti('commentRequired') : t('commentOptional')}
+          </label>
           <textarea
             id="approval-comment"
             className={TEXTAREA_CLASSES}
             rows={3}
+            required={isMajor}
             maxLength={REASON_MAX}
+            aria-invalid={commentInvalid}
+            aria-describedby={commentInvalid ? 'approval-comment-error' : undefined}
             value={text}
             onChange={(e) => setText(e.target.value)}
           />
+          {commentInvalid && (
+            <p id="approval-comment-error" role="alert" className="text-body-sm text-destructive">{ti('commentMissing')}</p>
+          )}
           <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
             <Button type="button" variant="outline" fullWidth={false} className="w-full sm:w-auto" onClick={close}>{t('cancel')}</Button>
-            <Button type="submit" fullWidth={false} className="w-full sm:w-auto" isLoading={decide.isPending}>{t('confirmApprove')}</Button>
+            <Button
+              type="submit"
+              fullWidth={false}
+              className="w-full sm:w-auto"
+              isLoading={decide.isPending}
+              disabled={isMajor && reportRevision === null}
+            >
+              {t('confirmApprove')}
+            </Button>
           </div>
         </form>
       </Modal>

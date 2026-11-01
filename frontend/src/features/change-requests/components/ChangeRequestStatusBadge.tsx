@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl'
 import { Badge, type BadgeTone } from '@/components/ui/Badge'
-import type { ChangeRequestStatus, RiskLevel } from '@/types/change-request.types'
+import type { ChangeRequestStatus, ImpactLevel, RiskLevel } from '@/types/change-request.types'
 
 // Trạng thái CR -> tông Badge lấy từ token ngữ nghĩa (không hard-code bảng màu).
 const STATUS_TONE: Record<ChangeRequestStatus, BadgeTone> = {
@@ -40,5 +40,28 @@ export function RiskLevelBadge({ level }: { level: RiskLevel }) {
     <Badge tone={RISK_TONE[level]} dot>
       {t(labels[level])}
     </Badge>
+  )
+}
+
+// Mức tác động -> tông Badge; nhãn chữ "Tác động: Lớn" nên không chỉ dựa vào màu.
+export const IMPACT_TONE: Record<ImpactLevel, BadgeTone> = {
+  MINOR: 'info',
+  MODERATE: 'warning',
+  MAJOR: 'danger',
+}
+
+export function ImpactLevelBadge({ level, confirmed = true }: { level: ImpactLevel; confirmed?: boolean }) {
+  const t = useTranslations('impactControl')
+  return (
+    <>
+      <Badge tone={IMPACT_TONE[level]} dot>
+        {t('badge', { level: t(`level.${level}`) })}
+      </Badge>
+      {!confirmed && (
+        <Badge tone="neutral" size="sm">
+          {t('unconfirmedBadge')}
+        </Badge>
+      )}
+    </>
   )
 }

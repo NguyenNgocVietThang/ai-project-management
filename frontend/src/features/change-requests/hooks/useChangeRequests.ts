@@ -6,6 +6,8 @@ import { changeRequestService, type ChangeRequestCreateInput } from '@/services/
 import type {
   ImpactAnalysisJobResponse,
   ImpactAnalysisJobResult,
+  ImpactLevel,
+  ManualImpactReportInput,
 } from '@/types/change-request.types'
 
 import { useJobPollingOptions, useCancelPausedJobQuery } from '@/features/jobs/hooks/jobPolling'
@@ -18,6 +20,8 @@ export const changeRequestKeys = {
   detail: (id: number) => [...changeRequestKeys.all, 'detail', id] as const,
   jobs: () => [...changeRequestKeys.all, 'impact-analysis-job'] as const,
   job: (jobId: string) => [...changeRequestKeys.jobs(), jobId] as const,
+  impactReport: (id: number) => [...changeRequestKeys.all, 'impact-report', id] as const,
+  approvals: (id: number) => [...changeRequestKeys.all, 'approvals', id] as const,
 }
 
 export function useChangeRequests(projectId: number) {
@@ -55,7 +59,7 @@ export function useSubmitChangeRequest() {
       queryClient.invalidateQueries({ queryKey: changeRequestKeys.detail(data.id) })
       queryClient.invalidateQueries({ queryKey: changeRequestKeys.list(data.project_id) })
       // Submit tạo chuỗi duyệt mới, cần tải lại dòng thời gian duyệt.
-      queryClient.invalidateQueries({ queryKey: [...changeRequestKeys.all, 'approvals', data.id] })
+      queryClient.invalidateQueries({ queryKey: changeRequestKeys.approvals(data.id) })
     },
   })
 }
@@ -93,4 +97,54 @@ export function useImpactAnalysisJob(jobId: string | null) {
       return data
     },
   })
+}
+
+/** Báo cáo tác động đã lưu của CR (null khi chưa có) — không mất khi tải lại trang. */
+export function useImpactReport(id: number | null) {
+  return useQuery({
+    queryKey: changeRequestKeys.impactReport(id ?? 0),
+    queryFn: () => changeRequestService.getImpactReport(id as number),
+    enabled: id !== null && Number.isFinite(id),
+  })
+}
+
+/** Làm mới mọi dữ liệu phụ thuộc mức tác động / báo cáo của một CR. */
+function invalidateImpactData(client: ReturnType<typeof useQueryClient>, id: number, projectId?: number) {
+  void client.invalidateQueries({ queryKey: changeRequestKeys.detail(id) })
+  void client.invalidateQueries({ queryKey: changeRequestKeys.impactReport(id) })
+  void client.invalidateQueries({ queryKey: changeRequestKeys.approvals(id) })
+  void client.invalidateQueries({
+    queryKey: projectId === undefined ? changeRequestKeys.lists() : changeRequestKeys.list(projectId),
+  })
+}
+
+/** PM chốt hoặc đổi mức tác động. */
+export function useSetImpactLevel(id: number) {
+  const client = useQueryClient()
+  return useMutation({
+    mutationFn: ({ level, reason }: { level: ImpactLevel; reason: string | null }) =>
+      changeRequestService.setImpactLevel(id, level, reason),
+    onSuccess: (data) => {
+      client.setQueryData(changeRequestKeys.detail(id), data)
+      invalidateImpactData(client, id, data.project_id)
+    },
+  })
+}
+
+/** PM nhập đánh giá tác động thủ công khi chưa có báo cáo AI. */
+export function useSetManualImpactReport(id: number) {
+  const client = useQueryClient()
+  return useMutation({
+    mutationFn: (body: ManualImpactReportInput) => changeRequestService.setManualImpactReport(id, body),
+    onSuccess: (report) => {
+      client.setQueryData(changeRequestKeys.impactReport(id), report)
+      invalidateImpactData(client, id)
+    },
+  })
+}
+
+/** Gọi khi job phân tích tác động hoàn tất: tải lại báo cáo đã lưu và chuỗi duyệt (revision mới). */
+export function useRefreshImpactData(id: number) {
+  const client = useQueryClient()
+  return () => invalidateImpactData(client, id)
 }

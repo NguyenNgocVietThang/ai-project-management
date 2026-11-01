@@ -10,7 +10,7 @@ import { formatDate } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 import { useChangeRequests } from '@/features/change-requests/hooks/useChangeRequests'
-import { ChangeRequestStatusBadge } from './ChangeRequestStatusBadge'
+import { ChangeRequestStatusBadge, ImpactLevelBadge } from './ChangeRequestStatusBadge'
 
 /**
  * Danh sách CR của dự án. Nút tạo mới và form nằm ở trang cha (CTA chính trên
@@ -89,7 +89,10 @@ export function ChangeRequestList({
                   <h3 className="min-w-0 break-words text-body-sm font-medium text-foreground">{item.title}</h3>
                   <ChangeRequestStatusBadge status={item.status} />
                 </div>
-                <p className="mt-1 text-caption text-muted-foreground">{formatDate(item.created_at, locale)}</p>
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  <span className="text-caption text-muted-foreground">{formatDate(item.created_at, locale)}</span>
+                  <ImpactLevelBadge level={item.impact_level} confirmed={item.impact_level_confirmed} />
+                </div>
               </button>
             </li>
           )

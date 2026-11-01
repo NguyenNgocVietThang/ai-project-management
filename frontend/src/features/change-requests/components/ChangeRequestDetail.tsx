@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Send, Sparkles } from 'lucide-react'
+import { ClipboardEdit, Send, Sparkles } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { Alert } from '@/components/common/Alert'
 import { Button } from '@/components/common/Button'
@@ -14,11 +14,20 @@ import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 import {
   useChangeRequest,
   useImpactAnalysisJob,
+  useImpactReport,
+  useRefreshImpactData,
   useRunImpactAnalysis,
   useSubmitChangeRequest,
 } from '@/features/change-requests/hooks/useChangeRequests'
 import { ApprovalTimeline } from '@/features/change-requests/components/ApprovalTimeline'
-import { ChangeRequestStatusBadge, RiskLevelBadge } from '@/features/change-requests/components/ChangeRequestStatusBadge'
+import {
+  ChangeRequestStatusBadge,
+  ImpactLevelBadge,
+  RiskLevelBadge,
+} from '@/features/change-requests/components/ChangeRequestStatusBadge'
+import { ImpactLevelPanel, OPEN_CR_STATUSES } from '@/features/change-requests/components/ImpactLevelPanel'
+import { ManualImpactReportModal } from '@/features/change-requests/components/ManualImpactReportModal'
+import { useProjectDetail } from '@/features/projects/hooks/useProjects'
 import { parseMissingRoles } from '@/features/change-requests/approvals'
 import type { ImpactReport } from '@/types/change-request.types'
 
@@ -67,8 +76,20 @@ export function ChangeRequestDetail({
   const runAnalysis = useRunImpactAnalysis()
   const submitMutation = useSubmitChangeRequest()
   const job = useImpactAnalysisJob(jobId)
+  const savedReport = useImpactReport(changeRequestId)
+  const refreshImpactData = useRefreshImpactData(changeRequestId)
+  const project = useProjectDetail(query.data?.project_id ?? Number.NaN)
+  const [manualOpen, setManualOpen] = useState(false)
   const t = useTranslations('approvals')
+  const ti = useTranslations('impactControl')
   const tc = useTranslations('common')
+  const jobStatus = job.data?.status
+
+  // Job phân tích xong: tải lại báo cáo đã lưu và chuỗi duyệt (revision báo cáo đã tăng).
+  useEffect(() => {
+    if (jobId !== null && jobStatus === 'COMPLETED') refreshImpactData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jobId, jobStatus])
 
   // Chuyển sang xem change request khác thì job đang theo dõi (nếu có) không
   // còn liên quan tới nó nữa.
@@ -101,7 +122,13 @@ export function ChangeRequestDetail({
   }
 
   const changeRequest = query.data
-  const report = isImpactReport(job.data?.result) ? job.data.result : null
+  // Ưu tiên báo cáo đã lưu (không mất khi tải lại trang); kết quả job chỉ dùng tạm khi chưa tải lại.
+  const jobReport = isImpactReport(job.data?.result) ? job.data.result : null
+  const report = savedReport.data ?? jobReport
+  // Chỉ PM của dự án được chốt mức và nhập đánh giá thủ công (admin hệ thống thì không).
+  const canManageImpact = project.data?.current_user_role === 'PM'
+  const isOpen = OPEN_CR_STATUSES.includes(changeRequest.status)
+  const canEnterManual = canManageImpact && isOpen && savedReport.data?.source !== 'AI'
   const isAnalyzing = jobId !== null && !job.isError && job.data?.status !== 'COMPLETED' && job.data?.status !== 'FAILED'
   const TitleTag = variant === 'page' ? 'h2' : 'h3'
 
@@ -126,6 +153,7 @@ export function ChangeRequestDetail({
               </TitleTag>
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 <ChangeRequestStatusBadge status={changeRequest.status} />
+                <ImpactLevelBadge level={changeRequest.impact_level} confirmed={changeRequest.impact_level_confirmed} />
               </div>
             </div>
             {changeRequest.status === 'DRAFT' && (
@@ -183,16 +211,24 @@ export function ChangeRequestDetail({
               </CardTitle>
               <CardDescription>{tw('impactAnalysisDescription')}</CardDescription>
             </div>
-            <Button
-              type="button"
-              fullWidth={false}
-              className="w-full sm:w-auto"
-              onClick={runImpactAnalysis}
-              isLoading={runAnalysis.isPending}
-            >
-              {!runAnalysis.isPending && <Sparkles className="h-4 w-4" aria-hidden="true" />}
-              {tw('runImpactAnalysis')}
-            </Button>
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+              {canEnterManual && (
+                <Button type="button" variant="outline" fullWidth={false} className="w-full sm:w-auto" onClick={() => setManualOpen(true)}>
+                  <ClipboardEdit className="h-4 w-4" aria-hidden="true" />
+                  {ti('manualOpen')}
+                </Button>
+              )}
+              <Button
+                type="button"
+                fullWidth={false}
+                className="w-full sm:w-auto"
+                onClick={runImpactAnalysis}
+                isLoading={runAnalysis.isPending}
+              >
+                {!runAnalysis.isPending && <Sparkles className="h-4 w-4" aria-hidden="true" />}
+                {tw('runImpactAnalysis')}
+              </Button>
+            </div>
           </CardHeader>
 
           <div className="space-y-4">
@@ -217,11 +253,22 @@ export function ChangeRequestDetail({
 
             {jobId && job.data?.status === 'FAILED' && <Alert>{getApiErrorMessage(new Error(job.data.error ?? ''), tw('impactAnalysisFailed'))}</Alert>}
 
+            {!report && !isAnalyzing && savedReport.isSuccess && (
+              <p className="text-body-sm text-muted-foreground">{ti('noReport')}</p>
+            )}
+
             {report && (
               <div className="space-y-4 rounded-lg border bg-muted/30 p-4 animate-fade-up">
+                {/* Báo cáo chỉ là khuyến nghị: con người quyết định từng bước duyệt. */}
+                <p className="text-overline uppercase text-warning">{ti('advisoryLabel')}</p>
                 <div className="flex flex-wrap items-center gap-3">
                   <RiskLevelBadge level={report.risk_level} />
                   <span className="text-body-sm text-muted-foreground">{tw('riskScore', { score: new Intl.NumberFormat(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(report.risk_score) })}</span>
+                  {report.revision !== undefined && (
+                    <span className="text-caption text-muted-foreground">
+                      {report.source === 'MANUAL' ? ti('sourceManual') : ti('sourceAI')} · {ti('revision', { revision: report.revision })}
+                    </span>
+                  )}
                 </div>
                 <dl className="grid gap-3 sm:grid-cols-2">
                   <div className="rounded-lg border bg-card p-3">
@@ -261,6 +308,15 @@ export function ChangeRequestDetail({
           </dl>
         </Card>
 
+        <Card>
+          <ImpactLevelPanel
+            changeRequest={changeRequest}
+            report={savedReport.data ?? null}
+            canManage={canManageImpact}
+            headingAs={variant === 'page' ? 'h3' : 'h4'}
+          />
+        </Card>
+
         <Card className={cn(changeRequest.status === 'DRAFT' && 'border-dashed shadow-none')}>
           {changeRequest.status !== 'DRAFT' ? (
             <ApprovalTimeline changeRequestId={changeRequest.id} />
@@ -272,6 +328,10 @@ export function ChangeRequestDetail({
           )}
         </Card>
       </aside>
+
+      {canEnterManual && (
+        <ManualImpactReportModal changeRequestId={changeRequest.id} open={manualOpen} onClose={() => setManualOpen(false)} />
+      )}
     </div>
   )
 }

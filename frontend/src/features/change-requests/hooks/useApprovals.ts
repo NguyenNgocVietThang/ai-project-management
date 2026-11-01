@@ -5,7 +5,7 @@ import { approvalService, type ApprovalChain } from '@/features/change-requests/
 import { changeRequestKeys } from '@/features/change-requests/hooks/useChangeRequests'
 
 export const approvalKeys = {
-  chain: (crId: number) => [...changeRequestKeys.all, 'approvals', crId] as const,
+  chain: (crId: number) => changeRequestKeys.approvals(crId),
 }
 
 export function useApprovalChain(crId: number) {
@@ -17,7 +17,7 @@ export function useApprovalChain(crId: number) {
 }
 
 type Decision =
-  | { kind: 'approve'; stepOrder: number; comment: string | null }
+  | { kind: 'approve'; stepOrder: number; comment: string | null; acknowledgedReportRevision?: number | null }
   | { kind: 'reject'; stepOrder: number; reason: string }
 
 /** Duyệt/từ chối một bước: ghi ngay response vào cache, rồi làm mới chi tiết và danh sách CR. */
@@ -26,7 +26,7 @@ export function useDecideApproval(crId: number) {
   return useMutation({
     mutationFn: (d: Decision): Promise<ApprovalChain> =>
       d.kind === 'approve'
-        ? approvalService.approve(crId, d.stepOrder, d.comment)
+        ? approvalService.approve(crId, d.stepOrder, d.comment, d.acknowledgedReportRevision ?? null)
         : approvalService.reject(crId, d.stepOrder, d.reason),
     // Lỗi (ví dụ 409 bước đã được người khác quyết định): tải lại chuỗi duyệt mới nhất.
     onError: () => {

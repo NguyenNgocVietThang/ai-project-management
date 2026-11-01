@@ -7,8 +7,9 @@ import { Button } from '@/components/common/Button'
 import { Input } from '@/components/common/Input'
 import { Label } from '@/components/common/Label'
 import { Modal } from '@/components/common/Modal'
+import { Select } from '@/components/ui/Select'
 import { useCreateChangeRequest } from '@/features/change-requests/hooks/useChangeRequests'
-import type { ChangeRequest } from '@/types/change-request.types'
+import { IMPACT_LEVELS, type ChangeRequest, type ImpactLevel } from '@/types/change-request.types'
 import { useApiErrorMessage } from '@/i18n/useApiErrorMessage'
 
 // Ô nhập nhiều dòng cùng kiểu với Input (bo 8px, viền input, focus ring).
@@ -28,15 +29,20 @@ export function ChangeRequestForm({
 }) {
   const getApiErrorMessage = useApiErrorMessage()
   const tw = useTranslations('workflowUi')
+  const ti = useTranslations('impactControl')
   const titleId = useId()
   const descriptionId = useId()
   const reasonId = useId()
   const impactId = useId()
+  const levelId = useId()
+  const levelHintId = useId()
 
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [reason, setReason] = useState('')
   const [impactDescription, setImpactDescription] = useState('')
+  // Mức tác động người tạo đề xuất; PM chốt sau (PM tạo thì tự chốt luôn).
+  const [impactLevel, setImpactLevel] = useState<ImpactLevel>('MODERATE')
   const createMutation = useCreateChangeRequest()
 
   const reset = () => {
@@ -44,6 +50,7 @@ export function ChangeRequestForm({
     setDescription('')
     setReason('')
     setImpactDescription('')
+    setImpactLevel('MODERATE')
     createMutation.reset()
   }
 
@@ -62,6 +69,7 @@ export function ChangeRequestForm({
           description: description.trim(),
           reason: reason.trim() || undefined,
           impact_description: impactDescription.trim() || undefined,
+          impact_level: impactLevel,
         },
       })
       reset()
@@ -125,6 +133,23 @@ export function ChangeRequestForm({
             onChange={(event) => setImpactDescription(event.target.value)}
             className={TEXTAREA_CLASSES}
           />
+        </div>
+
+        <div>
+          <Label htmlFor={levelId}>{ti('proposedLabel')}</Label>
+          <Select
+            id={levelId}
+            value={impactLevel}
+            aria-describedby={levelHintId}
+            onChange={(event) => setImpactLevel(event.target.value as ImpactLevel)}
+          >
+            {IMPACT_LEVELS.map((level) => (
+              <option key={level} value={level}>{ti(`level.${level}`)}</option>
+            ))}
+          </Select>
+          <p id={levelHintId} className="mt-1 text-caption text-muted-foreground">
+            {ti(`levelHint.${impactLevel}`)} {ti('proposedHint')}
+          </p>
         </div>
 
         <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
