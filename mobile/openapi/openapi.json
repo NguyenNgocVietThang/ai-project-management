@@ -613,6 +613,18 @@
       },
       "ApprovalApproveRequest": {
         "properties": {
+          "acknowledged_report_revision": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acknowledged Report Revision"
+          },
           "comment": {
             "anyOf": [
               {
@@ -650,6 +662,37 @@
             ],
             "title": "Current Step Order"
           },
+          "impact_level": {
+            "title": "Impact Level",
+            "type": "string"
+          },
+          "impact_level_confirmed": {
+            "title": "Impact Level Confirmed",
+            "type": "boolean"
+          },
+          "report_revision": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Report Revision"
+          },
+          "requires_acknowledgement": {
+            "title": "Requires Acknowledgement",
+            "type": "boolean"
+          },
+          "requires_comment": {
+            "title": "Requires Comment",
+            "type": "boolean"
+          },
+          "requires_report": {
+            "title": "Requires Report",
+            "type": "boolean"
+          },
           "steps": {
             "items": {
               "$ref": "#/components/schemas/ApprovalStepResponse"
@@ -662,6 +705,12 @@
           "change_request_id",
           "change_request_status",
           "current_step_order",
+          "impact_level",
+          "impact_level_confirmed",
+          "report_revision",
+          "requires_report",
+          "requires_acknowledgement",
+          "requires_comment",
           "steps"
         ],
         "title": "ApprovalChainResponse",
@@ -684,6 +733,17 @@
       },
       "ApprovalStepResponse": {
         "properties": {
+          "acknowledged_report_revision": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acknowledged Report Revision"
+          },
           "approver_id": {
             "anyOf": [
               {
@@ -736,6 +796,17 @@
           "id": {
             "title": "Id",
             "type": "integer"
+          },
+          "impact_level_at_decision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Impact Level At Decision"
           },
           "required_role": {
             "title": "Required Role",
@@ -1542,6 +1613,10 @@
             ],
             "title": "Impact Description"
           },
+          "impact_level": {
+            "$ref": "#/components/schemas/ImpactLevel",
+            "default": "MODERATE"
+          },
           "reason": {
             "anyOf": [
               {
@@ -1605,6 +1680,50 @@
             ],
             "title": "Impact Description"
           },
+          "impact_level": {
+            "title": "Impact Level",
+            "type": "string"
+          },
+          "impact_level_change_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Impact Level Change Reason"
+          },
+          "impact_level_confirmed": {
+            "description": "True khi PM (hoặc hệ thống với dữ liệu cũ) đã chốt mức; chưa chốt thì chưa quyết định được bước duyệt.",
+            "readOnly": true,
+            "title": "Impact Level Confirmed",
+            "type": "boolean"
+          },
+          "impact_level_confirmed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Impact Level Confirmed At"
+          },
+          "impact_level_confirmed_by_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Impact Level Confirmed By Id"
+          },
           "project_id": {
             "title": "Project Id",
             "type": "integer"
@@ -1642,8 +1761,13 @@
           "reason",
           "impact_description",
           "status",
+          "impact_level",
+          "impact_level_confirmed_by_id",
+          "impact_level_confirmed_at",
+          "impact_level_change_reason",
           "applied_at",
-          "created_at"
+          "created_at",
+          "impact_level_confirmed"
         ],
         "title": "ChangeRequestResponse",
         "type": "object"
@@ -2387,6 +2511,161 @@
         "title": "HTTPValidationError",
         "type": "object"
       },
+      "ImpactLevel": {
+        "description": "Mức tác động của CR. Người tạo đề xuất, AI chỉ gợi ý, PM là người chốt.",
+        "enum": [
+          "MINOR",
+          "MODERATE",
+          "MAJOR"
+        ],
+        "title": "ImpactLevel",
+        "type": "string"
+      },
+      "ImpactLevelUpdateRequest": {
+        "description": "PM chốt hoặc đổi mức tác động. Hạ mức từ MAJOR bắt buộc có lý do (kiểm tra ở service).",
+        "properties": {
+          "level": {
+            "$ref": "#/components/schemas/ImpactLevel"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "required": [
+          "level"
+        ],
+        "title": "ImpactLevelUpdateRequest",
+        "type": "object"
+      },
+      "ImpactReportResponse": {
+        "properties": {
+          "advisory": {
+            "const": true,
+            "default": true,
+            "title": "Advisory",
+            "type": "boolean"
+          },
+          "affected_tasks_json": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Affected Tasks Json"
+          },
+          "change_request_id": {
+            "title": "Change Request Id",
+            "type": "integer"
+          },
+          "cost_impact": {
+            "title": "Cost Impact",
+            "type": "number"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Id"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "impact_level_rationale": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Impact Level Rationale"
+          },
+          "revision": {
+            "default": 1,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "risk_level": {
+            "title": "Risk Level",
+            "type": "string"
+          },
+          "risk_score": {
+            "title": "Risk Score",
+            "type": "number"
+          },
+          "schedule_impact_days": {
+            "title": "Schedule Impact Days",
+            "type": "integer"
+          },
+          "source": {
+            "default": "AI",
+            "title": "Source",
+            "type": "string"
+          },
+          "suggested_impact_level": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suggested Impact Level"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          }
+        },
+        "required": [
+          "id",
+          "change_request_id",
+          "risk_level",
+          "risk_score",
+          "schedule_impact_days",
+          "cost_impact",
+          "affected_tasks_json",
+          "summary",
+          "created_at"
+        ],
+        "title": "ImpactReportResponse",
+        "type": "object"
+      },
       "InvestorGrantCreate": {
         "properties": {
           "email": {
@@ -2981,6 +3260,50 @@
           }
         },
         "title": "LogoutRequest",
+        "type": "object"
+      },
+      "ManualImpactReportRequest": {
+        "description": "PM nhập đánh giá tác động thủ công (dự phòng khi AI lỗi hoặc hết quota).",
+        "properties": {
+          "cost_impact": {
+            "maximum": 10000000000000.0,
+            "minimum": -10000000000000.0,
+            "title": "Cost Impact",
+            "type": "number"
+          },
+          "risk_level": {
+            "$ref": "#/components/schemas/RiskLevel"
+          },
+          "schedule_impact_days": {
+            "maximum": 3650.0,
+            "minimum": -3650.0,
+            "title": "Schedule Impact Days",
+            "type": "integer"
+          },
+          "suggested_impact_level": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ImpactLevel"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "summary": {
+            "maxLength": 5000,
+            "minLength": 1,
+            "title": "Summary",
+            "type": "string"
+          }
+        },
+        "required": [
+          "risk_level",
+          "schedule_impact_days",
+          "cost_impact",
+          "summary"
+        ],
+        "title": "ManualImpactReportRequest",
         "type": "object"
       },
       "MarkReadResponse": {
@@ -6851,6 +7174,16 @@
         ],
         "title": "ResourceWarning",
         "type": "object"
+      },
+      "RiskLevel": {
+        "enum": [
+          "LOW",
+          "MEDIUM",
+          "HIGH",
+          "CRITICAL"
+        ],
+        "title": "RiskLevel",
+        "type": "string"
       },
       "RoleCreate": {
         "properties": {
@@ -10904,6 +11237,170 @@
         "summary": "Reject Step",
         "tags": [
           "Approvals"
+        ]
+      }
+    },
+    "/api/v1/change-requests/{change_request_id}/impact-level": {
+      "post": {
+        "description": "PM chốt hoặc đổi mức tác động (MINOR/MODERATE/MAJOR).",
+        "operationId": "set_impact_level_api_v1_change_requests__change_request_id__impact_level_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "change_request_id",
+            "required": true,
+            "schema": {
+              "title": "Change Request Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImpactLevelUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeRequestResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Set Impact Level",
+        "tags": [
+          "Change Requests"
+        ]
+      }
+    },
+    "/api/v1/change-requests/{change_request_id}/impact-report": {
+      "get": {
+        "description": "Báo cáo tác động đã lưu (chỉ mang tính tư vấn); 404 khi chưa có.",
+        "operationId": "get_impact_report_api_v1_change_requests__change_request_id__impact_report_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "change_request_id",
+            "required": true,
+            "schema": {
+              "title": "Change Request Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImpactReportResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Impact Report",
+        "tags": [
+          "Change Requests"
+        ]
+      }
+    },
+    "/api/v1/change-requests/{change_request_id}/impact-report/manual": {
+      "put": {
+        "description": "PM nhập đánh giá tác động thủ công khi chưa có báo cáo AI.",
+        "operationId": "set_manual_impact_report_api_v1_change_requests__change_request_id__impact_report_manual_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "change_request_id",
+            "required": true,
+            "schema": {
+              "title": "Change Request Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManualImpactReportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImpactReportResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Set Manual Impact Report",
+        "tags": [
+          "Change Requests"
         ]
       }
     },

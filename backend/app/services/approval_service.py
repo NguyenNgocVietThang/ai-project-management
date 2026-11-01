@@ -8,6 +8,15 @@ Quy tắc:
   Admin vẫn xem được chuỗi duyệt.
 - Sai vai trò => 403; bước không phải bước hiện hành, bước không PENDING, hoặc CR không ở
   SUBMITTED/UNDER_REVIEW => 409.
+- Kiểm soát theo mức tác động (KH-CR, `docs/thesis/change-control-design.md` §2), kiểm tra sau
+  các điều kiện trên:
+  G1. PM phải chốt mức trước khi bất kỳ bước nào được quyết định (duyệt hoặc từ chối) => 422
+      `impact_level_unconfirmed`.
+  G2–G4 (chỉ khi DUYỆT CR MAJOR): phải có báo cáo tác động (`impact_report_required`); người
+      duyệt xác nhận đúng revision báo cáo đã đọc (`acknowledgement_required` /
+      `impact_report_changed`); phải ghi nhận xét (`comment_required`). Từ chối là hướng an toàn
+      nên không cần G2–G4.
+  AI không có đường nào ghi vào bảng approvals: mọi quyết định đều đến từ người dùng đúng vai trò.
 - Khóa hàng CR (`SELECT ... FOR UPDATE` trên PostgreSQL) trước khi đọc các bước, nên hai
   người cùng vai trò quyết định đồng thời thì người thứ hai thấy bước đã xong và nhận 409.
 - Quyết định đầu tiên chuyển CR SUBMITTED -> UNDER_REVIEW; từ chối => các bước sau CANCELLED
@@ -20,11 +29,17 @@ from fastapi import Depends
 from sqlalchemy import and_, exists, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import ConflictException, ForbiddenException, NotFoundException
+from app.core.exceptions import (
+    ConflictException,
+    ForbiddenException,
+    NotFoundException,
+    UnprocessableException,
+)
 from app.db.session import get_db
 from app.models.approval import Approval, ApprovalStatus
 from app.models.associations import project_members, user_roles
-from app.models.change_request import ChangeRequest, CRStatus
+from app.models.change_request import ChangeRequest, CRStatus, ImpactLevel
+from app.models.impact_report import ImpactReport
 from app.models.notification import NotificationType
 from app.models.project import Project
 from app.models.role import Role
@@ -55,6 +70,90 @@ async def on_change_request_approved(db: AsyncSession, cr: ChangeRequest, user: 
     )
 
 
+def is_major(cr: ChangeRequest) -> bool:
+    return cr.impact_level == ImpactLevel.MAJOR.value
+
+
+async def get_impact_report(db: AsyncSession, change_request_id: int) -> ImpactReport | None:
+    return await db.scalar(
+        select(ImpactReport)
+        .where(ImpactReport.change_request_id == change_request_id)
+        .execution_options(populate_existing=True)
+    )
+
+
+def _check_impact_gates(
+    cr: ChangeRequest,
+    report: ImpactReport | None,
+    *,
+    approve: bool,
+    comment: str | None,
+    acknowledged_report_revision: int | None,
+) -> None:
+    """Cổng G1–G4 theo mức tác động. Lỗi 422 có `detail` là mã lỗi để client phân biệt."""
+    # G1: mọi quyết định (kể cả từ chối) cần PM đã chốt mức.
+    if cr.impact_level_confirmed_at is None:
+        raise UnprocessableException("impact_level_unconfirmed")
+    if not approve:
+        return
+    if acknowledged_report_revision is not None:
+        # Gửi kèm revision thì phải khớp báo cáo hiện tại, ở mọi mức.
+        if report is None:
+            raise UnprocessableException("impact_report_required")
+        if acknowledged_report_revision != report.revision:
+            raise UnprocessableException("impact_report_changed")
+    if not is_major(cr):
+        return
+    if report is None:  # G2
+        raise UnprocessableException("impact_report_required")
+    if acknowledged_report_revision is None:  # G3
+        raise UnprocessableException("acknowledgement_required")
+    if not comment:  # G4
+        raise UnprocessableException("comment_required")
+
+
+async def reopen_approved_steps(db: AsyncSession, cr: ChangeRequest) -> list[int]:
+    """Mở lại các bước đã duyệt khi PM nâng mức tác động giữa chừng.
+
+    Caller phải giữ khóa hàng CR. Bước APPROVED quay về PENDING (xóa người duyệt, thời điểm,
+    nhận xét, xác nhận đọc), CR về SUBMITTED. Trả về danh sách step_order được mở lại.
+    """
+    steps = list(
+        (
+            await db.scalars(
+                select(Approval)
+                .where(Approval.change_request_id == cr.id)
+                .order_by(Approval.step_order)
+                .execution_options(populate_existing=True)
+            )
+        ).all()
+    )
+    reopened: list[int] = []
+    for step in steps:
+        if step.status == ApprovalStatus.APPROVED:
+            step.status = ApprovalStatus.PENDING
+            step.approver_id = None
+            step.approved_at = None
+            step.comment = None
+            step.impact_level_at_decision = None
+            step.acknowledged_report_revision = None
+            reopened.append(step.step_order)
+    if reopened:
+        cr.status = CRStatus.SUBMITTED
+        first = steps[0]
+        recipients = await role_member_ids(db, cr.project_id, first.required_role)
+        await NotificationService.push_many(
+            db, recipients,
+            title="Change request cần duyệt lại",
+            message=f"Change request '{cr.title}' được nâng mức tác động lên {cr.impact_level}, cần duyệt lại từ bước {first.required_role}",
+            ntype=NotificationType.CR_NEEDS_REVIEW,
+            link=f"/projects/{cr.project_id}/change-requests/{cr.id}",
+            entity_type="ChangeRequest", entity_id=cr.id,
+        )
+    await db.flush()
+    return reopened
+
+
 def _current_step(steps: list[Approval]) -> Approval | None:
     return next((s for s in steps if s.status == ApprovalStatus.PENDING), None)
 
@@ -75,14 +174,23 @@ class ApprovalService:
             raise NotFoundException("Change request not found")
         context = await get_project_context(self.db, cr.project_id, user)
         steps = await self._steps(cr.id)
-        return await self._build_response(cr, steps, context)
+        report = await get_impact_report(self.db, cr.id)
+        return await self._build_response(cr, steps, context, report)
 
     # --- Quyết định ------------------------------------------------------------
 
     async def approve(
-        self, change_request_id: int, step_order: int, user: User, comment: str | None = None
+        self,
+        change_request_id: int,
+        step_order: int,
+        user: User,
+        comment: str | None = None,
+        acknowledged_report_revision: int | None = None,
     ) -> ApprovalChainResponse:
-        return await self._decide(change_request_id, step_order, user, approve=True, comment=comment)
+        return await self._decide(
+            change_request_id, step_order, user, approve=True, comment=comment,
+            acknowledged_report_revision=acknowledged_report_revision,
+        )
 
     async def reject(
         self, change_request_id: int, step_order: int, user: User, reason: str
@@ -97,6 +205,7 @@ class ApprovalService:
         *,
         approve: bool,
         comment: str | None,
+        acknowledged_report_revision: int | None = None,
     ) -> ApprovalChainResponse:
         # Khóa hàng CR trước mọi kiểm tra trạng thái; populate_existing để đọc lại giá trị
         # mới nhất sau khi chờ khóa, không dùng bản cũ trong identity map.
@@ -121,10 +230,18 @@ class ApprovalService:
         if step.status != ApprovalStatus.PENDING or current is None or current.id != step.id:
             raise ConflictException("This approval step is not the current pending step")
 
+        report = await get_impact_report(self.db, cr.id)
+        _check_impact_gates(
+            cr, report, approve=approve, comment=comment,
+            acknowledged_report_revision=acknowledged_report_revision,
+        )
+
         old_cr_status = cr.status
         step.approver_id = user.id
         step.approved_at = datetime.now(UTC)
         step.comment = comment
+        step.impact_level_at_decision = cr.impact_level
+        step.acknowledged_report_revision = acknowledged_report_revision if approve else None
         step.status = ApprovalStatus.APPROVED if approve else ApprovalStatus.REJECTED
         cancelled: list[int] = []
         next_step: Approval | None = None
@@ -142,7 +259,11 @@ class ApprovalService:
         add_audit(
             self.db, user.id, "APPROVE" if approve else "REJECT", "Approval", step.id,
             old_values={"status": ApprovalStatus.PENDING.value},
-            new_values={"status": _value(step.status), "comment": comment},
+            new_values={
+                "status": _value(step.status), "comment": comment,
+                "impact_level": cr.impact_level,
+                "acknowledged_report_revision": step.acknowledged_report_revision,
+            },
             description=f"Step {step.step_order} ({step.required_role}) of change request {cr.id}",
         )
         if cr.status != old_cr_status:
@@ -157,7 +278,7 @@ class ApprovalService:
             await on_change_request_approved(self.db, cr, user)
 
         await self._notify(cr, next_step)
-        return await self._build_response(cr, steps, context)
+        return await self._build_response(cr, steps, context, report)
 
     # --- Thông báo -------------------------------------------------------------
 
@@ -201,7 +322,11 @@ class ApprovalService:
         )
 
     async def _build_response(
-        self, cr: ChangeRequest, steps: list[Approval], context: ProjectContext
+        self,
+        cr: ChangeRequest,
+        steps: list[Approval],
+        context: ProjectContext,
+        report: ImpactReport | None,
     ) -> ApprovalChainResponse:
         approver_ids = {s.approver_id for s in steps if s.approver_id is not None}
         names: dict[int, str] = {}
@@ -215,6 +340,12 @@ class ApprovalService:
             change_request_id=cr.id,
             change_request_status=_value(cr.status),
             current_step_order=current.step_order if current else None,
+            impact_level=cr.impact_level,
+            impact_level_confirmed=cr.impact_level_confirmed_at is not None,
+            report_revision=report.revision if report is not None else None,
+            requires_report=is_major(cr),
+            requires_acknowledgement=is_major(cr),
+            requires_comment=is_major(cr),
             steps=[
                 ApprovalStepResponse(
                     id=s.id,
@@ -225,6 +356,8 @@ class ApprovalService:
                     approver_name=names.get(s.approver_id) if s.approver_id else None,
                     comment=s.comment,
                     decided_at=s.approved_at,
+                    impact_level_at_decision=s.impact_level_at_decision,
+                    acknowledged_report_revision=s.acknowledged_report_revision,
                     can_decide=(
                         current is not None
                         and s.id == current.id

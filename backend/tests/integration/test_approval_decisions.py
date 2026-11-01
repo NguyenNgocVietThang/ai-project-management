@@ -3,6 +3,8 @@
 App test tự include router approvals với prefix /api/v1 (giống cách router.py mount
 change_requests), không phụ thuộc vào router.py.
 """
+from datetime import UTC, datetime
+
 import pytest
 import pytest_asyncio
 from fastapi import FastAPI
@@ -50,6 +52,8 @@ async def _setup(session, make_user, seed_roles):
     cr = ChangeRequest(
         project_id=project.id, requested_by_id=users["BA"].id, title="Add SSO",
         description="Y", status=CRStatus.DRAFT,
+        # Mức tác động đã được chốt (G1) để kiểm thử luồng duyệt.
+        impact_level_confirmed_at=datetime.now(UTC),
     )
     session.add(cr)
     await session.flush()
@@ -226,6 +230,7 @@ async def test_endpoints_contract(session, make_user, seed_roles, http_as):
         assert set(body["steps"][0]) == {
             "id", "step_order", "required_role", "status", "approver_id", "approver_name",
             "comment", "decided_at", "can_decide",
+            "impact_level_at_decision", "acknowledged_report_revision",
         }
         # Không có body vẫn duyệt được (comment tùy chọn).
         approved = await http.post(f"{base}/1/approve")

@@ -5,6 +5,7 @@ SQLite không chứng minh được khóa hàng `SELECT ... FOR UPDATE`.
 """
 import asyncio
 import os
+from datetime import UTC, datetime
 from uuid import uuid4
 
 import pytest
@@ -13,7 +14,7 @@ from sqlalchemy import insert, select, text
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 import app.db.base  # noqa: F401 - đăng ký mọi model trước create_all
-from app.core.exceptions import ConflictException
+from app.core.exceptions import ConflictException, UnprocessableException
 from app.models.approval import Approval, ApprovalStatus
 from app.models.associations import project_members
 from app.models.base import Base
@@ -21,6 +22,7 @@ from app.models.change_request import ChangeRequest, CRStatus
 from app.models.project import Project
 from app.models.role import Role
 from app.models.user import User
+from app.schemas.change_request import ImpactLevelUpdateRequest
 from app.services.approval_service import ApprovalService
 from app.services.change_request_service import ChangeRequestService
 
@@ -79,6 +81,8 @@ async def _seed(factory):
         cr = ChangeRequest(
             project_id=project.id, requested_by_id=users["BA"].id, title="PG CR",
             description="Y", status=CRStatus.DRAFT,
+            # Mức tác động đã được chốt (G1) để kiểm thử luồng duyệt.
+            impact_level_confirmed_at=datetime.now(UTC),
         )
         db.add(cr)
         await db.flush()
@@ -125,3 +129,49 @@ async def test_postgres_second_decider_waits_for_row_lock(pg_factory):
         assert not second.done()
     with pytest.raises(ConflictException):
         await asyncio.wait_for(second, timeout=10)
+
+
+async def _raise_to_major(factory, cr_id, pm_id):
+    async with factory() as db, db.begin():
+        pm = await db.get(User, pm_id)
+        await ChangeRequestService(db).set_impact_level(
+            cr_id, ImpactLevelUpdateRequest(level="MAJOR"), pm
+        )
+
+
+@pytest.mark.asyncio
+async def test_postgres_raise_level_waits_for_approval_then_reopens_it(pg_factory):
+    """BA đang duyệt (giữ khóa) thì PM nâng mức phải chờ, sau đó mở lại bước BA vừa duyệt."""
+    cr_id, ids = await _seed(pg_factory)
+    async with pg_factory() as first, first.begin():
+        user = await first.get(User, ids["BA"])
+        await ApprovalService(first).approve(cr_id, 1, user)
+        raising = asyncio.create_task(_raise_to_major(pg_factory, cr_id, ids["PM"]))
+        await asyncio.sleep(0.5)
+        assert not raising.done()
+    await asyncio.wait_for(raising, timeout=10)
+    async with pg_factory() as db:
+        cr = await db.get(ChangeRequest, cr_id)
+        assert cr.impact_level == "MAJOR" and cr.status == CRStatus.SUBMITTED
+        steps = list(await db.scalars(
+            select(Approval).where(Approval.change_request_id == cr_id).order_by(Approval.step_order)
+        ))
+        assert [s.status for s in steps] == [ApprovalStatus.PENDING] * 3
+        assert steps[0].approver_id is None
+
+
+@pytest.mark.asyncio
+async def test_postgres_approval_waiting_behind_raise_sees_the_new_level(pg_factory):
+    """PM nâng mức (giữ khóa) thì BA duyệt phải chờ và bị cổng MAJOR chặn, không duyệt theo mức cũ."""
+    cr_id, ids = await _seed(pg_factory)
+    async with pg_factory() as first, first.begin():
+        pm = await first.get(User, ids["PM"])
+        await ChangeRequestService(first).set_impact_level(
+            cr_id, ImpactLevelUpdateRequest(level="MAJOR"), pm
+        )
+        approving = asyncio.create_task(_approve(pg_factory, cr_id, ids["BA"]))
+        await asyncio.sleep(0.5)
+        assert not approving.done()
+    with pytest.raises(UnprocessableException) as exc:
+        await asyncio.wait_for(approving, timeout=10)
+    assert exc.value.detail == "impact_report_required"

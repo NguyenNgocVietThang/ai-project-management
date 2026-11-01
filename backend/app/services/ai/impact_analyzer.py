@@ -4,15 +4,19 @@ Cùng khuôn mẫu với app/services/ai/project_generator.py (SOP-AI-001): mộ
 SYSTEM_PROMPT cố định + `wrap_user_input` rào phần văn bản người dùng cung cấp,
 rồi gọi provider qua `generate_json`. Khác biệt chính là hàm `run_impact_analysis`
 ở đây tự nạp dữ liệu (ChangeRequest, Project, Task, CPM) thay vì nhận sẵn từ caller.
+
+Báo cáo chỉ mang tính TƯ VẤN: AI gợi ý mức tác động (`suggested_impact_level`) nhưng hệ thống
+không bao giờ tự đổi `change_requests.impact_level` hay ghi vào chuỗi duyệt; PM chốt mức và
+con người quyết định từng bước (KH-CR, docs/thesis/change-control-design.md).
 """
 from typing import Any
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.change_request import ChangeRequest
+from app.models.change_request import ChangeRequest, ImpactLevel
 from app.models.dependency import Dependency
-from app.models.impact_report import ImpactReport, RiskLevel
+from app.models.impact_report import ImpactReport, ReportSource, RiskLevel
 from app.models.project import Project
 from app.models.task import Task
 from app.services.ai.model_router import AITaskType
@@ -29,6 +33,16 @@ DEFAULT_RISK_LEVEL = RiskLevel.MEDIUM
 MAX_TASKS_IN_PROMPT = 150
 MAX_TEXT_FIELD_CHARS = 2000
 
+# Ngưỡng của quy tắc dự phòng khi AI không trả mức hợp lệ (đề xuất ban đầu, sẽ hiệu chỉnh
+# sau đánh giá E2; mọi thay đổi ngưỡng phải ghi lý do trong docs/thesis/evaluation-plan.md).
+MAJOR_SCHEDULE_DAYS = 10
+MAJOR_SCHEDULE_RATIO = 0.10
+MAJOR_COST_RATIO = 0.10
+MINOR_SCHEDULE_DAYS = 2
+MINOR_COST_RATIO = 0.02
+RULE_RATIONALE = "Suy ra theo quy tắc từ số liệu báo cáo (AI không trả mức hợp lệ)"
+MAX_RATIONALE_CHARS = 1000
+
 
 async def get_ai_provider() -> XkiroProvider:
     """xKiro là provider AI duy nhất được hỗ trợ (gộp nhiều model miễn phí sau 1 API key)."""
@@ -43,8 +57,15 @@ change request on an existing project plan and return a JSON object in EXACTLY t
   "schedule_impact_days": <integer, can be negative if the change shortens the schedule>,
   "cost_impact": <number, in the project's currency, can be negative>,
   "affected_task_ids": [<int>, ...],
-  "summary": "<1-2 paragraphs explaining the reasoning>"
+  "summary": "<1-2 paragraphs explaining the reasoning>",
+  "suggested_impact_level": "MINOR" | "MODERATE" | "MAJOR",
+  "impact_level_rationale": "<1-3 sentences explaining the suggested level>"
 }
+Impact level definitions (your suggestion is advisory only; a human project manager decides):
+- MINOR: small change, no critical-path task affected, delay of at most 2 days, negligible cost.
+- MODERATE: affects part of the schedule or resources; anything that is neither MINOR nor MAJOR.
+- MAJOR: changes core scope, the critical path or a milestone, or delays the project by 10 days
+  or more (or 10% or more of its duration), or costs 10% or more of the budget.
 "affected_task_ids" MUST only contain ids copied from the "Project tasks" list given in the
 prompt — never invent an id that is not in that list.
 Respond with a single JSON object and nothing else.
@@ -130,7 +151,47 @@ def _summarize_cpm(tasks: list[Task], dependencies: list[Dependency]) -> dict[st
     }
 
 
-def _validate_ai_output(raw: Any, *, valid_task_ids: set[int]) -> dict[str, Any]:
+def derive_impact_level(
+    *,
+    risk_level: RiskLevel,
+    schedule_impact_days: int,
+    cost_impact: float,
+    affected_task_ids: list[int],
+    critical_task_ids: set[int],
+    project_duration_days: float | None,
+    budget: float | None,
+) -> ImpactLevel:
+    """Quy tắc dự phòng suy ra mức tác động từ số liệu báo cáo (hàm thuần, không gọi AI)."""
+    delay = abs(schedule_impact_days)
+    cost = abs(cost_impact)
+    has_budget = budget is not None and budget > 0
+    if (
+        delay >= MAJOR_SCHEDULE_DAYS
+        or (project_duration_days and delay >= MAJOR_SCHEDULE_RATIO * project_duration_days)
+        or (has_budget and cost >= MAJOR_COST_RATIO * budget)
+        or risk_level == RiskLevel.CRITICAL
+    ):
+        return ImpactLevel.MAJOR
+    touches_critical = any(task_id in critical_task_ids for task_id in affected_task_ids)
+    small_cost = (cost <= MINOR_COST_RATIO * budget) if has_budget else cost == 0
+    if (
+        delay <= MINOR_SCHEDULE_DAYS
+        and not touches_critical
+        and small_cost
+        and risk_level == RiskLevel.LOW
+    ):
+        return ImpactLevel.MINOR
+    return ImpactLevel.MODERATE
+
+
+def _validate_ai_output(
+    raw: Any,
+    *,
+    valid_task_ids: set[int],
+    critical_task_ids: set[int] | None = None,
+    project_duration_days: float | None = None,
+    budget: float | None = None,
+) -> dict[str, Any]:
     """Chuẩn hoá output AI trước khi lưu — không tin bất kỳ trường nào của nó.
 
     Cùng triết lý phòng vệ với `_persist_plan` trong app/workers/ai_tasks.py: dữ
@@ -178,6 +239,31 @@ def _validate_ai_output(raw: Any, *, valid_task_ids: set[int]) -> dict[str, Any]
     summary_raw = raw.get("summary")
     summary = summary_raw.strip() if isinstance(summary_raw, str) and summary_raw.strip() else None
 
+    # Mức gợi ý: chỉ nhận đúng 3 giá trị; sai/thiếu thì dùng quy tắc dự phòng.
+    level_raw = raw.get("suggested_impact_level")
+    rationale_raw = raw.get("impact_level_rationale")
+    try:
+        suggested = ImpactLevel(str(level_raw).strip().upper()) if level_raw else None
+    except ValueError:
+        suggested = None
+    if suggested is not None:
+        rationale = (
+            rationale_raw.strip()[:MAX_RATIONALE_CHARS]
+            if isinstance(rationale_raw, str) and rationale_raw.strip()
+            else None
+        )
+    else:
+        suggested = derive_impact_level(
+            risk_level=risk_level,
+            schedule_impact_days=schedule_impact_days,
+            cost_impact=cost_impact,
+            affected_task_ids=affected_task_ids,
+            critical_task_ids=critical_task_ids or set(),
+            project_duration_days=project_duration_days,
+            budget=budget,
+        )
+        rationale = RULE_RATIONALE
+
     return {
         "risk_level": risk_level,
         "risk_score": risk_score,
@@ -185,6 +271,8 @@ def _validate_ai_output(raw: Any, *, valid_task_ids: set[int]) -> dict[str, Any]
         "cost_impact": cost_impact,
         "affected_tasks_json": affected_task_ids,
         "summary": summary,
+        "suggested_impact_level": suggested.value,
+        "impact_level_rationale": rationale,
     }
 
 
@@ -226,7 +314,13 @@ async def run_impact_analysis(db: AsyncSession, change_request_id: int) -> Impac
     if active_ai_context.get() is not None:
         await db.commit()  # Release read transaction before the provider call.
     raw = await generate_impact_analysis(change_request, project, task_brief, cpm_summary)
-    validated = _validate_ai_output(raw, valid_task_ids=set(task_ids))
+    validated = _validate_ai_output(
+        raw,
+        valid_task_ids=set(task_ids),
+        critical_task_ids=set(cpm_summary.get("critical_path_ids") or []),
+        project_duration_days=cpm_summary.get("project_duration_days"),
+        budget=getattr(project, "budget", None),
+    )
 
     existing = await db.scalar(
         select(ImpactReport).where(ImpactReport.change_request_id == change_request_id)
@@ -237,11 +331,16 @@ async def run_impact_analysis(db: AsyncSession, change_request_id: int) -> Impac
         for field, value in validated.items():
             setattr(existing, field, value)
         existing.ai_analysis_json = raw if isinstance(raw, dict) else None
+        # Ghi đè báo cáo cũ (AI hoặc thủ công): tăng revision để người duyệt phải đọc lại.
+        existing.revision = (existing.revision or 0) + 1
+        existing.source = ReportSource.AI.value
         report = existing
     else:
         report = ImpactReport(
             change_request_id=change_request_id,
             ai_analysis_json=raw if isinstance(raw, dict) else None,
+            revision=1,
+            source=ReportSource.AI.value,
             **validated,
         )
         db.add(report)

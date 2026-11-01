@@ -4,8 +4,10 @@ from pydantic import BaseModel, Field, field_validator
 
 
 class ApprovalApproveRequest(BaseModel):
-    # Ghi chú khi duyệt: tùy chọn.
+    # Ghi chú khi duyệt: tùy chọn, riêng CR MAJOR là bắt buộc (kiểm tra ở service).
     comment: str | None = Field(default=None, max_length=2000)
+    # Revision báo cáo tác động người duyệt xác nhận đã đọc; bắt buộc với CR MAJOR.
+    acknowledged_report_revision: int | None = Field(default=None, ge=1)
 
     @field_validator("comment")
     @classmethod
@@ -40,6 +42,10 @@ class ApprovalStepResponse(BaseModel):
     # Ghi chú khi duyệt hoặc lý do khi từ chối.
     comment: str | None
     decided_at: datetime | None
+    # Mức tác động của CR tại thời điểm quyết định bước này.
+    impact_level_at_decision: str | None = None
+    # Revision báo cáo người duyệt đã xác nhận đọc (nếu có).
+    acknowledged_report_revision: int | None = None
     # Người dùng hiện tại có được quyết định bước này ngay bây giờ không.
     can_decide: bool
 
@@ -49,4 +55,13 @@ class ApprovalChainResponse(BaseModel):
     change_request_status: str
     # step_order của bước PENDING đầu tiên; null khi chuỗi đã kết thúc.
     current_step_order: int | None
+    # Mức tác động hiện hành và trạng thái chốt của PM.
+    impact_level: str
+    impact_level_confirmed: bool
+    # Revision báo cáo tác động hiện tại; null khi chưa có báo cáo.
+    report_revision: int | None
+    # Điều kiện khi DUYỆT bước hiện hành (CR MAJOR): phải xác nhận đã đọc báo cáo và ghi nhận xét.
+    requires_report: bool
+    requires_acknowledgement: bool
+    requires_comment: bool
     steps: list[ApprovalStepResponse]

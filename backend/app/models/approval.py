@@ -1,4 +1,4 @@
-﻿import enum
+import enum
 from datetime import datetime
 
 from sqlalchemy import DateTime, Enum, ForeignKey, Index, Integer, String, Text, UniqueConstraint
@@ -39,6 +39,10 @@ class Approval(Base):
     status: Mapped[ApprovalStatus] = mapped_column(Enum(ApprovalStatus), default=ApprovalStatus.PENDING)
     comment: Mapped[str | None] = mapped_column(Text, nullable=True)
     approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    # Mức tác động của CR tại thời điểm quyết định (để truy vết khi mức bị đổi sau đó).
+    impact_level_at_decision: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    # Revision báo cáo tác động mà người duyệt xác nhận đã đọc.
+    acknowledged_report_revision: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
     change_request: Mapped["ChangeRequest"] = relationship("ChangeRequest", back_populates="approvals")
     approver: Mapped["User | None"] = relationship("User")

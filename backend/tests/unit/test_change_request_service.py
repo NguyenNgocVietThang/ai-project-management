@@ -91,7 +91,7 @@ async def test_member_cannot_create_change_request():
 async def test_submit_moves_draft_to_submitted():
     item = ChangeRequest(
         id=3, project_id=7, requested_by_id=1, title="X", description="Y", status=CRStatus.DRAFT,
-        created_at=datetime.now(UTC),
+        impact_level="MODERATE", created_at=datetime.now(UTC),
     )
     db = fake_db(get=AsyncMock(return_value=item))
     service = ChangeRequestService(db)
@@ -338,7 +338,10 @@ async def test_approval_migration_matches_model_backfills_and_downgrades(engine)
             ))
 
     async with engine.begin() as db:
-        model_shape = await db.run_sync(shape)
+        model_columns, model_uniques = await db.run_sync(shape)
+        # Cột do migration sau (20261101_cr_impact_level) thêm, không thuộc migration đang xét.
+        later = {"impact_level_at_decision", "acknowledged_report_revision"}
+        model_shape = ({k: v for k, v in model_columns.items() if k not in later}, model_uniques)
         await db.run_sync(seed_old)
         await db.run_sync(lambda connection: migrate(connection, True))
         assert await db.run_sync(shape) == model_shape

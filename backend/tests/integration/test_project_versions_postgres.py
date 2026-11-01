@@ -4,6 +4,7 @@ TEST_POSTGRES_URL phải trỏ tới DB dùng một lần; mỗi test tạo và 
 """
 import asyncio
 import os
+from datetime import UTC, datetime
 from uuid import uuid4
 
 import pytest
@@ -120,6 +121,8 @@ async def test_postgres_final_pm_approval_creates_cr_snapshot(pg_factory):
         cr = ChangeRequest(
             project_id=project_id, requested_by_id=ids["BA"], title="PG CR",
             description="Y", status=CRStatus.DRAFT,
+            # Mức tác động đã được chốt (G1) để kiểm thử luồng duyệt.
+            impact_level_confirmed_at=datetime.now(UTC),
         )
         db.add(cr)
         await db.flush()

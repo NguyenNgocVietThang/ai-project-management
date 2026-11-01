@@ -193,14 +193,22 @@ async def run_ai(ctx):
                 brief.status = "consumed"
                 brief.pending_job_id = None
         elif request_type == AIRequestType.IMPACT_ANALYSIS:
-            from app.models.impact_report import ImpactReport, RiskLevel
+            from app.models.impact_report import ImpactReport, ReportSource, RiskLevel
             report = await db.scalar(select(ImpactReport).where(ImpactReport.change_request_id == input_data["change_request_id"]))
             if report is None:
-                report = ImpactReport(change_request_id=input_data["change_request_id"])
+                report = ImpactReport(change_request_id=input_data["change_request_id"], revision=1)
                 db.add(report)
+            else:
+                # Ghi đè báo cáo cũ: tăng revision để người duyệt CR MAJOR phải xác nhận đọc lại.
+                report.revision = (report.revision or 0) + 1
             for key in ("risk_score", "schedule_impact_days", "cost_impact", "summary"):
                 setattr(report, key, result[key])
             report.risk_level = RiskLevel(result["risk_level"])
+            # Chỉ là gợi ý tư vấn: KHÔNG đổi change_requests.impact_level.
+            report.suggested_impact_level = result.get("suggested_impact_level")
+            report.impact_level_rationale = result.get("impact_level_rationale")
+            report.source = ReportSource.AI.value
+            report.created_by_id = request.user_id
             report.affected_tasks_json = result.get("affected_task_ids", result.get("affected_tasks_json", []))
             report.ai_analysis_json = result.get("ai_analysis_json")
             await db.flush()

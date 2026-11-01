@@ -31,7 +31,8 @@ async def approve_step(
     body: ApprovalApproveRequest | None = None,
 ):
     comment = body.comment if body else None
-    return await service.approve(change_request_id, step_order, current_user, comment)
+    acknowledged = body.acknowledged_report_revision if body else None
+    return await service.approve(change_request_id, step_order, current_user, comment, acknowledged)
 
 
 @router.post(

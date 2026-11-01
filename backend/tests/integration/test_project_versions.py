@@ -1,4 +1,6 @@
 """Phiên bản dự án (V1): snapshot, cap, móc duyệt CR và endpoint trên SQLite."""
+from datetime import UTC, datetime
+
 import pytest
 import pytest_asyncio
 from fastapi import FastAPI
@@ -107,6 +109,8 @@ async def test_final_pm_approval_creates_snapshot_with_cr(session, make_user, se
     cr = ChangeRequest(
         project_id=project.id, requested_by_id=users["BA"].id, title="Scope",
         description="Y", status=CRStatus.DRAFT,
+        # Mức tác động đã được chốt (G1) để kiểm thử luồng duyệt.
+        impact_level_confirmed_at=datetime.now(UTC),
     )
     session.add(cr)
     await session.flush()

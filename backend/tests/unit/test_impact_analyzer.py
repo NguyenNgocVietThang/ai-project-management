@@ -8,8 +8,16 @@ from unittest.mock import AsyncMock, Mock, patch
 import pytest
 
 import app.db.base  # noqa: F401 - đăng ký các quan hệ SQLAlchemy
+from app.models.change_request import ImpactLevel
 from app.models.impact_report import RiskLevel
-from app.services.ai.impact_analyzer import DEFAULT_RISK_LEVEL, run_impact_analysis
+from app.services.ai.impact_analyzer import (
+    DEFAULT_RISK_LEVEL,
+    RULE_RATIONALE,
+    SYSTEM_PROMPT,
+    _validate_ai_output,
+    derive_impact_level,
+    run_impact_analysis,
+)
 
 
 class FakeScalars:
@@ -150,6 +158,9 @@ async def test_existing_impact_report_is_updated_in_place_not_duplicated():
         affected_tasks_json=None,
         ai_analysis_json=None,
         summary=None,
+        # Báo cáo cũ do PM nhập thủ công: chạy lại AI phải ghi đè và tăng revision.
+        revision=1,
+        source="MANUAL",
     )
     db = make_db(cr=change_request(), proj=project(), tasks=tasks, existing_report=existing)
     with patched_ai({"risk_level": "CRITICAL", "risk_score": 9, "affected_task_ids": [100]}):
@@ -157,4 +168,86 @@ async def test_existing_impact_report_is_updated_in_place_not_duplicated():
 
     assert report is existing
     assert report.risk_level == RiskLevel.CRITICAL
+    assert report.revision == 2 and report.source == "AI"
+    # AI không trả mức gợi ý: dùng quy tắc dự phòng (CRITICAL => MAJOR).
+    assert report.suggested_impact_level == "MAJOR"
+    assert report.impact_level_rationale == RULE_RATIONALE
     db.add.assert_not_called()
+
+
+# --- KH-CR: AI gợi ý mức tác động (chỉ tư vấn) -----------------------------------------
+
+
+def _derive(**overrides):
+    values = {
+        "risk_level": RiskLevel.LOW, "schedule_impact_days": 0, "cost_impact": 0.0,
+        "affected_task_ids": [], "critical_task_ids": set(), "project_duration_days": 200.0,
+        "budget": 1_000_000.0,
+    }
+    values.update(overrides)
+    return derive_impact_level(**values)
+
+
+@pytest.mark.parametrize(
+    ("overrides", "expected"),
+    [
+        ({}, ImpactLevel.MINOR),
+        ({"schedule_impact_days": 2}, ImpactLevel.MINOR),
+        ({"schedule_impact_days": 3}, ImpactLevel.MODERATE),
+        ({"schedule_impact_days": 9}, ImpactLevel.MODERATE),
+        ({"schedule_impact_days": 10}, ImpactLevel.MAJOR),
+        ({"schedule_impact_days": -10}, ImpactLevel.MAJOR),  # rút ngắn lớn cũng là thay đổi lớn
+        # 10% thời lượng dự án: 5 ngày trên dự án 50 ngày.
+        ({"schedule_impact_days": 5, "project_duration_days": 50.0}, ImpactLevel.MAJOR),
+        ({"schedule_impact_days": 4, "project_duration_days": 50.0}, ImpactLevel.MODERATE),
+        ({"cost_impact": 20_000.0}, ImpactLevel.MINOR),  # đúng 2% budget
+        ({"cost_impact": 20_001.0}, ImpactLevel.MODERATE),
+        ({"cost_impact": 100_000.0}, ImpactLevel.MAJOR),  # 10% budget
+        # Không có budget: mọi chi phí khác 0 đều không còn là MINOR, nhưng không tự thành MAJOR.
+        ({"budget": None, "cost_impact": 1.0}, ImpactLevel.MODERATE),
+        ({"budget": None, "cost_impact": 0.0}, ImpactLevel.MINOR),
+        ({"affected_task_ids": [7], "critical_task_ids": {7}}, ImpactLevel.MODERATE),
+        ({"risk_level": RiskLevel.MEDIUM}, ImpactLevel.MODERATE),
+        ({"risk_level": RiskLevel.CRITICAL}, ImpactLevel.MAJOR),
+        ({"project_duration_days": None, "schedule_impact_days": 1}, ImpactLevel.MINOR),
+    ],
+)
+def test_derive_impact_level_thresholds(overrides, expected):
+    assert _derive(**overrides) == expected
+
+
+def test_valid_ai_suggestion_is_kept_with_its_rationale():
+    out = _validate_ai_output(
+        {"risk_level": "LOW", "suggested_impact_level": " major ", "impact_level_rationale": " Changes the milestone. "},
+        valid_task_ids=set(),
+    )
+    assert out["suggested_impact_level"] == "MAJOR"
+    assert out["impact_level_rationale"] == "Changes the milestone."
+
+
+@pytest.mark.parametrize("bad", [None, "", "HUGE", 3, ["MAJOR"]])
+def test_invalid_ai_suggestion_falls_back_to_the_rule(bad):
+    out = _validate_ai_output(
+        {"risk_level": "HIGH", "schedule_impact_days": 12, "suggested_impact_level": bad,
+         "impact_level_rationale": "ignored"},
+        valid_task_ids=set(),
+    )
+    assert out["suggested_impact_level"] == "MAJOR"
+    assert out["impact_level_rationale"] == RULE_RATIONALE
+
+
+def test_prompt_states_the_suggestion_is_advisory():
+    assert "suggested_impact_level" in SYSTEM_PROMPT
+    assert "advisory only" in SYSTEM_PROMPT
+
+
+@pytest.mark.asyncio
+async def test_new_report_records_suggestion_but_never_touches_the_cr_level():
+    cr = change_request(impact_level="MINOR")
+    db = make_db(cr=cr, proj=project(budget=None), tasks=[task(100)])
+    with patched_ai({"risk_level": "HIGH", "schedule_impact_days": 15, "suggested_impact_level": "MAJOR"}):
+        report = await run_impact_analysis(db, 1)
+    assert report.revision == 1 and report.source == "AI"
+    assert report.suggested_impact_level == "MAJOR"
+    # Gợi ý của AI không bao giờ tự áp vào CR: mức do PM chốt.
+    assert cr.impact_level == "MINOR"

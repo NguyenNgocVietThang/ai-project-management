@@ -1,7 +1,12 @@
 from fastapi import APIRouter, status
 
 from app.core.dependencies import CurrentUser, CurrentVerifiedUser
-from app.schemas.change_request import ChangeRequestCreate, ChangeRequestResponse
+from app.schemas.change_request import (
+    ChangeRequestCreate,
+    ChangeRequestResponse,
+    ImpactLevelUpdateRequest,
+)
+from app.schemas.impact_report import ImpactReportResponse, ManualImpactReportRequest
 from app.services.change_request_service import ChangeRequestServiceDep
 
 router = APIRouter()
@@ -40,3 +45,35 @@ async def submit_change_request(
     change_request_id: int, service: ChangeRequestServiceDep, current_user: CurrentVerifiedUser
 ):
     return await service.submit(change_request_id, current_user)
+
+
+@router.post("/change-requests/{change_request_id}/impact-level", response_model=ChangeRequestResponse)
+async def set_impact_level(
+    change_request_id: int,
+    body: ImpactLevelUpdateRequest,
+    service: ChangeRequestServiceDep,
+    current_user: CurrentVerifiedUser,
+):
+    """PM chốt hoặc đổi mức tác động (MINOR/MODERATE/MAJOR)."""
+    return await service.set_impact_level(change_request_id, body, current_user)
+
+
+@router.get("/change-requests/{change_request_id}/impact-report", response_model=ImpactReportResponse)
+async def get_impact_report(
+    change_request_id: int, service: ChangeRequestServiceDep, current_user: CurrentUser
+):
+    """Báo cáo tác động đã lưu (chỉ mang tính tư vấn); 404 khi chưa có."""
+    return await service.get_impact_report(change_request_id, current_user)
+
+
+@router.put(
+    "/change-requests/{change_request_id}/impact-report/manual", response_model=ImpactReportResponse
+)
+async def set_manual_impact_report(
+    change_request_id: int,
+    body: ManualImpactReportRequest,
+    service: ChangeRequestServiceDep,
+    current_user: CurrentVerifiedUser,
+):
+    """PM nhập đánh giá tác động thủ công khi chưa có báo cáo AI."""
+    return await service.set_manual_impact_report(change_request_id, body, current_user)
