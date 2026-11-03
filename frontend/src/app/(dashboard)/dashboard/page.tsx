@@ -49,10 +49,9 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      {/* Đầu trang theo mẫu PageHeader, riêng H1 có dấu chấm màu nhấn làm hậu tố */}
+      {/* Ảnh phong cảnh đổi theo theme; lớp phủ giữ tiêu đề và hành động dễ đọc */}
       <header className="dusk-landscape flex min-h-56 flex-col justify-end gap-6 rounded-2xl border border-border/50 p-5 sm:flex-row sm:items-end sm:justify-between sm:p-8">
         <div className="min-w-0">
-          
           <RevealText text={greeting} className="text-2xl font-medium tracking-tight sm:text-4xl" />
           <p className="mt-2 max-w-prose-ui text-body-sm text-muted-foreground sm:text-body">{t('subtitle')}</p>
         </div>

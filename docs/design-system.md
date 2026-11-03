@@ -1,10 +1,8 @@
 # Design system cho AI Project Planning và Portfolio Management
 
-<p align="center">
-  <img src="assets/design-system/overview.svg" alt="Bảng trực quan design system gồm màu teal và slate, typography và các thành phần giao diện" width="100%">
-</p>
+> Thiết kế hiện tại lấy cảm hứng từ [Hallmark Dusk](https://www.usehallmark.com/themes/dusk/). Các SVG minh họa bên dưới thuộc phiên bản teal cũ; chỉ tham khảo cấu trúc, không dùng làm nguồn màu hoặc typography.
 
-**Cập nhật:** 22/10/2026 · **Trạng thái:** Tài liệu hóa mã nguồn hiện tại · **Phạm vi:** Giao diện web quản lý dự án và danh mục.
+**Cập nhật:** 02/11/2026 · **Trạng thái:** Tài liệu hóa mã nguồn hiện tại · **Phạm vi:** Giao diện web quản lý dự án và danh mục.
 
 Tài liệu này giúp thiết kế và phát triển các màn hình nhất quán với giao diện đang có. Quy tắc được đối chiếu từ CSS, cấu hình Tailwind và component trong repository. Các tiêu chí nghiệm thu bên dưới là yêu cầu kiểm tra khi thay đổi giao diện, không phải chứng nhận toàn bộ ứng dụng đã đạt chuẩn.
 
@@ -27,9 +25,9 @@ Tài liệu này giúp thiết kế và phát triển các màn hình nhất qu�
 
 ## 1 Tóm tắt
 
-Giao diện dùng **slate cho nền và chữ, teal cho hành động chính**, cùng các màu ngữ nghĩa cho thành công, cảnh báo, thông tin và thao tác nguy hiểm. Theme sáng và tối dùng chung tên token; component không cần tự chọn bảng màu theo từng chế độ.
+Giao diện dùng **xám lạnh và than cho nền/chữ, lavender cho hành động chính**, cùng các màu ngữ nghĩa cho thành công, cảnh báo, thông tin và thao tác nguy hiểm. Theme sáng và tối dùng chung tên token; component không cần tự chọn bảng màu theo từng chế độ.
 
-Nền tảng gồm Inter hỗ trợ tiếng Việt, thang chữ riêng trong Tailwind, lưới khoảng cách 4px, góc bo chủ đạo 12px và chuyển động ngắn. Ưu tiên đọc dữ liệu, nhận biết hành động và sử dụng bằng bàn phím trên cả máy tính lẫn điện thoại.
+Nền tảng gồm Be Vietnam Pro hỗ trợ tiếng Việt, thang chữ riêng trong Tailwind, lưới khoảng cách 4px, card bo 16px, input bo 10px và nút dạng pill và chuyển động ngắn. Ưu tiên đọc dữ liệu, nhận biết hành động và sử dụng bằng bàn phím trên cả máy tính lẫn điện thoại.
 
 ## 2 Mục tiêu và giới hạn
 
@@ -85,28 +83,28 @@ Giá trị bên dưới là **bộ ba HSL**, giữ nguyên như mã nguồn. Dù
 
 | Token | Sáng | Tối | Cách dùng |
 |---|---|---|---|
-| `background` | `210 40% 98%` | `224 40% 6%` | Nền trang |
-| `foreground` | `222 47% 11%` | `210 40% 96%` | Chữ chính |
-| `card` | `0 0% 100%` | `222 40% 9%` | Mặt nội dung |
-| `primary` | `175 77% 26%` | `172 66% 50%` | Hành động chính |
-| `primary-foreground` | `0 0% 100%` | `222 47% 8%` | Chữ trên primary |
-| `secondary` | `210 40% 96%` | `217 33% 15%` | Hành động phụ |
-| `muted` | `210 40% 96%` | `217 33% 15%` | Vùng thông tin phụ |
-| `muted-foreground` | `215 19% 35%` | `215 20% 68%` | Chữ phụ |
-| `accent` | `166 76% 96%` | `175 40% 14%` | Nền hover hoặc nhấn nhẹ |
-| `destructive` | `0 72% 45%` | `0 91% 71%` | Xóa, thao tác nguy hiểm |
-| `success` | `163 94% 24%` | `158 64% 52%` | Thành công |
-| `warning` | `26 90% 37%` | `43 96% 56%` | Cảnh báo |
-| `info` | `201 96% 32%` | `198 93% 60%` | Thông tin |
-| `border` | `214 32% 91%` | `217 30% 18%` | Viền mặt nội dung |
-| `input` | `213 27% 84%` | `215 25% 27%` | Viền trường nhập |
-| `ring` | `175 77% 30%` | `172 66% 50%` | Focus ring |
+| `background` | `240 14% 96%` | `230 18% 9%` | Nền trang |
+| `foreground` | `235 20% 15%` | `240 16% 94%` | Chữ chính |
+| `card` | `240 20% 99%` | `232 16% 13%` | Mặt nội dung |
+| `primary` | `242 43% 46%` | `238 70% 79%` | Hành động chính |
+| `primary-foreground` | `240 25% 98%` | `235 28% 14%` | Chữ trên primary |
+| `secondary` | `240 15% 92%` | `233 15% 20%` | Hành động phụ |
+| `muted` | `240 13% 93%` | `233 13% 19%` | Vùng thông tin phụ |
+| `muted-foreground` | `235 10% 39%` | `235 12% 71%` | Chữ phụ |
+| `accent` | `242 36% 92%` | `238 25% 24%` | Nền hover hoặc nhấn nhẹ |
+| `destructive` | `0 67% 42%` | `0 80% 75%` | Xóa, thao tác nguy hiểm |
+| `success` | `158 62% 27%` | `158 46% 66%` | Thành công |
+| `warning` | `28 80% 33%` | `34 80% 73%` | Cảnh báo |
+| `info` | `209 65% 35%` | `207 70% 76%` | Thông tin |
+| `border` | `240 12% 84%` | `234 12% 27%` | Viền mặt nội dung |
+| `input` | `240 10% 72%` | `234 12% 43%` | Viền trường nhập |
+| `ring` | `242 43% 46%` | `238 70% 79%` | Focus ring |
 
 Các cặp `*-foreground`, `*-soft`, `popover` và `shadow-color` còn lại lấy trực tiếp từ [nguồn CSS](../frontend/src/app/globals.css). Không thay thế chúng bằng màu Tailwind cố định trong component dùng chung.
 
 ### 6.2 Typography
 
-[Root layout](../frontend/src/app/layout.tsx) tải Inter qua `next/font/google` và cung cấp biến `--font-sans`. Font mono dùng hệ thống cho mã hoặc dữ liệu kỹ thuật.
+[Root layout](../frontend/src/app/layout.tsx) tải Be Vietnam Pro qua `next/font/google` và cung cấp biến `--font-sans`. Font mono dùng hệ thống cho mã hoặc dữ liệu kỹ thuật.
 
 | Utility chữ | Cỡ chữ | Line height | Vai trò |
 |---|---|---|---|
@@ -128,13 +126,13 @@ Quy đổi px giả định cỡ chữ gốc 16px; mã nguồn dùng rem. Displa
 | Thuộc tính | Hiện trạng |
 |---|---|
 | Nhịp khoảng cách | Theo lưới 4px; thường dùng gap 8, 12, 16, 24px |
-| Card | `rounded-xl`, padding `p-4 sm:p-6` tương ứng 16/24px |
-| Radius token | `--radius: 0.75rem`; `lg` 12px, `md` 10px, `sm` 8px tại root 16px |
+| Card | `rounded-2xl`, padding `p-4 sm:p-6` tương ứng 16/24px |
+| Radius token | `--radius: 0.625rem`; `lg` 10px, `md` 8px, `sm` 6px tại root 16px |
 | Modal | `rounded-2xl`, tối đa `max-w-2xl`; body cuộn riêng |
 | Bóng | `shadow-xs`, `shadow-soft`, `shadow-soft-md`, `shadow-soft-lg` |
 | Focus toàn cục | Outline 2px, offset 3px; component có thể dùng ring riêng |
 
-`rounded-xl` của Card dùng giá trị mặc định Tailwind; không nhầm với token `rounded-lg` được ánh xạ từ `--radius`, dù hiện tại cùng ra 12px.
+Card dùng `rounded-2xl` (16px); input dùng `rounded-lg` (10px); Button dùng `rounded-full`. Khung nội dung dùng 20px trên desktop và 16px trên mobile.
 
 ### 6.4 Component
 
@@ -262,6 +260,18 @@ Tái sử dụng token và component trước khi thêm biến thể. Khi cần 
 | 3 | Kiểm tra giao diện | Có bằng chứng desktop/mobile, theme và bàn phím |
 | 4 | Cập nhật tài liệu và hình | Giá trị khớp nguồn, liên kết đúng, reduced motion hoạt động |
 
-**Lịch sử:** 22/10/2026 — Tạo tài liệu design system riêng từ mã nguồn hiện tại, theo cấu trúc nội dung mẫu System Design; thêm ba SVG minh họa động. Tài liệu kiến trúc hệ thống hiện có được giữ nguyên.
+**Lịch sử:** 02/11/2026 — Tạo tài liệu design system riêng từ mã nguồn hiện tại, theo cấu trúc nội dung mẫu System Design; thêm ba SVG minh họa động. Tài liệu kiến trúc hệ thống hiện có được giữ nguyên.
 
-22/10/2026 — Hợp nhất hướng dẫn UI nội bộ vào tài liệu này và xóa bản trùng cũ trong thư mục tài liệu frontend. Bổ sung các component hỗ trợ, mẫu bố cục trang và sửa mô tả mặc định của PageHeader theo mã hiện tại.
+02/11/2026 — Hợp nhất hướng dẫn UI nội bộ vào tài liệu này và xóa bản trùng cũ trong thư mục tài liệu frontend. Bổ sung các component hỗ trợ, mẫu bố cục trang và sửa mô tả mặc định của PageHeader theo mã hiện tại.
+
+
+## Dusk: ảnh nền sáng và tối
+
+Ảnh được tạo bằng imagegen, không mô tả một địa điểm có thật. Bản đêm là chỉnh ánh sáng của bản bình minh để giữ bố cục núi, hồ, cây và sương tương ứng; không phải ảnh lật gương.
+
+- [Bình minh](../frontend/public/backgrounds/dusk-dawn.webp): 117.382 byte.
+- [Ban đêm](../frontend/public/backgrounds/dusk-night.webp): 98.948 byte.
+- `--app-bg-image` đổi theo class theme trên html; vị trí ảnh đều là center/cover.
+- `dusk-auth-story` và `dusk-landscape` dùng lớp phủ sáng/tối theo theme. Form và bảng dùng nền card để bảo vệ khả năng đọc.
+- `prefers-reduced-transparency` thay các bề mặt Dusk bằng nền đặc; reduced motion giữ quy tắc toàn cục hiện có.
+- Light/dark/system, tiếng Việt/Anh, route và hành vi nghiệp vụ được giữ nguyên.
