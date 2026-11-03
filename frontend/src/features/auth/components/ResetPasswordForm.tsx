@@ -23,7 +23,7 @@ const resetPasswordSchema = z
     confirm_password: z.string().min(1, 'pleaseConfirmYourPassword'),
   })
   .refine((data) => data.new_password === data.confirm_password, {
-    message: 'passwordsDoNotMatch',
+    error: 'passwordsDoNotMatch',
     path: ['confirm_password'],
   })
 

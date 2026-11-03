@@ -26,12 +26,12 @@ const registerSchema = z
       .min(3, 'usernameMustBeAtLeast3Characters')
       .max(50, 'usernameMustBeAtMost50Characters')
       .regex(/^[a-zA-Z0-9_]+$/, 'usernameCanOnlyContainLettersNumbersAndUnderscores'),
-    email: z.string().min(1, 'emailIsRequired').email('enterAValidEmailAddress'),
+    email: z.string().min(1, 'emailIsRequired').pipe(z.email('enterAValidEmailAddress')),
     password: passwordSchema,
     confirm_password: z.string().min(1, 'pleaseConfirmYourPassword'),
   })
   .refine((data) => data.password === data.confirm_password, {
-    message: 'passwordsDoNotMatch',
+    error: 'passwordsDoNotMatch',
     path: ['confirm_password'],
   })
 

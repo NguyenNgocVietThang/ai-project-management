@@ -14,7 +14,7 @@ import { Label } from '@/components/common/Label'
 import { useAuth } from '@/hooks/useAuth'
 
 const forgotPasswordSchema = z.object({
-  email: z.string().min(1, 'emailIsRequired').email('enterAValidEmailAddress'),
+  email: z.string().min(1, 'emailIsRequired').pipe(z.email('enterAValidEmailAddress')),
 })
 
 type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>

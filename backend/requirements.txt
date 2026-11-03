@@ -43,7 +43,7 @@ openai==1.109.1 # SDK dùng cho xKiro — cổng AI tương thích OpenAI
 # ============================================================
 minio==7.2.9
 boto3==1.35.0             # Optional: AWS S3 compatible
-Pillow==12.3.0           # Validate and normalize uploaded avatars
+Pillow==13.0.0           # Validate and normalize uploaded avatars
 
 # ============================================================
 # Email

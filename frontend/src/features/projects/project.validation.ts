@@ -10,12 +10,12 @@ export const projectFormSchema = z
     budget: z
       .string()
       .refine((value) => value === '' || (!Number.isNaN(Number(value)) && Number(value) >= 0), {
-        message: 'budgetMin',
+        error: 'budgetMin',
       }),
     expected_benefit: z
       .string()
       .refine((value) => value === '' || (!Number.isNaN(Number(value)) && Number(value) >= 0), {
-        message: 'benefitMin',
+        error: 'benefitMin',
       }),
     currency: z.string().trim().min(3, 'currencyMin').max(10, 'currencyMax'),
     methodology: z.enum(['agile', 'waterfall', 'hybrid']),
@@ -23,7 +23,7 @@ export const projectFormSchema = z
   })
   .refine((values) => values.end_date >= values.start_date, {
     path: ['end_date'],
-    message: 'dateOrder',
+    error: 'dateOrder',
   })
 
 export type ProjectFormValues = z.infer<typeof projectFormSchema>

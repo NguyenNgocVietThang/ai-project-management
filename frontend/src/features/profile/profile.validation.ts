@@ -27,7 +27,7 @@ export const passwordFormSchema = z
     confirm_password: z.string().min(1, 'pleaseConfirmYourNewPassword'),
   })
   .refine((values) => values.new_password === values.confirm_password, {
-    message: 'passwordsDoNotMatch',
+    error: 'passwordsDoNotMatch',
     path: ['confirm_password'],
   })
 

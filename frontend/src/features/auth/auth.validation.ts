@@ -4,14 +4,14 @@ export const passwordSchema = z
   .string()
   .min(12, 'passwordMustBeAtLeast12Characters')
   .refine((password) => new TextEncoder().encode(password).length <= 72, {
-    message: 'passwordMustNotExceed72Bytes',
+    error: 'passwordMustNotExceed72Bytes',
   })
   .refine(
     (password) =>
       Array.from(password).some(
         (character) => /\p{N}/u.test(character) || !/[\p{L}\p{N}\s]/u.test(character)
       ),
-    { message: 'passwordMustContainAtLeastOneNumberOrSpecialCharacter' }
+    { error: 'passwordMustContainAtLeastOneNumberOrSpecialCharacter' }
   )
 
 export function getPasswordStrength(password: string): {

@@ -12,11 +12,11 @@ const passwordSchema = z
   .min(12, 'passwordMustBeAtLeast12Characters')
   .max(100, 'max100Characters')
   .refine((value) => /[0-9]/.test(value) || /[^a-zA-Z0-9\s]/.test(value), {
-    message: 'passwordMustContainAtLeastOneNumberOrSpecialCharacter',
+    error: 'passwordMustContainAtLeastOneNumberOrSpecialCharacter',
   })
 
 export const createUserFormSchema = z.object({
-  email: z.string().trim().email('enterAValidEmailAddress'),
+  email: z.string().trim().pipe(z.email('enterAValidEmailAddress')),
   username: usernameSchema,
   full_name: z.string().trim().min(2, 'fullNameMustBeAtLeast2Characters').max(100, 'max100Characters'),
   password: passwordSchema,

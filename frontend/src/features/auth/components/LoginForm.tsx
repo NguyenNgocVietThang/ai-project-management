@@ -14,7 +14,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { SocialLoginButtons } from './SocialLoginButtons'
 
 const loginSchema = z.object({
-  email: z.string().min(1, 'emailIsRequired').email('enterAValidEmailAddress'),
+  email: z.string().min(1, 'emailIsRequired').pipe(z.email('enterAValidEmailAddress')),
   password: z.string().min(1, 'passwordIsRequired'),
 })
 

@@ -9,14 +9,14 @@ export const portfolioFormSchema = z
     budget: z
       .string()
       .refine((value) => value === '' || (!Number.isNaN(Number(value)) && Number(value) >= 0), {
-        message: 'budgetMin',
+        error: 'budgetMin',
       }),
     currency: z.string().trim().min(3, 'currencyMin').max(10, 'currencyMax'),
     status: z.enum(['PLANNING', 'ACTIVE', 'ARCHIVED']).optional(),
   })
   .refine(
     (values) => !values.start_date || !values.end_date || values.end_date >= values.start_date,
-    { path: ['end_date'], message: 'dateOrder' }
+    { path: ['end_date'], error: 'dateOrder' }
   )
 
 export type PortfolioFormValues = z.infer<typeof portfolioFormSchema>
